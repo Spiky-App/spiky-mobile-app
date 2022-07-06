@@ -1,21 +1,27 @@
-import { registerRootComponent } from "expo";
-import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { ImageBackground, StyleSheet, View } from "react-native";
+import Background from "./constants/images/background-paper.png";
+import Home from "./screen/home";
 
-function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
-  );
-}
-
-registerRootComponent(App);
+const App = () => {
+    return (
+        <View style={styles.container}>
+            <ImageBackground source={Background} resizeMode="cover" style={styles.image}>
+                <Home />
+            </ImageBackground>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    container: {
+        flex: 1,
+    },
+    image: {
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: "#F8F8F8",
+    },
 });
+
+export default App;
