@@ -1,7 +1,7 @@
 import React from "react";
 import { ImageBackground, StyleSheet, View } from "react-native";
 import Background from "./constants/images/background-paper.png";
-import Home from "./screen/home";
+import Home from "./screens/home";
 
 const App = () => {
     return (
