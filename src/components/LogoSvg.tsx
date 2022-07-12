@@ -1,13 +1,8 @@
-import * as React from "react"
-import Svg, { G, Path, Rect } from "react-native-svg";
+import * as React from 'react';
+import Svg, { G, Path, Rect } from 'react-native-svg';
 
-const SvgComponent = (props:any) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={692.016}
-    height={237.43}
-    {...props}
-  >
+const SvgComponent = (props: any) => (
+  <Svg xmlns="http://www.w3.org/2000/svg" width={692.016} height={237.43} {...props}>
     <G transform="translate(-60.868 -76)">
       <Path
         data-name="Trazado 318"
@@ -27,11 +22,7 @@ const SvgComponent = (props:any) => (
         transform="translate(359.9 76)"
         fill="#fc702a"
       />
-      <Path
-        data-name="Rect\xE1ngulo 510"
-        fill="#01192e"
-        d="M361.4 129.1h37.2V265h-37.2z"
-      />
+      <Path data-name="Rect\xE1ngulo 510" fill="#01192e" d="M361.4 129.1h37.2V265h-37.2z" />
       <Path
         data-name="Trazado 320"
         d="m426.4 77-.078 188.129h37.2v-47.012l14.758-14.058 37.452 61.07h45.342l-57.669-86.257 50.9-49.772h-43.2L463.3 177.983 463.46 77Z"
@@ -47,13 +38,9 @@ const SvgComponent = (props:any) => (
         d="M329.512 150.113c-28.385-36.354-73.5-29.5-89.712-2.718V129.1h-35.625l-.047 183.841H241.7V249.1s19.706 23.24 48.806 19.14 42.553-27.3 43.453-29.2c2.7-5.199 19.753-50.427-4.447-88.927Zm-51.717 91.1c-6 .2-36.072.088-36.094-43.305s30.509-42.128 30.509-42.128 28.99-3.48 30.39 37.82-18.806 47.416-24.806 47.616Z"
         fill="#01192e"
       />
-      <Path
-        data-name="Trazado 323"
-        d="M750.9 249.8a30.039 30.039 0 1 1-56.1 21.5"
-        fill="none"
-      />
+      <Path data-name="Trazado 323" d="M750.9 249.8a30.039 30.039 0 1 1-56.1 21.5" fill="none" />
     </G>
   </Svg>
-)
+);
 
-export default SvgComponent
+export default SvgComponent;
