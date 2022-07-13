@@ -1,26 +1,46 @@
+import { login } from '.';
+import { AuthLoginService } from '../../services/Auth';
 import { types } from "../types";
-
-/* 
-authCheckingFinish: '[auth] Finish checking login state',
-authStartLogin: '[auth] Start login',
-authLogin: '[auth] Login',
-authStartRegister: '[auth] Register',
-authStartTokenRenew: '[auth] Start token renew',
-authLogout: '[auth] Logout',
-authNewNotification: '[auth] Add new notification',
-authUpdateNotifications: '[auth] Update notifications', 
-*/
+import { uiOpenAlert } from './ui';
 
 /* Log In Action */
 interface IAuthAction {
-  Email: string;
-  Password: string;
+  correo: string;
+  contrasena: string;
 }
 
-const login = (payload: IAuthAction) => ({
+const loginAction = (payload: IAuthAction) => ({
   type: types.authLogin,
   payload
 });
+
+export const startLogin = (authData : IAuthAction ) => {
+  const {ok} = AuthLoginService(authData);
+
+  return async dispatch => {
+    if (body.ok) {
+      // Get every university from the server
+      // Set Universities action
+      // dispatch(uiSetUniversities(body_uni.universidades));
+
+      // No me acuerdo de que hace esto
+      // dispatch(uiOpenAlert({ ok: body.ok }));
+
+      
+      // Set the login action with the user data with the loginResponseData
+      dispatch(
+        login({
+          uid: body.ok,
+          alias: body.uid,
+          universidad: alias,
+          n_notificaciones: n_notificaciones,
+        })
+      );
+    } else {
+      dispatch(uiOpenAlert(ok));
+    }
+  };
+}
 
 /* Log Out Action */
 
@@ -40,7 +60,7 @@ const authUpdateNotifications = (payload : IAuthNewNotificationAction) => ({
 });
 
 export default {
-  login,
+  loginAction,
   logout,
   checkingFinish,
   authUpdateNotifications

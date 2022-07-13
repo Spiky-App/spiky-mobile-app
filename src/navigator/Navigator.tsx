@@ -1,17 +1,17 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen } from '../screens/HomeScreen';
-import { LoginScreen } from '../screens/LoginScreen';
+import React from 'react';
 import { CheckEmail } from '../screens/CheckEmail';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
-import { MenuMain } from './MenuMain';
+import { HomeScreen } from '../screens/HomeScreen';
+import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
+import { MenuMain } from './MenuMain';
 
 const Stack = createStackNavigator();
 
 export const Navigator = () => {
   //Simulando la autenticacion
-  const auth = true;
+  const auth = false;
 
   return (
     <Stack.Navigator

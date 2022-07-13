@@ -1,15 +1,3 @@
-export interface ILoginData {
-    email: string;
-    password: string;
-  }
-
-  export interface IRegisterData {
-    validCorreo: string;
-    contrasena: string;
-    alias   : string;
-    keyword: 'VC' 
-};
-
 export interface IUniversidad {
     alias: string;
   }
