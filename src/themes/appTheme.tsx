@@ -64,10 +64,10 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
-  textinput:{
+  textinput: {
     fontFamily: 'Helvetica',
     color: '#000000',
-    fontSize: 14, 
+    fontSize: 14,
     paddingVertical: 2,
   },
   iconinput: {
@@ -76,8 +76,8 @@ export const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingRight: 15,
   },
   link: {

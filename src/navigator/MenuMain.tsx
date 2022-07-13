@@ -22,29 +22,29 @@ const menuInfo = [
   {
     name: 'Comunidad',
     screen: 'CommunityScreen',
-    icon: faUsers
+    icon: faUsers,
   },
   {
     name: 'Mis ideas',
     screen: 'MyIdeasScreen',
-    icon: faLightbulb
+    icon: faLightbulb,
   },
   {
     name: 'Tracking',
     screen: 'TrackingScreen',
-    icon: faThumbtack
+    icon: faThumbtack,
   },
   {
     name: 'Buscar',
     screen: 'SearchScreen',
-    icon: faMagnifyingGlass
+    icon: faMagnifyingGlass,
   },
   {
     name: 'Conexiones',
     screen: 'ConnectionScreen',
-    icon: faCircleNodes
+    icon: faCircleNodes,
   },
-]
+];
 
 export const MenuMain = () => {
   const { width } = useWindowDimensions();
@@ -72,29 +72,20 @@ export const MenuMain = () => {
 };
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
-  
-  
   return (
     <DrawerContentScrollView>
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
-        
-      {
-        menuInfo.map( (item) => (
-          <View
-            key={item.screen}
-          >
+        {menuInfo.map(item => (
+          <View key={item.screen}>
             <TouchableOpacity
               style={stylescom.buttonmenu}
               onPress={() => navigation.navigate(item.screen)}
             >
-              <FontAwesomeIcon icon={item.icon} size={20} color={ "#01192E" } />
-              <Text style={ stylescom.textmenu }>
-                {item.name}
-              </Text>
+              <FontAwesomeIcon icon={item.icon} size={20} color={'#01192E'} />
+              <Text style={stylescom.textmenu}>{item.name}</Text>
             </TouchableOpacity>
-          </View>  
-        ))
-      }
+          </View>
+        ))}
 
         <TouchableOpacity style={stylescom.buttonmenu} onPress={() => {}}>
           <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />

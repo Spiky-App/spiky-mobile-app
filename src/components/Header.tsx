@@ -24,7 +24,7 @@ export const Header = () => {
       resizeMode="cover"
     >
       <SafeAreaView>
-        <View style={{...stylescom.container, marginTop: top > 0 ? 0 : 15 }}>
+        <View style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}>
           <TouchableOpacity
             onPress={() => navigation.openDrawer()}
             style={{ justifyContent: 'center', alignItems: 'center' }}

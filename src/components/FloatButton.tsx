@@ -5,13 +5,12 @@ import { faPlus } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 export const FloatButton = () => {
-
   const navigation = useNavigation<any>();
 
   return (
-    <TouchableHighlight 
-      underlayColor="#01192ebe" 
-      onPress={() => navigation.navigate('CreateIdeaScreen') } 
+    <TouchableHighlight
+      underlayColor="#01192ebe"
+      onPress={() => navigation.navigate('CreateIdeaScreen')}
       style={stylescom.button}
     >
       <FontAwesomeIcon icon={faPlus} color="" size={40} />

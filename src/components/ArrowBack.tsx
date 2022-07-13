@@ -8,7 +8,7 @@ import { faChevronLeft } from '../constants/icons/FontAwesome';
 export const ArrowBack = () => {
   const { top } = useSafeAreaInsets();
   const navigation = useNavigation<any>();
-  
+
   return (
     <TouchableOpacity
       style={{ ...stylescom.arrow, marginTop: top > 0 ? top : 20 }}

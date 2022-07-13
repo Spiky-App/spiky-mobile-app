@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 
-
 export const CreateIdeaScreen = () => {
-
   const [counter, setCounter] = useState(0);
   const [buttonState, setButtonState] = useState(true);
   const navigation = useNavigation();
@@ -31,77 +38,83 @@ export const CreateIdeaScreen = () => {
 
   return (
     <SafeAreaView style={stylecom.container}>
-      <KeyboardAvoidingView
-        behavior="height" 
-        style={stylecom.container}
-      >
-
-        <View style={{ height: '40%'}}>
-          <TextInput 
-            placeholder='Perpetua tu idea..'
-            placeholderTextColor='#707070'
-            style={{...styles.textinput, fontSize: 16, fontWeight: '300'}}
+      <KeyboardAvoidingView behavior="height" style={stylecom.container}>
+        <View style={{ height: '40%' }}>
+          <TextInput
+            placeholder="Perpetua tu idea.."
+            placeholderTextColor="#707070"
+            style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
             multiline={true}
             onChangeText={value => onChange(value, 'mensaje')}
             autoFocus
           />
         </View>
 
-        <View style={{ 
-          flexDirection: 'row', 
-          flexWrap:'wrap', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          width: '100%',
-          position: 'absolute',
-          bottom: (Platform.OS === "ios" ? 70 : 50)
-        }}>
-          <TouchableOpacity onPress={ () => navigation.goBack() }>
-              <Text style={{...styles.text, ...styles.link}}>Cancelar</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            position: 'absolute',
+            bottom: Platform.OS === 'ios' ? 70 : 50,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ ...styles.text, ...styles.link }}>Cancelar</Text>
           </TouchableOpacity>
 
-
-          <View style={ stylecom.WrapperMaxCounterNIdea }>
-            <View style={ stylecom.ConteMaxCounterNIdea }>
-              <View style={ stylecom.MaxCounterNIdea }></View>
+          <View style={stylecom.WrapperMaxCounterNIdea}>
+            <View style={stylecom.ConteMaxCounterNIdea}>
+              <View style={stylecom.MaxCounterNIdea}></View>
               {counter <= 40 && (
-                <Text style={counter < 0 ? stylecom.MaxCounterTextNIdeaRed : stylecom.MaxCounterTextNIdea }>
+                <Text
+                  style={
+                    counter < 0 ? stylecom.MaxCounterTextNIdeaRed : stylecom.MaxCounterTextNIdea
+                  }
+                >
                   {counter}
                 </Text>
               )}
               <View
-              style={{
-                ...(counter < 0 ? stylecom.MaxCounterNIdeaColorRed : stylecom.MaxCounterNIdeaColor),
-                width: ((mensaje.length < 220 ? mensaje.length : 220) / 220) * 100 + `%` 
-              }}
+                style={{
+                  ...(counter < 0
+                    ? stylecom.MaxCounterNIdeaColorRed
+                    : stylecom.MaxCounterNIdeaColor),
+                  width: ((mensaje.length < 220 ? mensaje.length : 220) / 220) * 100 + `%`,
+                }}
               ></View>
             </View>
           </View>
 
           <TouchableOpacity
-            style={{ ...stylecom.circleButton,
-              borderColor: (buttonState ? '#d4d4d4d3' : '#01192E' )}}
-            onPress={ () => {} }
+            style={{ ...stylecom.circleButton, borderColor: buttonState ? '#d4d4d4d3' : '#01192E' }}
+            onPress={() => {}}
           >
-            <FontAwesomeIcon icon={faPenToSquare} size={16} color={buttonState ? '#d4d4d4d3' : '#01192E' }/>
+            <FontAwesomeIcon
+              icon={faPenToSquare}
+              size={16}
+              color={buttonState ? '#d4d4d4d3' : '#01192E'}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{...stylecom.circleButton, 
-              borderColor: (buttonState ? '#d4d4d4d3' : '#01192E' )}}
-            onPress={ () => {} }
+            style={{ ...stylecom.circleButton, borderColor: buttonState ? '#d4d4d4d3' : '#01192E' }}
+            onPress={() => {}}
           >
             <View
-              style={{        
-                transform: [
-                  { rotate: "45deg" },
-                ]
+              style={{
+                transform: [{ rotate: '45deg' }],
               }}
             >
-              <FontAwesomeIcon icon={faLocationArrow} size={16} color={buttonState ?  '#d4d4d4d3' : '#01192E' }/>
+              <FontAwesomeIcon
+                icon={faLocationArrow}
+                size={16}
+                color={buttonState ? '#d4d4d4d3' : '#01192E'}
+              />
             </View>
           </TouchableOpacity>
-
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -114,7 +127,7 @@ const stylecom = StyleSheet.create({
     marginTop: 15,
     marginHorizontal: 20,
   },
-  circleButton:{
+  circleButton: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 45,
@@ -122,18 +135,18 @@ const stylecom = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
   },
-  WrapperMaxCounterNIdea:{
+  WrapperMaxCounterNIdea: {
     // flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   ConteMaxCounterNIdea: {
     zIndex: 3,
     width: 100,
-    margin: 'auto', 
+    margin: 'auto',
     // backgroundColor: 'green'
   },
-  MaxCounterNIdea:{
+  MaxCounterNIdea: {
     backgroundColor: '#d4d4d4d3',
     width: 100,
     height: 3,
@@ -161,7 +174,7 @@ const stylecom = StyleSheet.create({
     textAlign: 'center',
     margin: 'auto',
   },
-  MaxCounterNIdeaColor:{
+  MaxCounterNIdeaColor: {
     position: 'absolute',
     top: 0,
     zIndex: 3,
@@ -178,5 +191,5 @@ const stylecom = StyleSheet.create({
     height: 3,
     borderRadius: 5,
     backgroundColor: '#9b0000',
-  }
+  },
 });

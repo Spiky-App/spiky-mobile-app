@@ -22,14 +22,16 @@ export const IdeasHeader = ({ title }: Props) => {
         underlayColor="#01192E"
         onPress={() => {}}
       >
-        <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center',
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <FontAwesomeIcon icon={faFilter} color="white" size={17} />
-          <Text style={{ ...stylecom.filterText}}>Filtros.</Text>
+          <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
         </View>
       </TouchableHighlight>
     </View>

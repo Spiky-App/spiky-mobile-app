@@ -43,5 +43,5 @@ export {
   faRightFromBracket,
   faGear,
   faPenToSquare,
-  faLocationArrow
+  faLocationArrow,
 };

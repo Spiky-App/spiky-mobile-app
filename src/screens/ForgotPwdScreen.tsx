@@ -32,7 +32,7 @@ export const ForgotPwdScreen = () => {
               placeholder="Correo universitario"
               autoCorrect={false}
               keyboardType="email-address"
-              style={ styles.textinput }
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'email')}
             />
           </View>

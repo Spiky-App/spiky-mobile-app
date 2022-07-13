@@ -31,7 +31,7 @@ export const SearchScreen = () => {
             <TextInput
               placeholder="Buscar"
               onChangeText={value => onChange(value, 'search')}
-              style={ styles.textinput }
+              style={styles.textinput}
               autoCorrect={false}
             />
             <TouchableOpacity style={styles.iconinput} onPress={() => {}}>

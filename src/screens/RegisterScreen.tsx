@@ -45,7 +45,7 @@ export const RegisterScreen = () => {
               placeholder="Seudónimo"
               autoCorrect={false}
               keyboardType="email-address"
-              style={ styles.textinput }
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'alias')}
             />
             <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
@@ -58,7 +58,7 @@ export const RegisterScreen = () => {
               placeholder="Contraseña"
               secureTextEntry={passVisible1}
               autoCorrect={false}
-              style={ styles.textinput }
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'contrasena')}
             />
             <TouchableOpacity
@@ -74,7 +74,7 @@ export const RegisterScreen = () => {
               placeholder="Confirmar contraseña"
               secureTextEntry={passVisible2}
               autoCorrect={false}
-              style={ styles.textinput }
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'confirContrasena')}
             />
             <TouchableOpacity
@@ -97,4 +97,3 @@ export const RegisterScreen = () => {
     </BackgroundPaper>
   );
 };
-
