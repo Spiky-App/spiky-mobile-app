@@ -6,12 +6,13 @@ import { CheckEmail } from '../screens/CheckEmail';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { MenuMain } from './MenuMain';
 import { RegisterScreen } from '../screens/RegisterScreen';
+import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 
 const Stack = createStackNavigator();
 
 export const Navigator = () => {
   //Simulando la autenticacion
-  const auth = true;
+  const auth = false;
 
   return (
     <Stack.Navigator
@@ -31,7 +32,10 @@ export const Navigator = () => {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
       ) : (
-        <Stack.Screen name="MenuMain" component={MenuMain} />
+        <>
+          <Stack.Screen name="MenuMain" component={MenuMain} />
+          <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
+        </>
       )}
     </Stack.Navigator>
   );

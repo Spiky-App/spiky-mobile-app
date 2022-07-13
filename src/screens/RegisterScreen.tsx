@@ -45,9 +45,10 @@ export const RegisterScreen = () => {
               placeholder="Seudónimo"
               autoCorrect={false}
               keyboardType="email-address"
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'alias')}
             />
-            <TouchableOpacity style={stylescom.pwdEyes} onPress={() => {}}>
+            <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
               <FontAwesomeIcon icon={faCircleInfo} size={16} color="#d4d4d4" />
             </TouchableOpacity>
           </View>
@@ -57,10 +58,11 @@ export const RegisterScreen = () => {
               placeholder="Contraseña"
               secureTextEntry={passVisible1}
               autoCorrect={false}
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'contrasena')}
             />
             <TouchableOpacity
-              style={stylescom.pwdEyes}
+              style={styles.iconinput}
               onPress={() => setPassVisible1(!passVisible1)}
             >
               <FontAwesomeIcon icon={passVisible1 ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
@@ -72,10 +74,11 @@ export const RegisterScreen = () => {
               placeholder="Confirmar contraseña"
               secureTextEntry={passVisible2}
               autoCorrect={false}
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'confirContrasena')}
             />
             <TouchableOpacity
-              style={stylescom.pwdEyes}
+              style={styles.iconinput}
               onPress={() => setPassVisible2(!passVisible2)}
             >
               <FontAwesomeIcon icon={passVisible2 ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
@@ -94,16 +97,3 @@ export const RegisterScreen = () => {
     </BackgroundPaper>
   );
 };
-
-const stylescom = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    marginHorizontal: 20,
-  },
-  pwdEyes: {
-    position: 'absolute',
-    right: 0,
-    top: 9,
-    paddingRight: 7,
-  },
-});

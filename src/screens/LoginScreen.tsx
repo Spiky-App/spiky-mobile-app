@@ -40,6 +40,7 @@ export const LoginScreen = () => {
               placeholder="Correo o seudónimo"
               autoCorrect={false}
               keyboardType="email-address"
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'email')}
             />
           </View>
@@ -49,12 +50,10 @@ export const LoginScreen = () => {
               placeholder="Contraseña"
               secureTextEntry={passVisible}
               autoCorrect={false}
+              style={styles.textinput}
               onChangeText={value => onChange(value, 'password')}
             />
-            <TouchableOpacity
-              style={stylescom.pwdEyes}
-              onPress={() => setPassVisible(!passVisible)}
-            >
+            <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible(!passVisible)}>
               <FontAwesomeIcon icon={passVisible ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
             </TouchableOpacity>
           </View>
