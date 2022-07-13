@@ -18,6 +18,8 @@ import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import { faBell } from '@fortawesome/free-solid-svg-icons/faBell';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
 import { faGear } from '@fortawesome/free-solid-svg-icons/faGear';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
+import { faLocationArrow } from '@fortawesome/free-solid-svg-icons/faLocationArrow';
 
 export {
   faUsers,
@@ -40,4 +42,6 @@ export {
   faBell,
   faRightFromBracket,
   faGear,
+  faPenToSquare,
+  faLocationArrow
 };

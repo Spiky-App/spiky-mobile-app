@@ -31,9 +31,10 @@ export const SearchScreen = () => {
             <TextInput
               placeholder="Buscar"
               onChangeText={value => onChange(value, 'search')}
-              style={{ ...styles.text, fontSize: 15 }}
+              style={ styles.textinput }
+              autoCorrect={false}
             />
-            <TouchableOpacity style={stylescom.icon} onPress={() => {}}>
+            <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
             </TouchableOpacity>
           </View>
@@ -54,12 +55,3 @@ export const SearchScreen = () => {
     </BackgroundPaper>
   );
 };
-
-const stylescom = StyleSheet.create({
-  icon: {
-    position: 'absolute',
-    right: 0,
-    top: 10,
-    paddingRight: 15,
-  },
-});

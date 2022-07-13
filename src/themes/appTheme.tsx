@@ -11,17 +11,28 @@ export const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
     color: '#01192E',
   },
+  textbold: {
+    fontFamily: 'Helvetica-Bold',
+    color: '#01192E',
+    fontWeight: '500',
+  },
   h1: {
     fontSize: 60,
+    fontFamily: 'Helvetica-Bold',
     fontWeight: '500',
   },
   h2: {
     fontSize: 45,
-    fontWeight: '500',
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: '600',
   },
   h3: {
     fontSize: 23,
-    fontWeight: '500',
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: '600',
+  },
+  h5: {
+    fontFamily: 'Helvetica-Bold',
   },
   orange: {
     color: '#FC702A',
@@ -52,6 +63,22 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 6,
+  },
+  textinput:{
+    fontFamily: 'Helvetica',
+    color: '#000000',
+    fontSize: 14, 
+    paddingVertical: 2,
+  },
+  iconinput: {
+    position: 'absolute',
+    flex: 1,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight: 15,
   },
   link: {
     color: '#5c71ad',

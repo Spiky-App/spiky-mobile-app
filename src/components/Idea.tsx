@@ -23,7 +23,7 @@ export const Idea = ({ idea }: Props) => {
     <View style={stylescom.wrap}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         <TouchableOpacity onPress={() => {}}>
-          <Text style={{ ...stylescom.user, ...styles.text }}>@{idea.usuario.alias}</Text>
+          <Text style={{ ...stylescom.user, ...styles.textbold }}>@{idea.usuario.alias}</Text>
         </TouchableOpacity>
         <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
         <Text style={{ ...styles.text, fontSize: 13 }}>{idea.usuario.universidad.alias}</Text>
@@ -93,7 +93,7 @@ export const Idea = ({ idea }: Props) => {
               <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
 
               <TouchableOpacity>
-                <Text style={{ ...styles.text, ...stylescom.dots }}>...</Text>
+                <Text style={{ ...styles.textbold, ...stylescom.dots }}>...</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -125,6 +125,8 @@ const stylescom = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
+    justifyContent: 'center',
+    // backgroundColor: 'red'
   },
   user: {
     fontWeight: '600',
@@ -136,13 +138,15 @@ const stylescom = StyleSheet.create({
     textAlign: 'justify',
     flexShrink: 1,
     width: '100%',
-    marginVertical: 8,
+    marginTop: 6,
     // backgroundColor: 'red'
   },
   reaction: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginRight: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   number: {
     fontWeight: '300',
@@ -159,13 +163,16 @@ const stylescom = StyleSheet.create({
   reactButton: {
     backgroundColor: '#D4D4D4',
     borderRadius: 2,
-    paddingHorizontal: 30,
-    paddingVertical: 2,
+    width: '25%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // paddingHorizontal: 30,
+    paddingVertical: 3,
   },
   containerReact: {
-    marginBottom: 5,
     justifyContent: 'space-around',
     flex: 1,
     flexDirection: 'row',
+    marginTop: 8,
   },
 });
