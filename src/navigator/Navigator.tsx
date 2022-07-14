@@ -5,11 +5,16 @@ import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
+import SpikyService from '../services/SpikyService';
 import { MenuMain } from './MenuMain';
 
 const Stack = createStackNavigator();
 
-export const Navigator = () => {
+interface Props {
+  spikyService: SpikyService;
+}
+
+export const Navigator = ({spikyService}: Props) => {
   //Simulando la autenticacion
   const auth = false;
 
