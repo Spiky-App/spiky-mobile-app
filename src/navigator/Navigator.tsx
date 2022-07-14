@@ -7,6 +7,7 @@ import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import SpikyService from '../services/SpikyService';
 import { MenuMain } from './MenuMain';
+import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 
 const Stack = createStackNavigator();
 
@@ -36,7 +37,10 @@ export const Navigator = ({spikyService}: Props) => {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
       ) : (
-        <Stack.Screen name="MenuMain" component={MenuMain} />
+        <>
+          <Stack.Screen name="MenuMain" component={MenuMain} />
+          <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
+        </>
       )}
     </Stack.Navigator>
   );

@@ -72,6 +72,7 @@ export const LoginScreen = ({ spikyService }: Props) => {
               autoCorrect={false}
               keyboardType="email-address"
               onChangeText={value => onChange({ email: value })}
+              style={styles.textinput}
             />
           </View>
 
@@ -80,13 +81,11 @@ export const LoginScreen = ({ spikyService }: Props) => {
               placeholder="Contraseña"
               secureTextEntry={passVisible}
               autoCorrect={false}
-              onChangeText={value => onChange({ password: value })}
+              style={styles.textinput}
+              onChangeText={value => onChange({password: value})}
             />
-            <TouchableOpacity
-              style={stylescom.pwdEyes}
-              onPress={() => setPassVisible(!passVisible)}
-            >
-              <FontAwesomeIcon icon={passVisible ? faEye : faEyeSlash} size={16} color="#d4d4d4" />|
+            <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible(!passVisible)}>
+              <FontAwesomeIcon icon={passVisible ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
             </TouchableOpacity>
           </View>
 

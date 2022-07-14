@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Text, View, TouchableHighlight, StyleSheet } from 'react-native';
 import { faFilter } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
+import { faHourglass3 } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   title: string;
@@ -21,10 +22,17 @@ export const IdeasHeader = ({ title }: Props) => {
         underlayColor="#01192E"
         onPress={() => {}}
       >
-        <>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <FontAwesomeIcon icon={faFilter} color="white" size={17} />
-          <Text style={stylecom.filterText}>Filtros.</Text>
-        </>
+          <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
+        </View>
       </TouchableHighlight>
     </View>
   );
@@ -43,12 +51,11 @@ const stylecom = StyleSheet.create({
     backgroundColor: '#D4D4D4',
     borderRadius: 3,
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    paddingVertical: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   filterText: {
-    fontFamily: 'Helvetica',
     fontSize: 15,
     color: 'white',
     fontWeight: '500',

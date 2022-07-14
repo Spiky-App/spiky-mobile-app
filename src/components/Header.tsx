@@ -8,15 +8,14 @@ import {
   ImageBackground,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
-  Button,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const Header = () => {
   const navigation = useNavigation<any>();
+  const { top } = useSafeAreaInsets();
   const [profileOption, setProfileOption] = useState(false);
 
   return (
@@ -25,7 +24,7 @@ export const Header = () => {
       resizeMode="cover"
     >
       <SafeAreaView>
-        <View style={stylescom.container}>
+        <View style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}>
           <TouchableOpacity
             onPress={() => navigation.openDrawer()}
             style={{ justifyContent: 'center', alignItems: 'center' }}
