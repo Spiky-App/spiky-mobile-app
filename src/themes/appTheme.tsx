@@ -95,4 +95,22 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     width: 270,
   },
+  user: {
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  msg: {
+    fontSize: 13,
+    fontWeight: '300',
+    textAlign: 'justify',
+    flexShrink: 1,
+    width: '100%',
+    marginVertical: 8,
+  },
+  numberGray: {
+    fontWeight: '300',
+    fontSize: 12,
+    color: '#bebebe',
+    marginLeft: 3,
+  },
 });

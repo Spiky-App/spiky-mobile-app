@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { faCheck, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { IdeaInterface } from '../data/ideas';
@@ -11,7 +12,9 @@ interface Props {
 }
 
 export const Idea = ({ idea }: Props) => {
+
   const uid = 1;
+  const navigation = useNavigation<any>();
 
   if (idea.id_usuario === uid && idea.reacciones.length === 0) {
     idea.reacciones = [{}];
@@ -83,7 +86,10 @@ export const Idea = ({ idea }: Props) => {
                 </Text>
               </View>
 
-              <TouchableOpacity style={stylescom.reaction}>
+              <TouchableOpacity 
+                style={stylescom.reaction}
+                onPress={ () => navigation.navigate('OpenedIdeaScreen')}
+              >
                 <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                 <Text style={{ ...styles.text, ...stylescom.number }}>{idea.num_respuestas}</Text>
               </TouchableOpacity>
@@ -166,7 +172,6 @@ const stylescom = StyleSheet.create({
     width: '25%',
     justifyContent: 'center',
     alignItems: 'center',
-    // paddingHorizontal: 30,
     paddingVertical: 3,
   },
   containerReact: {

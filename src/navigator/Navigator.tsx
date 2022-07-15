@@ -7,12 +7,14 @@ import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { MenuMain } from './MenuMain';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
+import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
+import { Animated } from 'react-native';
 
 const Stack = createStackNavigator();
 
 export const Navigator = () => {
   //Simulando la autenticacion
-  const auth = false;
+  const auth = true;
 
   return (
     <Stack.Navigator
@@ -35,6 +37,7 @@ export const Navigator = () => {
         <>
           <Stack.Screen name="MenuMain" component={MenuMain} />
           <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
+          <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
         </>
       )}
     </Stack.Navigator>
