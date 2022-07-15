@@ -7,9 +7,10 @@ import SpikyService from './services/SpikyService';
 import store from './store';
 
 const App = () => {
-  const host = 'http://localhost:4000';
+  const host = 'http://192.168.1.89:4000';
   const config: AxiosRequestConfig = {
     baseURL: `${host}/api/`,
+    timeout: 10000
   };
   const spikyService = new SpikyService(config);
   return (

@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingRight: 15,
   },
   link: {

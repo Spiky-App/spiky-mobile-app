@@ -8,7 +8,7 @@ class SpikyService {
   }
 
   login(email: string, password: string) {
-    return this.instance.post('auth/login', { contrasena: email, correo: password });
+    return this.instance.post('auth/login', { contrasena: password, correo: email });
   }
 }
 

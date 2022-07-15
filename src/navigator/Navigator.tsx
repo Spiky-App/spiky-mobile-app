@@ -1,4 +1,4 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
 import { CheckEmail } from '../screens/CheckEmail';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
@@ -9,13 +9,23 @@ import SpikyService from '../services/SpikyService';
 import { MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  HomeScreen: undefined;
+  LoginScreen: { spikyService: SpikyService };
+  CheckEmail: undefined;
+  ForgotPwdScreen: undefined;
+  RegisterScreen: undefined;
+  MenuMain: undefined;
+  CreateIdeaScreen: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 interface Props {
   spikyService: SpikyService;
 }
 
-export const Navigator = ({spikyService}: Props) => {
+export const Navigator = ({ spikyService }: Props) => {
   //Simulando la autenticacion
   const auth = false;
 
@@ -31,7 +41,11 @@ export const Navigator = ({spikyService}: Props) => {
       {!auth ? (
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen
+            name="LoginScreen"
+            component={LoginScreen}
+            initialParams={{ spikyService }}
+          />
           <Stack.Screen name="CheckEmail" component={CheckEmail} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
