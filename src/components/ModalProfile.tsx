@@ -10,6 +10,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faRightFromBracket, faGear } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
+import { useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import authActions from '../store/actions/authActions';
 
 interface Props {
   setProfileOption: (value: boolean) => void;
@@ -17,6 +20,8 @@ interface Props {
 }
 
 export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
+  const dispatch = useDispatch();
+  const { signOut } = bindActionCreators(authActions, dispatch);
   return (
     <Modal animationType="fade" visible={profileOption} transparent={true}>
       <TouchableWithoutFeedback onPress={() => setProfileOption(false)}>
@@ -46,7 +51,7 @@ export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
               <Text style={{ ...styles.text, ...stylescom.textModal }}>Configuraciones</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={stylescom.optionModal} onPress={() => {}}>
+            <TouchableOpacity style={stylescom.optionModal} onPress={signOut}>
               <FontAwesomeIcon icon={faRightFromBracket} color="white" />
               <Text style={{ ...styles.text, ...stylescom.textModal }}>Cerrar sesión</Text>
             </TouchableOpacity>

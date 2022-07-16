@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { LoginResponseData } from './types/spikyService';
 
 class SpikyService {
   private instance: AxiosInstance;
@@ -8,7 +9,7 @@ class SpikyService {
   }
 
   login(email: string, password: string) {
-    return this.instance.post('auth/login', { contrasena: password, correo: email });
+    return this.instance.post<LoginResponseData>('auth/login', { contrasena: password, correo: email });
   }
 }
 
