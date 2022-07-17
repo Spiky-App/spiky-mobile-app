@@ -8,9 +8,6 @@ interface Props {
 }
 
 export const CheckBox = ({ checked }: Props) => {
-  useEffect(() => {
-    console.log('Cambio');
-  }, [checked]);
 
   return (
     <View style={checked ? stylescom.checkboxActive : stylescom.checkbox}>
