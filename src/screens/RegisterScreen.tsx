@@ -36,7 +36,7 @@ export const RegisterScreen = () => {
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <BigTitle texts={['Escribe eso', 'que no saben']} />
 
-          <Text style={{ ...styles.textGray, marginVertical: 15, fontSize: 14, marginLeft: 40 }}>
+          <Text style={{ ...styles.textGrayPad, marginVertical: 15, fontSize: 14, marginLeft: 40 }}>
             correo1234@uni.mx
           </Text>
 
