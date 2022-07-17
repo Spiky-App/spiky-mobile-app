@@ -7,6 +7,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flex: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   text: {
     fontFamily: 'Helvetica',
     color: '#01192E',
@@ -87,13 +95,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
   },
-  textGray: {
+  textGrayPad: {
     color: '#707070',
     fontSize: 11,
     fontWeight: '300',
     paddingHorizontal: 15,
     paddingVertical: 8,
     width: 270,
+  },
+  textGray: {
+    color: '#707070',
+    fontSize: 13,
+    fontWeight: '300',
   },
   user: {
     fontWeight: '600',

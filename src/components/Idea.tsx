@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { faCheck, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
+import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { IdeaInterface } from '../data/ideas';
 import { getTime } from '../helpers/getTime';
+import { ModalIdeaOptions } from './ModalIdeaOptions';
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
 
 interface Props {
   idea: IdeaInterface;
 }
 
 export const Idea = ({ idea }: Props) => {
-
   const uid = 1;
   const navigation = useNavigation<any>();
+  const [ideaOptions, setIdeaOptions] = useState(false);
+  const [position, setPosition] = useState({
+    top: 0,
+    left: 0,
+  });
 
   if (idea.id_usuario === uid && idea.reacciones.length === 0) {
     idea.reacciones = [{}];
@@ -22,8 +28,30 @@ export const Idea = ({ idea }: Props) => {
 
   const fecha = getTime(idea.fecha);
 
+  useEffect(() => {
+    if (position.top !== 0) {
+      setIdeaOptions(value => !value);
+    }
+  }, [position]);
+
   return (
     <View style={stylescom.wrap}>
+      {uid === idea.id_usuario && (
+        <View style={stylescom.corner}>
+          <View style={{ transform: [{ rotate: '-45deg' }] }}>
+            <FontAwesomeIcon icon={faLightbulb} color="white" size={13} />
+          </View>
+        </View>
+      )}
+
+      {idea.trackings.length > 0 && (
+        <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
+          <View>
+            <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+          </View>
+        </View>
+      )}
+
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         <TouchableOpacity onPress={() => {}}>
           <Text style={{ ...stylescom.user, ...styles.textbold }}>@{idea.usuario.alias}</Text>
@@ -86,9 +114,9 @@ export const Idea = ({ idea }: Props) => {
                 </Text>
               </View>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={stylescom.reaction}
-                onPress={ () => navigation.navigate('OpenedIdeaScreen')}
+                onPress={() => navigation.navigate('OpenedIdeaScreen')}
               >
                 <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                 <Text style={{ ...styles.text, ...stylescom.number }}>{idea.num_respuestas}</Text>
@@ -98,9 +126,23 @@ export const Idea = ({ idea }: Props) => {
             <View style={stylescom.container}>
               <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
 
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={event => {
+                  setPosition({
+                    top: event.nativeEvent.pageY,
+                    left: event.nativeEvent.pageX,
+                  });
+                }}
+              >
                 <Text style={{ ...styles.textbold, ...stylescom.dots }}>...</Text>
               </TouchableOpacity>
+
+              <ModalIdeaOptions
+                setIdeaOptions={setIdeaOptions}
+                ideaOptions={ideaOptions}
+                position={position}
+                myIdea={uid === idea.id_usuario}
+              />
             </View>
           </>
         )}
@@ -126,6 +168,7 @@ const stylescom = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 6,
+    overflow: 'hidden',
   },
   container: {
     flexDirection: 'row',
@@ -179,5 +222,15 @@ const stylescom = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginTop: 8,
+  },
+  corner: {
+    position: 'absolute',
+    top: -4,
+    right: -28,
+    transform: [{ rotate: '45deg' }],
+    backgroundColor: '#01192E',
+    paddingTop: 8,
+    paddingBottom: 4,
+    paddingHorizontal: 30,
   },
 });
