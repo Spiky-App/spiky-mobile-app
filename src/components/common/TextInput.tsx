@@ -31,11 +31,7 @@ function TextInputCustom(props: Props) {
   return (
     <View>
       <View style={{ ...Styles.textInputContainer, ...textInputContainerSyle }}>
-        <TextInput
-          {...props}
-          placeholderTextColor="#707070"
-          style={Styles.textInput}
-        />
+        <TextInput {...props} placeholderTextColor="#707070" style={Styles.textInput} />
         {icon && (
           <TouchableOpacity {...touchableOpacityProps}>
             <FontAwesomeIcon icon={icon} size={27} color="#d4d4d4" />

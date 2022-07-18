@@ -1,4 +1,4 @@
-import { types } from "../types";
+import { types } from '../types';
 
 interface IGetChatAction {
   conversation: any[];
@@ -6,7 +6,7 @@ interface IGetChatAction {
 
 export const chatGetChats = (payload: IGetChatAction) => ({
   type: types.chatGetChats,
-  payload
+  payload,
 });
 
 interface IGetMessagesAction {
@@ -15,7 +15,7 @@ interface IGetMessagesAction {
 
 export const chatGetMessages = (payload: IGetMessagesAction) => ({
   type: types.chatGetMessages,
-  payload
+  payload,
 });
 
 interface ISetActiveChatAction {
@@ -26,18 +26,18 @@ interface ISetActiveChatAction {
 
 export const chatSetActiveChat = (payload: ISetActiveChatAction) => ({
   type: types.chatSetActiveChat,
-  payload
+  payload,
 });
 
 const clearActiveChatAction: ISetActiveChatAction = {
   conver: null,
   recepient: null,
-  id_universidad: null
+  id_universidad: null,
 };
 
 export const clearActiveChat = () => ({
   type: types.chatSetActiveChat,
-  payload: clearActiveChatAction
+  payload: clearActiveChatAction,
 });
 
 interface IChatNuevoMensajeAction {
@@ -46,7 +46,7 @@ interface IChatNuevoMensajeAction {
 
 export const chatNuevoMensaje = (payload: IChatNuevoMensajeAction) => ({
   type: types.chatNuevoMensaje,
-  payload
+  payload,
 });
 
 interface INuevoChatAction {
@@ -54,5 +54,5 @@ interface INuevoChatAction {
 }
 export const chatNuevoChat = (payload: INuevoChatAction) => ({
   type: types.chatNuevoChat,
-  payload
+  payload,
 });

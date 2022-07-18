@@ -1,4 +1,4 @@
-import { Action, ActionTypes } from '../types/authTypes';
+import { Action, AuthActionTypes } from '../types/authTypes';
 
 interface State {
   isLoading: boolean;
@@ -17,21 +17,21 @@ const initialState: State = {
 
 export const authReducer = (state = initialState, action: Action) => {
   switch (action.type) {
-    case ActionTypes.SIGN_IN:
+    case AuthActionTypes.SIGN_IN:
       return { ...state, token: action.payload };
-    case ActionTypes.SIGN_OUT:
+    case AuthActionTypes.SIGN_OUT:
       return { ...state, token: undefined };
-    case ActionTypes.CHECKING_FINISH:
+    case AuthActionTypes.CHECKING_FINISH:
       return {
         ...state,
         checking: false,
       };
-    case ActionTypes.NEW_NOTIFICATION:
+    case AuthActionTypes.NEW_NOTIFICATION:
       return {
         ...state,
         n_notificaciones: state.n_notificaciones + 1,
       };
-    case ActionTypes.UPDATE_NOTIFICATIONS:
+    case AuthActionTypes.UPDATE_NOTIFICATIONS:
       return {
         ...state,
         n_notificaciones: action.payload,

@@ -1,4 +1,4 @@
-export enum ActionTypes {
+export enum AuthActionTypes {
   SIGN_IN,
   SIGN_OUT,
   CHECKING_FINISH,
@@ -7,24 +7,24 @@ export enum ActionTypes {
 }
 
 interface SignInAction {
-  type: ActionTypes.SIGN_IN;
+  type: AuthActionTypes.SIGN_IN;
   payload: string;
 }
 
 interface SignOutAction {
-  type: ActionTypes.SIGN_OUT;
+  type: AuthActionTypes.SIGN_OUT;
 }
 
 interface CheckingFinishAction {
-  type: ActionTypes.CHECKING_FINISH;
+  type: AuthActionTypes.CHECKING_FINISH;
 }
 
 interface NewNotificationAction {
-  type: ActionTypes.NEW_NOTIFICATION;
+  type: AuthActionTypes.NEW_NOTIFICATION;
 }
 
 interface UpdateNotificationsAction {
-  type: ActionTypes.UPDATE_NOTIFICATIONS;
+  type: AuthActionTypes.UPDATE_NOTIFICATIONS;
   payload: number;
 }
 

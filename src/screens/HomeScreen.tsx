@@ -3,10 +3,12 @@ import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
+import messageActions from '../store/actions/messageActions';
+import UIActions from '../store/actions/UIActions';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
-
+  
   return (
     <BackgroundPaper>
       <View style={stylecom.container}>

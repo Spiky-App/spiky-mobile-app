@@ -9,10 +9,10 @@ import SpikyService from '../services/SpikyService';
 import { MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 import { useSelector } from 'react-redux';
-import { State } from '../store/reducers'
+import { State } from '../store/reducers';
 
 export type RootStackParamList = {
-  HomeScreen: undefined;
+  HomeScreen: { spikyService: SpikyService };
   LoginScreen: { spikyService: SpikyService };
   CheckEmail: undefined;
   ForgotPwdScreen: undefined;
@@ -30,7 +30,6 @@ interface Props {
 export const Navigator = ({ spikyService }: Props) => {
   //Simulando la autenticacion
   const auth = useSelector((state: State) => state.auth);
-  console.log(auth);
   return (
     <Stack.Navigator
       screenOptions={{
