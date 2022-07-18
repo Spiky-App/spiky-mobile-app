@@ -17,7 +17,7 @@ export const CommunityScreen = () => {
         style={{ width: '90%' }}
         data={mensajes}
         renderItem={({ item }) => <Idea idea={item} />}
-        keyExtractor={item => item.id_mensaje + ''}
+        keyExtractor={item => item.id_mensaje}
         showsVerticalScrollIndicator={false}
       />
 
