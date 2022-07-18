@@ -37,7 +37,7 @@ export const ForgotPwdScreen = () => {
             />
           </View>
 
-          <Text style={{ ...styles.textGray, marginBottom: 25 }}>
+          <Text style={{ ...styles.textGrayPad, marginBottom: 25 }}>
             Ingrese correo electrónico y le enviaremos instrucciones para restablecer su contraseña.
           </Text>
 

@@ -10,6 +10,8 @@ import { MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 import { useSelector } from 'react-redux';
 import { State } from '../store/reducers';
+import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
+import { Animated } from 'react-native';
 
 export type RootStackParamList = {
   HomeScreen: { spikyService: SpikyService };
@@ -19,7 +21,9 @@ export type RootStackParamList = {
   RegisterScreen: undefined;
   MenuMain: undefined;
   CreateIdeaScreen: undefined;
+  OpenedIdeaScreen: undefined;
 };
+
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -55,6 +59,7 @@ export const Navigator = ({ spikyService }: Props) => {
         <>
           <Stack.Screen name="MenuMain" component={MenuMain} />
           <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
+          <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
         </>
       )}
     </Stack.Navigator>
