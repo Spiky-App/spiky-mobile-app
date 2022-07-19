@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View,
@@ -20,7 +19,8 @@ export const CheckEmail = () => {
   //Borrar este hook
   const navigation = useNavigation<any>();
 
-  const { form, onChange } = useForm({
+  // const { form, onChange } = useForm({
+  const { onChange } = useForm({
     email: '',
   });
 

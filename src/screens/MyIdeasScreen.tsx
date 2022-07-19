@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, TouchableHighlight } from 'react-native';
+import { FlatList } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { Idea } from '../components/Idea';

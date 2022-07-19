@@ -13,6 +13,7 @@ export const CreateIdeaScreen = () => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylecom = StyleSheet.create({
   container: {
     justifyContent: 'center',
