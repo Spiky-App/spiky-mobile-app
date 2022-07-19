@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
-import { CheckEmail } from '../screens/CheckEmail';
+import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { MenuMain } from './MenuMain';
 import { RegisterScreen } from '../screens/RegisterScreen';
@@ -29,7 +29,7 @@ export const Navigator = () => {
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="CheckEmail" component={CheckEmail} />
+          <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
