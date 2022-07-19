@@ -19,7 +19,7 @@ import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
 
 export const SearchScreen = () => {
-  const { form, onChange } = useForm({
+  const { onChange } = useForm({
     search: '',
   });
 

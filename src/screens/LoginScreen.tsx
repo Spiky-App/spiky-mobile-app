@@ -20,7 +20,7 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 
 export const LoginScreen = () => {
-  const { form, onChange } = useForm({
+  const { onChange } = useForm({
     email: '',
     password: '',
   });

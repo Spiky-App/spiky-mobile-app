@@ -8,9 +8,6 @@ import {
   ImageBackground,
   SafeAreaView,
   TouchableOpacity,
-  Modal,
-  Button,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';

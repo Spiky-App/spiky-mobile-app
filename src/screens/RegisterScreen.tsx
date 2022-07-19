@@ -19,7 +19,7 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 
 export const RegisterScreen = () => {
-  const { form, onChange } = useForm({
+  const { onChange } = useForm({
     alias: '',
     contrasena: '',
     confirContrasena: '',
