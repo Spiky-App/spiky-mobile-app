@@ -16,7 +16,9 @@
           "error"
         ],
         "no-shadow": "off",
-        "no-undef": "off"
+        "single": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"]
       }
     }
   ]
