@@ -134,7 +134,7 @@ export const LoginScreen = ({ route }: Props) => {
           </TouchableHighlight>
           <TouchableOpacity
             style={{ marginBottom: 35 }}
-            onPress={() => navigation.navigate('CheckEmail')}
+            onPress={() => navigation.navigate('CheckEmailScreen')}
           >
             <Text style={styles.link}>Solicitar cuenta</Text>
           </TouchableOpacity>
