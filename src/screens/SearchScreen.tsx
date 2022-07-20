@@ -17,8 +17,12 @@ import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
+import { EmptyState } from '../components/EmptyState';
+import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 
 export const SearchScreen = () => {
+  const loading = false;
+  const moreMsg = true;
   const { form, onChange } = useForm({
     search: '',
   });
@@ -41,13 +45,18 @@ export const SearchScreen = () => {
 
           <IdeasHeader title="Explorando" />
 
-          <FlatList
-            style={{ width: '90%' }}
-            data={ideas}
-            renderItem={({ item }) => <Idea idea={item} />}
-            keyExtractor={item => item.id_mensaje + ''}
-            showsVerticalScrollIndicator={false}
-          />
+          {ideas.length !== 0 && !loading ? (
+            <FlatList
+              style={{ width: '90%' }}
+              data={ideas}
+              renderItem={({ item }) => <Idea idea={item} />}
+              keyExtractor={item => item.id_mensaje + ''}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
+            />
+          ) : (
+            <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
+          )}
 
           <FloatButton />
         </>
