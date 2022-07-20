@@ -46,7 +46,7 @@ export const RegisterScreen = () => {
               autoCorrect={false}
               keyboardType="email-address"
               style={styles.textinput}
-              onChangeText={value => onChange(value, 'alias')}
+              onChangeText={value => onChange({alias:value})}
             />
             <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
               <FontAwesomeIcon icon={faCircleInfo} size={16} color="#d4d4d4" />
@@ -59,7 +59,7 @@ export const RegisterScreen = () => {
               secureTextEntry={passVisible1}
               autoCorrect={false}
               style={styles.textinput}
-              onChangeText={value => onChange(value, 'contrasena')}
+              onChangeText={value => onChange({contrasena:value})}
             />
             <TouchableOpacity
               style={styles.iconinput}
@@ -75,7 +75,7 @@ export const RegisterScreen = () => {
               secureTextEntry={passVisible2}
               autoCorrect={false}
               style={styles.textinput}
-              onChangeText={value => onChange(value, 'confirContrasena')}
+              onChangeText={value => onChange({confirContrasena:value})}
             />
             <TouchableOpacity
               style={styles.iconinput}

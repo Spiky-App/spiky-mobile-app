@@ -45,7 +45,7 @@ export const CreateIdeaScreen = () => {
             placeholderTextColor="#707070"
             style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
             multiline={true}
-            onChangeText={value => onChange(value, 'mensaje')}
+            onChangeText={value => onChange( {mensaje: value})}
             autoFocus
           />
         </View>

@@ -1,12 +1,6 @@
-import { createStackNavigator } from '@react-navigation/stack';
-<<<<<<< HEAD
-import { HomeScreen } from '../screens/HomeScreen';
-import { LoginScreen } from '../screens/LoginScreen';
-import { CheckEmailScreen } from '../screens/CheckEmailScreen';
-=======
 import React from 'react';
-import { CheckEmail } from '../screens/CheckEmail';
->>>>>>> develop
+import { createStackNavigator } from '@react-navigation/stack';
+import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
@@ -22,7 +16,7 @@ import { Animated } from 'react-native';
 export type RootStackParamList = {
   HomeScreen: { spikyService: SpikyService };
   LoginScreen: { spikyService: SpikyService };
-  CheckEmail: undefined;
+  CheckEmailScreen: undefined;
   ForgotPwdScreen: undefined;
   RegisterScreen: undefined;
   MenuMain: undefined;
@@ -52,17 +46,12 @@ export const Navigator = ({ spikyService }: Props) => {
       {!auth.token ? (
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
-<<<<<<< HEAD
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
-=======
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}
             initialParams={{ spikyService }}
           />
-          <Stack.Screen name="CheckEmail" component={CheckEmail} />
->>>>>>> develop
+          <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
