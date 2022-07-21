@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
   createDrawerNavigator,
@@ -22,6 +22,7 @@ import { SearchScreen } from '../screens/SearchScreen';
 import { ConnectionScreen } from '../screens/ConnectionScreen';
 import { Header } from '../components/Header';
 import { ProfileScreen } from '../screens/ProfileScreen';
+import { ModalNotification } from '../components/ModalNotification';
 
 const Drawer = createDrawerNavigator();
 
@@ -80,6 +81,8 @@ export const MenuMain = () => {
 };
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
+  const [modalNotif, setModalNotif] = useState(false);
+
   return (
     <DrawerContentScrollView>
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
@@ -95,10 +98,18 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
           </View>
         ))}
 
-        <TouchableOpacity style={stylescom.buttonmenu} onPress={() => {}}>
+        <TouchableOpacity
+          style={stylescom.buttonmenu}
+          onPress={() => {
+            navigation.closeDrawer();
+            setModalNotif(true);
+          }}
+        >
           <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />
           <Text style={stylescom.textmenu}>Notificaciones</Text>
         </TouchableOpacity>
+
+        <ModalNotification modalNotif={modalNotif} setModalNotif={setModalNotif} />
 
         <TouchableOpacity
           style={{

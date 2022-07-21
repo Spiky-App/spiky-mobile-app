@@ -8,7 +8,7 @@ import UIActions from '../store/actions/UIActions';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<any>();
-  
+
   return (
     <BackgroundPaper>
       <View style={stylecom.container}>

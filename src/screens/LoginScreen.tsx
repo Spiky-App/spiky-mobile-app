@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -92,7 +91,7 @@ export const LoginScreen = ({ route }: Props) => {
             <TextInputCustom
               placeholder="Correo o seudónimo"
               autoCorrect={false}
-              autoCapitalize = 'none'
+              autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={value => onChange({ email: value })}
               helperMessage={getHelperMessage(form.email)}
@@ -114,7 +113,7 @@ export const LoginScreen = ({ route }: Props) => {
             style={{ marginBottom: 35 }}
             onPress={() => navigation.navigate('ForgotPwdScreen')}
           >
-            <Text style={styles.link}>¿Olvidaste tu contraseña?</Text>
+            <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
           <TouchableHighlight
             underlayColor="#01192ebe"
@@ -136,7 +135,7 @@ export const LoginScreen = ({ route }: Props) => {
             style={{ marginBottom: 35 }}
             onPress={() => navigation.navigate('CheckEmailScreen')}
           >
-            <Text style={styles.link}>Solicitar cuenta</Text>
+            <Text style={styles.linkPad}>Solicitar cuenta</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>

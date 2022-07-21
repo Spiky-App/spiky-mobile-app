@@ -10,15 +10,15 @@ import { useSelector } from 'react-redux';
 import { State } from '../store/reducers';
 
 export const CommunityScreen = () => {
-  const {mensajes} = useSelector((state: State) => state.message);
+  const { mensajes } = useSelector((state: State) => state.message);
   const loading = false;
   const moreMsg = true;
-  
+
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <IdeasHeader title="Comunidad" />
 
-      { mensajes && !loading ? (
+      {mensajes && !loading ? (
         <FlatList
           style={{ width: '90%' }}
           data={mensajes}
