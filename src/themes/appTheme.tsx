@@ -92,6 +92,11 @@ export const styles = StyleSheet.create({
     color: '#5c71ad',
     fontSize: 11,
     fontWeight: '300',
+  },
+  linkPad: {
+    color: '#5c71ad',
+    fontSize: 11,
+    fontWeight: '300',
     paddingHorizontal: 15,
     paddingVertical: 8,
   },
@@ -125,5 +130,11 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#bebebe',
     marginLeft: 3,
+  },
+  backmodal: {
+    flex: 1,
+    backgroundColor: '#6363635c',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

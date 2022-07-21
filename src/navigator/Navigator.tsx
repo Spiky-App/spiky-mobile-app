@@ -24,7 +24,6 @@ export type RootStackParamList = {
   OpenedIdeaScreen: undefined;
 };
 
-
 const Stack = createStackNavigator<RootStackParamList>();
 
 interface Props {

@@ -34,7 +34,7 @@ export const SearchScreen = () => {
           <View style={{ ...styles.input, marginTop: 14, borderRadius: 10, width: '90%' }}>
             <TextInput
               placeholder="Buscar"
-              onChangeText={value => onChange({search:value})}
+              onChangeText={value => onChange({ search: value })}
               style={styles.textinput}
               autoCorrect={false}
             />

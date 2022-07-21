@@ -42,7 +42,7 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
   return (
     <Modal animationType="fade" visible={modalFilter} transparent={true}>
       <TouchableWithoutFeedback onPress={() => setModalFilter(false)}>
-        <View style={stylecom.back}>
+        <View style={styles.backmodal}>
           <TouchableWithoutFeedback>
             <View style={{ ...stylecom.container, paddingHorizontal: 25, paddingVertical: 15 }}>
               <View style={{ ...styles.flex, justifyContent: 'space-between' }}>
@@ -51,7 +51,7 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                   <Text style={styles.orange}>.</Text>
                 </Text>
 
-                <TouchableOpacity>
+                <TouchableOpacity style={styles.center}>
                   <Text style={{ ...styles.text, ...styles.link }}>Restaurar</Text>
                 </TouchableOpacity>
               </View>
@@ -89,6 +89,12 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                   showsVerticalScrollIndicator={false}
                 />
               </View>
+
+              <View style={{ ...styles.center, marginTop: 25 }}>
+                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                  <Text style={{ ...styles.text, fontSize: 11 }}>Aplicar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -98,12 +104,6 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
 };
 
 const stylecom = StyleSheet.create({
-  back: {
-    flex: 1,
-    backgroundColor: '#6363635c',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     minHeight: 300,
     width: 260,

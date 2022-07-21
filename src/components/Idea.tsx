@@ -53,7 +53,7 @@ export const Idea = ({ idea }: Props) => {
           </View>
         )}
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        <View style={styles.flex}>
           <TouchableOpacity onPress={() => {}}>
             <Text style={{ ...stylescom.user, ...styles.textbold }}>@{idea.usuario.alias}</Text>
           </TouchableOpacity>
@@ -168,12 +168,12 @@ const stylescom = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
-  subwrap:{
+  subwrap: {
     paddingTop: 15,
     paddingBottom: 8,
     paddingHorizontal: 25,
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   container: {
     flexDirection: 'row',

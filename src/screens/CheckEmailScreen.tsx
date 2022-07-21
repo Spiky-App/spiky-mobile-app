@@ -38,7 +38,7 @@ export const CheckEmailScreen = () => {
               autoCorrect={false}
               keyboardType="email-address"
               style={styles.textinput}
-              onChangeText={value => onChange( {email:value} )}
+              onChangeText={value => onChange({ email: value })}
             />
           </View>
 
