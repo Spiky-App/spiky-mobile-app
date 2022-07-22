@@ -13,6 +13,7 @@ import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
 import { bindActionCreators } from 'redux';
 import messageActions from '../store/actions/messageActions';
 import UIActions from '../store/actions/UIActions';
+import SpikyService from '../services/SpikyService';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -28,9 +29,11 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-  //Simulando la autenticacion
   const { token } = useSelector((state: State) => state.auth);
-  const { spikyService } = useSelector((state: State) => state.service);
+  const { spikyServiceConfig } = useSelector((state: State) => state.service);
+  const { universities } = useSelector((state: State) => state.ui);
+  const { mensajes } = useSelector((state: State) => state.message);
+  const spikyService = new SpikyService(spikyServiceConfig);
   const dispatch = useDispatch();
 
   const { uiSetUniversities, getAllMessages } = bindActionCreators(
@@ -39,7 +42,6 @@ export const Navigator = () => {
   );
 
   async function setSessionInfo() {
-    // retrieve the list of available universities
     try {
       const UniResponse = await spikyService.getUniversities();
       uiSetUniversities(UniResponse.data);
@@ -47,7 +49,6 @@ export const Navigator = () => {
       console.log('Error uni');
     }
     try {
-      // retrieve the list of ideas
       const messagesResponse = await spikyService.getIdeas();
       getAllMessages(messagesResponse.data);
     } catch {
@@ -56,12 +57,10 @@ export const Navigator = () => {
   }
 
   useEffect(() => {
-    if (token) {
+    if (token && !universities && !mensajes) {
       setSessionInfo();
     }
   }, [token]);
-
-  console.log("Navigator: ", token?.length);
 
   return (
     <Stack.Navigator

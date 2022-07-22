@@ -1,13 +1,14 @@
+import { AxiosRequestConfig } from 'axios';
 import config from '../../config';
 import SpikyService from '../../services/SpikyService';
 import { Action, ActionTypes } from '../types/serviceTypes';
 
 interface State {
-  spikyService: SpikyService;
+  spikyServiceConfig: AxiosRequestConfig;
 }
 
 const initialState: State = {
-  spikyService: new SpikyService(config),
+  spikyServiceConfig: config,
 };
 
 export const serviceReducer = (state: State = initialState, action: Action): State => {
@@ -15,7 +16,7 @@ export const serviceReducer = (state: State = initialState, action: Action): Sta
     case ActionTypes.SET_SPIKY_SERVICE_CONFIG:
       return {
         ...state,
-        spikyService: new SpikyService({ ...config, ...action.payload }),
+        spikyServiceConfig: { ...state.spikyServiceConfig, ...action.payload },
       };
     default:
       return state;

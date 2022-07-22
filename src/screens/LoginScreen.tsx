@@ -20,6 +20,7 @@ import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
+import SpikyService from '../services/SpikyService';
 import AuthActions from '../store/actions/authActions';
 import { State } from '../store/reducers';
 import { styles } from '../themes/appTheme';
@@ -29,7 +30,8 @@ import { StorageKeys } from '../types/storage';
 
 export const LoginScreen = () => {
   const dispatch = useDispatch();
-  const { spikyService } = useSelector((state: State) => state.service);
+  const { spikyServiceConfig } = useSelector((state: State) => state.service);
+  const spikyService = new SpikyService(spikyServiceConfig);
   const { form, onChange } = useForm<FormState>({
     email: '',
     password: '',

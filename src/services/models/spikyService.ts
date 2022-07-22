@@ -6,8 +6,7 @@ export interface LoginResponseData {
   n_notificaciones: number;
   token: string;
 }
-
-interface Universidad {
+export interface Universidad {
   id_universidad: number;
   alias?: string;
 }
@@ -29,7 +28,7 @@ interface Tracking {
   id_tracking: number;
 }
 
-interface MessagesData {
+export interface MessagesData {
   id_usuario: number;
   id_mensaje: number;
   mensaje: string;
