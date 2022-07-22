@@ -23,6 +23,9 @@ import { ConnectionScreen } from '../screens/ConnectionScreen';
 import { Header } from '../components/Header';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { ModalNotification } from '../components/ModalNotification';
+import { ConfigurationScreen } from '../screens/ConfigurationScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
+import { HashTagScreen } from '../screens/HashTagScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -76,6 +79,9 @@ export const MenuMain = () => {
       <Drawer.Screen name="SearchScreen" component={SearchScreen} />
       <Drawer.Screen name="ConnectionScreen" component={ConnectionScreen} />
       <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
+      <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+      <Drawer.Screen name="HashTagScreen" component={HashTagScreen} />
     </Drawer.Navigator>
   );
 };

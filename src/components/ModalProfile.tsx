@@ -8,11 +8,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faRightFromBracket, faGear } from '../constants/icons/FontAwesome';
-import { styles } from '../themes/appTheme';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { faRightFromBracket, faGear } from '../constants/icons/FontAwesome';
 import authActions from '../store/actions/authActions';
+import { styles } from '../themes/appTheme';
 
 interface Props {
   setProfileOption: (value: boolean) => void;
@@ -22,6 +23,7 @@ interface Props {
 export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
   const dispatch = useDispatch();
   const { signOut } = bindActionCreators(authActions, dispatch);
+  const navigation = useNavigation<any>();
   return (
     <Modal animationType="fade" visible={profileOption} transparent={true}>
       <TouchableWithoutFeedback onPress={() => setProfileOption(false)}>
@@ -46,7 +48,13 @@ export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
               borderRadius: 5,
             }}
           >
-            <TouchableOpacity style={stylescom.optionModal} onPress={() => {}}>
+            <TouchableOpacity
+              style={stylescom.optionModal}
+              onPress={() => {
+                setProfileOption(false);
+                navigation.navigate('ConfigurationScreen');
+              }}
+            >
               <FontAwesomeIcon icon={faGear} color="white" />
               <Text style={{ ...styles.text, ...stylescom.textModal }}>Configuraciones</Text>
             </TouchableOpacity>
