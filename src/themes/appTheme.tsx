@@ -72,6 +72,18 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
+  shadow: {
+    shadowColor: '#4d4d4d',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    backgroundColor: 'white',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 6,
+    borderRadius: 4,
+  },
   textinput: {
     fontFamily: 'Helvetica',
     color: '#000000',

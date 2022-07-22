@@ -63,7 +63,7 @@ export const Notification = ({ item }: PropsNotification) => {
       <TouchableOpacity style={{ marginVertical: 10, marginLeft: 18 }} onPress={() => {}}>
         <View style={styles.flex}>
           <Text>
-            <Text style={{ ...styles.text, ...stylescom.user, fontSize: 13 }}>
+            <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
               {'@' + item.usuario2.alias + ' de ' + item.usuario2.universidad.alias + ' '}
             </Text>
             <Text style={{ ...styles.text, fontSize: 13 }}>{msg_notif[item.tipo]}</Text>
