@@ -45,7 +45,6 @@ export const Navigator = ({ spikyService }: Props) => {
       }}
     >
       {!auth.token ? (
-        // {!true ? (
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen
