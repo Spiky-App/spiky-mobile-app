@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { authReducer } from './authReducer';
 import { chatReducer } from './chatReducer';
 import { messageReducer } from './messageReducer';
+import { serviceReducer } from './serviceReducer';
 import { uiReducer } from './uiReducer';
 
 const appReducer = combineReducers({
@@ -9,6 +10,7 @@ const appReducer = combineReducers({
   ui: uiReducer,
   message: messageReducer,
   chat: chatReducer,
+  service: serviceReducer,
 });
 
 export default appReducer;

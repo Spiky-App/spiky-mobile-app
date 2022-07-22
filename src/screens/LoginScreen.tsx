@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -11,7 +10,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -22,17 +21,15 @@ import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import AuthActions from '../store/actions/authActions';
-import messageActions from '../store/actions/messageActions';
-import UIActions from '../store/actions/UIActions';
+import { State } from '../store/reducers';
 import { styles } from '../themes/appTheme';
+import { HelperMessage } from '../types/common';
 import { FormState } from '../types/login';
+import { StorageKeys } from '../types/storage';
 
-interface Props extends StackScreenProps<RootStackParamList, 'LoginScreen'> {}
-
-export const LoginScreen = ({ route }: Props) => {
-  const { spikyService } = route.params;
-
+export const LoginScreen = () => {
   const dispatch = useDispatch();
+  const { spikyService } = useSelector((state: State) => state.service);
   const { form, onChange } = useForm<FormState>({
     email: '',
     password: '',
@@ -43,29 +40,17 @@ export const LoginScreen = ({ route }: Props) => {
   const [passVisible, setPassVisible] = useState(true);
 
   const { signIn } = bindActionCreators(AuthActions, dispatch);
-  const { uiSetUniversities } = bindActionCreators(UIActions, dispatch);
-  const { getAllMessages } = bindActionCreators(messageActions, dispatch);
 
-  const handleLogin = async () => {
+  async function login() {
     setLoading(true);
     if (validateForm(form)) {
       const { email, password } = form;
       try {
-        // call the login service
         const response = await spikyService.login(email, password);
-        signIn(response.data);
-
-        // save the token to async storage
-        await AsyncStorage.setItem('@token', response.data?.token);
-
-        // retrieve the list of available universities
-        const UniResponse = await spikyService.getUniversities(response.data.token);
-        uiSetUniversities(UniResponse.data);
-
-        // retrieve the list of ideas
-        const messagesResponse = await spikyService.getIdeas(response.data.token);
-        getAllMessages(messagesResponse.data);
-
+        const { data } = response;
+        const { token } = data;
+        await AsyncStorage.setItem(StorageKeys.TOKEN, token);
+        signIn(token);
         setFormValid(true);
       } catch (error) {
         console.log('Error creando credenciales');
@@ -75,10 +60,13 @@ export const LoginScreen = ({ route }: Props) => {
       setFormValid(false);
     }
     setLoading(false);
-  };
+  }
 
-  const getHelperMessage = (value: string) =>
-    isFormValid ? undefined : getFormHelperMessage(value);
+  function getHelperMessage(value: string): HelperMessage | undefined {
+    if (isFormValid) {
+      return getFormHelperMessage(value);
+    }
+  }
 
   return (
     <BackgroundPaper>
@@ -92,7 +80,7 @@ export const LoginScreen = ({ route }: Props) => {
             <TextInputCustom
               placeholder="Correo o seudónimo"
               autoCorrect={false}
-              autoCapitalize = 'none'
+              autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={value => onChange({ email: value })}
               helperMessage={getHelperMessage(form.email)}
@@ -118,7 +106,7 @@ export const LoginScreen = ({ route }: Props) => {
           </TouchableOpacity>
           <TouchableHighlight
             underlayColor="#01192ebe"
-            onPress={handleLogin}
+            onPress={login}
             style={{
               ...styles.button,
               paddingHorizontal: 30,

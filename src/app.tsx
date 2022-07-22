@@ -1,25 +1,12 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { AxiosRequestConfig } from 'axios';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Navigator } from './navigator/Navigator';
-import SpikyService from './services/SpikyService';
+import Container from './navigator/Container';
 import store from './store';
 
-const App = () => {
-  const host = 'http://localhost:4000';
-  const config: AxiosRequestConfig = {
-    baseURL: `${host}/api/`,
-    timeout: 10000,
-  };
-  const spikyService = new SpikyService(config);
-  return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Navigator spikyService={spikyService} />
-      </NavigationContainer>
-    </Provider>
-  );
-};
+const App = () => (
+  <Provider store={store}>
+    <Container />
+  </Provider>
+);
 
 export default App;

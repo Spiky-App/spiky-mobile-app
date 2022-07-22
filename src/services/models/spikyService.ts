@@ -42,7 +42,18 @@ interface MessagesData {
   usuario: Usuario;
   draft: number;
 }
+
 export interface MessagesResponseData {
   mensajes: MessagesData[];
   ok: boolean;
+}
+
+export interface AuthRenewResponseData {
+  ok: boolean;
+  token?: string;
+  uid?: number;
+  alias?: string;
+  universidad?: string;
+  n_notificaciones?: number;
+  msg?: string;
 }

@@ -15,12 +15,17 @@ const initialState: State = {
   n_notificaciones: 0,
 };
 
-export const authReducer = (state = initialState, action: Action) => {
+export const authReducer = (state = initialState, action: Action): State => {
   switch (action.type) {
     case AuthActionTypes.SIGN_IN:
       return { ...state, token: action.payload };
     case AuthActionTypes.SIGN_OUT:
-      return { ...state, token: undefined };
+      return {
+        isLoading: state.isLoading,
+        isSignout: state.isSignout,
+        checking: state.checking,
+        n_notificaciones: state.n_notificaciones,
+      };
     case AuthActionTypes.CHECKING_FINISH:
       return {
         ...state,

@@ -1,21 +1,22 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckEmail } from '../screens/CheckEmail';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
-import SpikyService from '../services/SpikyService';
 import { MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../store/reducers';
 import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
-import { Animated } from 'react-native';
+import { bindActionCreators } from 'redux';
+import messageActions from '../store/actions/messageActions';
+import UIActions from '../store/actions/UIActions';
 
 export type RootStackParamList = {
-  HomeScreen: { spikyService: SpikyService };
-  LoginScreen: { spikyService: SpikyService };
+  HomeScreen: undefined;
+  LoginScreen: undefined;
   CheckEmail: undefined;
   ForgotPwdScreen: undefined;
   RegisterScreen: undefined;
@@ -24,16 +25,44 @@ export type RootStackParamList = {
   OpenedIdeaScreen: undefined;
 };
 
-
 const Stack = createStackNavigator<RootStackParamList>();
 
-interface Props {
-  spikyService: SpikyService;
-}
-
-export const Navigator = ({ spikyService }: Props) => {
+export const Navigator = () => {
   //Simulando la autenticacion
-  const auth = useSelector((state: State) => state.auth);
+  const { token } = useSelector((state: State) => state.auth);
+  const { spikyService } = useSelector((state: State) => state.service);
+  const dispatch = useDispatch();
+
+  const { uiSetUniversities, getAllMessages } = bindActionCreators(
+    { ...UIActions, ...messageActions },
+    dispatch
+  );
+
+  async function setSessionInfo() {
+    // retrieve the list of available universities
+    try {
+      const UniResponse = await spikyService.getUniversities();
+      uiSetUniversities(UniResponse.data);
+    } catch {
+      console.log('Error uni');
+    }
+    try {
+      // retrieve the list of ideas
+      const messagesResponse = await spikyService.getIdeas();
+      getAllMessages(messagesResponse.data);
+    } catch {
+      console.log('Error messages');
+    }
+  }
+
+  useEffect(() => {
+    if (token) {
+      setSessionInfo();
+    }
+  }, [token]);
+
+  console.log("Navigator: ", token?.length);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -43,14 +72,10 @@ export const Navigator = ({ spikyService }: Props) => {
         },
       }}
     >
-      {!auth.token ? (
+      {!token ? (
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen
-            name="LoginScreen"
-            component={LoginScreen}
-            initialParams={{ spikyService }}
-          />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="CheckEmail" component={CheckEmail} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
