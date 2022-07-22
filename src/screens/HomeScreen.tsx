@@ -3,14 +3,8 @@ import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
-import messageActions from '../store/actions/messageActions';
-import UIActions from '../store/actions/UIActions';
-import { useSelector } from 'react-redux';
-import { State } from '../store/reducers';
 
 export const HomeScreen = () => {
-  const { token } = useSelector((state: State) => state.auth);
-  console.log("HomeScreenToken: ", token);
   const navigation = useNavigation<any>();
 
   return (
