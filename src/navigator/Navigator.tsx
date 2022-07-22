@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { State } from '../store/reducers';
 import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
 import { Animated } from 'react-native';
+import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
 
 export type RootStackParamList = {
   HomeScreen: { spikyService: SpikyService };
@@ -22,6 +23,7 @@ export type RootStackParamList = {
   MenuMain: undefined;
   CreateIdeaScreen: undefined;
   OpenedIdeaScreen: undefined;
+  ManifestPart1Screen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -42,8 +44,8 @@ export const Navigator = ({ spikyService }: Props) => {
         },
       }}
     >
-      {/* {!auth.token ? ( */}
-      {!true ? (
+      {!auth.token ? (
+        // {!true ? (
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen
@@ -54,6 +56,7 @@ export const Navigator = ({ spikyService }: Props) => {
           <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
         </>
       ) : (
         <>
