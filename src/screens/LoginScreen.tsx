@@ -55,11 +55,11 @@ export const LoginScreen = () => {
       try {
         const response = await spikyService.login(email, password);
         const { data } = response;
-        const { token, alias, n_notificaciones } = data;
+        const { token, alias, n_notificaciones, universidad } = data;
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
         signIn(token);
         setSpikyServiceConfig({ headers: { 'x-token': token } });
-        setUser({ nickname: alias, n_notifications: n_notificaciones });
+        setUser({ nickname: alias, n_notifications: n_notificaciones, university: universidad });
         setFormValid(true);
       } catch (error) {
         console.log('Error creando credenciales');

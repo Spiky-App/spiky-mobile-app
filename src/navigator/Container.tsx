@@ -30,11 +30,11 @@ const Container = () => {
       try {
         const response = await spikyService.getAuthRenew(tokenStorage);
         const { data } = response;
-        const { token, alias, n_notificaciones } = data;
+        const { token, alias, n_notificaciones, universidad } = data;
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
         signIn(token);
         setSpikyServiceConfig({ headers: { 'x-token': token } });
-        setUser({ nickname: alias, n_notifications: n_notificaciones });
+        setUser({ nickname: alias, n_notifications: n_notificaciones, university: universidad });
       } catch {
         await AsyncStorage.removeItem(StorageKeys.TOKEN);
       }

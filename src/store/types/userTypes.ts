@@ -5,6 +5,7 @@ export enum UserActionTypes {
 export interface SetUserPayload {
     nickname: string;
     n_notifications: number;
+    university: string;
 }
 
 interface SetUserAction {
