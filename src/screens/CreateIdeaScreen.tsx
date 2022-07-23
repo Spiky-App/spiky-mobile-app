@@ -45,7 +45,7 @@ export const CreateIdeaScreen = () => {
             placeholderTextColor="#707070"
             style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
             multiline={true}
-            onChangeText={value => onChange(value, 'mensaje')}
+            onChangeText={value => onChange({ mensaje: value })}
             autoFocus
           />
         </View>
@@ -62,7 +62,7 @@ export const CreateIdeaScreen = () => {
           }}
         >
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ ...styles.text, ...styles.link }}>Cancelar</Text>
+            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
           </TouchableOpacity>
 
           <View style={stylecom.WrapperMaxCounterNIdea}>

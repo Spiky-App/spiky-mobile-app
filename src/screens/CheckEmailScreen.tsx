@@ -16,7 +16,7 @@ import { styles } from '../themes/appTheme';
 import { BigTitle } from '../components/BigTitle';
 import { useNavigation } from '@react-navigation/native';
 
-export const CheckEmail = () => {
+export const CheckEmailScreen = () => {
   //Borrar este hook
   const navigation = useNavigation<any>();
 
@@ -38,7 +38,7 @@ export const CheckEmail = () => {
               autoCorrect={false}
               keyboardType="email-address"
               style={styles.textinput}
-              onChangeText={value => onChange(value, 'email')}
+              onChangeText={value => onChange({ email: value })}
             />
           </View>
 

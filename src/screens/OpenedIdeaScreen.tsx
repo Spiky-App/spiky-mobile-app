@@ -29,7 +29,7 @@ import { styles } from '../themes/appTheme';
 import { InputComment } from '../components/InputComment';
 import { ModalIdeaOptions } from '../components/ModalIdeaOptions';
 
-let ideaOutComments = ideas[5];
+let ideaOutComments = ideas[1];
 let idea = { ...ideaOutComments, respuestas: comentarios };
 
 export const OpenedIdeaScreen = () => {

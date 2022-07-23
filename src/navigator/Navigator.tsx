@@ -1,6 +1,6 @@
-import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { CheckEmail } from '../screens/CheckEmail';
+import { createStackNavigator } from '@react-navigation/stack';
+import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
@@ -14,16 +14,19 @@ import { bindActionCreators } from 'redux';
 import messageActions from '../store/actions/messageActions';
 import UIActions from '../store/actions/UIActions';
 import SpikyService from '../services/SpikyService';
+import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
   LoginScreen: undefined;
   CheckEmail: undefined;
+  CheckEmailScreen: undefined;
   ForgotPwdScreen: undefined;
   RegisterScreen: undefined;
   MenuMain: undefined;
   CreateIdeaScreen: undefined;
   OpenedIdeaScreen: undefined;
+  ManifestPart1Screen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -75,9 +78,10 @@ export const Navigator = () => {
         <>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="CheckEmail" component={CheckEmail} />
+          <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
           <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
         </>
       ) : (
         <>

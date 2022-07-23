@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
   createDrawerNavigator,
@@ -6,15 +6,26 @@ import {
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { faBell, faLightbulb, faPlus, faThumbtack, faUsers } from '../constants/icons/FontAwesome';
+import {
+  faBell,
+  faLightbulb,
+  faPlus,
+  faThumbtack,
+  faUsers,
+  faMagnifyingGlass,
+  faCircleNodes,
+} from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
 import { TrackingScreen } from '../screens/TrackingScreen';
 import { SearchScreen } from '../screens/SearchScreen';
 import { ConnectionScreen } from '../screens/ConnectionScreen';
 import { Header } from '../components/Header';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
-import { faCircleNodes } from '@fortawesome/free-solid-svg-icons/faCircleNodes';
+import { ProfileScreen } from '../screens/ProfileScreen';
+import { ModalNotification } from '../components/ModalNotification';
+import { ConfigurationScreen } from '../screens/ConfigurationScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
+import { HashTagScreen } from '../screens/HashTagScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -67,11 +78,17 @@ export const MenuMain = () => {
       <Drawer.Screen name="TrackingScreen" component={TrackingScreen} />
       <Drawer.Screen name="SearchScreen" component={SearchScreen} />
       <Drawer.Screen name="ConnectionScreen" component={ConnectionScreen} />
+      <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
+      <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+      <Drawer.Screen name="HashTagScreen" component={HashTagScreen} />
     </Drawer.Navigator>
   );
 };
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
+  const [modalNotif, setModalNotif] = useState(false);
+
   return (
     <DrawerContentScrollView>
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
@@ -87,10 +104,18 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
           </View>
         ))}
 
-        <TouchableOpacity style={stylescom.buttonmenu} onPress={() => {}}>
+        <TouchableOpacity
+          style={stylescom.buttonmenu}
+          onPress={() => {
+            navigation.closeDrawer();
+            setModalNotif(true);
+          }}
+        >
           <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />
           <Text style={stylescom.textmenu}>Notificaciones</Text>
         </TouchableOpacity>
+
+        <ModalNotification modalNotif={modalNotif} setModalNotif={setModalNotif} />
 
         <TouchableOpacity
           style={{

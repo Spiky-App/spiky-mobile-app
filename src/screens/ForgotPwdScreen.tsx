@@ -33,7 +33,7 @@ export const ForgotPwdScreen = () => {
               autoCorrect={false}
               keyboardType="email-address"
               style={styles.textinput}
-              onChangeText={value => onChange(value, 'email')}
+              onChangeText={value => onChange({ email: value })}
             />
           </View>
 

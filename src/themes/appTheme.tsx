@@ -72,6 +72,18 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
+  shadow: {
+    shadowColor: '#4d4d4d',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    backgroundColor: 'white',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 6,
+    borderRadius: 4,
+  },
   textinput: {
     fontFamily: 'Helvetica',
     color: '#000000',
@@ -89,6 +101,11 @@ export const styles = StyleSheet.create({
     paddingRight: 15,
   },
   link: {
+    color: '#5c71ad',
+    fontSize: 11,
+    fontWeight: '300',
+  },
+  linkPad: {
     color: '#5c71ad',
     fontSize: 11,
     fontWeight: '300',
@@ -125,5 +142,11 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#bebebe',
     marginLeft: 3,
+  },
+  backmodal: {
+    flex: 1,
+    backgroundColor: '#6363635c',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

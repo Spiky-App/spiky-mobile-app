@@ -8,13 +8,14 @@ import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 
-export const TrackingScreen = () => {
+export const ProfileScreen = () => {
+  const alias = 'usuario';
   const loading = false;
   const moreMsg = true;
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title="Siguiendo" />
+      <IdeasHeader title={'@' + alias} />
 
       {ideas.length !== 0 && !loading ? (
         <FlatList
@@ -26,7 +27,7 @@ export const TrackingScreen = () => {
           ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
         />
       ) : (
-        <EmptyState message="Haz tracking en las ideas que revolucionan." />
+        <EmptyState message="" />
       )}
 
       <FloatButton />

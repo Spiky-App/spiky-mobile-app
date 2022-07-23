@@ -8,7 +8,6 @@ interface Props {
 }
 
 export const CheckBox = ({ checked }: Props) => {
-
   return (
     <View style={checked ? stylescom.checkboxActive : stylescom.checkbox}>
       <FontAwesomeIcon icon={faCheck} color="white" size={10} />

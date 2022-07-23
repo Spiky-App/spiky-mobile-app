@@ -111,7 +111,7 @@ export const LoginScreen = () => {
             style={{ marginBottom: 35 }}
             onPress={() => navigation.navigate('ForgotPwdScreen')}
           >
-            <Text style={styles.link}>¿Olvidaste tu contraseña?</Text>
+            <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
           <TouchableHighlight
             underlayColor="#01192ebe"
@@ -131,9 +131,9 @@ export const LoginScreen = () => {
           </TouchableHighlight>
           <TouchableOpacity
             style={{ marginBottom: 35 }}
-            onPress={() => navigation.navigate('CheckEmail')}
+            onPress={() => navigation.navigate('CheckEmailScreen')}
           >
-            <Text style={styles.link}>Solicitar cuenta</Text>
+            <Text style={styles.linkPad}>Solicitar cuenta</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
