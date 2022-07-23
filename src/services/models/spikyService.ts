@@ -49,10 +49,10 @@ export interface MessagesResponseData {
 
 export interface AuthRenewResponseData {
   ok: boolean;
-  token?: string;
-  uid?: number;
-  alias?: string;
-  universidad?: string;
-  n_notificaciones?: number;
-  msg?: string;
+  token: string;
+  uid: number;
+  alias: string;
+  universidad: string;
+  n_notificaciones: number;
+  msg: string;
 }

@@ -15,7 +15,7 @@ const initialState: State = {
   n_notificaciones: 0,
 };
 
-export const authReducer = (state = initialState, action: Action): State => {
+export const authReducer = (state: State = initialState, action: Action): State => {
   switch (action.type) {
     case AuthActionTypes.SIGN_IN:
       return { ...state, token: action.payload };

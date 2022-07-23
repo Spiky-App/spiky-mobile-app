@@ -10,6 +10,7 @@ import serviceActions from '../store/actions/serviceActions';
 import { State } from '../store/reducers';
 import SpikyService from '../services/SpikyService';
 import SplashScreen from '../screens/SplashScreen';
+import userActions from '../store/actions/userActions';
 
 const Container = () => {
   const { spikyServiceConfig } = useSelector((state: State) => state.service);
@@ -17,8 +18,8 @@ const Container = () => {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(false);
 
-  const { signIn, setSpikyServiceConfig } = bindActionCreators(
-    { ...authActions, ...serviceActions },
+  const { signIn, setSpikyServiceConfig, setUser } = bindActionCreators(
+    { ...authActions, ...serviceActions, ...userActions },
     dispatch
   );
 
@@ -29,10 +30,11 @@ const Container = () => {
       try {
         const response = await spikyService.getAuthRenew(tokenStorage);
         const { data } = response;
-        const { token } = data;
+        const { token, alias, n_notificaciones } = data;
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
         signIn(token);
         setSpikyServiceConfig({ headers: { 'x-token': token } });
+        setUser({ nickname: alias, n_notifications: n_notificaciones });
       } catch {
         await AsyncStorage.removeItem(StorageKeys.TOKEN);
       }

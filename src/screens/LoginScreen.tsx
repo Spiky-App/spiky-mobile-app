@@ -22,6 +22,8 @@ import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import SpikyService from '../services/SpikyService';
 import AuthActions from '../store/actions/authActions';
+import serviceActions from '../store/actions/serviceActions';
+import userActions from '../store/actions/userActions';
 import { State } from '../store/reducers';
 import { styles } from '../themes/appTheme';
 import { HelperMessage } from '../types/common';
@@ -41,7 +43,10 @@ export const LoginScreen = () => {
   const [isLoading, setLoading] = useState(false);
   const [passVisible, setPassVisible] = useState(true);
 
-  const { signIn } = bindActionCreators(AuthActions, dispatch);
+  const { signIn, setSpikyServiceConfig, setUser } = bindActionCreators(
+    { ...AuthActions, ...serviceActions, ...userActions },
+    dispatch
+  );
 
   async function login() {
     setLoading(true);
@@ -50,9 +55,11 @@ export const LoginScreen = () => {
       try {
         const response = await spikyService.login(email, password);
         const { data } = response;
-        const { token } = data;
+        const { token, alias, n_notificaciones } = data;
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
         signIn(token);
+        setSpikyServiceConfig({ headers: { 'x-token': token } });
+        setUser({ nickname: alias, n_notifications: n_notificaciones });
         setFormValid(true);
       } catch (error) {
         console.log('Error creando credenciales');
