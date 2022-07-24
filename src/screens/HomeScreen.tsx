@@ -33,7 +33,7 @@ export const HomeScreen = () => {
 
         <TouchableHighlight
           underlayColor="#01192ebe"
-          onPress={() => navigation.navigate('CheckEmailScreen')}
+          onPress={() => navigation.navigate('ManifestPart1Screen')}
           style={styles.button}
         >
           <Text style={{ ...styles.text, ...styles.textb }}>Soy nuevo</Text>
