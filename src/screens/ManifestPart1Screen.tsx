@@ -6,7 +6,6 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 
-
 const manfiesto = [
   'Antes de eso..',
   '',
@@ -18,7 +17,6 @@ const manfiesto = [
 ];
 
 export const ManifestPart1Screen = () => {
-
   const { opacity, position, fadeIn, scale, fadeOut, movingPositionAndScale } = useAnimation();
   const [state, setState] = useState(0);
   const [aux, setAux] = useState(true);
@@ -26,120 +24,106 @@ export const ManifestPart1Screen = () => {
   const navigation = useNavigation<any>();
 
   const nextManifiesto = () => {
-    fadeOut(1200, () => setState( state + 1 ));  
+    fadeOut(1200, () => setState(state + 1));
   };
 
   useEffect(() => {
-    if(state > 6){
+    if (state > 6) {
       navigation.replace('CheckEmailScreen');
       clearTimeout(timeRef.current);
-    }else if(state === 1){
+    } else if (state === 1) {
       fadeIn(1200);
-      timeRef.current = setTimeout( () => {
+      timeRef.current = setTimeout(() => {
         setAux(false);
-        movingPositionAndScale(0,-300, 1, 0.7, 1500, nextManifiesto);
-      }, 2500 );
-      ;
-    }else{
-      const delay = state == 0 ? 1500 : 4000
-      timeRef.current = setTimeout(nextManifiesto, delay );
-      fadeIn(1200);    
+        movingPositionAndScale(0, -300, 1, 0.7, 1500, nextManifiesto);
+      }, 2500);
+    } else {
+      const delay = state == 0 ? 1500 : 4000;
+      timeRef.current = setTimeout(nextManifiesto, delay);
+      fadeIn(1200);
     }
   }, [state]);
 
   useEffect(() => {
-    setTimeout( () => fadeIn(1200), 1000);    
+    setTimeout(() => fadeIn(1200), 1000);
     return () => clearTimeout(timeRef.current);
-    ;
   }, []);
 
   return (
     <BackgroundPaper>
+      <ArrowBack />
 
-      <ArrowBack/>
-
-      <TouchableWithoutFeedback 
-        style={{...styles.center}}
-        onPress={ () => nextManifiesto() }
-      >
-        <View style={ styles.center }>
-          { state > 0 &&
-            <Animated.View style={{
-              ...styles.center,
-              position: 'absolute',
-              backgroundColor: 'red',
-              transform: [ 
-                { translateY: position },
-                { scale } 
-              ],
-              opacity: aux ? opacity : 1
-            }}>
-              <Text 
+      <TouchableWithoutFeedback style={{ ...styles.center }} onPress={() => nextManifiesto()}>
+        <View style={styles.center}>
+          {state > 0 && (
+            <Animated.View
+              style={{
+                ...styles.center,
+                position: 'absolute',
+                backgroundColor: 'red',
+                transform: [{ translateY: position }, { scale }],
+                opacity: aux ? opacity : 1,
+              }}
+            >
+              <Text
                 style={{
-                  ...styles.text, 
-                  ...styles.h3, 
+                  ...styles.text,
+                  ...styles.h3,
                   fontSize: 16,
-                  marginBottom:5
+                  marginBottom: 5,
                 }}
               >
                 Conoce nuestro
               </Text>
-              <Text 
+              <Text
                 style={{
                   ...styles.text,
-                  ...styles.h3, 
-                  fontSize:40  
+                  ...styles.h3,
+                  fontSize: 40,
                 }}
               >
                 manifiesto
                 <Text style={styles.orange}>.</Text>
               </Text>
             </Animated.View>
-          }
+          )}
 
-          <Animated.View style={{
-            ...styles.center, 
-            flexDirection:'row', 
-            width: '70%',
-            flex:1,
-            opacity
-          }}>
-
-          {
-            state !==  1 &&
-            <Manifiesto state={state} />
-          }
-
+          <Animated.View
+            style={{
+              ...styles.center,
+              flexDirection: 'row',
+              width: '70%',
+              flex: 1,
+              opacity,
+            }}
+          >
+            {state !== 1 && <Manifiesto state={state} />}
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>
-
     </BackgroundPaper>
   );
 };
 
 interface ManifiestoProps {
-  state: number
+  state: number;
 }
 
-const Manifiesto = ({state}:ManifiestoProps) => {
-  return(
+const Manifiesto = ({ state }: ManifiestoProps) => {
+  return (
     <>
-      <View style={{...styles.center, marginRight: 15 }}>
-        <Text style={{ ...styles.text, ...styles.h3, color: '#707070', fontSize:28 }}>
-          {
-            (state !== 6 && state !== 0) &&
-            state-1 + '.'
-          }
+      <View style={{ ...styles.center, marginRight: 15 }}>
+        <Text style={{ ...styles.text, ...styles.h3, color: '#707070', fontSize: 28 }}>
+          {state !== 6 && state !== 0 && state - 1 + '.'}
         </Text>
       </View>
 
-      <View style={{...styles.center }}>
-        <Text style={{ ...styles.text, ...styles.h3, fontSize:28  }}>
+      <View style={{ ...styles.center }}>
+        <Text style={{ ...styles.text, ...styles.h3, fontSize: 28 }}>
           {manfiesto[state]}
           <Text style={styles.orange}>.</Text>
         </Text>
       </View>
     </>
   );
-}
+};
