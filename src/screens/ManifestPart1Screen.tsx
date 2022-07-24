@@ -35,7 +35,7 @@ export const ManifestPart1Screen = () => {
       fadeIn(1200);
       timeRef.current = setTimeout(() => {
         setAux(false);
-        movingPositionAndScale(0, -300, 1, 0.7, 1500, nextManifiesto);
+        movingPositionAndScale(0, -320, 1, 0.7, 1500, nextManifiesto);
       }, 2500);
     } else {
       const delay = state == 0 ? 1500 : 4000;
@@ -60,7 +60,6 @@ export const ManifestPart1Screen = () => {
               style={{
                 ...styles.center,
                 position: 'absolute',
-                backgroundColor: 'red',
                 transform: [{ translateY: position }, { scale }],
                 opacity: aux ? opacity : 1,
               }}
@@ -91,8 +90,6 @@ export const ManifestPart1Screen = () => {
           <Animated.View
             style={{
               ...styles.center,
-              flexDirection: 'row',
-              width: '70%',
               flex: 1,
               opacity,
             }}
@@ -111,19 +108,21 @@ interface ManifiestoProps {
 
 const Manifiesto = ({ state }: ManifiestoProps) => {
   return (
-    <>
-      <View style={{ ...styles.center, marginRight: 15 }}>
-        <Text style={{ ...styles.text, ...styles.h3, color: '#707070', fontSize: 28 }}>
-          {state !== 6 && state !== 0 && state - 1 + '.'}
-        </Text>
-      </View>
+    <View style={{ flexDirection: 'row', marginHorizontal: 50 }}>
+      {state !== 6 && state !== 0 && (
+        <View style={{ ...styles.center, marginRight: 15 }}>
+          <Text style={{ ...styles.text, ...styles.h3, color: '#707070', fontSize: 28 }}>
+            {state - 1 + '.'}
+          </Text>
+        </View>
+      )}
 
-      <View style={{ ...styles.center }}>
+      <View style={styles.center}>
         <Text style={{ ...styles.text, ...styles.h3, fontSize: 28 }}>
           {manfiesto[state]}
           <Text style={styles.orange}>.</Text>
         </Text>
       </View>
-    </>
+    </View>
   );
 };
