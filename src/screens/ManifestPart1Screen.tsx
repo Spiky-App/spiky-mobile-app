@@ -53,7 +53,10 @@ export const ManifestPart1Screen = () => {
     <BackgroundPaper>
       <ArrowBack />
 
-      <TouchableWithoutFeedback style={{ ...styles.center }} onPress={() => nextManifiesto()}>
+      <TouchableWithoutFeedback 
+        style={{ ...styles.center }} 
+        // onPress={() => nextManifiesto()}
+      >
         <View style={styles.center}>
           {state > 0 && (
             <Animated.View
