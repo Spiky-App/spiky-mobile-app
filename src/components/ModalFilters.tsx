@@ -34,11 +34,6 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
     }
   }, [universidades]);
 
-  // useEffect(() => {
-  //   console.log(formValues);
-
-  // }, [formValues])
-
   return (
     <Modal animationType="fade" visible={modalFilter} transparent={true}>
       <TouchableWithoutFeedback onPress={() => setModalFilter(false)}>
