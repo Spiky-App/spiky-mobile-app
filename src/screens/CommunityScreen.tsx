@@ -1,33 +1,35 @@
 import React from 'react';
 import { FlatList } from 'react-native';
-import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
-import { Idea } from '../components/Idea';
-import { FloatButton } from '../components/FloatButton';
-import { EmptyState } from '../components/EmptyState';
-import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { useSelector } from 'react-redux';
+import { BackgroundPaper } from '../components/BackgroundPaper';
+import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
+import { EmptyState } from '../components/EmptyState';
+import { FloatButton } from '../components/FloatButton';
+import { Idea } from '../components/Idea';
+import { IdeasHeader } from '../components/IdeasHeader';
 import { State } from '../store/reducers';
 import { LoadingAnimated } from '../components/LoadingAnimated';
+import { ideas } from '../data/ideas';
 
 export const CommunityScreen = () => {
-  const { mensajes } = useSelector((state: State) => state.message);
-  const loading = true;
+  /* const { mensajes } = useSelector((state: State) => state.message); */
+  const loading = false;
   const moreMsg = true;
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <IdeasHeader title="Comunidad" />
 
-      {mensajes ? (
+      {ideas ? (
         <FlatList
           style={{ width: '90%' }}
-          data={mensajes}
+          data={ideas}
           renderItem={({ item }) => <Idea idea={item} />}
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
         />
+        
       ) : (
         ( loading 
           ?
