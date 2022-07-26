@@ -7,6 +7,7 @@ import { Idea } from '../components/Idea';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
+import { LoadingAnimated } from '../components/LoadingAnimated';
 
 export const TrackingScreen = () => {
   const loading = false;
@@ -23,10 +24,15 @@ export const TrackingScreen = () => {
           renderItem={({ item }) => <Idea idea={item} />}
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
+          ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
         />
       ) : (
-        <EmptyState message="Haz tracking en las ideas que revolucionan." />
+        ( loading 
+          ?
+            <LoadingAnimated />
+          :
+            <EmptyState message="Haz tracking en las ideas que revolucionan." />
+        )
       )}
 
       <FloatButton />

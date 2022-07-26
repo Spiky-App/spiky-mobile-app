@@ -8,11 +8,11 @@ import { FloatButton } from '../components/FloatButton';
 import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { State } from '../store/reducers';
+import { LoadingAnimated } from '../components/LoadingAnimated';
 import { ideas } from '../data/ideas';
 
 export const CommunityScreen = () => {
   /* const { mensajes } = useSelector((state: State) => state.message); */
-  
   const loading = false;
   const moreMsg = true;
 
@@ -20,20 +20,24 @@ export const CommunityScreen = () => {
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <IdeasHeader title="Comunidad" />
 
-      {ideas && !loading ? (
+      {ideas ? (
         <FlatList
           style={{ width: '90%' }}
           data={ideas}
           renderItem={({ item }) => <Idea idea={item} />}
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
+          ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
         />
         
       ) : (
-        <EmptyState message="Cuestión de tiempo de que alguien hable." />
+        ( loading 
+          ?
+            <LoadingAnimated />
+          :
+            <EmptyState message="Cuestión de tiempo de que alguien hable." />
+        )
       )}
-
       <FloatButton />
     </BackgroundPaper>
   );
