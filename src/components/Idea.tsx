@@ -197,7 +197,6 @@ const stylescom = StyleSheet.create({
   },
   reaction: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     marginRight: 25,
     alignItems: 'center',
     justifyContent: 'center',
