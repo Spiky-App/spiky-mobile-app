@@ -8,6 +8,7 @@ import { ideas } from '../data/ideas';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
+import { LoadingAnimated } from '../components/LoadingAnimated';
 
 export const MyIdeasScreen = () => {
   const loading = false;
@@ -17,19 +18,23 @@ export const MyIdeasScreen = () => {
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <IdeasHeader title="Mis ideas" />
 
-      {ideas.length !== 0 && !loading ? (
+      {ideas.length !== 0 ? (
         <FlatList
           style={{ width: '90%' }}
           data={ideas}
           renderItem={({ item }) => <Idea idea={item} />}
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
+          ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
         />
       ) : (
-        <EmptyState message="¿Ya sabes que decir?" />
+        ( loading 
+          ?
+            <LoadingAnimated />
+          :
+            <EmptyState message="¿Ya sabes que decir?" />
+        )
       )}
-
       <FloatButton />
     </BackgroundPaper>
   );

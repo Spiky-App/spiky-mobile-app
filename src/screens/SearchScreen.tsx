@@ -19,6 +19,7 @@ import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
+import { LoadingAnimated } from '../components/LoadingAnimated';
 
 export const SearchScreen = () => {
   const loading = false;
@@ -45,17 +46,22 @@ export const SearchScreen = () => {
 
           <IdeasHeader title="Explorando" />
 
-          {ideas.length !== 0 && !loading ? (
+          {ideas.length !== 0 ? (
             <FlatList
               style={{ width: '90%' }}
               data={ideas}
               renderItem={({ item }) => <Idea idea={item} />}
               keyExtractor={item => item.id_mensaje + ''}
               showsVerticalScrollIndicator={false}
-              ListFooterComponent={moreMsg ? ButtonMoreIdeas : <></>}
+              ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
             />
           ) : (
-            <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
+            ( loading 
+              ?
+                <LoadingAnimated />
+              :
+                <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
+            )
           )}
 
           <FloatButton />
