@@ -16,7 +16,6 @@ const AxiosPrivate = () => {
 };
 
 const Axios = () => {
-  console.log('Axios', baseURL.API);
   return axios.create({
     baseURL: baseURL.API,
     headers: {
