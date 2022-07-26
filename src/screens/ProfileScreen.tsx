@@ -26,6 +26,7 @@ export const ProfileScreen = () => {
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
+          ListFooterComponentStyle={{marginVertical: 12}}
         />
       ) : (
         ( loading 
