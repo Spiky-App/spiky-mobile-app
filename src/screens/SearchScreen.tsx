@@ -54,15 +54,12 @@ export const SearchScreen = () => {
               keyExtractor={item => item.id_mensaje + ''}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
-              ListFooterComponentStyle={{marginVertical: 12}}
+              ListFooterComponentStyle={{ marginVertical: 12 }}
             />
+          ) : loading ? (
+            <LoadingAnimated />
           ) : (
-            ( loading 
-              ?
-                <LoadingAnimated />
-              :
-                <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
-            )
+            <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
           )}
 
           <FloatButton />

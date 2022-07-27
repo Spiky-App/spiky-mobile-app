@@ -16,7 +16,7 @@ export const MyIdeasScreen = () => {
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title="Mis ideas" />
+      <IdeasHeader title="Mis ideas" myideas={true} />
 
       {ideas.length !== 0 ? (
         <FlatList
@@ -27,13 +27,10 @@ export const MyIdeasScreen = () => {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
         />
+      ) : loading ? (
+        <LoadingAnimated />
       ) : (
-        ( loading 
-          ?
-            <LoadingAnimated />
-          :
-            <EmptyState message="¿Ya sabes que decir?" />
-        )
+        <EmptyState message="¿Ya sabes que decir?" />
       )}
       <FloatButton />
     </BackgroundPaper>
