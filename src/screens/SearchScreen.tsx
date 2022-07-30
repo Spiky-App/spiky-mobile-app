@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  Animated,
   FlatList,
   Keyboard,
   StyleSheet,
@@ -20,19 +21,33 @@ import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/LoadingAnimated';
+import { useAnimation } from '../hooks/useAnimation';
 
 export const SearchScreen = () => {
   const loading = false;
   const moreMsg = true;
+  const { position, movingPosition } = useAnimation();
   const { form, onChange } = useForm({
     search: '',
   });
+
+  useEffect(() => {
+    movingPosition(-50, 0, 900);
+  }, []);
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <>
-          <View style={{ ...styles.input, marginTop: 14, borderRadius: 10, width: '90%' }}>
+          <Animated.View
+            style={{
+              ...styles.input,
+              marginTop: 14,
+              borderRadius: 10,
+              width: '90%',
+              transform: [{ translateY: position }],
+            }}
+          >
             <TextInput
               placeholder="Buscar"
               onChangeText={value => onChange({ search: value })}
@@ -42,7 +57,7 @@ export const SearchScreen = () => {
             <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
           <IdeasHeader title="Explorando" />
 

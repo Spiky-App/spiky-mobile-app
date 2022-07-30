@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Text, View, TouchableHighlight, StyleSheet } from 'react-native';
+import { Text, View, TouchableHighlight, StyleSheet, Animated } from 'react-native';
 import { faFilter } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { faHourglass3 } from '@fortawesome/free-solid-svg-icons';
 import { ModalFilters } from './ModalFilters';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useAnimation } from '../hooks/useAnimation';
 
 interface Props {
   title: string;
@@ -15,9 +16,19 @@ interface Props {
 export const IdeasHeader = ({ title, myideas = false }: Props) => {
   const [modalFilter, setModalFilter] = useState(false);
   const [activeDraft, setActiveDraft] = useState(false);
+  const { opacity, fadeIn } = useAnimation();
+
+  useEffect(() => {
+    fadeIn(800);
+  }, []);
 
   return (
-    <View style={stylecom.filterWrap}>
+    <Animated.View
+      style={{
+        ...stylecom.filterWrap,
+        opacity,
+      }}
+    >
       <Text style={{ ...styles.text, ...styles.h3 }}>
         {title}
         <Text style={styles.orange}>.</Text>
@@ -66,7 +77,7 @@ export const IdeasHeader = ({ title, myideas = false }: Props) => {
       )}
 
       <ModalFilters setModalFilter={setModalFilter} modalFilter={modalFilter} />
-    </View>
+    </Animated.View>
   );
 };
 
