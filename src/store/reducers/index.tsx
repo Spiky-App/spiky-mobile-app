@@ -12,7 +12,7 @@ const appReducer = combineReducers({
   message: messageReducer,
   chat: chatReducer,
   service: serviceReducer,
-  user: userReducer
+  user: userReducer,
 });
 
 export default appReducer;

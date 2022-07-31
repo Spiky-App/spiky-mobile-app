@@ -68,6 +68,21 @@ export const useAnimation = () => {
     });
   };
 
+  const movingPosition = (
+    initPosition: number,
+    endPosition: number,
+    duration: number = 300,
+    callback: () => void = () => {}
+  ) => {
+    position.setValue(initPosition);
+
+    Animated.timing(position, {
+      toValue: endPosition,
+      duration,
+      useNativeDriver: true,
+    }).start(callback);
+  };
+
   return {
     opacity,
     position,
@@ -76,5 +91,6 @@ export const useAnimation = () => {
     fadeOut,
     movingPositionAndScale,
     movingPositionAndBack,
+    movingPosition,
   };
 };

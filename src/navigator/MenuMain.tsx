@@ -26,6 +26,7 @@ import { ModalNotification } from '../components/ModalNotification';
 import { ConfigurationScreen } from '../screens/ConfigurationScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { HashTagScreen } from '../screens/HashTagScreen';
+import { CommonActions } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
@@ -89,6 +90,15 @@ export const MenuMain = () => {
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
   const [modalNotif, setModalNotif] = useState(false);
 
+  const changeScreen = (screen: string) => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: screen }],
+      })
+    );
+  };
+
   return (
     <DrawerContentScrollView>
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
@@ -96,7 +106,7 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
           <View key={item.screen}>
             <TouchableOpacity
               style={stylescom.buttonmenu}
-              onPress={() => navigation.navigate(item.screen)}
+              onPress={() => changeScreen(item.screen)}
             >
               <FontAwesomeIcon icon={item.icon} size={20} color={'#01192E'} />
               <Text style={stylescom.textmenu}>{item.name}</Text>
