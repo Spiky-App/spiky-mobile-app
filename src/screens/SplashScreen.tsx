@@ -1,16 +1,28 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import logo from '../constants/images/name-logo.png';
+import IconLogoAnimated from '../components/svg/IconLogoAnimated';
 import { styles } from '../themes/appTheme';
 import splashStyles from '../themes/screens/splash';
 
 const SplashScreen = () => {
   return (
     <BackgroundPaper>
-      <View style={splashStyles.container}>
-        <Image source={logo} style={splashStyles.logo} />
-        <Text style={{ ...styles.text, ...styles.h3 }}>Cargando...</Text>
+      <View style={{ ...styles.center }}>
+        <IconLogoAnimated />
+        <View style={{ ...styles.center }}>
+          <Text
+            style={{
+              ...styles.text,
+              ...styles.h3,
+              fontSize: 20,
+              position: 'absolute',
+              top: -30,
+            }}
+          >
+            Cargando...
+          </Text>
+        </View>
       </View>
     </BackgroundPaper>
   );
