@@ -41,8 +41,8 @@ const Dot = ({ delay }: DotProps) => {
   const intervalRef = useRef(0);
 
   useEffect(() => {
-    intervalRef.current = setTimeout(() => {
-      timeoutRef.current = setInterval(() => movingPositionAndBack(0, -8, 400), 1500);
+    timeoutRef.current = setTimeout(() => {
+      intervalRef.current = setInterval(() => movingPositionAndBack(0, -8, 400), 1500);
     }, delay);
 
     return () => {
