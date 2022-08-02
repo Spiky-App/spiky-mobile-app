@@ -25,15 +25,12 @@ export const TrackingScreen = () => {
           keyExtractor={item => item.id_mensaje + ''}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
-          ListFooterComponentStyle={{marginVertical: 12}}
+          ListFooterComponentStyle={{ marginVertical: 12 }}
         />
+      ) : loading ? (
+        <LoadingAnimated />
       ) : (
-        ( loading 
-          ?
-            <LoadingAnimated />
-          :
-            <EmptyState message="Haz tracking en las ideas que revolucionan." />
-        )
+        <EmptyState message="Haz tracking en las ideas que revolucionan." />
       )}
 
       <FloatButton />

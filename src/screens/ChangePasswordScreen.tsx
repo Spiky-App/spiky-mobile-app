@@ -5,10 +5,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash, faArrowLeftLong } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
+import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
+import { useForm } from '../hooks/useForm';
+
+const initialSate = {
+  actualContrasena: '',
+  nuevaContrasena: '',
+  confirContrasena: '',
+};
 
 export const ChangePasswordScreen = () => {
-  const [passVisible, setPassVisible] = useState(true);
+  const [passVisible1, setPassVisible1] = useState(true);
+  const [passVisible2, setPassVisible2] = useState(true);
+  const [msgPassword, setMsgPassword] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false);
   const navigation = useNavigation<any>();
+  const { form, onChange } = useForm(initialSate);
+
+  const { actualContrasena, nuevaContrasena, confirContrasena } = form;
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
@@ -34,27 +48,35 @@ export const ChangePasswordScreen = () => {
         <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
           <TextInput
             placeholder="Contraseña actual"
-            secureTextEntry={passVisible}
+            secureTextEntry={passVisible1}
             autoCorrect={false}
             keyboardType="email-address"
             style={styles.textinput}
+            onChangeText={value => onChange({ actualContrasena: value })}
           />
-          <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible(!passVisible)}>
-            <FontAwesomeIcon icon={passVisible ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
+          <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible1(!passVisible1)}>
+            <FontAwesomeIcon icon={passVisible1 ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
           </TouchableOpacity>
         </View>
 
         <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
           <TextInput
             placeholder="Nueva contraseña"
-            secureTextEntry={passVisible}
+            secureTextEntry={passVisible2}
             autoCorrect={false}
             keyboardType="email-address"
             style={styles.textinput}
+            onChangeText={value => onChange({ nuevaContrasena: value })}
+            onFocus={() => setMsgPassword(true)}
+            onBlur={() => setMsgPassword(false)}
           />
-          <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible(!passVisible)}>
-            <FontAwesomeIcon icon={passVisible ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
+          <TouchableOpacity style={styles.iconinput} onPress={() => setPassVisible2(!passVisible2)}>
+            <FontAwesomeIcon icon={passVisible2 ? faEye : faEyeSlash} size={16} color="#d4d4d4" />
           </TouchableOpacity>
+
+          {msgPassword && (
+            <PasswordValidationMsg password={nuevaContrasena} setPasswordValid={setPasswordValid} />
+          )}
         </View>
 
         <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
@@ -63,6 +85,8 @@ export const ChangePasswordScreen = () => {
             autoCorrect={false}
             keyboardType="email-address"
             style={styles.textinput}
+            secureTextEntry={true}
+            onChangeText={value => onChange({ confirContrasena: value })}
           />
         </View>
 
