@@ -103,7 +103,6 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     return (
         <DrawerContentScrollView>
             <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
-               
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
                 </View>

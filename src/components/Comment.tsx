@@ -12,9 +12,9 @@ interface Props {
 }
 
 export const Comment = ({ comment }: Props) => {
-  const [presssIconGray, setPresssIconGray] = useState(false);
-  const uid = 1;
-  const fecha = getTime(comment.fecha);
+    const [presssIconGray, setPresssIconGray] = useState(false);
+    const uid = 1;
+    const fecha = getTime(comment.fecha);
 
     return (
         <>
@@ -29,26 +29,28 @@ export const Comment = ({ comment }: Props) => {
                     {comment.usuario.universidad.alias}
                 </Text>
 
-        <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>{fecha}</Text>
-        {uid !== comment.usuario.id_usuario && (
-          <>
-            <TouchableOpacity
-              style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
-              onPress={() => {}}
-            >
-              <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ width: 18, marginLeft: 6 }}
-              onPress={() => {
-                setPresssIconGray(true);
-              }}
-            >
-              <IconGray underlayColor={'#01192ebe'} pressed={presssIconGray} />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+                <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>
+                    {fecha}
+                </Text>
+                {uid !== comment.usuario.id_usuario && (
+                    <>
+                        <TouchableOpacity
+                            style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
+                            onPress={() => {}}
+                        >
+                            <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ width: 18, marginLeft: 6 }}
+                            onPress={() => {
+                                setPresssIconGray(true);
+                            }}
+                        >
+                            <IconGray underlayColor={'#01192ebe'} pressed={presssIconGray} />
+                        </TouchableOpacity>
+                    </>
+                )}
+            </View>
 
             <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 25 }}>
                 {comment.respuesta}
