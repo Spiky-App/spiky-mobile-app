@@ -7,14 +7,14 @@ import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
-import { useDispatch, useSelector } from 'react-redux';
-import { State } from '../store/reducers';
 import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
-import { bindActionCreators } from 'redux';
-import messageActions from '../store/actions/messageActions';
-import UIActions from '../store/actions/UIActions';
-import SpikyService from '../services/SpikyService';
 import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
+import { RootState } from '../store';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import SpikyService from '../services/SpikyService';
+import { setUniversities } from '../store/feature/ui/uiSlice';
+import { Message, University, User } from '../types/store/common';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -32,38 +32,64 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-  const { token } = useSelector((state: State) => state.auth);
-  const { spikyServiceConfig } = useSelector((state: State) => state.service);
-  const { universities } = useSelector((state: State) => state.ui);
-  const { mensajes } = useSelector((state: State) => state.message);
-  const spikyService = new SpikyService(spikyServiceConfig);
-  const dispatch = useDispatch();
-
-  const { uiSetUniversities, getAllMessages } = bindActionCreators(
-    { ...UIActions, ...messageActions },
-    dispatch
-  );
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((state: RootState) => state.auth.token);
+  const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+  const universities = useAppSelector((state: RootState) => state.ui.universities);
+  const messages = useAppSelector((state: RootState) => state.messages.messages);
+  const uid = useAppSelector((state: RootState) => state.user.id)
 
   async function setSessionInfo() {
+    const spikyClient = new SpikyService(config);
     try {
-      const UniResponse = await spikyService.getUniversities();
-      uiSetUniversities(UniResponse.data);
+      const { data: universitiesData } = await spikyClient.getUniversities();
+      const { universidades } = universitiesData;
+      const universities: University[] = universidades.map<University>(university => ({
+        id: university.id_universidad ?? 0,
+        shortname: university.alias,
+      }));
+      dispatch(setUniversities(universities));
     } catch {
       console.log('Error uni');
     }
     try {
-      const messagesResponse = await spikyService.getIdeas();
-      getAllMessages(messagesResponse.data);
+      const messagesResponse = await spikyClient.getMessages(uid, 1);
+      const { data: messagesData } = messagesResponse;
+      const { mensajes } = messagesData;
+      const messages: Message[] = mensajes.map(message => {
+        const university: University = {
+          id: message.usuario.id_universidad,
+          shortname: message.usuario.universidad.alias,
+        };
+        const user: User = {
+          alias: message.usuario.alias,
+          university,
+        };
+        return {
+          id: message.id_mensaje,
+          message: message.mensaje,
+          date: message.fecha,
+          favor: message.favor,
+          neutral: message.neutro,
+          aggainst: message.contra,
+          user,
+          reactions: message.reacciones,
+          trackings: message.trackings,
+          answersNumber: message.num_respuestas,
+          draft: message.draft,
+        };
+      });
+      dispatch(setMessages(messages));
     } catch {
       console.log('Error messages');
     }
   }
 
   useEffect(() => {
-    if (token && !universities && !mensajes) {
+    if (token && !universities && !messages) {
       setSessionInfo();
     }
-  }, [token]);
+  }, [token, universities, messages, config]);
 
   return (
     <Stack.Navigator

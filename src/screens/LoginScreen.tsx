@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import {
   Keyboard,
@@ -10,8 +9,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
@@ -21,19 +18,19 @@ import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import SpikyService from '../services/SpikyService';
-import AuthActions from '../store/actions/authActions';
-import serviceActions from '../store/actions/serviceActions';
-import userActions from '../store/actions/userActions';
-import { State } from '../store/reducers';
+import { RootState } from '../store';
+import { signIn } from '../store/feature/auth/authSlice';
+import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { setUser } from '../store/feature/user/userSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { HelperMessage } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
 export const LoginScreen = () => {
-  const dispatch = useDispatch();
-  const { spikyServiceConfig } = useSelector((state: State) => state.service);
-  const spikyService = new SpikyService(spikyServiceConfig);
+  const dispatch = useAppDispatch();
+  const config = useAppSelector((state: RootState) => state.serviceConfig.config);
   const { form, onChange } = useForm<FormState>({
     email: '',
     password: '',
@@ -43,10 +40,7 @@ export const LoginScreen = () => {
   const [isLoading, setLoading] = useState(false);
   const [passVisible, setPassVisible] = useState(true);
 
-  const { signIn, setSpikyServiceConfig, setUser } = bindActionCreators(
-    { ...AuthActions, ...serviceActions, ...userActions },
-    dispatch
-  );
+  const spikyService = new SpikyService(config);
 
   async function login() {
     setLoading(true);
@@ -55,14 +49,14 @@ export const LoginScreen = () => {
       try {
         const response = await spikyService.login(email, password);
         const { data } = response;
-        const { token, alias, n_notificaciones, universidad } = data;
+        const { token, alias, n_notificaciones, universidad, uid } = data;
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-        signIn(token);
-        setSpikyServiceConfig({ headers: { 'x-token': token } });
-        setUser({ nickname: alias, n_notifications: n_notificaciones, university: universidad });
+        dispatch(signIn(token));
+        dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
+        dispatch(setUser({ nickname: alias, notificationsNumber: n_notificaciones, university: universidad, id: uid }));
         setFormValid(true);
       } catch (error) {
-        console.log('Error creando credenciales');
+        console.log('Error creando credenciales', error);
         setFormValid(false);
       }
     } else {
@@ -72,7 +66,7 @@ export const LoginScreen = () => {
   }
 
   function getHelperMessage(value: string): HelperMessage | undefined {
-    if (isFormValid) {
+    if (!isFormValid) {
       return getFormHelperMessage(value);
     }
   }

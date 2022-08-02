@@ -12,11 +12,11 @@ import {
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { State } from '../store/reducers';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 
 export const Header = () => {
-  const { nickName } = useSelector((state: State) => state.user);
+  const nickname = useAppSelector((state: RootState) => state.user.nickname);
   const navigation = useNavigation<any>();
   const { top } = useSafeAreaInsets();
   const [profileOption, setProfileOption] = useState(false);
@@ -44,7 +44,7 @@ export const Header = () => {
             onPress={() => setProfileOption(true)}
           >
             <FontAwesomeIcon icon={faUser} size={18} color="#ffff" />
-            <Text style={stylescom.text}>{`@${nickName}`}</Text>
+            <Text style={stylescom.text}>{`@${nickname}`}</Text>
           </TouchableOpacity>
 
           <ModalProfile setProfileOption={setProfileOption} profileOption={profileOption} />

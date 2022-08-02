@@ -9,11 +9,14 @@ import {
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { faRightFromBracket, faGear } from '../constants/icons/FontAwesome';
-import authActions from '../store/actions/authActions';
 import { styles } from '../themes/appTheme';
+import { useAppDispatch } from '../store/hooks';
+import { signOut } from '../store/feature/auth/authSlice';
+import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { removeUser } from '../store/feature/user/userSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageKeys } from '../types/storage';
 
 interface Props {
   setProfileOption: (value: boolean) => void;
@@ -21,9 +24,16 @@ interface Props {
 }
 
 export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
-  const dispatch = useDispatch();
-  const { signOut } = bindActionCreators(authActions, dispatch);
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<any>();
+
+  async function onPressLogout() {
+    await AsyncStorage.removeItem(StorageKeys.TOKEN);
+    dispatch(signOut());
+    dispatch(restartConfig());
+    dispatch(removeUser());
+  }
+
   return (
     <Modal animationType="fade" visible={profileOption} transparent={true}>
       <TouchableWithoutFeedback onPress={() => setProfileOption(false)}>
@@ -59,7 +69,7 @@ export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
               <Text style={{ ...styles.text, ...stylescom.textModal }}>Configuraciones</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={stylescom.optionModal} onPress={signOut}>
+            <TouchableOpacity style={stylescom.optionModal} onPress={onPressLogout}>
               <FontAwesomeIcon icon={faRightFromBracket} color="white" />
               <Text style={{ ...styles.text, ...stylescom.textModal }}>Cerrar sesión</Text>
             </TouchableOpacity>
