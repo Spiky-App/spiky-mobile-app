@@ -4,24 +4,27 @@ import { RootState } from '../..';
 import config from '../../../constants/config';
 
 interface ServiceConfigState {
-  config: AxiosRequestConfig;
+    config: AxiosRequestConfig;
 }
 
 const initialState: ServiceConfigState = {
-  config,
+    config,
 };
 
 export const serviceConfigSlice = createSlice({
-  name: 'serviceConfig',
-  initialState,
-  reducers: {
-    updateServiceConfig: (state: ServiceConfigState, action: PayloadAction<AxiosRequestConfig>) => {
-      state.config = { ...state.config, ...action.payload };
+    name: 'serviceConfig',
+    initialState,
+    reducers: {
+        updateServiceConfig: (
+            state: ServiceConfigState,
+            action: PayloadAction<AxiosRequestConfig>
+        ) => {
+            state.config = { ...state.config, ...action.payload };
+        },
+        restartConfig: (state: ServiceConfigState) => {
+            state.config = initialState.config;
+        },
     },
-    restartConfig: (state: ServiceConfigState) => {
-      state.config = initialState.config;
-    }
-  },
 });
 
 export const { updateServiceConfig, restartConfig } = serviceConfigSlice.actions;

@@ -1,4 +1,4 @@
-import { StatusType } from "./common";
+import { StatusType } from './common';
 
 export interface University {
     id: number;
@@ -19,12 +19,12 @@ export interface Message {
     aggainst: number;
     user: User;
     reactions: [];
-    trackings: [],
+    trackings: [];
     answersNumber: number;
     draft: number;
 }
 
 export interface Toast {
-  message: string;
-  type?: StatusType;
+    message: string;
+    type?: StatusType;
 }

@@ -1,23 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { Message, University } from '../../../types/store';
+import { Message } from '../../../types/store';
 
 interface MessagesState {
-  messages?: Message[];
+    messages?: Message[];
 }
 
 const initialState: MessagesState = {
-  messages: undefined,
+    messages: undefined,
 };
 
 export const messagesSlice = createSlice({
-  name: 'messages',
-  initialState,
-  reducers: {
-    setMessages: (state: MessagesState, action: PayloadAction<Message[]>) => {
-      state.messages = action.payload;
+    name: 'messages',
+    initialState,
+    reducers: {
+        setMessages: (state: MessagesState, action: PayloadAction<Message[]>) => {
+            state.messages = action.payload;
+        },
     },
-  },
 });
 
 export const { setMessages } = messagesSlice.actions;

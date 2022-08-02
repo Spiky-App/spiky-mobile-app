@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  Text,
-  TouchableHighlight,
-  View,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Button,
+    Text,
+    TouchableHighlight,
+    View,
+    TextInput,
+    Keyboard,
+    TouchableWithoutFeedback,
+    Button,
 } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -16,44 +16,47 @@ import { BigTitle } from '../components/BigTitle';
 import { useNavigation } from '@react-navigation/native';
 
 export const CheckEmailScreen = () => {
-  //Borrar este hook
-  const navigation = useNavigation<any>();
+    //Borrar este hook
+    const navigation = useNavigation<any>();
 
-  // const { form, onChange } = useForm({
-  const { onChange } = useForm({
-    email: '',
-  });
+    // const { form, onChange } = useForm({
+    const { onChange } = useForm({
+        email: '',
+    });
 
-  return (
-    <BackgroundPaper>
-      <ArrowBack />
+    return (
+        <BackgroundPaper>
+            <ArrowBack />
 
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <BigTitle texts={['Sé parte', 'del cambio']} />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <BigTitle texts={['Sé parte', 'del cambio']} />
 
-          <View style={{ ...styles.input, marginVertical: 25 }}>
-            <TextInput
-              placeholder="Correo universitario"
-              autoCorrect={false}
-              keyboardType="email-address"
-              style={styles.textinput}
-              onChangeText={value => onChange({ email: value })}
-            />
-          </View>
+                    <View style={{ ...styles.input, marginVertical: 25 }}>
+                        <TextInput
+                            placeholder="Correo universitario"
+                            autoCorrect={false}
+                            keyboardType="email-address"
+                            style={styles.textinput}
+                            onChangeText={value => onChange({ email: value })}
+                        />
+                    </View>
 
-          <TouchableHighlight
-            underlayColor="#01192ebe"
-            onPress={() => {}}
-            style={{ ...styles.button, paddingHorizontal: 30 }}
-          >
-            <Text style={{ ...styles.text, ...styles.textb }}>Verificar correo</Text>
-          </TouchableHighlight>
+                    <TouchableHighlight
+                        underlayColor="#01192ebe"
+                        onPress={() => {}}
+                        style={{ ...styles.button, paddingHorizontal: 30 }}
+                    >
+                        <Text style={{ ...styles.text, ...styles.textb }}>Verificar correo</Text>
+                    </TouchableHighlight>
 
-          {/* Borrar este boton, solo para acceder a este screen */}
-          <Button title="Register Screen" onPress={() => navigation.navigate('RegisterScreen')} />
-        </View>
-      </TouchableWithoutFeedback>
-    </BackgroundPaper>
-  );
+                    {/* Borrar este boton, solo para acceder a este screen */}
+                    <Button
+                        title="Register Screen"
+                        onPress={() => navigation.navigate('RegisterScreen')}
+                    />
+                </View>
+            </TouchableWithoutFeedback>
+        </BackgroundPaper>
+    );
 };

@@ -19,7 +19,7 @@ interface University {
 
 export interface MessagesResponse {
     ok: boolean;
-    mensajes: Message[]
+    mensajes: Message[];
 }
 
 interface Message {

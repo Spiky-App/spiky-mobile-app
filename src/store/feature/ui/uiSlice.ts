@@ -3,21 +3,21 @@ import { RootState } from '../..';
 import { University } from '../../../types/store';
 
 interface UIState {
-  universities?: University[];
+    universities?: University[];
 }
 
 const initialState: UIState = {
-  universities: undefined,
+    universities: undefined,
 };
 
 export const uiSlice = createSlice({
-  name: 'ui',
-  initialState,
-  reducers: {
-    setUniversities: (state: UIState, action: PayloadAction<University[]>) => {
-      state.universities = action.payload;
+    name: 'ui',
+    initialState,
+    reducers: {
+        setUniversities: (state: UIState, action: PayloadAction<University[]>) => {
+            state.universities = action.payload;
+        },
     },
-  },
 });
 
 export const { setUniversities } = uiSlice.actions;
