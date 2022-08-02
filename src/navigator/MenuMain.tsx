@@ -27,6 +27,8 @@ import { ConfigurationScreen } from '../screens/ConfigurationScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
+import LogoSvg from '../components/svg/LogoSvg';
+import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 
 const Drawer = createDrawerNavigator();
 
@@ -102,6 +104,10 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
   return (
     <DrawerContentScrollView>
       <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
+        <View style={{ width: 125, marginTop: 20 }}>
+          <LogoAndIconSvg />
+        </View>
+
         {menuInfo.map(item => (
           <View key={item.screen}>
             <TouchableOpacity

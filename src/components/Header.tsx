@@ -14,6 +14,7 @@ import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { State } from '../store/reducers';
+import LogoWhiteSvg from './svg/LogoWhiteSvg';
 
 export const Header = () => {
   const { nickName } = useSelector((state: State) => state.user);
@@ -36,6 +37,10 @@ export const Header = () => {
               <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
             </View>
           </TouchableOpacity>
+
+          <View style={{ width: 75, marginLeft: 15 }}>
+            <LogoWhiteSvg />
+          </View>
 
           <View style={{ flex: 1 }} />
 

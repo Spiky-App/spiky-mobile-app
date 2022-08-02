@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated } from 'react-native';
-import { useAnimation } from '../hooks/useAnimation';
-import { styles } from '../themes/appTheme';
+import { useAnimation } from '../../hooks/useAnimation';
+import { styles } from '../../themes/appTheme';
 
 interface Props {
   scale?: number;

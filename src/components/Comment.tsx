@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { faReply } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { ComentarioInterface } from '../data/respuestas';
+import IconGray from './svg/IconGray';
 
 interface Props {
   comment: ComentarioInterface;
 }
 
 export const Comment = ({ comment }: Props) => {
+  const [presssIconGray, setPresssIconGray] = useState(false);
   const uid = 1;
   const fecha = getTime(comment.fecha);
 
@@ -25,12 +27,22 @@ export const Comment = ({ comment }: Props) => {
 
         <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>{fecha}</Text>
         {uid !== comment.usuario.id_usuario && (
-          <TouchableOpacity
-            style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
-            onPress={() => {}}
-          >
-            <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
+              onPress={() => {}}
+            >
+              <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ width: 18, marginLeft: 6 }}
+              onPress={() => {
+                setPresssIconGray(true);
+              }}
+            >
+              <IconGray underlayColor={'#01192ebe'} pressed={presssIconGray} />
+            </TouchableOpacity>
+          </>
         )}
       </View>
 

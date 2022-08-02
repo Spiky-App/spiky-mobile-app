@@ -20,7 +20,7 @@ import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
-import { LoadingAnimated } from '../components/LoadingAnimated';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAnimation } from '../hooks/useAnimation';
 
 export const SearchScreen = () => {
