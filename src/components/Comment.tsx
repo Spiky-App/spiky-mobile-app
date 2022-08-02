@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { faReply } from '../constants/icons/FontAwesome';
@@ -6,15 +6,26 @@ import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { ComentarioInterface } from '../data/respuestas';
 import IconGray from './svg/IconGray';
+import { ModalReactComment } from './ModalReactComment';
 
 interface Props {
     comment: ComentarioInterface;
 }
 
 export const Comment = ({ comment }: Props) => {
-    const [presssIconGray, setPresssIconGray] = useState(false);
+    const [reactComment, setReactComment] = useState(false);
+    const [position, setPosition] = useState({
+        top: 0,
+        left: 0,
+    });
     const uid = 1;
     const fecha = getTime(comment.fecha);
+
+    useEffect(() => {
+        if (position.top !== 0) {
+            setReactComment(true);
+        }
+    }, [position]);
 
     return (
         <>
@@ -42,11 +53,14 @@ export const Comment = ({ comment }: Props) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ width: 18, marginLeft: 6 }}
-                            onPress={() => {
-                                setPresssIconGray(true);
+                            onPress={(event) => {
+                                setPosition({
+                                    top: event.nativeEvent.pageY,
+                                    left: event.nativeEvent.pageX,
+                                });
                             }}
                         >
-                            <IconGray underlayColor={'#01192ebe'} pressed={presssIconGray} />
+                            <IconGray underlayColor={'#01192ebe'} pressed={reactComment} />
                         </TouchableOpacity>
                     </>
                 )}
@@ -55,6 +69,7 @@ export const Comment = ({ comment }: Props) => {
             <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 25 }}>
                 {comment.respuesta}
             </Text>
+            <ModalReactComment setReactComment={setReactComment} reactComment={reactComment} position={position}/>
         </>
     );
 };
