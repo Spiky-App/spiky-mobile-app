@@ -1,13 +1,13 @@
 export interface IUniversidad {
     alias: string;
-  }
-  
+}
+
 export interface IUsuario {
     alias: string;
     id_universidad: number;
     universidad: IUniversidad;
-  }
-  
+}
+
 export interface IIdea {
     id_usuario: number;
     id_mensaje: number;
@@ -20,4 +20,4 @@ export interface IIdea {
     num_respuestas: number;
     usuario: Usuario;
     draft: number;
-  }
+}

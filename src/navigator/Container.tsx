@@ -13,52 +13,52 @@ import { setUser } from '../store/feature/user/userSlice';
 import Toast from '../components/common/Toast';
 
 const Container = () => {
-  const dispatch = useAppDispatch();
-  const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-  const spikyService = new SpikyService(config);
-  const [isLoading, setLoading] = useState(false);
+    const dispatch = useAppDispatch();
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const spikyService = new SpikyService(config);
+    const [isLoading, setLoading] = useState(false);
 
-  async function validateToken() {
-    setLoading(true);
-    const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
-    if (tokenStorage) {
-      try {
-        const response = await spikyService.getAuthRenew(tokenStorage);
-        const { data } = response;
-        const { token, alias, n_notificaciones, universidad, uid } = data;
-        await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-        dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-        dispatch(signIn(token));
-        dispatch(
-          setUser({
-            nickname: alias,
-            notificationsNumber: n_notificaciones,
-            university: universidad,
-            id: uid,
-          })
-        );
-      } catch {
-        await AsyncStorage.removeItem(StorageKeys.TOKEN);
-      }
+    async function validateToken() {
+        setLoading(true);
+        const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
+        if (tokenStorage) {
+            try {
+                const response = await spikyService.getAuthRenew(tokenStorage);
+                const { data } = response;
+                const { token, alias, n_notificaciones, universidad, uid } = data;
+                await AsyncStorage.setItem(StorageKeys.TOKEN, token);
+                dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
+                dispatch(signIn(token));
+                dispatch(
+                    setUser({
+                        nickname: alias,
+                        notificationsNumber: n_notificaciones,
+                        university: universidad,
+                        id: uid,
+                    })
+                );
+            } catch {
+                await AsyncStorage.removeItem(StorageKeys.TOKEN);
+            }
+        }
+        setLoading(false);
     }
-    setLoading(false);
-  }
 
-  useEffect(() => {
-    validateToken();
-  }, []);
+    useEffect(() => {
+        validateToken();
+    }, []);
 
-  if (isLoading) {
-    return <SplashScreen />;
-  }
+    if (isLoading) {
+        return <SplashScreen />;
+    }
 
-  return (
-    <NavigationContainer>
-      <Toast>
-        <Navigator />
-      </Toast>
-    </NavigationContainer>
-  );
+    return (
+        <NavigationContainer>
+            <Toast>
+                <Navigator />
+            </Toast>
+        </NavigationContainer>
+    );
 };
 
 export default Container;

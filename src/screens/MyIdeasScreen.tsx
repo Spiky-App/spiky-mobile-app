@@ -11,28 +11,30 @@ import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/LoadingAnimated';
 
 export const MyIdeasScreen = () => {
-  const loading = false;
-  const moreMsg = true;
+    const loading = false;
+    const moreMsg = true;
 
-  return (
-    <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title="Mis ideas" myideas={true} />
+    return (
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+            <IdeasHeader title="Mis ideas" myideas={true} />
 
-      {ideas.length !== 0 ? (
-        <FlatList
-          style={{ width: '90%' }}
-          data={ideas}
-          renderItem={({ item }) => <Idea idea={item} />}
-          keyExtractor={item => item.id_mensaje + ''}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
-        />
-      ) : loading ? (
-        <LoadingAnimated />
-      ) : (
-        <EmptyState message="¿Ya sabes que decir?" />
-      )}
-      <FloatButton />
-    </BackgroundPaper>
-  );
+            {ideas.length !== 0 ? (
+                <FlatList
+                    style={{ width: '90%' }}
+                    data={ideas}
+                    renderItem={({ item }) => <Idea idea={item} />}
+                    keyExtractor={item => item.id_mensaje + ''}
+                    showsVerticalScrollIndicator={false}
+                    ListFooterComponent={
+                        loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
+                    }
+                />
+            ) : loading ? (
+                <LoadingAnimated />
+            ) : (
+                <EmptyState message="¿Ya sabes que decir?" />
+            )}
+            <FloatButton />
+        </BackgroundPaper>
+    );
 };

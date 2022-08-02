@@ -7,14 +7,14 @@ import uiSlice from './feature/ui/uiSlice';
 import userSlice from './feature/user/userSlice';
 
 export const store = configureStore({
-  reducer: {
-    auth: authSlice,
-    serviceConfig: serviceConfigSlice,
-    user: userSlice,
-    ui: uiSlice,
-    messages: messagesSlice,
-    toast: toastSlice,
-  },
+    reducer: {
+        auth: authSlice,
+        serviceConfig: serviceConfigSlice,
+        user: userSlice,
+        ui: uiSlice,
+        messages: messagesSlice,
+        toast: toastSlice,
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

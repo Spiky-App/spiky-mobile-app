@@ -19,105 +19,109 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 
 export type RootStackParamList = {
-  HomeScreen: undefined;
-  LoginScreen: undefined;
-  CheckEmail: undefined;
-  CheckEmailScreen: undefined;
-  ForgotPwdScreen: undefined;
-  RegisterScreen: undefined;
-  MenuMain: undefined;
-  CreateIdeaScreen: undefined;
-  OpenedIdeaScreen: undefined;
-  ManifestPart1Screen: undefined;
+    HomeScreen: undefined;
+    LoginScreen: undefined;
+    CheckEmail: undefined;
+    CheckEmailScreen: undefined;
+    ForgotPwdScreen: undefined;
+    RegisterScreen: undefined;
+    MenuMain: undefined;
+    CreateIdeaScreen: undefined;
+    OpenedIdeaScreen: undefined;
+    ManifestPart1Screen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-  const dispatch = useAppDispatch();
-  const token = useAppSelector((state: RootState) => state.auth.token);
-  const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-  const universities = useAppSelector((state: RootState) => state.ui.universities);
-  const messages = useAppSelector((state: RootState) => state.messages.messages);
-  const uid = useAppSelector((state: RootState) => state.user.id)
+    const dispatch = useAppDispatch();
+    const token = useAppSelector((state: RootState) => state.auth.token);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const universities = useAppSelector((state: RootState) => state.ui.universities);
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const uid = useAppSelector((state: RootState) => state.user.id);
 
-  async function setSessionInfo() {
-    const spikyClient = new SpikyService(config);
-    try {
-      const { data: universitiesData } = await spikyClient.getUniversities();
-      const { universidades } = universitiesData;
-      const universities: University[] = universidades.map<University>(university => ({
-        id: university.id_universidad ?? 0,
-        shortname: university.alias,
-      }));
-      dispatch(setUniversities(universities));
-    } catch {
-      dispatch(addToast({ message: 'Error cargando universidades', type: StatusType.WARNING }));
+    async function setSessionInfo() {
+        const spikyClient = new SpikyService(config);
+        try {
+            const { data: universitiesData } = await spikyClient.getUniversities();
+            const { universidades } = universitiesData;
+            const universitiesResponse: University[] = universidades.map<University>(
+                university => ({
+                    id: university.id_universidad ?? 0,
+                    shortname: university.alias,
+                })
+            );
+            dispatch(setUniversities(universitiesResponse));
+        } catch {
+            dispatch(
+                addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
+            );
+        }
+        try {
+            const messagesResponse = await spikyClient.getMessages(uid, 1);
+            const { data: messagesData } = messagesResponse;
+            const { mensajes } = messagesData;
+            const messagesRetrived: Message[] = mensajes.map(message => {
+                const university: University = {
+                    id: message.usuario.id_universidad,
+                    shortname: message.usuario.universidad.alias,
+                };
+                const user: User = {
+                    alias: message.usuario.alias,
+                    university,
+                };
+                return {
+                    id: message.id_mensaje,
+                    message: message.mensaje,
+                    date: message.fecha,
+                    favor: message.favor,
+                    neutral: message.neutro,
+                    aggainst: message.contra,
+                    user,
+                    reactions: message.reacciones,
+                    trackings: message.trackings,
+                    answersNumber: message.num_respuestas,
+                    draft: message.draft,
+                };
+            });
+            dispatch(setMessages(messagesRetrived));
+        } catch {
+            dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
+        }
     }
-    try {
-      const messagesResponse = await spikyClient.getMessages(uid, 1);
-      const { data: messagesData } = messagesResponse;
-      const { mensajes } = messagesData;
-      const messages: Message[] = mensajes.map(message => {
-        const university: University = {
-          id: message.usuario.id_universidad,
-          shortname: message.usuario.universidad.alias,
-        };
-        const user: User = {
-          alias: message.usuario.alias,
-          university,
-        };
-        return {
-          id: message.id_mensaje,
-          message: message.mensaje,
-          date: message.fecha,
-          favor: message.favor,
-          neutral: message.neutro,
-          aggainst: message.contra,
-          user,
-          reactions: message.reacciones,
-          trackings: message.trackings,
-          answersNumber: message.num_respuestas,
-          draft: message.draft,
-        };
-      });
-      dispatch(setMessages(messages));
-    } catch {
-      dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
-    }
-  }
 
-  useEffect(() => {
-    if (token && !universities && !messages) {
-      setSessionInfo();
-    }
-  }, [token, universities, messages, config]);
+    useEffect(() => {
+        if (token && !universities && !messages) {
+            setSessionInfo();
+        }
+    }, [token, universities, messages, config]);
 
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyle: {
-          backgroundColor: 'white',
-        },
-      }}
-    >
-      {!token ? (
-        <>
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
-          <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-          <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="MenuMain" component={MenuMain} />
-          <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
-          <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
-        </>
-      )}
-    </Stack.Navigator>
-  );
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                cardStyle: {
+                    backgroundColor: 'white',
+                },
+            }}
+        >
+            {!token ? (
+                <>
+                    <Stack.Screen name="HomeScreen" component={HomeScreen} />
+                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                    <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
+                    <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
+                    <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+                    <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
+                </>
+            ) : (
+                <>
+                    <Stack.Screen name="MenuMain" component={MenuMain} />
+                    <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
+                    <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
+                </>
+            )}
+        </Stack.Navigator>
+    );
 };
