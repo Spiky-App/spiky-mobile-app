@@ -15,6 +15,7 @@ import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
 import { Message, University, User } from '../types/store/common';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { addToast, StatusType } from '../store/feature/toast/toastSlice';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -50,7 +51,7 @@ export const Navigator = () => {
       }));
       dispatch(setUniversities(universities));
     } catch {
-      console.log('Error uni');
+      dispatch(addToast({ message: 'Error cargando universidades', type: StatusType.WARNING }));
     }
     try {
       const messagesResponse = await spikyClient.getMessages(uid, 1);
@@ -81,7 +82,7 @@ export const Navigator = () => {
       });
       dispatch(setMessages(messages));
     } catch {
-      console.log('Error messages');
+      dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
     }
   }
 

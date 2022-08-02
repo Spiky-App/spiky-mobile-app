@@ -10,6 +10,7 @@ import { RootState } from '../store';
 import { signIn } from '../store/feature/auth/authSlice';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { setUser } from '../store/feature/user/userSlice';
+import Toast from '../components/common/Toast';
 
 const Container = () => {
   const dispatch = useAppDispatch();
@@ -53,7 +54,9 @@ const Container = () => {
 
   return (
     <NavigationContainer>
-      <Navigator />
+      <Toast>
+        <Navigator />
+      </Toast>
     </NavigationContainer>
   );
 };

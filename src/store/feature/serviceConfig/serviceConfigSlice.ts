@@ -26,6 +26,6 @@ export const serviceConfigSlice = createSlice({
 
 export const { updateServiceConfig, restartConfig } = serviceConfigSlice.actions;
 
-export const selectCount = (state: RootState) => state.serviceConfig;
+export const selectServiceConfig = (state: RootState) => state.serviceConfig;
 
 export default serviceConfigSlice.reducer;

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import authSlice from './feature/auth/authSlice';
 import messagesSlice from './feature/messages/messagesSlice';
 import serviceConfigSlice from './feature/serviceConfig/serviceConfigSlice';
+import toastSlice from './feature/toast/toastSlice';
 import uiSlice from './feature/ui/uiSlice';
 import userSlice from './feature/user/userSlice';
 
@@ -12,6 +13,7 @@ export const store = configureStore({
     user: userSlice,
     ui: uiSlice,
     messages: messagesSlice,
+    toast: toastSlice,
   },
 });
 

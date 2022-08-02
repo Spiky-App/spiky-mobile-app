@@ -22,6 +22,6 @@ export const uiSlice = createSlice({
 
 export const { setUniversities } = uiSlice.actions;
 
-export const selectCount = (state: RootState) => state.ui;
+export const selectUi = (state: RootState) => state.ui;
 
 export default uiSlice.reducer;
