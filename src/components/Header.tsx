@@ -11,9 +11,14 @@ import {
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 
 export const Header = () => {
+  const nickname = useAppSelector((state: RootState) => state.user.nickname);
   const navigation = useNavigation<any>();
+  const { top } = useSafeAreaInsets();
   const [profileOption, setProfileOption] = useState(false);
 
   return (
@@ -22,7 +27,7 @@ export const Header = () => {
       resizeMode="cover"
     >
       <SafeAreaView>
-        <View style={stylescom.container}>
+        <View style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}>
           <TouchableOpacity
             onPress={() => navigation.openDrawer()}
             style={{ justifyContent: 'center', alignItems: 'center' }}
@@ -39,7 +44,7 @@ export const Header = () => {
             onPress={() => setProfileOption(true)}
           >
             <FontAwesomeIcon icon={faUser} size={18} color="#ffff" />
-            <Text style={stylescom.text}>@user</Text>
+            <Text style={stylescom.text}>{`@${nickname}`}</Text>
           </TouchableOpacity>
 
           <ModalProfile setProfileOption={setProfileOption} profileOption={profileOption} />

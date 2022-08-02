@@ -11,10 +11,10 @@ export const ArrowBack = () => {
 
   return (
     <TouchableOpacity
-      style={{ ...stylescom.arrow, marginTop: top }}
+      style={{ ...stylescom.arrow, marginTop: top > 0 ? top : 20 }}
       onPress={() => navigation.goBack()}
     >
-      <FontAwesomeIcon icon={faChevronLeft} size={25} color="#959595" />
+      <FontAwesomeIcon icon={faChevronLeft} size={30} color="#959595" />
     </TouchableOpacity>
   );
 };

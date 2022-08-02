@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  Animated,
   FlatList,
   Keyboard,
   StyleSheet,
@@ -17,36 +18,64 @@ import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
+import { EmptyState } from '../components/EmptyState';
+import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
+import { LoadingAnimated } from '../components/LoadingAnimated';
+import { useAnimation } from '../hooks/useAnimation';
 
 export const SearchScreen = () => {
-  const { onChange } = useForm({
+  const loading = false;
+  const moreMsg = true;
+  const { position, movingPosition } = useAnimation();
+  const { form, onChange } = useForm({
     search: '',
   });
+
+  useEffect(() => {
+    movingPosition(-50, 0, 900);
+  }, []);
 
   return (
     <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <>
-          <View style={{ ...styles.input, marginTop: 14, borderRadius: 10, width: '90%' }}>
+          <Animated.View
+            style={{
+              ...styles.input,
+              marginTop: 14,
+              borderRadius: 10,
+              width: '90%',
+              transform: [{ translateY: position }],
+            }}
+          >
             <TextInput
               placeholder="Buscar"
-              onChangeText={value => onChange(value, 'search')}
-              style={{ ...styles.text, fontSize: 15 }}
+              onChangeText={value => onChange({ search: value })}
+              style={styles.textinput}
+              autoCorrect={false}
             />
-            <TouchableOpacity style={stylescom.icon} onPress={() => {}}>
+            <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
           <IdeasHeader title="Explorando" />
 
-          <FlatList
-            style={{ width: '90%' }}
-            data={ideas}
-            renderItem={({ item }) => <Idea idea={item} />}
-            keyExtractor={item => item.id_mensaje + ''}
-            showsVerticalScrollIndicator={false}
-          />
+          {ideas.length !== 0 ? (
+            <FlatList
+              style={{ width: '90%' }}
+              data={ideas}
+              renderItem={({ item }) => <Idea idea={item} />}
+              keyExtractor={item => item.id_mensaje + ''}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
+              ListFooterComponentStyle={{ marginVertical: 12 }}
+            />
+          ) : loading ? (
+            <LoadingAnimated />
+          ) : (
+            <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
+          )}
 
           <FloatButton />
         </>
@@ -54,12 +83,3 @@ export const SearchScreen = () => {
     </BackgroundPaper>
   );
 };
-
-const stylescom = StyleSheet.create({
-  icon: {
-    position: 'absolute',
-    right: 0,
-    top: 10,
-    paddingRight: 15,
-  },
-});

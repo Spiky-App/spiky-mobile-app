@@ -7,21 +7,40 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flex: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   text: {
     fontFamily: 'Helvetica',
     color: '#01192E',
   },
+  textbold: {
+    fontFamily: 'Helvetica-Bold',
+    color: '#01192E',
+    fontWeight: '500',
+  },
   h1: {
     fontSize: 60,
+    fontFamily: 'Helvetica-Bold',
     fontWeight: '500',
   },
   h2: {
     fontSize: 45,
-    fontWeight: '500',
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: '600',
   },
   h3: {
     fontSize: 23,
-    fontWeight: '500',
+    fontFamily: 'Helvetica-Bold',
+    fontWeight: '600',
+  },
+  h5: {
+    fontFamily: 'Helvetica-Bold',
   },
   orange: {
     color: '#FC702A',
@@ -53,19 +72,81 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
   },
+  shadow: {
+    shadowColor: '#4d4d4d',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    backgroundColor: 'white',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 6,
+    borderRadius: 4,
+  },
+  textinput: {
+    fontFamily: 'Helvetica',
+    color: '#000000',
+    fontSize: 14,
+    paddingVertical: 2,
+  },
+  iconinput: {
+    position: 'absolute',
+    flex: 1,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    paddingRight: 15,
+  },
   link: {
+    color: '#5c71ad',
+    fontSize: 11,
+    fontWeight: '300',
+  },
+  linkPad: {
     color: '#5c71ad',
     fontSize: 11,
     fontWeight: '300',
     paddingHorizontal: 15,
     paddingVertical: 8,
   },
-  textGray: {
+  textGrayPad: {
     color: '#707070',
     fontSize: 11,
     fontWeight: '300',
     paddingHorizontal: 15,
     paddingVertical: 8,
     width: 270,
+  },
+  textGray: {
+    color: '#707070',
+    fontSize: 13,
+    fontWeight: '300',
+  },
+  user: {
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  msg: {
+    fontSize: 13,
+    fontWeight: '300',
+    textAlign: 'justify',
+    flexShrink: 1,
+    width: '100%',
+    marginVertical: 8,
+  },
+  numberGray: {
+    fontWeight: '300',
+    fontSize: 12,
+    color: '#bebebe',
+    marginLeft: 3,
+  },
+  backmodal: {
+    flex: 1,
+    backgroundColor: '#6363635c',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
