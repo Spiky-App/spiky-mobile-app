@@ -63,4 +63,5 @@ buck-out/
 /vendor/bundle/
 
 # Local build files
+.env
 .env.local
