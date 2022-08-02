@@ -2,19 +2,13 @@
   "root": true,
   "extends": "@react-native-community",
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
+      "files": ["*.ts", "*.tsx"],
       "rules": {
-        "@typescript-eslint/no-shadow": [
-          "error"
-        ],
+        "react-native/no-inline-styles": "off",
+        "@typescript-eslint/no-shadow": ["error"],
         "no-shadow": "off",
         "single": "off",
         "no-unused-vars": "off",

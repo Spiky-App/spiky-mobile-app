@@ -1,6 +1,6 @@
 export const getTime = (fecha: string) => {
-  
-  const value:any = Date.now() - parseInt(fecha);
+  // parseInt needs radix parameter that means base of the given number
+  const value: any = Date.now() - parseInt(fecha, 10);
   const milisec = parseInt(value, 10); // convert value to number if it's string
   let sec = Math.floor(milisec / 1000);
   let hours = Math.floor(sec / 3600); // get hours

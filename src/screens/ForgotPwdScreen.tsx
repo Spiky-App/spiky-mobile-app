@@ -15,7 +15,8 @@ import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 
 export const ForgotPwdScreen = () => {
-  const { form, onChange } = useForm({
+  // const { form, onChange } = useForm({
+  const { onChange } = useForm({
     email: '',
   });
 
@@ -54,6 +55,7 @@ export const ForgotPwdScreen = () => {
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylescom = StyleSheet.create({
   container: {
     justifyContent: 'center',
