@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { University } from '../../../types/store/common';
+import { University } from '../../../types/store';
 
 interface UIState {
   universities?: University[];
@@ -22,6 +22,6 @@ export const uiSlice = createSlice({
 
 export const { setUniversities } = uiSlice.actions;
 
-export const selectCount = (state: RootState) => state.ui;
+export const selectUi = (state: RootState) => state.ui;
 
 export default uiSlice.reducer;

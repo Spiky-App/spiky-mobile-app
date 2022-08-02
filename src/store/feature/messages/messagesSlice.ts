@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { Message, University } from '../../../types/store/common';
+import { Message, University } from '../../../types/store';
 
 interface MessagesState {
   messages?: Message[];
@@ -22,6 +22,6 @@ export const messagesSlice = createSlice({
 
 export const { setMessages } = messagesSlice.actions;
 
-export const selectCount = (state: RootState) => state.messages;
+export const selectMessages = (state: RootState) => state.messages;
 
 export default messagesSlice.reducer;

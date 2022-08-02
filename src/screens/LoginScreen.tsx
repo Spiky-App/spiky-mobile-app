@@ -21,10 +21,11 @@ import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { signIn } from '../store/feature/auth/authSlice';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { addToast } from '../store/feature/toast/toastSlice';
 import { setUser } from '../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { HelperMessage } from '../types/common';
+import { HelperMessage, StatusType } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
@@ -53,10 +54,17 @@ export const LoginScreen = () => {
         await AsyncStorage.setItem(StorageKeys.TOKEN, token);
         dispatch(signIn(token));
         dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-        dispatch(setUser({ nickname: alias, notificationsNumber: n_notificaciones, university: universidad, id: uid }));
+        dispatch(
+          setUser({
+            nickname: alias,
+            notificationsNumber: n_notificaciones,
+            university: universidad,
+            id: uid,
+          })
+        );
         setFormValid(true);
-      } catch (error) {
-        console.log('Error creando credenciales', error);
+      } catch {
+        dispatch(addToast({ message: 'Error iniciando sesión', type: StatusType.WARNING }));
         setFormValid(false);
       }
     } else {
