@@ -53,7 +53,7 @@ export const Comment = ({ comment }: Props) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ width: 18, marginLeft: 6 }}
-                            onPress={(event) => {
+                            onPress={event => {
                                 setPosition({
                                     top: event.nativeEvent.pageY,
                                     left: event.nativeEvent.pageX,
@@ -69,7 +69,11 @@ export const Comment = ({ comment }: Props) => {
             <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 25 }}>
                 {comment.respuesta}
             </Text>
-            <ModalReactComment setReactComment={setReactComment} reactComment={reactComment} position={position}/>
+            <ModalReactComment
+                setReactComment={setReactComment}
+                reactComment={reactComment}
+                position={position}
+            />
         </>
     );
 };

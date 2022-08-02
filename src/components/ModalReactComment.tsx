@@ -13,7 +13,7 @@ interface Props {
     };
 }
 
-export const ModalReactComment = ({ reactComment, setReactComment, position }:Props) => {
+export const ModalReactComment = ({ reactComment, setReactComment, position }: Props) => {
     const { top, left } = position;
 
     return (
@@ -27,9 +27,8 @@ export const ModalReactComment = ({ reactComment, setReactComment, position }:Pr
                         alignItems: 'center',
                     }}
                 >
-                    
                     <TouchableWithoutFeedback>
-                        <View 
+                        <View
                             style={{
                                 backgroundColor: '#ffff',
                                 paddingVertical: 8,
@@ -46,38 +45,31 @@ export const ModalReactComment = ({ reactComment, setReactComment, position }:Pr
                                 position: 'absolute',
                                 flexDirection: 'row',
                                 width: 150,
-                                top: top -52,
-                                left: left +5,
+                                top: top - 52,
+                                left: left + 5,
                             }}
                         >
-                            <TouchableOpacity
-                                style={ stylescom.button}
-                                onPress={ () => {} }
-                            >
-                                <FontAwesomeIcon icon={faCheck} size={20} color='white'/>
+                            <TouchableOpacity style={stylescom.button} onPress={() => {}}>
+                                <FontAwesomeIcon icon={faCheck} size={20} color="white" />
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={ stylescom.button}
-                                onPress={ () => {} }
-                            >
-                                <FontAwesomeIcon icon={faXmark} size={20} color='white'/>
+                            <TouchableOpacity style={stylescom.button} onPress={() => {}}>
+                                <FontAwesomeIcon icon={faXmark} size={20} color="white" />
                             </TouchableOpacity>
                         </View>
                     </TouchableWithoutFeedback>
-
                 </View>
             </TouchableWithoutFeedback>
         </Modal>
     );
-}
+};
 
 const stylescom = StyleSheet.create({
-    button:{
+    button: {
         ...styles.center,
-        backgroundColor:'#01192E',
+        backgroundColor: '#01192E',
         paddingVertical: 3,
-        borderRadius: 3, 
+        borderRadius: 3,
         marginHorizontal: 5,
         flex: 1,
-    }
+    },
 });
