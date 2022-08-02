@@ -1,3 +1,5 @@
+import { StatusType } from "./common";
+
 export interface University {
     id: number;
     shortname: string;
@@ -20,4 +22,9 @@ export interface Message {
     trackings: [],
     answersNumber: number;
     draft: number;
+}
+
+export interface Toast {
+  message: string;
+  type?: StatusType;
 }

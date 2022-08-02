@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { University } from '../../../types/store/common';
+import { University } from '../../../types/store';
 
 interface UIState {
   universities?: University[];

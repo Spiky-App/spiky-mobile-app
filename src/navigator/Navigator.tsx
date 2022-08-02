@@ -13,9 +13,10 @@ import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { Message, University, User } from '../types/store/common';
+import { Message, University, User } from '../types/store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
-import { addToast, StatusType } from '../store/feature/toast/toastSlice';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { StatusType } from '../types/common';
 
 export type RootStackParamList = {
   HomeScreen: undefined;

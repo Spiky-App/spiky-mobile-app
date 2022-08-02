@@ -1,15 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-
-export enum StatusType {
-  WARNING,
-  DEFAULT
-}
-
-export interface Toast {
-  message: string;
-  type?: StatusType;
-}
+import { Toast } from '../../../types/store';
 
 interface ToastState {
   queue: Toast[];

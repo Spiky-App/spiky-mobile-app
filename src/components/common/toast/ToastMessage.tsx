@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text } from 'react-native';
-import { removeToast, StatusType } from '../../../store/feature/toast/toastSlice';
+import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
+import { StatusType } from '../../../types/common';
 
 interface Props {
   message: string;

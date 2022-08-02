@@ -21,11 +21,11 @@ import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { signIn } from '../store/feature/auth/authSlice';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { addToast, StatusType } from '../store/feature/toast/toastSlice';
+import { addToast } from '../store/feature/toast/toastSlice';
 import { setUser } from '../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { HelperMessage } from '../types/common';
+import { HelperMessage, StatusType } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
