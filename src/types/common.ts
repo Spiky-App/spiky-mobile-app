@@ -1,8 +1,13 @@
 export enum HelperMessageType {
-  WARNING,
+    WARNING,
 }
 
 export interface HelperMessage {
-  message: string;
-  type: HelperMessageType;
+    message: string;
+    type: HelperMessageType;
+}
+
+export enum StatusType {
+    WARNING,
+    DEFAULT,
 }

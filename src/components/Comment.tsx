@@ -8,7 +8,7 @@ import { ComentarioInterface } from '../data/respuestas';
 import IconGray from './svg/IconGray';
 
 interface Props {
-  comment: ComentarioInterface;
+    comment: ComentarioInterface;
 }
 
 export const Comment = ({ comment }: Props) => {
@@ -16,14 +16,18 @@ export const Comment = ({ comment }: Props) => {
   const uid = 1;
   const fecha = getTime(comment.fecha);
 
-  return (
-    <>
-      <View style={stylescom.flex}>
-        <TouchableOpacity onPress={() => {}}>
-          <Text style={{ ...styles.user, ...styles.textbold }}>@{comment.usuario.alias}</Text>
-        </TouchableOpacity>
-        <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-        <Text style={{ ...styles.text, fontSize: 13 }}>{comment.usuario.universidad.alias}</Text>
+    return (
+        <>
+            <View style={stylescom.flex}>
+                <TouchableOpacity onPress={() => {}}>
+                    <Text style={{ ...styles.user, ...styles.textbold }}>
+                        @{comment.usuario.alias}
+                    </Text>
+                </TouchableOpacity>
+                <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
+                <Text style={{ ...styles.text, fontSize: 13 }}>
+                    {comment.usuario.universidad.alias}
+                </Text>
 
         <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>{fecha}</Text>
         {uid !== comment.usuario.id_usuario && (
@@ -46,21 +50,21 @@ export const Comment = ({ comment }: Props) => {
         )}
       </View>
 
-      <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 25 }}>
-        {comment.respuesta}
-      </Text>
-    </>
-  );
+            <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 25 }}>
+                {comment.respuesta}
+            </Text>
+        </>
+    );
 };
 
 const stylescom = StyleSheet.create({
-  flex: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
+    flex: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    container: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+    },
 });

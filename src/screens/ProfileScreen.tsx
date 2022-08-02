@@ -10,31 +10,33 @@ import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 
 export const ProfileScreen = () => {
-  const alias = 'usuario';
-  const loading = false;
-  const moreMsg = true;
+    const alias = 'usuario';
+    const loading = false;
+    const moreMsg = true;
 
-  return (
-    <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title={'@' + alias} />
+    return (
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+            <IdeasHeader title={'@' + alias} />
 
-      {ideas.length !== 0 ? (
-        <FlatList
-          style={{ width: '90%' }}
-          data={ideas}
-          renderItem={({ item }) => <Idea idea={item} />}
-          keyExtractor={item => item.id_mensaje + ''}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>}
-          ListFooterComponentStyle={{ marginVertical: 12 }}
-        />
-      ) : loading ? (
-        <LoadingAnimated />
-      ) : (
-        <EmptyState message="" />
-      )}
+            {ideas.length !== 0 ? (
+                <FlatList
+                    style={{ width: '90%' }}
+                    data={ideas}
+                    renderItem={({ item }) => <Idea idea={item} />}
+                    keyExtractor={item => item.id_mensaje + ''}
+                    showsVerticalScrollIndicator={false}
+                    ListFooterComponent={
+                        loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
+                    }
+                    ListFooterComponentStyle={{ marginVertical: 12 }}
+                />
+            ) : loading ? (
+                <LoadingAnimated />
+            ) : (
+                <EmptyState message="" />
+            )}
 
-      <FloatButton />
-    </BackgroundPaper>
-  );
+            <FloatButton />
+        </BackgroundPaper>
+    );
 };

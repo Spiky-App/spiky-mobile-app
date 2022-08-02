@@ -6,24 +6,24 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 
 export const ArrowBack = () => {
-  const { top } = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+    const { top } = useSafeAreaInsets();
+    const navigation = useNavigation<any>();
 
-  return (
-    <TouchableOpacity
-      style={{ ...stylescom.arrow, marginTop: top > 0 ? top : 20 }}
-      onPress={() => navigation.goBack()}
-    >
-      <FontAwesomeIcon icon={faChevronLeft} size={30} color="#959595" />
-    </TouchableOpacity>
-  );
+    return (
+        <TouchableOpacity
+            style={{ ...stylescom.arrow, marginTop: top > 0 ? top : 20 }}
+            onPress={() => navigation.goBack()}
+        >
+            <FontAwesomeIcon icon={faChevronLeft} size={30} color="#959595" />
+        </TouchableOpacity>
+    );
 };
 
 const stylescom = StyleSheet.create({
-  arrow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    paddingLeft: 15,
-  },
+    arrow: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        paddingLeft: 15,
+    },
 });
