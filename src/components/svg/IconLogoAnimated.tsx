@@ -1,20 +1,29 @@
-import * as React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
-import Svg, { SvgProps, G, Path, Rect, Circle } from 'react-native-svg';
-import { useAnimation } from '../../hooks/useAnimation';
+import { SvgProps, G, Path, Rect, Circle, Svg } from 'react-native-svg';
 
 const IconLogoAnimated = (props: SvgProps) => {
     let AnimatedRect = Animated.createAnimatedComponent(Rect);
     let AnimatedPath = Animated.createAnimatedComponent(Path);
-    const intervalRef = React.useRef(0);
-    const { opacity, fadeIn, fadeOut } = useAnimation();
+    const opacity = useRef(new Animated.Value(0)).current;
 
-    React.useEffect(() => {
-        intervalRef.current = setInterval(
-            () => fadeIn(300, () => fadeOut(300, () => {}, 500)),
-            1300
-        );
-        return () => clearInterval(intervalRef.current);
+    useEffect(() => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(500),
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+            ]),
+            { iterations: 1000 }
+        ).start();
     }, []);
 
     return (

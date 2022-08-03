@@ -15,6 +15,7 @@ import Toast from '../components/common/Toast';
 const Container = () => {
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    console.log(config);
     const spikyService = new SpikyService(config);
     const [isLoading, setLoading] = useState(false);
 
