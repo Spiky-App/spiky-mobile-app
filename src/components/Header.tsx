@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
+import { styles } from '../themes/appTheme';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -25,6 +26,8 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
+
+    const n_notificaciones = 11;
 
     return (
         <ImageBackground
@@ -47,6 +50,15 @@ export const Header = () => {
                     >
                         <View style={{ ...stylescom.flexConte, marginLeft: 20 }}>
                             <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
+                            {
+                                n_notificaciones > 0 && (
+                                    <View style={stylescom.notif}>
+                                        <Text style={stylescom.textnotif}>
+                                            {n_notificaciones}
+                                        </Text>
+                                    </View>
+                                )
+                            }
                         </View>
                     </TouchableOpacity>
 
@@ -103,4 +115,20 @@ const stylescom = StyleSheet.create({
         justifyContent: 'center',
         height: 45,
     },
+    notif:{
+        ...styles.center,
+        backgroundColor: '#FC702A',
+        height: 18,
+        width: 18,
+        borderRadius: 100,
+        position: 'absolute',
+        top: 6,
+        right: -6,
+    },
+    textnotif:{
+        ...styles.text, 
+        ...styles.h3,
+        color:'#ffff', 
+        fontSize:10,
+    }
 });

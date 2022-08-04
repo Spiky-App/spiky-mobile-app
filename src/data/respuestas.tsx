@@ -115,11 +115,7 @@ export const comentarios: ComentarioInterface[] = [
                 alias: 'UP',
             },
         },
-        resp_reacciones: [
-            {
-                tipo: 1,
-            },
-        ],
+        resp_reacciones: [],
     },
     {
         id_respuesta: 286,
@@ -157,10 +153,6 @@ export const comentarios: ComentarioInterface[] = [
                 alias: 'UP',
             },
         },
-        resp_reacciones: [
-            {
-                tipo: 1,
-            },
-        ],
+        resp_reacciones: [],
     },
 ];
