@@ -50,15 +50,11 @@ export const Header = () => {
                     >
                         <View style={{ ...stylescom.flexConte, marginLeft: 20 }}>
                             <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
-                            {
-                                n_notificaciones > 0 && (
-                                    <View style={stylescom.notif}>
-                                        <Text style={stylescom.textnotif}>
-                                            {n_notificaciones}
-                                        </Text>
-                                    </View>
-                                )
-                            }
+                            {n_notificaciones > 0 && (
+                                <View style={stylescom.notif}>
+                                    <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
+                                </View>
+                            )}
                         </View>
                     </TouchableOpacity>
 
@@ -115,7 +111,7 @@ const stylescom = StyleSheet.create({
         justifyContent: 'center',
         height: 45,
     },
-    notif:{
+    notif: {
         ...styles.center,
         backgroundColor: '#FC702A',
         height: 18,
@@ -125,10 +121,10 @@ const stylescom = StyleSheet.create({
         top: 6,
         right: -6,
     },
-    textnotif:{
-        ...styles.text, 
+    textnotif: {
+        ...styles.text,
         ...styles.h3,
-        color:'#ffff', 
-        fontSize:10,
-    }
+        color: '#ffff',
+        fontSize: 10,
+    },
 });
