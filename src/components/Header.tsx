@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -8,6 +8,7 @@ import {
     ImageBackground,
     SafeAreaView,
     TouchableOpacity,
+    ViewComponent,
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
@@ -21,6 +22,10 @@ export const Header = () => {
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
+    const [position, setPosition] = useState({
+        top: 0,
+        right: 0,
+    });
 
     return (
         <ImageBackground
@@ -28,7 +33,15 @@ export const Header = () => {
             resizeMode="cover"
         >
             <SafeAreaView>
-                <View style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}>
+                <View
+                    style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}
+                    onLayout={({ nativeEvent }) => {
+                        setPosition({
+                            top: nativeEvent.layout.y + 10,
+                            right: nativeEvent.layout.x + 120,
+                        });
+                    }}
+                >
                     <TouchableOpacity
                         onPress={() => navigation.openDrawer()}
                         style={{ justifyContent: 'center', alignItems: 'center' }}
@@ -55,6 +68,7 @@ export const Header = () => {
                     <ModalProfile
                         setProfileOption={setProfileOption}
                         profileOption={profileOption}
+                        position={position}
                     />
                 </View>
             </SafeAreaView>

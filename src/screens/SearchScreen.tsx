@@ -30,7 +30,7 @@ export const SearchScreen = () => {
     });
 
     useEffect(() => {
-        movingPosition(-50, 0, 900);
+        movingPosition(-50, 0, 700);
     }, []);
 
     return (
