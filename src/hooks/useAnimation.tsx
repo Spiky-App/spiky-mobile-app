@@ -15,10 +15,14 @@ export const useAnimation = () => {
         }).start(callback);
     };
 
-    const fadeOut = (callback: () => void = () => {}, delay: number = 0) => {
+    const fadeOut = (
+        duration: number = 300,
+        callback: () => void = () => {},
+        delay: number = 0
+    ) => {
         Animated.timing(opacity, {
             toValue: 0,
-            duration: 300,
+            duration,
             delay,
             useNativeDriver: true,
         }).start(callback);

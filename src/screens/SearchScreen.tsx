@@ -18,7 +18,7 @@ import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
-import { LoadingAnimated } from '../components/LoadingAnimated';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAnimation } from '../hooks/useAnimation';
 
 export const SearchScreen = () => {
@@ -30,7 +30,7 @@ export const SearchScreen = () => {
     });
 
     useEffect(() => {
-        movingPosition(-50, 0, 900);
+        movingPosition(-50, 0, 700);
     }, []);
 
     return (

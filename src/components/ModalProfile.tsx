@@ -21,11 +21,16 @@ import { StorageKeys } from '../types/storage';
 interface Props {
     setProfileOption: (value: boolean) => void;
     profileOption: boolean;
+    position: {
+        top: number;
+        right: number;
+    };
 }
 
-export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
+export const ModalProfile = ({ setProfileOption, profileOption, position }: Props) => {
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
+    const { top, right } = position;
 
     async function onPressLogout() {
         await AsyncStorage.removeItem(StorageKeys.TOKEN);
@@ -45,39 +50,44 @@ export const ModalProfile = ({ setProfileOption, profileOption }: Props) => {
                         alignItems: 'center',
                     }}
                 >
-                    <View
-                        style={{
-                            backgroundColor: '#01192E',
-                            paddingVertical: 3,
-                            shadowOffset: {
-                                width: 0,
-                                height: 10,
-                            },
-                            shadowOpacity: 0.25,
-                            elevation: 10,
-                            borderRadius: 5,
-                        }}
-                    >
-                        <TouchableOpacity
-                            style={stylescom.optionModal}
-                            onPress={() => {
-                                setProfileOption(false);
-                                navigation.navigate('ConfigurationScreen');
+                    <TouchableWithoutFeedback>
+                        <View
+                            style={{
+                                backgroundColor: '#01192E',
+                                paddingVertical: 3,
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 10,
+                                },
+                                shadowOpacity: 0.25,
+                                elevation: 10,
+                                borderRadius: 5,
+                                position: 'absolute',
+                                top: top + 40,
+                                right: right - 120,
                             }}
                         >
-                            <FontAwesomeIcon icon={faGear} color="white" />
-                            <Text style={{ ...styles.text, ...stylescom.textModal }}>
-                                Configuraciones
-                            </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={stylescom.optionModal}
+                                onPress={() => {
+                                    setProfileOption(false);
+                                    navigation.navigate('ConfigurationScreen');
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faGear} color="white" />
+                                <Text style={{ ...styles.text, ...stylescom.textModal }}>
+                                    Configuraciones
+                                </Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity style={stylescom.optionModal} onPress={onPressLogout}>
-                            <FontAwesomeIcon icon={faRightFromBracket} color="white" />
-                            <Text style={{ ...styles.text, ...stylescom.textModal }}>
-                                Cerrar sesión
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity style={stylescom.optionModal} onPress={onPressLogout}>
+                                <FontAwesomeIcon icon={faRightFromBracket} color="white" />
+                                <Text style={{ ...styles.text, ...stylescom.textModal }}>
+                                    Cerrar sesión
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
             </TouchableWithoutFeedback>
         </Modal>
@@ -94,7 +104,6 @@ const stylescom = StyleSheet.create({
     textModal: {
         color: '#ffff',
         fontSize: 14,
-        fontWeight: '500',
         marginLeft: 10,
     },
 });

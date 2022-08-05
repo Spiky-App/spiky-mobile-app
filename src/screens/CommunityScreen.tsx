@@ -6,7 +6,7 @@ import { EmptyState } from '../components/EmptyState';
 import { FloatButton } from '../components/FloatButton';
 import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { LoadingAnimated } from '../components/LoadingAnimated';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { ideas } from '../data/ideas';
 
 export const CommunityScreen = () => {

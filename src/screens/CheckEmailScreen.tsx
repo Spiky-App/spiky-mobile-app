@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Text,
     TouchableHighlight,
@@ -7,6 +7,7 @@ import {
     Keyboard,
     TouchableWithoutFeedback,
     Button,
+    Animated,
 } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -14,6 +15,8 @@ import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 import { BigTitle } from '../components/BigTitle';
 import { useNavigation } from '@react-navigation/native';
+import { useAnimation } from '../hooks/useAnimation';
+import LogoSvg from '../components/svg/LogoSvg';
 
 export const CheckEmailScreen = () => {
     //Borrar este hook
@@ -56,7 +59,32 @@ export const CheckEmailScreen = () => {
                         onPress={() => navigation.navigate('RegisterScreen')}
                     />
                 </View>
+                <LogoFadeIn />
             </TouchableWithoutFeedback>
         </BackgroundPaper>
+    );
+};
+
+const LogoFadeIn = () => {
+    const { opacity, fadeIn } = useAnimation();
+
+    useEffect(() => {
+        fadeIn(800, () => {}, 1000);
+    }, []);
+
+    return (
+        <View
+            style={{
+                position: 'absolute',
+                bottom: 40,
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+            }}
+        >
+            <Animated.View style={{ width: 115, opacity }}>
+                <LogoSvg />
+            </Animated.View>
+        </View>
     );
 };
