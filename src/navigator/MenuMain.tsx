@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     createDrawerNavigator,
     DrawerContentComponentProps,
     DrawerContentScrollView,
+    useDrawerStatus,
 } from '@react-navigation/drawer';
 import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import {
@@ -13,7 +14,9 @@ import {
     faThumbtack,
     faUsers,
     faMagnifyingGlass,
-    faCircleNodes,
+    // faCircleNodes,
+    faHashtag,
+    faUser,
 } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
@@ -28,6 +31,7 @@ import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
+import { styles } from '../themes/appTheme';
 
 const Drawer = createDrawerNavigator();
 
@@ -52,10 +56,20 @@ const menuInfo = [
         screen: 'SearchScreen',
         icon: faMagnifyingGlass,
     },
+    // {
+    //     name: 'Conexiones',
+    //     screen: 'ConnectionScreen',
+    //     icon: faCircleNodes,
+    // },
     {
-        name: 'Conexiones',
-        screen: 'ConnectionScreen',
-        icon: faCircleNodes,
+        name: 'Hashtag',
+        screen: 'HashTagScreen',
+        icon: faHashtag,
+    },
+    {
+        name: 'Perfil',
+        screen: 'ProfileScreen',
+        icon: faUser,
     },
 ];
 
@@ -90,6 +104,10 @@ export const MenuMain = () => {
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
+    const [screenActive, setScreenActive] = useState('');
+    const isDrawerOpen = useDrawerStatus() === 'open';
+
+    const n_notificaciones = 11;
 
     const changeScreen = (screen: string) => {
         navigation.dispatch(
@@ -100,6 +118,16 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
         );
     };
 
+    useEffect(() => {
+        if (isDrawerOpen) {
+            const routes = navigation.getState().routes;
+            const lengthHistory = navigation.getState().history?.length || 0;
+            const lastScreen: any = navigation.getState().history?.[lengthHistory - 2];
+            const screenActiveObj = routes.filter(route => route.key === lastScreen?.key);
+            setScreenActive(screenActiveObj[0]?.name || '');
+        }
+    }, [isDrawerOpen]);
+
     return (
         <DrawerContentScrollView>
             <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
@@ -107,17 +135,45 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     <LogoAndIconSvg />
                 </View>
 
-                {menuInfo.map(item => (
-                    <View key={item.screen}>
-                        <TouchableOpacity
-                            style={stylescom.buttonmenu}
-                            onPress={() => changeScreen(item.screen)}
-                        >
-                            <FontAwesomeIcon icon={item.icon} size={20} color={'#01192E'} />
-                            <Text style={stylescom.textmenu}>{item.name}</Text>
-                        </TouchableOpacity>
-                    </View>
-                ))}
+                {menuInfo.map(item => {
+                    if (
+                        (item.screen !== 'HashTagScreen' && item.screen !== 'ProfileScreen') ||
+                        screenActive === item.screen
+                    ) {
+                        return (
+                            <View key={item.screen}>
+                                <TouchableOpacity
+                                    style={
+                                        screenActive === item.screen
+                                            ? stylescom.buttonmenuActive
+                                            : stylescom.buttonmenu
+                                    }
+                                    onPress={() => changeScreen(item.screen)}
+                                >
+                                    {screenActive === item.screen && (
+                                        <View style={stylescom.orangeLine} />
+                                    )}
+                                    <FontAwesomeIcon
+                                        icon={item.icon}
+                                        size={20}
+                                        color={screenActive === item.screen ? 'white' : '#01192E'}
+                                    />
+                                    <Text
+                                        style={
+                                            screenActive === item.screen
+                                                ? stylescom.textmenuActive
+                                                : stylescom.textmenu
+                                        }
+                                    >
+                                        {item.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        );
+                    } else {
+                        return;
+                    }
+                })}
 
                 <TouchableOpacity
                     style={stylescom.buttonmenu}
@@ -128,6 +184,11 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 >
                     <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />
                     <Text style={stylescom.textmenu}>Notificaciones</Text>
+                    {n_notificaciones > 0 && (
+                        <View style={stylescom.notif}>
+                            <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
+                        </View>
+                    )}
                 </TouchableOpacity>
 
                 <ModalNotification modalNotif={modalNotif} setModalNotif={setModalNotif} />
@@ -169,19 +230,20 @@ const stylescom = StyleSheet.create({
         paddingLeft: 10,
     },
     buttonmenu: {
-        marginTop: 25,
+        alignItems: 'center',
+        marginTop: 20,
         flexDirection: 'row',
-        flexWrap: 'wrap',
         paddingVertical: 10,
         borderRadius: 5,
+        paddingLeft: 10,
     },
     buttonmenuActive: {
-        marginTop: 40,
+        marginTop: 20,
         flexDirection: 'row',
-        flexWrap: 'wrap',
         backgroundColor: '#01192E',
         paddingVertical: 10,
         borderRadius: 5,
+        paddingLeft: 10,
     },
     textmenuActive: {
         fontFamily: 'Helvetica',
@@ -189,5 +251,28 @@ const stylescom = StyleSheet.create({
         fontSize: 15,
         fontWeight: '400',
         paddingLeft: 10,
+    },
+    orangeLine: {
+        width: 9,
+        borderRadius: 3,
+        backgroundColor: '#FC702A',
+        position: 'absolute',
+        left: -13,
+        top: 0,
+        bottom: 0,
+    },
+    notif: {
+        ...styles.center,
+        backgroundColor: '#FC702A',
+        height: 18,
+        width: 18,
+        borderRadius: 100,
+        marginLeft: 15,
+    },
+    textnotif: {
+        ...styles.text,
+        ...styles.h3,
+        color: '#ffff',
+        fontSize: 10,
     },
 });

@@ -59,7 +59,9 @@ export const Header = () => {
                     </TouchableOpacity>
 
                     <View style={{ width: 75, marginLeft: 15 }}>
-                        <LogoWhiteSvg />
+                        <TouchableOpacity onPress={() => navigation.navigate('CommunityScreen')}>
+                            <LogoWhiteSvg />
+                        </TouchableOpacity>
                     </View>
 
                     <View style={{ flex: 1 }} />

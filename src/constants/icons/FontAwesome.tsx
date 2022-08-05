@@ -24,6 +24,7 @@ import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons/faArrowLeftLong';
 import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons/faHashtag';
 
 export {
     faUsers,
@@ -52,4 +53,5 @@ export {
     faArrowLeftLong,
     faBan,
     faTrashCan,
+    faHashtag,
 };
