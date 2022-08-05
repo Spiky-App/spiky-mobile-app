@@ -24,7 +24,7 @@ export const ManifestPart1Screen = () => {
     const navigation = useNavigation<any>();
 
     const nextManifiesto = () => {
-        fadeOut(1200, () => setState(state + 1));
+        fadeOut(1000, () => setState(state + 1));
     };
 
     useEffect(() => {
