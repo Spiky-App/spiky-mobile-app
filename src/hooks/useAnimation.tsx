@@ -28,6 +28,28 @@ export const useAnimation = () => {
         }).start(callback);
     };
 
+    const fadeInFadeOutLoop = (
+        duration: number = 300,
+        callback: () => void = () => {},
+        delay: number = 0
+    ) => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(delay),
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start(callback);
+    };
+
     const movingPositionAndScale = (
         initPosition: number,
         endPosition: number,
@@ -53,25 +75,29 @@ export const useAnimation = () => {
         ]).start(callback);
     };
 
-    const movingPositionAndBack = (
+    const movingPositionAndBackLoop = (
         initPosition: number,
         endPosition: number,
         duration: number = 300,
+        delay: number = 300,
         callback: () => void = () => {}
     ) => {
         position.setValue(initPosition);
-
-        Animated.timing(position, {
-            toValue: endPosition,
-            duration,
-            useNativeDriver: true,
-        }).start(() => {
-            Animated.timing(position, {
-                toValue: 0,
-                duration,
-                useNativeDriver: true,
-            }).start(callback);
-        });
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(position, {
+                    toValue: endPosition,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(position, {
+                    toValue: 0,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(delay),
+            ])
+        ).start(callback);
     };
 
     const movingPosition = (
@@ -95,8 +121,9 @@ export const useAnimation = () => {
         scale,
         fadeIn,
         fadeOut,
+        fadeInFadeOutLoop,
         movingPositionAndScale,
-        movingPositionAndBack,
+        movingPositionAndBackLoop,
         movingPosition,
     };
 };

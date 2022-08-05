@@ -14,12 +14,12 @@ const SplashScreen = () => {
                         style={{
                             ...styles.text,
                             ...styles.h3,
-                            fontSize: 20,
+                            fontSize: 18,
                             position: 'absolute',
                             top: -30,
                         }}
                     >
-                        Cargando...
+                        Cargando
                     </Text>
                 </View>
             </View>

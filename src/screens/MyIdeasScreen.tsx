@@ -11,7 +11,7 @@ import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 
 export const MyIdeasScreen = () => {
-    const loading = false;
+    const loading = true;
     const moreMsg = true;
 
     return (
