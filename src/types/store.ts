@@ -6,6 +6,7 @@ export interface University {
 }
 
 export interface User {
+    id: number;
     alias: string;
     university: University;
 }
@@ -16,10 +17,10 @@ export interface Message {
     date: string;
     favor: number;
     neutral: number;
-    aggainst: number;
+    against: number;
     user: User;
-    reactions: [];
-    trackings: [];
+    reaction_type?: number;
+    id_tracking?: number;
     answersNumber: number;
     draft: number;
 }

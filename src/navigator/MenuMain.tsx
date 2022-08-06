@@ -32,6 +32,8 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+import { useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
 
 const Drawer = createDrawerNavigator();
 
@@ -106,8 +108,7 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
-
-    const n_notificaciones = 11;
+    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
 
     const changeScreen = (screen: string) => {
         navigation.dispatch(

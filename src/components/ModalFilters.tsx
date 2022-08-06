@@ -8,7 +8,8 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
-import { universidades } from '../data/universidades';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { CheckBox } from './CheckBox';
 
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
+    const universities = useAppSelector((state: RootState) => state.ui.universities);
     const [formValues, setFormValues] = useState<any>({
         [0]: false,
     });
@@ -27,14 +29,12 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
     };
 
     useEffect(() => {
-        if (universidades.length !== 0) {
+        if (universities?.length !== 0) {
             let objUnivers = {};
-            universidades.forEach(
-                item => (objUnivers = { ...objUnivers, [item.id_universidad]: false })
-            );
+            universities?.forEach(item => (objUnivers = { ...objUnivers, [item.id]: false }));
             setFormValues({ ...formValues, ...objUnivers });
         }
-    }, [universidades]);
+    }, [universities]);
 
     return (
         <Modal animationType="fade" visible={modalFilter} transparent={true}>
@@ -77,14 +77,14 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                                 </TouchableOpacity>
 
                                 <FlatList
-                                    data={universidades}
+                                    data={universities}
                                     renderItem={({ item }) => (
                                         <TouchableOpacity
                                             style={{ ...styles.flex, marginBottom: 10 }}
-                                            onPress={() => handleChange(item.id_universidad)}
-                                            key={item.id_universidad}
+                                            onPress={() => handleChange(item.id)}
+                                            key={item.id}
                                         >
-                                            <CheckBox checked={formValues[item.id_universidad]} />
+                                            <CheckBox checked={formValues[item.id]} />
                                             <Text
                                                 style={{
                                                     ...styles.text,
@@ -92,11 +92,11 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                                                     marginLeft: 6,
                                                 }}
                                             >
-                                                {item.alias}
+                                                {item.shortname}
                                             </Text>
                                         </TouchableOpacity>
                                     )}
-                                    keyExtractor={item => item.id_universidad + ''}
+                                    keyExtractor={item => item.id + ''}
                                     showsVerticalScrollIndicator={false}
                                 />
                             </View>

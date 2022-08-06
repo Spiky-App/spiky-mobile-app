@@ -59,7 +59,7 @@ export const Navigator = () => {
             );
         }
         try {
-            const messagesResponse = await spikyClient.getMessages(uid, 1);
+            const messagesResponse = await spikyClient.getMessages(uid, 11);
             const { data: messagesData } = messagesResponse;
             const { mensajes } = messagesData;
             const messagesRetrived: Message[] = mensajes.map(message => {
@@ -68,6 +68,7 @@ export const Navigator = () => {
                     shortname: message.usuario.universidad.alias,
                 };
                 const user: User = {
+                    id: message.id_usuario,
                     alias: message.usuario.alias,
                     university,
                 };
@@ -77,10 +78,10 @@ export const Navigator = () => {
                     date: message.fecha,
                     favor: message.favor,
                     neutral: message.neutro,
-                    aggainst: message.contra,
+                    against: message.contra,
                     user,
-                    reactions: message.reacciones,
-                    trackings: message.trackings,
+                    reaction_type: message.reacciones[0]?.tipo ? message.reacciones[0].tipo : 0,
+                    id_tracking: message.trackings[0]?.id_tracking,
                     answersNumber: message.num_respuestas,
                     draft: message.draft,
                 };

@@ -27,7 +27,7 @@ export const Header = () => {
         right: 0,
     });
 
-    const n_notificaciones = 11;
+    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
 
     return (
         <ImageBackground

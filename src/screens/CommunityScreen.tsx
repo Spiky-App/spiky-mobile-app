@@ -7,23 +7,23 @@ import { FloatButton } from '../components/FloatButton';
 import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
-import { ideas } from '../data/ideas';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 
 export const CommunityScreen = () => {
-    /* const { mensajes } = useSelector((state: State) => state.message); */
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
     const loading = false;
     const moreMsg = true;
-
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Comunidad" />
 
-            {ideas ? (
+            {messages ? (
                 <FlatList
                     style={{ width: '90%' }}
-                    data={ideas}
+                    data={messages}
                     renderItem={({ item }) => <Idea idea={item} />}
-                    keyExtractor={item => item.id_mensaje + ''}
+                    keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
                     ListFooterComponent={
                         loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>

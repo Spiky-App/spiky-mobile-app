@@ -26,10 +26,10 @@ class SpikyService {
     // TODO: Implementar el uid y el id del ultimo mensaje
     getMessages(uid: number, lastMessageId: number) {
         const params = {
-            uid,
+            uid: uid,
             id_ultimoMensaje: lastMessageId,
         };
-        return this.instance.get<MessagesResponse>('mensajes?uid=1&id_ultimoMensaje=11', {
+        return this.instance.get<MessagesResponse>('mensajes', {
             params,
         });
     }

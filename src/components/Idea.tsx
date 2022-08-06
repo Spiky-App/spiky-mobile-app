@@ -4,29 +4,27 @@ import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 're
 import { useNavigation } from '@react-navigation/native';
 import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
-import { IdeaInterface } from '../data/ideas';
 import { getTime } from '../helpers/getTime';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
+import { Message } from '../types/store';
+import { useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
 
 interface Props {
-    idea: IdeaInterface;
+    idea: Message;
 }
 
 export const Idea = ({ idea }: Props) => {
-    const uid = 1;
+    const uid = useAppSelector((state: RootState) => state.user.id);
     const navigation = useNavigation<any>();
     const [ideaOptions, setIdeaOptions] = useState(false);
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
     });
-
-    if (idea.id_usuario === uid && idea.reacciones.length === 0) {
-        idea.reacciones = [{}];
-    }
-
-    const fecha = getTime(idea.fecha);
+    const isOwner = idea.user.id === uid;
+    const fecha = getTime(idea.date);
 
     useEffect(() => {
         if (position.top !== 0) {
@@ -34,10 +32,16 @@ export const Idea = ({ idea }: Props) => {
         }
     }, [position]);
 
+    const handleClick = () => {
+        console.log('click on the following idea');
+        console.log(idea);
+        navigation.navigate('OpenedIdeaScreen');
+    };
+
     return (
         <View style={stylescom.wrap}>
             <View style={stylescom.subwrap}>
-                {uid === idea.id_usuario && (
+                {isOwner && (
                     <View style={stylescom.corner}>
                         <View style={{ transform: [{ rotate: '-45deg' }] }}>
                             <FontAwesomeIcon icon={faLightbulb} color="white" size={13} />
@@ -45,7 +49,7 @@ export const Idea = ({ idea }: Props) => {
                     </View>
                 )}
 
-                {idea.trackings.length > 0 && (
+                {idea.id_tracking && (
                     <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
                         <View>
                             <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
@@ -56,16 +60,16 @@ export const Idea = ({ idea }: Props) => {
                 <View style={styles.flex}>
                     <TouchableOpacity onPress={() => {}}>
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
-                            @{idea.usuario.alias}
+                            @{idea.user.alias}
                         </Text>
                     </TouchableOpacity>
                     <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
                     <Text style={{ ...styles.text, fontSize: 13 }}>
-                        {idea.usuario.universidad.alias}
+                        {idea.user.university.shortname}
                     </Text>
                 </View>
 
-                <Text style={{ ...styles.text, ...stylescom.msg }}>{idea.mensaje}</Text>
+                <Text style={{ ...styles.text, ...stylescom.msg }}>{idea.message}</Text>
 
                 <View
                     style={{
@@ -74,7 +78,7 @@ export const Idea = ({ idea }: Props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    {idea.reacciones.length === 0 ? (
+                    {idea.reaction_type == 0 && !isOwner ? (
                         <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
                             <TouchableHighlight
                                 style={stylescom.reactButton}
@@ -106,22 +110,18 @@ export const Idea = ({ idea }: Props) => {
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon
                                         icon={faXmark}
-                                        color={
-                                            idea.reacciones[0].tipo === 2 ? '#6A000E' : '#bebebe'
-                                        }
+                                        color={idea.reaction_type === 2 ? '#6A000E' : '#bebebe'}
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.contra === 0 ? '' : idea.contra}
+                                        {idea.against === 0 ? '' : idea.against}
                                     </Text>
                                 </View>
 
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon
                                         icon={faCheck}
-                                        color={
-                                            idea.reacciones[0].tipo === 1 ? '#0B5F00' : '#bebebe'
-                                        }
+                                        color={idea.reaction_type === 1 ? '#0B5F00' : '#bebebe'}
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
@@ -129,13 +129,10 @@ export const Idea = ({ idea }: Props) => {
                                     </Text>
                                 </View>
 
-                                <TouchableOpacity
-                                    style={stylescom.reaction}
-                                    onPress={() => navigation.navigate('OpenedIdeaScreen')}
-                                >
+                                <TouchableOpacity style={stylescom.reaction} onPress={handleClick}>
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.num_respuestas}
+                                        {idea.answersNumber === 0 ? '' : idea.answersNumber}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -160,7 +157,7 @@ export const Idea = ({ idea }: Props) => {
                                     setIdeaOptions={setIdeaOptions}
                                     ideaOptions={ideaOptions}
                                     position={position}
-                                    myIdea={uid === idea.id_usuario}
+                                    myIdea={isOwner}
                                 />
                             </View>
                         </>
