@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        paddingHorizontal: 20,
-        paddingBottom: 20,
+        paddingHorizontal: 40,
+        paddingBottom: 30,
     },
 });
