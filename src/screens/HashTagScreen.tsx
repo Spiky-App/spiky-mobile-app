@@ -11,9 +11,12 @@ import { useAppDispatch } from '../store/hooks';
 import { useMensajes } from '../hooks/useMensajes';
 import { setFilter } from '../store/feature/messages/messagesSlice';
 
-export const HashTagScreen = () => {
+interface Props {
+    hashtag: string;
+}
+export const HashTagScreen = ({ hashtag }: Props) => {
     // TODO implementar el filtro por hashtag
-    const hashtag = 'hola';
+    //const hashtag = 'hola';
     const dispatch = useAppDispatch();
 
     useEffect(function () {

@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { Message, University, User } from '../types/store';
 
-export const useMensajes = () => {
+export const useMensajes = (alias? : string) => {
     const dispatch = useAppDispatch();
     const { messages, filter, loading, moreMsg } = useAppSelector(
         (state: RootState) => state.messages
@@ -19,7 +19,8 @@ export const useMensajes = () => {
         const fetchMessages = async () => {
             try {
                 const spikyClient = new SpikyService(config);
-                const messagesResponse = await spikyClient.getMessages(uid, 11, filter);
+                const messagesResponse = await spikyClient.getMessages(uid, 11, filter, alias);
+                console.log(messagesResponse.request.responseURL);
                 const { data: messagesData } = messagesResponse;
                 const { mensajes } = messagesData;
                 const messagesRetrived: Message[] = mensajes.map(message => {
@@ -40,7 +41,7 @@ export const useMensajes = () => {
                         neutral: message.neutro,
                         against: message.contra,
                         user,
-                        reaction_type: message.reacciones[0]?.tipo ? message.reacciones[0].tipo : 0,
+                        reaction_type: message.reacciones[0]?.tipo || 0,
                         id_tracking: message.trackings[0]?.id_tracking,
                         answersNumber: message.num_respuestas,
                         draft: message.draft,
@@ -54,7 +55,7 @@ export const useMensajes = () => {
             }
         };
         fetchMessages();
-    });
+    }, [dispatch, config, uid, filter, alias]);
     return {
         filter,
         messages,

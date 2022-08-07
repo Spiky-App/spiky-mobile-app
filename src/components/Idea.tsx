@@ -54,7 +54,9 @@ export const Idea = ({ idea }: Props) => {
                 <View style={styles.flex}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('ProfileScreen');
+                            navigation.navigate('ProfileScreen', {
+                                alias: idea.user.alias,
+                              });
                         }}
                     >
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>

@@ -23,10 +23,11 @@ class SpikyService {
         return this.instance.get<UniversityResponse>('univer');
     }
 
-    getMessages(uid: number, lastMessageId: number, filter: string) {
+    getMessages(uid: number, lastMessageId: number, filter: string, alias?: string) {
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
+            alias
         };
         return this.instance.get<MessagesResponse>(`mensajes${filter}`, {
             params,
