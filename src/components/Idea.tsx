@@ -32,12 +32,6 @@ export const Idea = ({ idea }: Props) => {
         }
     }, [position]);
 
-    const handleClick = () => {
-        console.log('click on the following idea');
-        console.log(idea);
-        navigation.navigate('OpenedIdeaScreen');
-    };
-
     return (
         <View style={stylescom.wrap}>
             <View style={stylescom.subwrap}>
@@ -58,7 +52,11 @@ export const Idea = ({ idea }: Props) => {
                 )}
 
                 <View style={styles.flex}>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('ProfileScreen');
+                        }}
+                    >
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
                             @{idea.user.alias}
                         </Text>
@@ -129,7 +127,12 @@ export const Idea = ({ idea }: Props) => {
                                     </Text>
                                 </View>
 
-                                <TouchableOpacity style={stylescom.reaction} onPress={handleClick}>
+                                <TouchableOpacity
+                                    style={stylescom.reaction}
+                                    onPress={() => {
+                                        navigation.navigate('OpenedIdeaScreen');
+                                    }}
+                                >
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
                                         {idea.answersNumber === 0 ? '' : idea.answersNumber}

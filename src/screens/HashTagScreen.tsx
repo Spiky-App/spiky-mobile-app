@@ -1,29 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FlatList } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { ideas } from '../data/ideas';
 import { Idea } from '../components/Idea';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
+import { useAppDispatch } from '../store/hooks';
+import { useMensajes } from '../hooks/useMensajes';
+import { setFilter } from '../store/feature/messages/messagesSlice';
 
 export const HashTagScreen = () => {
-    const hashtag = 'usuario';
-    const loading = false;
-    const moreMsg = true;
+    // TODO implementar el filtro por hashtag
+    const hashtag = 'hola';
+    const dispatch = useAppDispatch();
+
+    useEffect(function () {
+        dispatch(setFilter('/hashtag/' + hashtag));
+        console.log('on /hashtag');
+    }, []);
+    const { messages, loading, moreMsg } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'#' + hashtag} />
 
-            {ideas.length !== 0 ? (
+            {messages?.length !== 0 ? (
                 <FlatList
                     style={{ width: '90%' }}
-                    data={ideas}
+                    data={messages}
                     renderItem={({ item }) => <Idea idea={item} />}
-                    keyExtractor={item => item.id_mensaje + ''}
+                    keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
                     ListFooterComponent={
                         loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>

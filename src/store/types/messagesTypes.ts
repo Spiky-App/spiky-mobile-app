@@ -4,9 +4,9 @@ export enum MessagesActionTypes {
     GET_EVERY_MESSAGE,
 }
 
-interface GetEveryIdea {
+interface GetEveryMessage {
     type: MessagesActionTypes.GET_EVERY_MESSAGE;
     payload: MessagesData[];
 }
 
-export type Action = GetEveryIdea;
+export type Action = GetEveryMessage;

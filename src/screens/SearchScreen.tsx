@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { ideas } from '../data/ideas';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
@@ -20,18 +19,24 @@ import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAnimation } from '../hooks/useAnimation';
+import { useMensajes } from '../hooks/useMensajes';
+import { setFilter } from '../store/feature/messages/messagesSlice';
+import { useAppDispatch } from '../store/hooks';
 
 export const SearchScreen = () => {
-    const loading = false;
-    const moreMsg = true;
+    const dispatch = useAppDispatch();
+
+    useEffect(function () {
+        movingPosition(-50, 0, 700);
+        dispatch(setFilter('/search'));
+        console.log('filter: /search');
+    }, []);
+    const { messages, loading, moreMsg } = useMensajes();
+
     const { position, movingPosition } = useAnimation();
     const { onChange } = useForm({
         search: '',
     });
-
-    useEffect(() => {
-        movingPosition(-50, 0, 700);
-    }, []);
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
@@ -59,12 +64,12 @@ export const SearchScreen = () => {
 
                     <IdeasHeader title="Explorando" />
 
-                    {ideas.length !== 0 ? (
+                    {messages?.length !== 0 ? (
                         <FlatList
                             style={{ width: '90%' }}
-                            data={ideas}
+                            data={messages}
                             renderItem={({ item }) => <Idea idea={item} />}
-                            keyExtractor={item => item.id_mensaje + ''}
+                            keyExtractor={item => item.id + ''}
                             showsVerticalScrollIndicator={false}
                             ListFooterComponent={
                                 loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>

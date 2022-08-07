@@ -13,8 +13,7 @@ import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { Message, University, User } from '../types/store';
-import { setMessages } from '../store/feature/messages/messagesSlice';
+import { University } from '../types/store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 
@@ -39,7 +38,6 @@ export const Navigator = () => {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const uid = useAppSelector((state: RootState) => state.user.id);
 
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
@@ -57,38 +55,6 @@ export const Navigator = () => {
             dispatch(
                 addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
             );
-        }
-        try {
-            const messagesResponse = await spikyClient.getMessages(uid, 11);
-            const { data: messagesData } = messagesResponse;
-            const { mensajes } = messagesData;
-            const messagesRetrived: Message[] = mensajes.map(message => {
-                const university: University = {
-                    id: message.usuario.id_universidad,
-                    shortname: message.usuario.universidad.alias,
-                };
-                const user: User = {
-                    id: message.id_usuario,
-                    alias: message.usuario.alias,
-                    university,
-                };
-                return {
-                    id: message.id_mensaje,
-                    message: message.mensaje,
-                    date: message.fecha,
-                    favor: message.favor,
-                    neutral: message.neutro,
-                    against: message.contra,
-                    user,
-                    reaction_type: message.reacciones[0]?.tipo ? message.reacciones[0].tipo : 0,
-                    id_tracking: message.trackings[0]?.id_tracking,
-                    answersNumber: message.num_respuestas,
-                    draft: message.draft,
-                };
-            });
-            dispatch(setMessages(messagesRetrived));
-        } catch {
-            dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
         }
     }
 
