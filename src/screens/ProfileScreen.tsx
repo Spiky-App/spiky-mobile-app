@@ -11,16 +11,14 @@ import { useAppDispatch } from '../store/hooks';
 import { setFilter } from '../store/feature/messages/messagesSlice';
 import { useMensajes } from '../hooks/useMensajes';
 import { DrawerParamList } from '../navigator/MenuMain';
-import {
-    DrawerScreenProps
-} from '@react-navigation/drawer';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 
 type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 
-export const ProfileScreen = ({ route, navigation } : Props) => {
+export const ProfileScreen = ({ route }: Props) => {
     // TODO implementar el filtro por alias
     //const alias = 'rooster0';
-    const alias  = route.params?.alias;
+    const alias = route.params?.alias;
     const dispatch = useAppDispatch();
 
     useEffect(function () {

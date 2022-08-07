@@ -56,7 +56,7 @@ export const Idea = ({ idea }: Props) => {
                         onPress={() => {
                             navigation.navigate('ProfileScreen', {
                                 alias: idea.user.alias,
-                              });
+                            });
                         }}
                     >
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>

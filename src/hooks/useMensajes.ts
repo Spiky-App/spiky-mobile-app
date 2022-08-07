@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { Message, University, User } from '../types/store';
 
-export const useMensajes = (alias? : string) => {
+export const useMensajes = (alias?: string) => {
     const dispatch = useAppDispatch();
     const { messages, filter, loading, moreMsg } = useAppSelector(
         (state: RootState) => state.messages

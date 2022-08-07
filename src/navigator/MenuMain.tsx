@@ -4,7 +4,6 @@ import {
     createDrawerNavigator,
     DrawerContentComponentProps,
     DrawerContentScrollView,
-    DrawerScreenProps,
     useDrawerStatus,
 } from '@react-navigation/drawer';
 import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
@@ -30,7 +29,7 @@ import { ModalNotification } from '../components/ModalNotification';
 import { ConfigurationScreen } from '../screens/ConfigurationScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { HashTagScreen } from '../screens/HashTagScreen';
-import { CommonActions, useRoute } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
 import { useAppSelector } from '../store/hooks';
@@ -112,7 +111,7 @@ export const MenuMain = () => {
             <Drawer.Screen
                 name="ProfileScreen"
                 component={ProfileScreen}
-                initialParams={{ alias: "alias" }}
+                initialParams={{ alias: 'alias' }}
             />
             <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
             <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
@@ -127,9 +126,7 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const isDrawerOpen = useDrawerStatus() === 'open';
     const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
 
-
     const changeScreen = (screen: string) => {
-
         const targetRoute = navigation.getState().routes.find(route => route.name === screen);
         navigation.dispatch(
             CommonActions.reset({

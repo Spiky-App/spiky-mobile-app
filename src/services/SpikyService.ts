@@ -27,7 +27,7 @@ class SpikyService {
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
-            alias
+            alias,
         };
         return this.instance.get<MessagesResponse>(`mensajes${filter}`, {
             params,
