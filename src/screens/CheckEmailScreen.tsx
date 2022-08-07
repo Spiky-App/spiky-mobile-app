@@ -59,8 +59,8 @@ export const CheckEmailScreen = () => {
                         onPress={() => navigation.navigate('RegisterScreen')}
                     />
                 </View>
-                <LogoFadeIn />
             </TouchableWithoutFeedback>
+            <LogoFadeIn />
         </BackgroundPaper>
     );
 };
