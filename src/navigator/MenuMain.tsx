@@ -129,8 +129,11 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     }, [isDrawerOpen]);
 
     return (
-        <DrawerContentScrollView>
-            <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
+        <DrawerContentScrollView
+            contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+            style={{ flexDirection: 'row' }}
+        >
+            <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
                 </View>
@@ -215,6 +218,24 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     >
                         Crear idea
                     </Text>
+                </TouchableOpacity>
+
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity
+                    style={{
+                        position: 'absolute',
+                        bottom: 65,
+                        right: 0,
+                        left: 0,
+                    }}
+                    onPress={() => navigation.navigate('TermAndConditionsScreen')}
+                >
+                    <View style={{ ...styles.center }}>
+                        <Text style={{ ...styles.text, ...styles.link }}>
+                            Terminos y condiciones.
+                        </Text>
+                        <Text style={{ ...styles.text, ...styles.link }}>Aviso de privacidad.</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </DrawerContentScrollView>

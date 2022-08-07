@@ -1,5 +1,6 @@
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons/faLightbulb';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
@@ -54,4 +55,5 @@ export {
     faBan,
     faTrashCan,
     faHashtag,
+    faChevronRight,
 };
