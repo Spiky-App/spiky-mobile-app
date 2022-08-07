@@ -232,7 +232,7 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 >
                     <View style={{ ...styles.center }}>
                         <Text style={{ ...styles.text, ...styles.link }}>
-                            Terminos y condiciones.
+                            Términos y condiciones.
                         </Text>
                         <Text style={{ ...styles.text, ...styles.link }}>Aviso de privacidad.</Text>
                     </View>
