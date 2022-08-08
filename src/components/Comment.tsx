@@ -62,7 +62,7 @@ export const Comment = ({ comment }: Props) => {
                                     });
                                 }}
                             >
-                                <IconGray underlayColor={'#01192ebe'} pressed={reactComment} />
+                                <IconGray color='#E6E6E6' underlayColor={'#01192ebe'} pressed={reactComment} />
                             </TouchableOpacity>
                         )}
                     </>

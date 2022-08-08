@@ -32,6 +32,7 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+import IconGray from '../components/svg/IconGray';
 
 const Drawer = createDrawerNavigator();
 
@@ -210,7 +211,10 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                         navigation.navigate('CreateIdeaScreen');
                     }}
                 >
-                    <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" />
+                    {/* <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" /> */}
+                    <View style={{width:22, justifyContent:'center'}}>
+                        <IconGray color='#01192E' underlayColor={'#E6E6E6'} />
+                    </View>
                     <Text
                         style={{
                             ...stylescom.textmenu,
