@@ -27,6 +27,7 @@ import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons/faHashtag';
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation';
+import { faFlag } from '@fortawesome/free-solid-svg-icons/faFlag';
 
 export {
     faUsers,
@@ -58,4 +59,5 @@ export {
     faHashtag,
     faChevronRight,
     faTriangleExclamation,
+    faFlag,
 };
