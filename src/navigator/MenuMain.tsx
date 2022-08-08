@@ -10,7 +10,7 @@ import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'r
 import {
     faBell,
     faLightbulb,
-    faPlus,
+    // faPlus,
     faThumbtack,
     faUsers,
     faMagnifyingGlass,
@@ -212,8 +212,8 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     }}
                 >
                     {/* <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" /> */}
-                    <View style={{width:22, justifyContent:'center'}}>
-                        <IconGray color='#01192E' underlayColor={'#E6E6E6'} />
+                    <View style={{ width: 22, justifyContent: 'center' }}>
+                        <IconGray color="#01192E" underlayColor={'#E6E6E6'} />
                     </View>
                     <Text
                         style={{

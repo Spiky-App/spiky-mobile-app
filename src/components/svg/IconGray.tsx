@@ -9,7 +9,7 @@ interface Props extends SvgProps {
 }
 
 const IconGray = (props: Props) => {
-    const { color, underlayColor = color, pressed,  } = props;
+    const { color, underlayColor = color, pressed } = props;
     const originalWidth = 16.736;
     const originalHeight = 16.736;
     const aspectRatio = originalWidth / originalHeight;
