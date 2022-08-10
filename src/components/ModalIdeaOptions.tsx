@@ -19,10 +19,10 @@ export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position
     const { top, left } = position;
     const navigation = useNavigation<any>();
 
-    const goToScreen = (screen:string) => {
+    const goToScreen = (screen: string) => {
         setIdeaOptions(false);
         navigation.navigate(screen);
-    }
+    };
 
     return (
         <Modal animationType="fade" visible={ideaOptions} transparent={true}>

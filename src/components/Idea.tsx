@@ -10,7 +10,7 @@ import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
 import MsgTransform from './MsgTransform';
 
-interface Props{
+interface Props {
     idea: IdeaInterface;
 }
 
@@ -65,9 +65,12 @@ export const Idea = ({ idea }: Props) => {
                         {idea.usuario.universidad.alias}
                     </Text>
                 </View>
-                
-                <View style={{marginTop: 6,}}>
-                    <MsgTransform textStyle={{ ...styles.text, ...stylescom.msg }} text={idea.mensaje}/>
+
+                <View style={{ marginTop: 6 }}>
+                    <MsgTransform
+                        textStyle={{ ...styles.text, ...stylescom.msg }}
+                        text={idea.mensaje}
+                    />
                 </View>
 
                 <View
