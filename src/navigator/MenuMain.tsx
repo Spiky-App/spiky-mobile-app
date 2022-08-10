@@ -10,7 +10,7 @@ import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'r
 import {
     faBell,
     faLightbulb,
-    // faPlus,
+    faPlus,
     faThumbtack,
     faUsers,
     faMagnifyingGlass,
@@ -32,7 +32,7 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
-import IconGray from '../components/svg/IconGray';
+// import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 
@@ -230,10 +230,10 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                         navigation.navigate('CreateIdeaScreen');
                     }}
                 >
-                    {/* <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" /> */}
-                    <View style={{ width: 22, justifyContent: 'center' }}>
+                    <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" />
+                    {/* <View style={{ width: 22, justifyContent: 'center' }}>
                         <IconGray color="#01192E" underlayColor={'#E6E6E6'} />
-                    </View>
+                    </View> */}
                     <Text
                         style={{
                             ...stylescom.textmenu,
