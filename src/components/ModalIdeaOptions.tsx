@@ -19,6 +19,11 @@ export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position
     const { top, left } = position;
     const navigation = useNavigation<any>();
 
+    const goToScreen = (screen:string) => {
+        setIdeaOptions(false);
+        navigation.navigate(screen);
+    }
+
     return (
         <Modal animationType="fade" visible={ideaOptions} transparent={true}>
             <TouchableWithoutFeedback onPress={() => setIdeaOptions(false)}>
@@ -103,7 +108,7 @@ export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position
                                             ...styles.center,
                                             paddingHorizontal: 14,
                                         }}
-                                        onPress={() => navigation.navigate('ReportIdeaScreen')}
+                                        onPress={() => goToScreen('ReportIdeaScreen')}
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text

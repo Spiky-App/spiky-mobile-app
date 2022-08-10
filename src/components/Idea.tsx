@@ -8,8 +8,9 @@ import { IdeaInterface } from '../data/ideas';
 import { getTime } from '../helpers/getTime';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
+import MsgTransform from './MsgTransform';
 
-interface Props {
+interface Props{
     idea: IdeaInterface;
 }
 
@@ -64,8 +65,10 @@ export const Idea = ({ idea }: Props) => {
                         {idea.usuario.universidad.alias}
                     </Text>
                 </View>
-
-                <Text style={{ ...styles.text, ...stylescom.msg }}>{idea.mensaje}</Text>
+                
+                <View style={{marginTop: 6,}}>
+                    <MsgTransform textStyle={{ ...styles.text, ...stylescom.msg }} text={idea.mensaje}/>
+                </View>
 
                 <View
                     style={{
@@ -198,7 +201,6 @@ const stylescom = StyleSheet.create({
         flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: 'red'
     },
     user: {
         fontWeight: '600',
@@ -206,12 +208,9 @@ const stylescom = StyleSheet.create({
     },
     msg: {
         fontSize: 13,
-        fontWeight: '300',
+        // fontWeight: '300',
         textAlign: 'justify',
         flexShrink: 1,
-        width: '100%',
-        marginTop: 6,
-        // backgroundColor: 'red'
     },
     reaction: {
         flexDirection: 'row',
