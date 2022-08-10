@@ -32,8 +32,23 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+import { useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
 
-const Drawer = createDrawerNavigator();
+export type DrawerParamList = {
+    CommunityScreen: undefined;
+    MyIdeasScreen: undefined;
+    TrackingScreen: undefined;
+    SearchScreen: undefined;
+    ConnectionScreen: undefined;
+    // ProfileScreen: { alias: '' } | undefined;
+    ProfileScreen: { alias: string };
+    ConfigurationScreen: undefined;
+    ChangePasswordScreen: undefined;
+    HashTagScreen: { hashtag: '' } | undefined;
+};
+
+const Drawer = createDrawerNavigator<DrawerParamList>();
 
 const menuInfo = [
     {
@@ -75,7 +90,6 @@ const menuInfo = [
 
 export const MenuMain = () => {
     const { width } = useWindowDimensions();
-
     return (
         <Drawer.Navigator
             screenOptions={{
@@ -87,6 +101,7 @@ export const MenuMain = () => {
                 drawerStyle: { backgroundColor: '#F8F8F8', width: '60%' },
                 overlayColor: '#6363635c',
             }}
+            useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
         >
             <Drawer.Screen name="CommunityScreen" component={CommunityScreen} />
@@ -94,7 +109,11 @@ export const MenuMain = () => {
             <Drawer.Screen name="TrackingScreen" component={TrackingScreen} />
             <Drawer.Screen name="SearchScreen" component={SearchScreen} />
             <Drawer.Screen name="ConnectionScreen" component={ConnectionScreen} />
-            <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
+            <Drawer.Screen
+                name="ProfileScreen"
+                component={ProfileScreen}
+                initialParams={{ alias: 'alias' }}
+            />
             <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
             <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
             <Drawer.Screen name="HashTagScreen" component={HashTagScreen} />
@@ -106,14 +125,14 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
-
-    const n_notificaciones = 11;
+    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
 
     const changeScreen = (screen: string) => {
+        const targetRoute = navigation.getState().routes.find(route => route.name === screen);
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
-                routes: [{ name: screen }],
+                routes: [{ name: screen, params: targetRoute?.params }],
             })
         );
     };

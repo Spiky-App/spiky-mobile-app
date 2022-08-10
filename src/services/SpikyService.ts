@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { LoginResponse, MessagesResponse, UniversityResponse } from '../types/services/spiky';
+import { MessageRequestData } from './models/spikyService';
 
 interface Headers {
     'x-token': string;
@@ -23,13 +24,18 @@ class SpikyService {
         return this.instance.get<UniversityResponse>('univer');
     }
 
-    // TODO: Implementar el uid y el id del ultimo mensaje
-    getMessages(uid: number, lastMessageId: number) {
+    getMessages(
+        uid: number,
+        lastMessageId: number,
+        filter: string,
+        parameters: MessageRequestData
+    ) {
         const params = {
-            uid,
+            uid: uid,
             id_ultimoMensaje: lastMessageId,
+            ...parameters,
         };
-        return this.instance.get<MessagesResponse>('mensajes?uid=1&id_ultimoMensaje=11', {
+        return this.instance.get<MessagesResponse>(`mensajes${filter}`, {
             params,
         });
     }

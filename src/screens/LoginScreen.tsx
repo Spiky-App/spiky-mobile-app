@@ -63,7 +63,8 @@ export const LoginScreen = () => {
                     })
                 );
                 setFormValid(true);
-            } catch {
+            } catch (e) {
+                console.log(e);
                 dispatch(addToast({ message: 'Error iniciando sesión', type: StatusType.WARNING }));
                 setFormValid(false);
             }

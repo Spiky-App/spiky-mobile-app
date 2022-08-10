@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Animated,
-    FlatList,
     Keyboard,
     TextInput,
     TouchableOpacity,
@@ -9,30 +8,35 @@ import {
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { ideas } from '../data/ideas';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
-import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
-import { EmptyState } from '../components/EmptyState';
-import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
-import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAnimation } from '../hooks/useAnimation';
+import { useMensajes } from '../hooks/useMensajes';
+import { setFilter } from '../store/feature/messages/messagesSlice';
+import { useAppDispatch } from '../store/hooks';
+import MessagesFeed from '../components/MessagesFeed';
 
 export const SearchScreen = () => {
-    const loading = false;
-    const moreMsg = true;
-    const { position, movingPosition } = useAnimation();
-    const { onChange } = useForm({
-        search: '',
-    });
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         movingPosition(-50, 0, 700);
+        dispatch(setFilter('/search'));
     }, []);
 
+    const { position, movingPosition } = useAnimation();
+    const [search, setSearch] = useState('');
+    const { messages, fetchMessages } = useMensajes({ search });
+    useEffect(() => {
+        if (search.length > 0) {
+            fetchMessages();
+        }
+    }, [search]);
+    const submit = () => {
+        fetchMessages();
+    };
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -48,35 +52,17 @@ export const SearchScreen = () => {
                     >
                         <TextInput
                             placeholder="Buscar"
-                            onChangeText={value => onChange({ search: value })}
+                            onChangeText={value => setSearch(value.toLowerCase())}
                             style={styles.textinput}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
+                        <TouchableOpacity style={styles.iconinput} onPress={() => submit()}>
                             <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </Animated.View>
 
                     <IdeasHeader title="Explorando" />
-
-                    {ideas.length !== 0 ? (
-                        <FlatList
-                            style={{ width: '90%' }}
-                            data={ideas}
-                            renderItem={({ item }) => <Idea idea={item} />}
-                            keyExtractor={item => item.id_mensaje + ''}
-                            showsVerticalScrollIndicator={false}
-                            ListFooterComponent={
-                                loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
-                            }
-                            ListFooterComponentStyle={{ marginVertical: 12 }}
-                        />
-                    ) : loading ? (
-                        <LoadingAnimated />
-                    ) : (
-                        <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
-                    )}
-
+                    <MessagesFeed messages={messages} />
                     <FloatButton />
                 </>
             </TouchableWithoutFeedback>
