@@ -12,7 +12,7 @@
         "no-shadow": "off",
         "single": "off",
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["warn"],
+        "@typescript-eslint/no-unused-vars": ["error"],
         "prettier/prettier": [
           "error",
           {},

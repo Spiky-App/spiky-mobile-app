@@ -13,7 +13,7 @@ export const TrackingScreen = () => {
     useEffect(function () {
         dispatch(setFilter('/tracking'));
     }, []);
-    const { messages, loading, moreMsg } = useMensajes();
+    const { messages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>

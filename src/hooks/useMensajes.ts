@@ -20,12 +20,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
         try {
             const spikyClient = new SpikyService(config);
             dispatch(setLoading(true));
-            const { request, data: messagesData } = await spikyClient.getMessages(
-                uid,
-                11,
-                filter,
-                params
-            );
+            const { data: messagesData } = await spikyClient.getMessages(uid, 11, filter, params);
             const { mensajes } = messagesData;
 
             const messagesRetrived: Message[] = mensajes.map(message => {
