@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableHighlight, View } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faPlus } from '../constants/icons/FontAwesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+// import { faPlus } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import IconGray from './svg/IconGray';
 
