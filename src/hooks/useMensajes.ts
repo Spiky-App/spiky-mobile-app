@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { MessageRequestData } from '../services/models/spikyService';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
-import { setMessages } from '../store/feature/messages/messagesSlice';
+import { setMessages, setLoading } from '../store/feature/messages/messagesSlice';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
@@ -19,13 +19,13 @@ export const useMensajes = (params: MessageRequestData = {}) => {
     const fetchMessages = async () => {
         try {
             const spikyClient = new SpikyService(config);
+            dispatch(setLoading(true));
             const { request, data: messagesData } = await spikyClient.getMessages(
                 uid,
                 11,
                 filter,
                 params
             );
-            console.log(request.responseURL);
             const { mensajes } = messagesData;
 
             const messagesRetrived: Message[] = mensajes.map(message => {
@@ -53,22 +53,21 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 };
             });
             dispatch(setMessages(messagesRetrived));
+            dispatch(setLoading(false));
         } catch {
             dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
         }
     };
-    // FIXME: weird loop when adding 'params' to the effect
     useEffect(() => {
         fetchMessages();
     }, [config, uid, filter]);
-    useEffect(() => {
-        console.log(params);
-    }, [params]);
+
 
     return {
         filter,
         messages,
         loading,
         moreMsg,
+        fetchMessages
     };
 };

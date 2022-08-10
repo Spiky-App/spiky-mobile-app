@@ -3,7 +3,7 @@ import { RootState } from '../..';
 import { ActiveMessage, Message } from '../../../types/store';
 
 interface MessagesState {
-    messages?: Message[];
+    messages: Message[];
     loading: boolean;
     filter: string;
     moreMsg: boolean;
@@ -11,7 +11,7 @@ interface MessagesState {
 }
 
 const initialState: MessagesState = {
-    messages: undefined,
+    messages: [],
     loading: false,
     filter: '',
     moreMsg: false,
@@ -28,10 +28,13 @@ export const messagesSlice = createSlice({
         setFilter: (state: MessagesState, action: PayloadAction<string>) => {
             state.filter = action.payload;
         },
+        setLoading: (state: MessagesState, action: PayloadAction<boolean>) => {
+            state.loading = action.payload;
+        },
     },
 });
 
-export const { setMessages, setFilter } = messagesSlice.actions;
+export const { setMessages, setFilter, setLoading } = messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;
 

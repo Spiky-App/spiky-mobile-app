@@ -6,6 +6,7 @@ import { EmptyState } from '../components/EmptyState';
 import { FloatButton } from '../components/FloatButton';
 import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
+import MessagesFeed from '../components/MessagesFeed';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useMensajes } from '../hooks/useMensajes';
 import { setFilter } from '../store/feature/messages/messagesSlice';
@@ -22,24 +23,7 @@ export const CommunityScreen = () => {
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Comunidad" />
-
-            {messages ? (
-                <FlatList
-                    style={{ width: '90%' }}
-                    data={messages}
-                    renderItem={({ item }) => <Idea idea={item} />}
-                    keyExtractor={item => item.id + ''}
-                    showsVerticalScrollIndicator={false}
-                    ListFooterComponent={
-                        loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
-                    }
-                    ListFooterComponentStyle={{ marginVertical: 12 }}
-                />
-            ) : loading ? (
-                <LoadingAnimated />
-            ) : (
-                <EmptyState message="Cuestión de tiempo de que alguien hable." />
-            )}
+            <MessagesFeed messages={messages} />
             <FloatButton />
         </BackgroundPaper>
     );
