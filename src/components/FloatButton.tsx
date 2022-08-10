@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, TouchableHighlight } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPlus } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import IconGray from './svg/IconGray';
+// import IconGray from './svg/IconGray';
 
 export const FloatButton = () => {
     const navigation = useNavigation<any>();
@@ -16,10 +16,10 @@ export const FloatButton = () => {
         >
             <FontAwesomeIcon icon={faPlus} color="" size={40} />
             {/* <View style={{ width: '100%', justifyContent: 'center', paddingRight: 8 }}> */}
-                {/* <View style={{position:'absolute', top: 4}}>
+            {/* <View style={{position:'absolute', top: 4}}>
                     <FontAwesomeIcon icon={faPlus} color="#FC702A" size={20} />
                 </View>  */}
-                {/* <IconGray color="#01192E" underlayColor={'#E6E6E6'} /> */}
+            {/* <IconGray color="#01192E" underlayColor={'#E6E6E6'} /> */}
             {/* </View> */}
         </TouchableHighlight>
     );
