@@ -1,25 +1,25 @@
-import React from 'react';
-import { FlatList } from 'react-native';
+import React, { useEffect } from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { ideas } from '../data/ideas';
-import { Idea } from '../components/Idea';
 import { FloatButton } from '../components/FloatButton';
+import { useMensajes } from '../hooks/useMensajes';
+import { useAppDispatch } from '../store/hooks';
+import { setFilter } from '../store/feature/messages/messagesSlice';
+import MessagesFeed from '../components/MessagesFeed';
 
 export const TrackingScreen = () => {
-  return (
-    <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title="Siguiendo" />
+    const dispatch = useAppDispatch();
 
-      <FlatList
-        style={{ width: '90%' }}
-        data={ideas}
-        renderItem={({ item }) => <Idea idea={item} />}
-        keyExtractor={item => item.id_mensaje + ''}
-        showsVerticalScrollIndicator={false}
-      />
+    useEffect(function () {
+        dispatch(setFilter('/tracking'));
+    }, []);
+    const { messages } = useMensajes();
 
-      <FloatButton />
-    </BackgroundPaper>
-  );
+    return (
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+            <IdeasHeader title="Siguiendo" />
+            <MessagesFeed messages={messages} />
+            <FloatButton />
+        </BackgroundPaper>
+    );
 };

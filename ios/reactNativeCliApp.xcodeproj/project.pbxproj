@@ -12,8 +12,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1D1D6DCDF6A6424FBE6BBC7F /* Helvetica-BoldOblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81B0AFD936194EB38F787E2A /* Helvetica-BoldOblique.ttf */; };
+		2C06DBA3BBFB462596BB599B /* Helvetica-Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6ED89775C7074D9FA14E508E /* Helvetica-Oblique.ttf */; };
+		4663F98F9A89441C9586FD5C /* Helvetica.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C2B53FB5035246C88CA6A22C /* Helvetica.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-reactNativeCliApp-reactNativeCliAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-reactNativeCliApp-reactNativeCliAppTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9BAE43035CAB4394ACCC1C0B /* Helvetica-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 12ED6A6FD019410E9E5E5EC3 /* Helvetica-Light.ttf */; };
+		C633B7B6ABB7467BAB2953FC /* Helvetica-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64602077270F4D618AF5AE73 /* Helvetica-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +35,7 @@
 		00E356EE1AD99517003FC87E /* reactNativeCliAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reactNativeCliAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* reactNativeCliAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = reactNativeCliAppTests.m; sourceTree = "<group>"; };
+		12ED6A6FD019410E9E5E5EC3 /* Helvetica-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-Light.ttf"; path = "../assets/fonts/Helvetica-Light.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* reactNativeCliApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reactNativeCliApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = reactNativeCliApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = reactNativeCliApp/AppDelegate.mm; sourceTree = "<group>"; };
@@ -41,8 +47,12 @@
 		5709B34CF0A7D63546082F79 /* Pods-reactNativeCliApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactNativeCliApp.release.xcconfig"; path = "Target Support Files/Pods-reactNativeCliApp/Pods-reactNativeCliApp.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-reactNativeCliApp-reactNativeCliAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactNativeCliApp-reactNativeCliAppTests.debug.xcconfig"; path = "Target Support Files/Pods-reactNativeCliApp-reactNativeCliAppTests/Pods-reactNativeCliApp-reactNativeCliAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-reactNativeCliApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-reactNativeCliApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		64602077270F4D618AF5AE73 /* Helvetica-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-Bold.ttf"; path = "../assets/fonts/Helvetica-Bold.ttf"; sourceTree = "<group>"; };
+		6ED89775C7074D9FA14E508E /* Helvetica-Oblique.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-Oblique.ttf"; path = "../assets/fonts/Helvetica-Oblique.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = reactNativeCliApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81B0AFD936194EB38F787E2A /* Helvetica-BoldOblique.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Helvetica-BoldOblique.ttf"; path = "../assets/fonts/Helvetica-BoldOblique.ttf"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-reactNativeCliApp-reactNativeCliAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reactNativeCliApp-reactNativeCliAppTests.release.xcconfig"; path = "Target Support Files/Pods-reactNativeCliApp-reactNativeCliAppTests/Pods-reactNativeCliApp-reactNativeCliAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		C2B53FB5035246C88CA6A22C /* Helvetica.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Helvetica.ttf; path = ../assets/fonts/Helvetica.ttf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -106,6 +116,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		410A11F29413470184E2A34C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				64602077270F4D618AF5AE73 /* Helvetica-Bold.ttf */,
+				81B0AFD936194EB38F787E2A /* Helvetica-BoldOblique.ttf */,
+				12ED6A6FD019410E9E5E5EC3 /* Helvetica-Light.ttf */,
+				6ED89775C7074D9FA14E508E /* Helvetica-Oblique.ttf */,
+				C2B53FB5035246C88CA6A22C /* Helvetica.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +144,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				410A11F29413470184E2A34C /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -200,7 +223,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
@@ -244,6 +267,11 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				C633B7B6ABB7467BAB2953FC /* Helvetica-Bold.ttf in Resources */,
+				1D1D6DCDF6A6424FBE6BBC7F /* Helvetica-BoldOblique.ttf in Resources */,
+				9BAE43035CAB4394ACCC1C0B /* Helvetica-Light.ttf in Resources */,
+				2C06DBA3BBFB462596BB599B /* Helvetica-Oblique.ttf in Resources */,
+				4663F98F9A89441C9586FD5C /* Helvetica.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,6 +460,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-reactNativeCliApp-reactNativeCliAppTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -459,6 +488,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-reactNativeCliApp-reactNativeCliAppTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = reactNativeCliAppTests/Info.plist;
@@ -486,8 +516,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3HYDX58NGZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = reactNativeCliApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -497,7 +529,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.spiky.app;
 				PRODUCT_NAME = reactNativeCliApp;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -512,7 +544,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3HYDX58NGZ;
 				INFOPLIST_FILE = reactNativeCliApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -522,7 +556,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.spiky.app;
 				PRODUCT_NAME = reactNativeCliApp;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

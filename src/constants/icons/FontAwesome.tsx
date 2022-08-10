@@ -18,26 +18,40 @@ import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import { faBell } from '@fortawesome/free-solid-svg-icons/faBell';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons/faRightFromBracket';
 import { faGear } from '@fortawesome/free-solid-svg-icons/faGear';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
+import { faLocationArrow } from '@fortawesome/free-solid-svg-icons/faLocationArrow';
+import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
+import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons/faArrowLeftLong';
+import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons/faHashtag';
 
 export {
-  faUsers,
-  faChevronLeft,
-  faThumbtack,
-  faLightbulb,
-  faMagnifyingGlass,
-  faCircleNodes,
-  faEye,
-  faEyeSlash,
-  faUser,
-  faBars,
-  faPlus,
-  faCircleInfo,
-  faFilter,
-  faXmark,
-  faCheck,
-  faMessage,
-  faMinus,
-  faBell,
-  faRightFromBracket,
-  faGear,
+    faUsers,
+    faChevronLeft,
+    faThumbtack,
+    faLightbulb,
+    faMagnifyingGlass,
+    faCircleNodes,
+    faEye,
+    faEyeSlash,
+    faUser,
+    faBars,
+    faPlus,
+    faCircleInfo,
+    faFilter,
+    faXmark,
+    faCheck,
+    faMessage,
+    faMinus,
+    faBell,
+    faRightFromBracket,
+    faGear,
+    faPenToSquare,
+    faLocationArrow,
+    faReply,
+    faArrowLeftLong,
+    faBan,
+    faTrashCan,
+    faHashtag,
 };

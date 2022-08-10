@@ -1,26 +1,24 @@
-import React from 'react';
-import { FlatList } from 'react-native';
+import React, { useEffect } from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
-import { Idea } from '../components/Idea';
-
-import { ideas } from '../data/ideas';
 import { FloatButton } from '../components/FloatButton';
+import { IdeasHeader } from '../components/IdeasHeader';
+import MessagesFeed from '../components/MessagesFeed';
+import { useMensajes } from '../hooks/useMensajes';
+import { setFilter } from '../store/feature/messages/messagesSlice';
+import { useAppDispatch } from '../store/hooks';
 
 export const CommunityScreen = () => {
-  return (
-    <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <IdeasHeader title="Comunidad" />
+    const dispatch = useAppDispatch();
+    useEffect(function () {
+        dispatch(setFilter(''));
+    }, []);
+    const { messages } = useMensajes();
 
-      <FlatList
-        style={{ width: '90%' }}
-        data={ideas}
-        renderItem={({ item }) => <Idea idea={item} />}
-        keyExtractor={item => item.id_mensaje + ''}
-        showsVerticalScrollIndicator={false}
-      />
-
-      <FloatButton />
-    </BackgroundPaper>
-  );
+    return (
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+            <IdeasHeader title="Comunidad" />
+            <MessagesFeed messages={messages} />
+            <FloatButton />
+        </BackgroundPaper>
+    );
 };

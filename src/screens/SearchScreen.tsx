@@ -1,65 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  FlatList,
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    Animated,
+    Keyboard,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
-import { ideas } from '../data/ideas';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
-import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
+import { useAnimation } from '../hooks/useAnimation';
+import { useMensajes } from '../hooks/useMensajes';
+import { setFilter } from '../store/feature/messages/messagesSlice';
+import { useAppDispatch } from '../store/hooks';
+import MessagesFeed from '../components/MessagesFeed';
 
 export const SearchScreen = () => {
-  const { onChange } = useForm({
-    search: '',
-  });
+    const dispatch = useAppDispatch();
 
-  return (
-    <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <>
-          <View style={{ ...styles.input, marginTop: 14, borderRadius: 10, width: '90%' }}>
-            <TextInput
-              placeholder="Buscar"
-              onChangeText={value => onChange(value, 'search')}
-              style={{ ...styles.text, fontSize: 15 }}
-            />
-            <TouchableOpacity style={stylescom.icon} onPress={() => {}}>
-              <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
-            </TouchableOpacity>
-          </View>
+    useEffect(() => {
+        movingPosition(-50, 0, 700);
+        dispatch(setFilter('/search'));
+    }, []);
 
-          <IdeasHeader title="Explorando" />
+    const { position, movingPosition } = useAnimation();
+    const [search, setSearch] = useState('');
+    const { messages, fetchMessages } = useMensajes({ search });
+    useEffect(() => {
+        if (search.length > 0) {
+            fetchMessages();
+        }
+    }, [search]);
+    const submit = () => {
+        fetchMessages();
+    };
+    return (
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <>
+                    <Animated.View
+                        style={{
+                            ...styles.input,
+                            marginTop: 14,
+                            borderRadius: 10,
+                            width: '90%',
+                            transform: [{ translateY: position }],
+                        }}
+                    >
+                        <TextInput
+                            placeholder="Buscar"
+                            onChangeText={value => setSearch(value.toLowerCase())}
+                            style={styles.textinput}
+                            autoCorrect={false}
+                        />
+                        <TouchableOpacity style={styles.iconinput} onPress={() => submit()}>
+                            <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
+                        </TouchableOpacity>
+                    </Animated.View>
 
-          <FlatList
-            style={{ width: '90%' }}
-            data={ideas}
-            renderItem={({ item }) => <Idea idea={item} />}
-            keyExtractor={item => item.id_mensaje + ''}
-            showsVerticalScrollIndicator={false}
-          />
-
-          <FloatButton />
-        </>
-      </TouchableWithoutFeedback>
-    </BackgroundPaper>
-  );
+                    <IdeasHeader title="Explorando" />
+                    <MessagesFeed messages={messages} />
+                    <FloatButton />
+                </>
+            </TouchableWithoutFeedback>
+        </BackgroundPaper>
+    );
 };
-
-const stylescom = StyleSheet.create({
-  icon: {
-    position: 'absolute',
-    right: 0,
-    top: 10,
-    paddingRight: 15,
-  },
-});
