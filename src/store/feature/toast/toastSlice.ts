@@ -15,6 +15,10 @@ export const toastSlice = createSlice({
     initialState,
     reducers: {
         addToast: (state: ToastState, action: PayloadAction<Toast>) => {
+            // return if the toast is already in the queue
+            if (state.queue.find(t => t.message === action.payload.message)) {
+                return;
+            }
             const queueUpdated = [...state.queue, action.payload];
             state.queue = queueUpdated;
         },

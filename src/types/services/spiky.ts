@@ -31,8 +31,8 @@ interface Message {
     contra: number;
     id_usuario: number;
     usuario: User;
-    reacciones: [];
-    trackings: [];
+    reacciones: [{ tipo: number }];
+    trackings: [{ id_tracking: number }];
     num_respuestas: number;
     draft: number;
 }
