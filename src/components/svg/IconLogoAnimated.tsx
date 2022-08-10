@@ -6,15 +6,10 @@ import { useAnimation } from '../../hooks/useAnimation';
 const IconLogoAnimated = (props: SvgProps) => {
     let AnimatedRect = Animated.createAnimatedComponent(Rect);
     let AnimatedPath = Animated.createAnimatedComponent(Path);
-    const intervalRef = React.useRef(0);
-    const { opacity, fadeIn, fadeOut } = useAnimation();
+    const { opacity, fadeInFadeOutLoop } = useAnimation();
 
     React.useEffect(() => {
-        intervalRef.current = setInterval(
-            () => fadeIn(300, () => fadeOut(300, () => {}, 500)),
-            1300
-        );
-        return () => clearInterval(intervalRef.current);
+        fadeInFadeOutLoop(350, () => {}, 500);
     }, []);
 
     return (

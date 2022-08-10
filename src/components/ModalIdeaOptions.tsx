@@ -3,6 +3,7 @@ import { Modal, Text, TouchableWithoutFeedback, View, TouchableOpacity } from 'r
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBan, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
     setIdeaOptions: (value: boolean) => void;
@@ -16,6 +17,12 @@ interface Props {
 
 export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position }: Props) => {
     const { top, left } = position;
+    const navigation = useNavigation<any>();
+
+    const goToScreen = (screen: string) => {
+        setIdeaOptions(false);
+        navigation.navigate(screen);
+    };
 
     return (
         <Modal animationType="fade" visible={ideaOptions} transparent={true}>
@@ -101,7 +108,7 @@ export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position
                                             ...styles.center,
                                             paddingHorizontal: 14,
                                         }}
-                                        onPress={() => {}}
+                                        onPress={() => goToScreen('ReportIdeaScreen')}
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text

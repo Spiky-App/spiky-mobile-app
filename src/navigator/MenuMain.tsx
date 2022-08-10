@@ -32,6 +32,7 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+// import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 
@@ -148,8 +149,11 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     }, [isDrawerOpen]);
 
     return (
-        <DrawerContentScrollView>
-            <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
+        <DrawerContentScrollView
+            contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+            style={{ flexDirection: 'row' }}
+        >
+            <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
                 </View>
@@ -227,6 +231,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     }}
                 >
                     <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" />
+                    {/* <View style={{ width: 22, justifyContent: 'center' }}>
+                        <IconGray color="#01192E" underlayColor={'#E6E6E6'} />
+                    </View> */}
                     <Text
                         style={{
                             ...stylescom.textmenu,
@@ -234,6 +241,24 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     >
                         Crear idea
                     </Text>
+                </TouchableOpacity>
+
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity
+                    style={{
+                        position: 'absolute',
+                        bottom: 65,
+                        right: 0,
+                        left: 0,
+                    }}
+                    onPress={() => navigation.navigate('TermAndConditionsScreen')}
+                >
+                    <View style={{ ...styles.center }}>
+                        <Text style={{ ...styles.text, ...styles.link }}>
+                            Términos y condiciones.
+                        </Text>
+                        <Text style={{ ...styles.text, ...styles.link }}>Aviso de privacidad.</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </DrawerContentScrollView>
