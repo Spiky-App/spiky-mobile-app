@@ -25,7 +25,7 @@ export const ProfileScreen = ({ route }: Props) => {
         dispatch(setFilter('/perfil'));
         console.log('filter: /perfil');
     }, []);
-    const { messages, loading, moreMsg } = useMensajes(alias);
+    const { messages, loading, moreMsg } = useMensajes({ alias });
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>

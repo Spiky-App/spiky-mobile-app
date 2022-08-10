@@ -56,3 +56,11 @@ export interface AuthRenewResponseData {
     n_notificaciones: number;
     msg: string;
 }
+
+export interface MessageRequestData {
+    alias?: string;
+    search?: string;
+    hashtag?: string;
+    univer?: number;
+    draft?: boolean;
+}

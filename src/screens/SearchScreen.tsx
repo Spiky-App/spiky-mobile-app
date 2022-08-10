@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Animated,
     FlatList,
@@ -13,7 +13,6 @@ import { Idea } from '../components/Idea';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
-import { useForm } from '../hooks/useForm';
 import { FloatButton } from '../components/FloatButton';
 import { EmptyState } from '../components/EmptyState';
 import { ButtonMoreIdeas } from '../components/ButtonMoreIdeas';
@@ -31,13 +30,14 @@ export const SearchScreen = () => {
         dispatch(setFilter('/search'));
         console.log('filter: /search');
     }, []);
-    const { messages, loading, moreMsg } = useMensajes();
+    console.info('render SearchScreen');
 
     const { position, movingPosition } = useAnimation();
-    const { onChange } = useForm({
-        search: '',
-    });
-
+    const [search, setSearch] = useState('');
+    const { messages, loading, moreMsg } = useMensajes({ search });
+    const submit = () => {
+        console.log('search: ', search);
+    };
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -53,11 +53,11 @@ export const SearchScreen = () => {
                     >
                         <TextInput
                             placeholder="Buscar"
-                            onChangeText={value => onChange({ search: value })}
+                            onChangeText={value => setSearch(value.toLowerCase())}
                             style={styles.textinput}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
+                        <TouchableOpacity style={styles.iconinput} onPress={() => submit()}>
                             <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </Animated.View>
