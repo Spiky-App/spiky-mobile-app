@@ -88,6 +88,7 @@ export const MenuMain = () => {
                 drawerStyle: { backgroundColor: '#F8F8F8', width: '60%' },
                 overlayColor: '#6363635c',
             }}
+            useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
         >
             <Drawer.Screen name="CommunityScreen" component={CommunityScreen} />
