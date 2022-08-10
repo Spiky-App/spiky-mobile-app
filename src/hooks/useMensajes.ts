@@ -62,12 +62,11 @@ export const useMensajes = (params: MessageRequestData = {}) => {
         fetchMessages();
     }, [config, uid, filter]);
 
-
     return {
         filter,
         messages,
         loading,
         moreMsg,
-        fetchMessages
+        fetchMessages,
     };
 };
