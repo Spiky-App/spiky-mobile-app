@@ -16,7 +16,6 @@ export const CommunityScreen = () => {
     const dispatch = useAppDispatch();
     useEffect(function () {
         dispatch(setFilter(''));
-        console.log('on /community');
     }, []);
     const { messages, loading, moreMsg } = useMensajes();
 

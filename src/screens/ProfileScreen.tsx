@@ -23,7 +23,6 @@ export const ProfileScreen = ({ route }: Props) => {
 
     useEffect(function () {
         dispatch(setFilter('/perfil'));
-        console.log('filter: /perfil');
     }, []);
     const { messages, loading, moreMsg } = useMensajes({ alias });
 

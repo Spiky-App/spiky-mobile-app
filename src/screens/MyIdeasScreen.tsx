@@ -12,7 +12,6 @@ export const MyIdeasScreen = () => {
 
     useEffect(function () {
         dispatch(setFilter('/user'));
-        console.log('filter: /user');
     }, []);
     const { messages } = useMensajes();
 

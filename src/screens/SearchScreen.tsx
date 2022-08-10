@@ -24,7 +24,6 @@ export const SearchScreen = () => {
     useEffect(() => {
         movingPosition(-50, 0, 700);
         dispatch(setFilter('/search'));
-        console.log('filter: /search');
     }, []);
 
     const { position, movingPosition } = useAnimation();

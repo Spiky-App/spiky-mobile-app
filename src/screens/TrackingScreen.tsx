@@ -12,7 +12,6 @@ export const TrackingScreen = () => {
 
     useEffect(function () {
         dispatch(setFilter('/tracking'));
-        console.log('filter: /tracking');
     }, []);
     const { messages, loading, moreMsg } = useMensajes();
 

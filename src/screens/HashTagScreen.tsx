@@ -21,7 +21,6 @@ export const HashTagScreen = ({ hashtag }: Props) => {
 
     useEffect(function () {
         dispatch(setFilter('/hashtag/' + hashtag));
-        console.log('on /hashtag');
     }, []);
     const { messages, loading, moreMsg } = useMensajes();
 
