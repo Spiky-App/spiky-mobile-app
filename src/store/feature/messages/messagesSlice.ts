@@ -31,10 +31,13 @@ export const messagesSlice = createSlice({
         setLoading: (state: MessagesState, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },
+        addMessage: (state: MessagesState, action: PayloadAction<Message>) => {
+            state.messages = [action.payload, ...state.messages];
+        },
     },
 });
 
-export const { setMessages, setFilter, setLoading } = messagesSlice.actions;
+export const { setMessages, setFilter, setLoading, addMessage } = messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;
 

@@ -7,17 +7,7 @@ import {
     useDrawerStatus,
 } from '@react-navigation/drawer';
 import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-    faBell,
-    faLightbulb,
-    faPlus,
-    faThumbtack,
-    faUsers,
-    faMagnifyingGlass,
-    // faCircleNodes,
-    faHashtag,
-    faUser,
-} from '../constants/icons/FontAwesome';
+import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
 import { TrackingScreen } from '../screens/TrackingScreen';
@@ -35,10 +25,13 @@ import { styles } from '../themes/appTheme';
 // import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
+import { menuInfo } from '../constants/navigatior';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
-    MyIdeasScreen: undefined;
+    MyIdeasScreen?: {
+        draft?: boolean;
+    };
     TrackingScreen: undefined;
     SearchScreen: undefined;
     ConnectionScreen: undefined;
@@ -50,44 +43,6 @@ export type DrawerParamList = {
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
-
-const menuInfo = [
-    {
-        name: 'Comunidad',
-        screen: 'CommunityScreen',
-        icon: faUsers,
-    },
-    {
-        name: 'Mis ideas',
-        screen: 'MyIdeasScreen',
-        icon: faLightbulb,
-    },
-    {
-        name: 'Tracking',
-        screen: 'TrackingScreen',
-        icon: faThumbtack,
-    },
-    {
-        name: 'Buscar',
-        screen: 'SearchScreen',
-        icon: faMagnifyingGlass,
-    },
-    // {
-    //     name: 'Conexiones',
-    //     screen: 'ConnectionScreen',
-    //     icon: faCircleNodes,
-    // },
-    {
-        name: 'Hashtag',
-        screen: 'HashTagScreen',
-        icon: faHashtag,
-    },
-    {
-        name: 'Perfil',
-        screen: 'ProfileScreen',
-        icon: faUser,
-    },
-];
 
 export const MenuMain = () => {
     const { width } = useWindowDimensions();

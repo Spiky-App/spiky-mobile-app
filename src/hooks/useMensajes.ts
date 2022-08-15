@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { generateMessageFromMensaje } from '../helpers/message';
 import { MessageRequestData } from '../services/models/spikyService';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
@@ -6,7 +7,7 @@ import { setMessages, setLoading } from '../store/feature/messages/messagesSlice
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Message, University, User } from '../types/store';
+import { Message, User } from '../types/store';
 
 export const useMensajes = (params: MessageRequestData = {}) => {
     const dispatch = useAppDispatch();
@@ -14,38 +15,24 @@ export const useMensajes = (params: MessageRequestData = {}) => {
         (state: RootState) => state.messages
     );
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { id: uid, nickname, university } = useAppSelector((state: RootState) => state.user);
 
     const fetchMessages = async () => {
         try {
             const spikyClient = new SpikyService(config);
             dispatch(setLoading(true));
-            const { data: messagesData } = await spikyClient.getMessages(uid, 11, filter, params);
+            const { data: messagesData } = await spikyClient.getMessages(uid, 11, params, filter);
             const { mensajes } = messagesData;
 
-            const messagesRetrived: Message[] = mensajes.map(message => {
-                const university: University = {
-                    id: message.usuario.id_universidad,
-                    shortname: message.usuario.universidad.alias,
-                };
+            const messagesRetrived: Message[] = mensajes.map(mensaje => {
                 const user: User = {
-                    id: message.id_usuario,
-                    alias: message.usuario.alias,
-                    university,
+                    id: uid,
+                    nickname: nickname,
+                    university: {
+                        shortname: university,
+                    },
                 };
-                return {
-                    id: message.id_mensaje,
-                    message: message.mensaje,
-                    date: message.fecha,
-                    favor: message.favor,
-                    neutral: message.neutro,
-                    against: message.contra,
-                    user,
-                    reaction_type: message.reacciones[0]?.tipo || 0,
-                    id_tracking: message.trackings[0]?.id_tracking,
-                    answersNumber: message.num_respuestas,
-                    draft: message.draft,
-                };
+                return generateMessageFromMensaje(mensaje, user);
             });
             dispatch(setMessages(messagesRetrived));
             dispatch(setLoading(false));

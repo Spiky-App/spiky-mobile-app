@@ -7,7 +7,7 @@ export interface University {
 
 export interface User {
     id: number;
-    alias: string;
+    nickname: string;
     university: University;
 }
 interface Response {
@@ -34,16 +34,25 @@ export interface ActiveMessage {
     num_respuestas: number;
     banned: number;
 }
+
+export interface Reaction {
+    type: number;
+}
+
+export interface Tracking {
+    id: number;
+}
+
 export interface Message {
     id: number;
     message: string;
-    date: string;
+    date: number;
     favor: number;
     neutral: number;
     against: number;
     user: User;
-    reaction_type?: number;
-    id_tracking?: number;
+    reactions: Reaction[];
+    trackings: Tracking[];
     answersNumber: number;
     draft: number;
 }
