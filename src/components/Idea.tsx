@@ -7,7 +7,7 @@ import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
-import { Message } from '../types/store';
+import { Message, ReactionType } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
@@ -25,7 +25,7 @@ export const Idea = ({ idea }: Props) => {
         left: 0,
     });
     const isOwner = idea.user.id === uid;
-    const fecha = getTime(idea.date);
+    const fecha = getTime(idea.date.toString());
 
     useEffect(() => {
         if (position.top !== 0) {
@@ -44,7 +44,7 @@ export const Idea = ({ idea }: Props) => {
                     </View>
                 )}
 
-                {idea.id_tracking && (
+                {idea.messageTrackingId && (
                     <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
                         <View>
                             <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
@@ -56,12 +56,12 @@ export const Idea = ({ idea }: Props) => {
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate('ProfileScreen', {
-                                alias: idea.user.alias,
+                                alias: idea.user.nickname,
                             });
                         }}
                     >
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
-                            @{idea.user.alias}
+                            @{idea.user.nickname}
                         </Text>
                     </TouchableOpacity>
                     <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
@@ -84,7 +84,7 @@ export const Idea = ({ idea }: Props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    {idea.reaction_type == 0 && !isOwner ? (
+                    {idea.reactionType == ReactionType.NEUTRAL && !isOwner ? (
                         <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
                             <TouchableHighlight
                                 style={stylescom.reactButton}
@@ -116,7 +116,11 @@ export const Idea = ({ idea }: Props) => {
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon
                                         icon={faXmark}
-                                        color={idea.reaction_type === 2 ? '#6A000E' : '#bebebe'}
+                                        color={
+                                            idea.reactionType === ReactionType.AGAINST
+                                                ? '#6A000E'
+                                                : '#bebebe'
+                                        }
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
@@ -127,7 +131,11 @@ export const Idea = ({ idea }: Props) => {
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon
                                         icon={faCheck}
-                                        color={idea.reaction_type === 1 ? '#0B5F00' : '#bebebe'}
+                                        color={
+                                            idea.reactionType === ReactionType.FAVOR
+                                                ? '#0B5F00'
+                                                : '#bebebe'
+                                        }
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>

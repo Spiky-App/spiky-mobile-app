@@ -43,6 +43,12 @@ export interface Tracking {
     id: number;
 }
 
+export enum ReactionType {
+    NEUTRAL = 0,
+    FAVOR = 1,
+    AGAINST = 2,
+}
+
 export interface Message {
     id: number;
     message: string;
@@ -51,8 +57,8 @@ export interface Message {
     neutral: number;
     against: number;
     user: User;
-    reactions: Reaction[];
-    trackings: Tracking[];
+    reactionType?: ReactionType;
+    messageTrackingId?: number;
     answersNumber: number;
     draft: number;
 }
