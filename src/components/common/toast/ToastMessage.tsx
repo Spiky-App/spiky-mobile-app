@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { StatusType } from '../../../types/common';
-import { faTriangleExclamation } from '../../../constants/icons/FontAwesome';
+import { faTriangleExclamation, faXmark } from '../../../constants/icons/FontAwesome';
 import { styles } from '../../../themes/appTheme';
 
 interface Props {
@@ -62,6 +62,13 @@ function ToastMessage({ message, status }: Props) {
         >
             <FontAwesomeIcon icon={faTriangleExclamation} color={iconColor()} size={20} />
             <Text style={[stylescom.text]}>{message}</Text>
+            <View style={stylescom.xmark}>
+                <TouchableWithoutFeedback
+                // onPress={()=>{}}
+                >
+                    <FontAwesomeIcon icon={faXmark} color={'#bebebe'} size={18} />
+                </TouchableWithoutFeedback>
+            </View>
         </Animated.View>
     );
 }
@@ -94,5 +101,12 @@ const stylescom = StyleSheet.create({
         letterSpacing: 0.26,
         marginHorizontal: 10,
         marginLeft: 10,
+    },
+    xmark: {
+        position: 'absolute',
+        justifyContent: 'center',
+        top: 0,
+        bottom: 0,
+        right: 12,
     },
 });

@@ -1,5 +1,6 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableWithoutFeedback } from 'react-native';
 import { styles } from '../themes/appTheme';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 const MsgTransform = ({ text, textStyle }: Props) => {
     const [content, setContent] = useState<Element>(<Text></Text>);
+    const navigation = useNavigation<any>();
 
     useEffect(() => {
         if (text !== '') {
@@ -27,14 +29,17 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             string.indexOf(']')
                         );
                         return (
-                            <TouchableOpacity
+                            <TouchableWithoutFeedback
                                 key={index}
                                 style={{ alignItems: 'flex-end' }}
-                                onPress={() => {}}
-                                // ${alias.replace('@', '')}
+                                onPress={() => {
+                                    navigation.navigate('ProfileScreen', {
+                                        alias: alias.replace('@', ''),
+                                    });
+                                }}
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>{alias}</Text>
-                            </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                         );
                     } else if (regexp_hashtag.test(string)) {
                         const hashtag = string.substring(
@@ -42,9 +47,9 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             string.indexOf(']')
                         );
                         return (
-                            <TouchableOpacity
+                            <TouchableWithoutFeedback
                                 key={index}
-                                style={{ ...textStyle }}
+                                style={{ ...textStyle, backgroundColor: 'red' }}
                                 onPress={() => {}}
                                 // ${hashtag.replace('#', '')}
                             >
@@ -54,7 +59,7 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                                     </Text>
                                     {hashtag.replace('#', '')}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                         );
                     } else {
                         return (
