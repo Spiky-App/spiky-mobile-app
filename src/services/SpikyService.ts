@@ -1,15 +1,16 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { LoginResponse, MessagesResponse, UniversityResponse } from '../types/services/spiky';
-import { MessageRequestData } from './models/spikyService';
-
-interface Headers {
-    'x-token': string;
-}
+import {
+    LoginResponse,
+    GetMessagesResponse,
+    UniversityResponse,
+    MessageRequestParams,
+    CreateMessageResponse,
+} from '../types/services/spiky';
 
 class SpikyService {
     private instance: AxiosInstance;
 
-    constructor(config?: AxiosRequestConfig<AxiosRequestConfig<Headers>>) {
+    constructor(config?: AxiosRequestConfig) {
         this.instance = axios.create(config);
     }
 
@@ -27,15 +28,15 @@ class SpikyService {
     getMessages(
         uid: number,
         lastMessageId: number,
-        filter: string,
-        parameters: MessageRequestData
+        parameters: MessageRequestParams,
+        filter?: string
     ) {
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
             ...parameters,
         };
-        return this.instance.get<MessagesResponse>(`mensajes${filter}`, {
+        return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, {
             params,
         });
     }
@@ -43,6 +44,23 @@ class SpikyService {
     getAuthRenew(token: string) {
         return this.instance.get<LoginResponse>('auth/renew', {
             headers: { 'x-token': token },
+        });
+    }
+
+    createMessage(message: string, draft: number) {
+        return this.instance.post<CreateMessageResponse>('mensajes/create', {
+            mensaje: message,
+            draft,
+        });
+    }
+
+    getUserMessages(uid: number, parameters?: MessageRequestParams) {
+        const params = {
+            uid,
+            ...parameters,
+        };
+        return this.instance.get<GetMessagesResponse>(`mensajes/user`, {
+            params,
         });
     }
 }
