@@ -5,6 +5,8 @@ import {
     UniversityResponse,
     MessageRequestParams,
     CreateMessageResponse,
+    GetUsersSuggetionProps,
+    GetHashtagsSuggetionProps,
 } from '../types/services/spiky';
 
 class SpikyService {
@@ -62,6 +64,14 @@ class SpikyService {
         return this.instance.get<GetMessagesResponse>(`mensajes/user`, {
             params,
         });
+    }
+
+    getUserSuggestions(word: string | undefined) {
+        return this.instance.get<GetUsersSuggetionProps>(`users/${word}`);
+    }
+
+    getHashtagsSuggestions(word: string | undefined) {
+        return this.instance.get<GetHashtagsSuggetionProps>(`hashtag/${word}`);
     }
 }
 

@@ -4,12 +4,13 @@ import {
     Text,
     View,
     SafeAreaView,
-    TextInput,
+    // TextInput,
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { MentionInput } from 'react-native-controlled-mentions';
 import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
@@ -26,6 +27,8 @@ import { Message, User } from '../types/store';
 import { StatusType } from '../types/common';
 import ButtonIcon from '../components/common/ButtonIcon';
 import { generateMessageFromMensaje } from '../helpers/message';
+import { MentionData } from 'react-native-controlled-mentions/dist/types';
+import { renderSuggetions } from '../components/Suggestions';
 
 type NavigationProp = CompositeNavigationProp<
     DrawerNavigationProp<DrawerParamList>,
@@ -109,13 +112,37 @@ export const CreateIdeaScreen = () => {
         <SafeAreaView style={stylecom.container}>
             <KeyboardAvoidingView behavior="height" style={stylecom.container}>
                 <View style={{ height: '40%' }}>
-                    <TextInput
+                    <MentionInput
                         placeholder="Perpetua tu idea.."
                         placeholderTextColor="#707070"
-                        style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
+                        style={{ ...styles.textinput, fontSize: 16 }}
                         multiline={true}
-                        onChangeText={value => onChange({ message: value })}
+                        // onChangeText={value => onChange({ message: value })}
                         autoFocus
+                        value={form.message}
+                        onChange={value => onChange({ message: value })}
+                        partTypes={[
+                            {
+                                trigger: '@',
+                                renderSuggestions: props =>
+                                    renderSuggetions({ ...props, isMention: true }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                isBottomMentionSuggestionsRender: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+                            {
+                                trigger: '#',
+                                renderSuggestions: props =>
+                                    renderSuggetions({ ...props, isMention: false }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                isBottomMentionSuggestionsRender: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+                        ]}
                     />
                 </View>
                 <View
