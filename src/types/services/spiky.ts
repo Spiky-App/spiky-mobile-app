@@ -49,11 +49,27 @@ export interface Message {
 
 interface User {
     alias: string;
-    id_universidad: number;
-    universidad: University;
+    id_universidad?: number;
+    universidad?: University;
+    id_usuario?: number;
 }
 
 export interface CreateMessageResponse {
     ok: boolean;
     mensaje: Message;
+}
+
+export interface GetUsersSuggetionProps {
+    ok: boolean;
+    usuarios: User[];
+}
+
+interface Hashtag {
+    id_hashtag: number;
+    hashtag: string;
+}
+
+export interface GetHashtagsSuggetionProps {
+    ok: boolean;
+    hashtags: Hashtag[];
 }
