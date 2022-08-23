@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import {
+    Animated,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
@@ -11,15 +18,18 @@ import { Message, ReactionType } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
+import { useAnimation } from '../hooks/useAnimation';
 
 interface Props {
     idea: Message;
+    index: number;
 }
 
-export const Idea = ({ idea }: Props) => {
+export const Idea = ({ idea, index }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const navigation = useNavigation<any>();
     const [ideaOptions, setIdeaOptions] = useState(false);
+    const { opacity, fadeIn } = useAnimation();
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
@@ -33,8 +43,12 @@ export const Idea = ({ idea }: Props) => {
         }
     }, [position]);
 
+    useEffect(() => {
+        fadeIn(350, () => {}, index * 150);
+    }, []);
+
     return (
-        <View style={stylescom.wrap}>
+        <Animated.View style={{ ...stylescom.wrap, opacity }}>
             <View style={stylescom.subwrap}>
                 {isOwner && (
                     <View style={stylescom.corner}>
@@ -183,7 +197,7 @@ export const Idea = ({ idea }: Props) => {
                     )}
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 

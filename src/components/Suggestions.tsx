@@ -19,7 +19,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
 
-    const getUserSuggestions = async (word: string | undefined) => {
+    const getUserSuggestions = async (word: string) => {
         if (word !== '@') {
             if (word !== '') {
                 const response = await service.getUserSuggestions(word);
@@ -34,7 +34,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
         }
     };
 
-    const getHashtagSuggestions = async (word: string | undefined) => {
+    const getHashtagSuggestions = async (word: string) => {
         if (word === '') word = 'anyhashtag0320';
         if (word !== '#') {
             const response = await service.getHashtagsSuggestions(word);

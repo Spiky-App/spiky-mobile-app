@@ -4,7 +4,6 @@ import {
     Text,
     View,
     SafeAreaView,
-    // TextInput,
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
@@ -117,7 +116,6 @@ export const CreateIdeaScreen = () => {
                         placeholderTextColor="#707070"
                         style={{ ...styles.textinput, fontSize: 16 }}
                         multiline={true}
-                        // onChangeText={value => onChange({ message: value })}
                         autoFocus
                         value={form.message}
                         onChange={value => onChange({ message: value })}

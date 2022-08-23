@@ -66,11 +66,11 @@ class SpikyService {
         });
     }
 
-    getUserSuggestions(word: string | undefined) {
+    getUserSuggestions(word: string) {
         return this.instance.get<GetUsersSuggetionProps>(`users/${word}`);
     }
 
-    getHashtagsSuggestions(word: string | undefined) {
+    getHashtagsSuggestions(word: string) {
         return this.instance.get<GetHashtagsSuggetionProps>(`hashtag/${word}`);
     }
 }
