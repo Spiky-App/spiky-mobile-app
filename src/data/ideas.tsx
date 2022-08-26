@@ -68,7 +68,7 @@ export const ideas: IdeaInterface[] = [
     {
         id_usuario: 3,
         id_mensaje: 4,
-        mensaje: 'Hola mundo',
+        mensaje: 'Hola como estas!!! @[@fer](2) Ya casiii #[#UnHashTagMas](6) jajajaja',
         fecha: '1650930143162',
         contra: 2,
         favor: 12,

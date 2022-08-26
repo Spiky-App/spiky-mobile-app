@@ -1,5 +1,6 @@
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons/faLightbulb';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
@@ -25,6 +26,8 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons/faArrowLeftLo
 import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons/faHashtag';
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation';
+import { faFlag } from '@fortawesome/free-solid-svg-icons/faFlag';
 
 export {
     faUsers,
@@ -54,4 +57,7 @@ export {
     faBan,
     faTrashCan,
     faHashtag,
+    faChevronRight,
+    faTriangleExclamation,
+    faFlag,
 };

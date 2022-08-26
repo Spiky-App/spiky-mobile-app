@@ -1,8 +1,11 @@
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { StatusType } from '../../../types/common';
+import { faTriangleExclamation, faXmark } from '../../../constants/icons/FontAwesome';
+import { styles } from '../../../themes/appTheme';
 
 interface Props {
     message: string;
@@ -24,25 +27,25 @@ function ToastMessage({ message, status }: Props) {
     const containerStyle = () => {
         switch (status) {
             case StatusType.WARNING:
-                return styles.warningContainer;
+                return stylescom.warningContainer;
             default:
                 return {};
         }
     };
 
-    const textStyle = () => {
+    const iconColor = () => {
         switch (status) {
             case StatusType.WARNING:
-                return styles.warningText;
+                return '#FC702A';
             default:
-                return {};
+                return '#01192E';
         }
     };
 
     return (
         <Animated.View
             style={[
-                styles.container,
+                stylescom.container,
                 {
                     opacity,
                     transform: [
@@ -57,17 +60,25 @@ function ToastMessage({ message, status }: Props) {
                 containerStyle(),
             ]}
         >
-            <Text style={[styles.text, textStyle()]}>{message}</Text>
+            <FontAwesomeIcon icon={faTriangleExclamation} color={iconColor()} size={20} />
+            <Text style={[stylescom.text]}>{message}</Text>
+            <View style={stylescom.xmark}>
+                <TouchableWithoutFeedback
+                // onPress={()=>{}}
+                >
+                    <FontAwesomeIcon icon={faXmark} color={'#bebebe'} size={18} />
+                </TouchableWithoutFeedback>
+            </View>
         </Animated.View>
     );
 }
 
 export default ToastMessage;
 
-const styles = StyleSheet.create({
+const stylescom = StyleSheet.create({
     container: {
-        borderRadius: 4,
-        marginVertical: 5,
+        borderRadius: 6,
+        marginVertical: 6,
         padding: 15,
         width: '100%',
         shadowColor: '#000',
@@ -78,20 +89,24 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
     },
-    warningContainer: {
-        backgroundColor: '#ff3f3f',
-    },
+    warningContainer: {},
     text: {
-        color: '#000',
-        fontWeight: '600',
-        fontSize: 12,
+        ...styles.text,
+        fontSize: 13,
         letterSpacing: 0.26,
         marginHorizontal: 10,
+        marginLeft: 10,
     },
-    warningText: {
-        color: '#fff',
+    xmark: {
+        position: 'absolute',
+        justifyContent: 'center',
+        top: 0,
+        bottom: 0,
+        right: 12,
     },
 });

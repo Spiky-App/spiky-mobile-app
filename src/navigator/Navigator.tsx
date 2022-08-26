@@ -16,6 +16,8 @@ import { setUniversities } from '../store/feature/ui/uiSlice';
 import { University } from '../types/store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
+import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
+import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -28,6 +30,8 @@ export type RootStackParamList = {
     CreateIdeaScreen: undefined;
     OpenedIdeaScreen: undefined;
     ManifestPart1Screen: undefined;
+    TermAndConditionsScreen: undefined;
+    ReportIdeaScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -93,6 +97,11 @@ export const Navigator = () => {
                     <Stack.Screen name="MenuMain" component={MenuMain} />
                     <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
                     <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
+                    <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
+                    <Stack.Screen
+                        name="TermAndConditionsScreen"
+                        component={TermAndConditionsScreen}
+                    />
                 </>
             )}
         </Stack.Navigator>

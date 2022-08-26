@@ -7,17 +7,7 @@ import {
     useDrawerStatus,
 } from '@react-navigation/drawer';
 import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-    faBell,
-    faLightbulb,
-    faPlus,
-    faThumbtack,
-    faUsers,
-    faMagnifyingGlass,
-    // faCircleNodes,
-    faHashtag,
-    faUser,
-} from '../constants/icons/FontAwesome';
+import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
 import { TrackingScreen } from '../screens/TrackingScreen';
@@ -32,12 +22,16 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+// import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
+import { menuInfo } from '../constants/navigatior';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
-    MyIdeasScreen: undefined;
+    MyIdeasScreen?: {
+        draft?: boolean;
+    };
     TrackingScreen: undefined;
     SearchScreen: undefined;
     ConnectionScreen: undefined;
@@ -49,44 +43,6 @@ export type DrawerParamList = {
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
-
-const menuInfo = [
-    {
-        name: 'Comunidad',
-        screen: 'CommunityScreen',
-        icon: faUsers,
-    },
-    {
-        name: 'Mis ideas',
-        screen: 'MyIdeasScreen',
-        icon: faLightbulb,
-    },
-    {
-        name: 'Tracking',
-        screen: 'TrackingScreen',
-        icon: faThumbtack,
-    },
-    {
-        name: 'Buscar',
-        screen: 'SearchScreen',
-        icon: faMagnifyingGlass,
-    },
-    // {
-    //     name: 'Conexiones',
-    //     screen: 'ConnectionScreen',
-    //     icon: faCircleNodes,
-    // },
-    {
-        name: 'Hashtag',
-        screen: 'HashTagScreen',
-        icon: faHashtag,
-    },
-    {
-        name: 'Perfil',
-        screen: 'ProfileScreen',
-        icon: faUser,
-    },
-];
 
 export const MenuMain = () => {
     const { width } = useWindowDimensions();
@@ -148,8 +104,11 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     }, [isDrawerOpen]);
 
     return (
-        <DrawerContentScrollView>
-            <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
+        <DrawerContentScrollView
+            contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+            style={{ flexDirection: 'row' }}
+        >
+            <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
                 </View>
@@ -227,6 +186,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     }}
                 >
                     <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" />
+                    {/* <View style={{ width: 22, justifyContent: 'center' }}>
+                        <IconGray color="#01192E" underlayColor={'#E6E6E6'} />
+                    </View> */}
                     <Text
                         style={{
                             ...stylescom.textmenu,
@@ -234,6 +196,24 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     >
                         Crear idea
                     </Text>
+                </TouchableOpacity>
+
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity
+                    style={{
+                        position: 'absolute',
+                        bottom: 65,
+                        right: 0,
+                        left: 0,
+                    }}
+                    onPress={() => navigation.navigate('TermAndConditionsScreen')}
+                >
+                    <View style={{ ...styles.center }}>
+                        <Text style={{ ...styles.text, ...styles.link }}>
+                            Términos y condiciones.
+                        </Text>
+                        <Text style={{ ...styles.text, ...styles.link }}>Aviso de privacidad.</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </DrawerContentScrollView>

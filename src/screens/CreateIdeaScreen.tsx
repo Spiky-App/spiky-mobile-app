@@ -4,52 +4,145 @@ import {
     Text,
     View,
     SafeAreaView,
-    TextInput,
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { MentionInput } from 'react-native-controlled-mentions';
 import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
+import { DrawerParamList } from '../navigator/MenuMain';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigator/Navigator';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import SpikyService from '../services/SpikyService';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { addMessage } from '../store/feature/messages/messagesSlice';
+import { Message, User } from '../types/store';
+import { StatusType } from '../types/common';
+import ButtonIcon from '../components/common/ButtonIcon';
+import { generateMessageFromMensaje } from '../helpers/message';
+import { MentionData } from 'react-native-controlled-mentions/dist/types';
+import { renderSuggetions } from '../components/Suggestions';
+
+type NavigationProp = CompositeNavigationProp<
+    DrawerNavigationProp<DrawerParamList>,
+    StackNavigationProp<RootStackParamList, 'CreateIdeaScreen'>
+>;
 
 export const CreateIdeaScreen = () => {
-    const [counter, setCounter] = useState(0);
-    const [buttonState, setButtonState] = useState(true);
-    const navigation = useNavigation();
+    const dispatch = useAppDispatch();
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const { nickname, id, university } = useAppSelector((state: RootState) => state.user);
     const { form, onChange } = useForm({
-        mensaje: '',
+        message: '',
     });
+    const navigation = useNavigation<NavigationProp>();
+    const [counter, setCounter] = useState(0);
+    const [isLoading, setLoading] = useState(false);
 
-    const { mensaje } = form;
+    const service = new SpikyService(config);
+    const IDEA_MAX_LENGHT = 220;
+
+    function invalid() {
+        const { message: mensaje } = form;
+        if (!mensaje || mensaje.length > IDEA_MAX_LENGHT) {
+            return true;
+        }
+        return false;
+    }
+
+    function getPercentage(value: number, maxValue: number): number {
+        return (value / maxValue) * 100;
+    }
+
+    async function createMessage(message: string, draft?: boolean) {
+        let createdMessage: Message | undefined = undefined;
+        try {
+            const response = await service.createMessage(message, draft ? 1 : 0);
+            const { data } = response;
+            const { mensaje } = data;
+            const user: User = {
+                nickname,
+                id,
+                university: {
+                    shortname: university,
+                },
+            };
+            createdMessage = generateMessageFromMensaje(mensaje, user);
+        } catch {
+            dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
+        }
+        return createdMessage;
+    }
+
+    async function onPressLocationArrow() {
+        setLoading(true);
+        const message = await createMessage(form.message);
+        if (message) {
+            dispatch(addMessage(message));
+            navigation.goBack();
+        }
+        setLoading(false);
+    }
+
+    async function onPressPenToSquare() {
+        setLoading(true);
+        const message = await createMessage(form.message, true);
+        if (message) {
+            dispatch(addMessage(message));
+            navigation.goBack();
+        }
+        setLoading(false);
+    }
 
     useEffect(() => {
-        setCounter(220 - mensaje.length);
-        if (mensaje.length <= 220 && mensaje.length > 0) {
-            if (buttonState) {
-                setButtonState(false);
-            }
-        } else {
-            setButtonState(true);
-        }
-    }, [mensaje]);
+        const { message: mensaje } = form;
+        setCounter(IDEA_MAX_LENGHT - mensaje.length);
+    }, [form]);
+
+    const messageLenght = form.message.length;
 
     return (
         <SafeAreaView style={stylecom.container}>
             <KeyboardAvoidingView behavior="height" style={stylecom.container}>
                 <View style={{ height: '40%' }}>
-                    <TextInput
+                    <MentionInput
                         placeholder="Perpetua tu idea.."
                         placeholderTextColor="#707070"
-                        style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
+                        style={{ ...styles.textinput, fontSize: 16 }}
                         multiline={true}
-                        onChangeText={value => onChange({ mensaje: value })}
                         autoFocus
+                        value={form.message}
+                        onChange={value => onChange({ message: value })}
+                        partTypes={[
+                            {
+                                trigger: '@',
+                                renderSuggestions: props =>
+                                    renderSuggetions({ ...props, isMention: true }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                isBottomMentionSuggestionsRender: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+                            {
+                                trigger: '#',
+                                renderSuggestions: props =>
+                                    renderSuggetions({ ...props, isMention: false }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                isBottomMentionSuggestionsRender: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+                        ]}
                     />
                 </View>
-
                 <View
                     style={{
                         flexDirection: 'row',
@@ -61,10 +154,9 @@ export const CreateIdeaScreen = () => {
                         bottom: Platform.OS === 'ios' ? 70 : 50,
                     }}
                 >
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} disabled={isLoading}>
                         <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
                     </TouchableOpacity>
-
                     <View style={stylecom.WrapperMaxCounterNIdea}>
                         <View style={stylecom.ConteMaxCounterNIdea}>
                             <View style={stylecom.MaxCounterNIdea}></View>
@@ -80,59 +172,39 @@ export const CreateIdeaScreen = () => {
                                 </Text>
                             )}
                             <View
-                                style={{
-                                    ...(counter < 0
+                                style={[
+                                    counter < 0
                                         ? stylecom.MaxCounterNIdeaColorRed
-                                        : stylecom.MaxCounterNIdeaColor),
-                                    width:
-                                        ((mensaje.length < 220 ? mensaje.length : 220) / 220) *
-                                            100 +
-                                        `%`,
-                                }}
-                            ></View>
-                        </View>
-                    </View>
-
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.circleButton,
-                            borderColor: buttonState ? '#d4d4d4d3' : '#01192E',
-                        }}
-                        onPress={() => {}}
-                    >
-                        <FontAwesomeIcon
-                            icon={faPenToSquare}
-                            size={16}
-                            color={buttonState ? '#d4d4d4d3' : '#01192E'}
-                        />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.circleButton,
-                            borderColor: buttonState ? '#d4d4d4d3' : '#01192E',
-                        }}
-                        onPress={() => {}}
-                    >
-                        <View
-                            style={{
-                                transform: [{ rotate: '45deg' }],
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faLocationArrow}
-                                size={16}
-                                color={buttonState ? '#d4d4d4d3' : '#01192E'}
+                                        : stylecom.MaxCounterNIdeaColor,
+                                    {
+                                        width:
+                                            getPercentage(
+                                                messageLenght < IDEA_MAX_LENGHT
+                                                    ? messageLenght
+                                                    : IDEA_MAX_LENGHT,
+                                                IDEA_MAX_LENGHT
+                                            ) + '%',
+                                    },
+                                ]}
                             />
                         </View>
-                    </TouchableOpacity>
+                    </View>
+                    <ButtonIcon
+                        disabled={isLoading || invalid()}
+                        icon={faPenToSquare}
+                        onPress={onPressPenToSquare}
+                    />
+                    <ButtonIcon
+                        disabled={isLoading || invalid()}
+                        icon={faLocationArrow}
+                        onPress={onPressLocationArrow}
+                    />
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylecom = StyleSheet.create({
     container: {
         flex: 1,

@@ -20,7 +20,7 @@ const MessagesFeed = ({ messages, loadMore }: props) => {
                 <FlatList
                     style={{ width: '90%' }}
                     data={messages}
-                    renderItem={({ item }) => <Idea idea={item} />}
+                    renderItem={({ item, index }) => <Idea idea={item} index={index} />}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
                     onEndReached={loadMore}

@@ -39,10 +39,13 @@ export const messagesSlice = createSlice({
         setLastMessageId: (state: MessagesState, action: PayloadAction<number | undefined>) => {
             state.lastMessageId = action.payload;
         },
+        addMessage: (state: MessagesState, action: PayloadAction<Message>) => {
+            state.messages = [action.payload, ...state.messages];
+        },
     },
 });
 
-export const { setMessages, setFilter, setLoading, setMoreMsg, setLastMessageId } =
+export const { setMessages, setFilter, setLoading, setMoreMsg, setLastMessageId, addMessage } =
     messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;
