@@ -12,7 +12,7 @@ export const CommunityScreen = () => {
     useEffect(function () {
         dispatch(setFilter(''));
     }, []);
-    const { messages, loading, moreMsg, fetchMessages } = useMensajes();
+    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
