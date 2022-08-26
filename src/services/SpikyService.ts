@@ -26,13 +26,17 @@ class SpikyService {
 
     getMessages(
         uid: number,
-        lastMessageId: number,
+        lastMessageId: number | undefined,
         filter: string,
         parameters: MessageRequestData
     ) {
+        const defaultParams: MessageRequestData = {
+            cantidad: 10,
+        };
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
+            ...defaultParams,
             ...parameters,
         };
         return this.instance.get<MessagesResponse>(`mensajes${filter}`, {

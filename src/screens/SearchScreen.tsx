@@ -14,7 +14,7 @@ import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { FloatButton } from '../components/FloatButton';
 import { useAnimation } from '../hooks/useAnimation';
 import { useMensajes } from '../hooks/useMensajes';
-import { setFilter } from '../store/feature/messages/messagesSlice';
+import { setFilter, setLastMessageId, setMessages } from '../store/feature/messages/messagesSlice';
 import { useAppDispatch } from '../store/hooks';
 import MessagesFeed from '../components/MessagesFeed';
 
@@ -28,14 +28,21 @@ export const SearchScreen = () => {
 
     const { position, movingPosition } = useAnimation();
     const [search, setSearch] = useState('');
-    const { messages, fetchMessages } = useMensajes({ search });
-    useEffect(() => {
+    const { messages, fetchMessages, moreMsg } = useMensajes({ search });
+    const handleSearch = () => {
         if (search.length > 0) {
+            // reset last message id, and messages
+            dispatch(setMessages([]));
+            dispatch(setLastMessageId(undefined));
             fetchMessages();
         }
+    };
+    // Comment if you don't want requests in every keystroke
+    useEffect(() => {
+        handleSearch();
     }, [search]);
     const submit = () => {
-        fetchMessages();
+        handleSearch();
     };
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
@@ -62,7 +69,12 @@ export const SearchScreen = () => {
                     </Animated.View>
 
                     <IdeasHeader title="Explorando" />
-                    <MessagesFeed messages={messages} />
+                    <MessagesFeed
+                        messages={messages}
+                        loadMore={() => {
+                            if (moreMsg) fetchMessages();
+                        }}
+                    />
                     <FloatButton />
                 </>
             </TouchableWithoutFeedback>

@@ -8,6 +8,7 @@ interface MessagesState {
     filter: string;
     moreMsg: boolean;
     activeMsg?: ActiveMessage;
+    lastMessageId?: number;
 }
 
 const initialState: MessagesState = {
@@ -16,6 +17,7 @@ const initialState: MessagesState = {
     filter: '',
     moreMsg: false,
     activeMsg: undefined,
+    lastMessageId: undefined,
 };
 
 export const messagesSlice = createSlice({
@@ -31,10 +33,17 @@ export const messagesSlice = createSlice({
         setLoading: (state: MessagesState, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },
+        setMoreMsg: (state: MessagesState, action: PayloadAction<boolean>) => {
+            state.moreMsg = action.payload;
+        },
+        setLastMessageId: (state: MessagesState, action: PayloadAction<number | undefined>) => {
+            state.lastMessageId = action.payload;
+        },
     },
 });
 
-export const { setMessages, setFilter, setLoading } = messagesSlice.actions;
+export const { setMessages, setFilter, setLoading, setMoreMsg, setLastMessageId } =
+    messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;
 

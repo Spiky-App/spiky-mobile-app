@@ -10,9 +10,10 @@ import { Message } from '../types/store';
 
 interface props {
     messages: Message[];
+    loadMore: () => void;
 }
 
-const MessagesFeed = ({ messages }: props) => {
+const MessagesFeed = ({ messages, loadMore }: props) => {
     const { loading, moreMsg } = useAppSelector((state: RootState) => state.messages);
     return (
         <>
@@ -23,9 +24,8 @@ const MessagesFeed = ({ messages }: props) => {
                     renderItem={({ item }) => <Idea idea={item} />}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
-                    ListFooterComponent={
-                        loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
-                    }
+                    onEndReached={loadMore}
+                    ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                 />
             ) : loading ? (

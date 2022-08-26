@@ -10,6 +10,8 @@ import { RootState } from '../store';
 import { signIn } from '../store/feature/auth/authSlice';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { setUser } from '../store/feature/user/userSlice';
+// Workaround to avoid error of axios [AxiosError: Unsupported protocol undefined:]
+// import { config as dotenvconfig } from '../constants/config';
 import Toast from '../components/common/Toast';
 
 const Container = () => {
@@ -46,6 +48,8 @@ const Container = () => {
 
     useEffect(() => {
         validateToken();
+        // dispatch(updateServiceConfig({ ...dotenvconfig }));
+        console.log(config);
     }, []);
 
     if (isLoading) {

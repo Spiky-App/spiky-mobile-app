@@ -37,8 +37,6 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    // const { messages } = useAppSelector((state: RootState) => state.messages);
-    console.info('render Navigator');
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
