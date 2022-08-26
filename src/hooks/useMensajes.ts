@@ -15,7 +15,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
         (state: RootState) => state.messages
     );
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const { id: uid, nickname, university } = useAppSelector((state: RootState) => state.user);
+    const { id: uid } = useAppSelector((state: RootState) => state.user);
 
     const fetchMessages = async () => {
         try {
@@ -26,10 +26,10 @@ export const useMensajes = (params: MessageRequestData = {}) => {
 
             const messagesRetrived: Message[] = mensajes.map(mensaje => {
                 const user: User = {
-                    id: uid,
-                    nickname: nickname,
+                    id: mensaje.id_usuario,
+                    nickname: mensaje.usuario.alias,
                     university: {
-                        shortname: university,
+                        shortname: mensaje.usuario.universidad.alias,
                     },
                 };
                 return generateMessageFromMensaje(mensaje, user);

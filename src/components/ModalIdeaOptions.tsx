@@ -4,6 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBan, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useNavigation } from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import SpikyService from '../services/SpikyService';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 
 interface Props {
     setIdeaOptions: (value: boolean) => void;
@@ -13,15 +17,56 @@ interface Props {
         top: number;
         left: number;
     };
+    messageId: number;
+    messageTrackingId?: number;
 }
 
-export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position }: Props) => {
+export const ModalIdeaOptions = ({
+    setIdeaOptions,
+    ideaOptions,
+    myIdea,
+    position,
+    messageId,
+    messageTrackingId,
+}: Props) => {
     const { top, left } = position;
     const navigation = useNavigation<any>();
+    const dispatch = useAppDispatch();
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
 
     const goToScreen = (screen: string) => {
         setIdeaOptions(false);
         navigation.navigate(screen);
+    };
+
+    const handleTracking = async () => {
+        if (!messageTrackingId) {
+            const response = await service.createTracking(uid, messageId);
+            const { data } = response;
+            const { id_tracking } = data;
+
+            const messagesUpdated = messages.map(msg => {
+                if (msg.id === messageId) {
+                    msg.messageTrackingId = id_tracking;
+                }
+                return msg;
+            });
+            dispatch(setMessages(messagesUpdated));
+        } else {
+            await service.deleteTracking(messageTrackingId);
+
+            const messagesUpdated = messages.map(msg => {
+                if (msg.id === messageId) {
+                    msg.messageTrackingId = undefined;
+                }
+                return msg;
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIdeaOptions(false);
     };
 
     return (
@@ -62,7 +107,7 @@ export const ModalIdeaOptions = ({ setIdeaOptions, ideaOptions, myIdea, position
                                             ...styles.center,
                                             paddingHorizontal: 14,
                                         }}
-                                        onPress={() => {}}
+                                        onPress={handleTracking}
                                     >
                                         <FontAwesomeIcon
                                             icon={faThumbtack}

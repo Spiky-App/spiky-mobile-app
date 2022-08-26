@@ -191,6 +191,8 @@ export const Idea = ({ idea, index }: Props) => {
                                     ideaOptions={ideaOptions}
                                     position={position}
                                     myIdea={isOwner}
+                                    messageId={idea.id}
+                                    messageTrackingId={idea.messageTrackingId}
                                 />
                             </View>
                         </>
