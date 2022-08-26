@@ -31,7 +31,7 @@ class SpikyService {
         parameters: MessageRequestData
     ) {
         const defaultParams: MessageRequestData = {
-            cantidad: 10,
+            cantidad: 15,
         };
         const params = {
             uid: uid,
