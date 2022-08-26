@@ -193,6 +193,8 @@ export const OpenedIdeaScreen = () => {
                                     ideaOptions={ideaOptions}
                                     position={position}
                                     myIdea={uid === idea.id_usuario}
+                                    messageId={1}
+                                    messageTrackingId={1}
                                 />
                             </View>
                         </>

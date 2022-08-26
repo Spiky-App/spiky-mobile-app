@@ -7,6 +7,8 @@ import {
     CreateMessageResponse,
     GetUsersSuggetionProps,
     GetHashtagsSuggetionProps,
+    CreateTrackingProps,
+    DeleteTrackingProps,
 } from '../types/services/spiky';
 
 class SpikyService {
@@ -72,6 +74,14 @@ class SpikyService {
 
     getHashtagsSuggestions(word: string) {
         return this.instance.get<GetHashtagsSuggetionProps>(`hashtag/${word}`);
+    }
+
+    createTracking(uid: number, messageId: number) {
+        return this.instance.post<CreateTrackingProps>(`track`, { uid, id_mensaje: messageId });
+    }
+
+    deleteTracking(messageTrackingId: number) {
+        return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
 }
 

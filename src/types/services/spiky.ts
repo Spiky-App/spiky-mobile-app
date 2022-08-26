@@ -44,13 +44,13 @@ export interface Message {
     num_respuestas?: number;
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
-    usuario?: User;
+    usuario: User;
 }
 
 interface User {
     alias: string;
     id_universidad?: number;
-    universidad?: University;
+    universidad: University;
     id_usuario?: number;
 }
 
@@ -72,4 +72,13 @@ interface Hashtag {
 export interface GetHashtagsSuggetionProps {
     ok: boolean;
     hashtags: Hashtag[];
+}
+
+export interface CreateTrackingProps {
+    ok: boolean;
+    id_tracking: number;
+}
+
+export interface DeleteTrackingProps {
+    ok: boolean;
 }
