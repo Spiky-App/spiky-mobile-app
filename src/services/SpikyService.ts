@@ -9,6 +9,7 @@ import {
     GetHashtagsSuggetionProps,
     CreateTrackingProps,
     DeleteTrackingProps,
+    CreateReactionMsg,
 } from '../types/services/spiky';
 
 class SpikyService {
@@ -31,8 +32,8 @@ class SpikyService {
 
     getMessages(
         uid: number,
-        lastMessageId: number,
         parameters: MessageRequestParams,
+        lastMessageId?: number,
         filter?: string
     ) {
         const params = {
@@ -82,6 +83,14 @@ class SpikyService {
 
     deleteTracking(messageTrackingId: number) {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
+    }
+
+    createReactionMsg(uid: number, messageId: number, reactionType: number) {
+        return this.instance.post<CreateReactionMsg>(`reacc`, {
+            uid,
+            id_mensaje: messageId,
+            tipo: reactionType,
+        });
     }
 }
 

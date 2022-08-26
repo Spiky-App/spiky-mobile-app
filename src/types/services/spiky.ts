@@ -82,3 +82,7 @@ export interface CreateTrackingProps {
 export interface DeleteTrackingProps {
     ok: boolean;
 }
+
+export interface CreateReactionMsg {
+    ok: boolean;
+}
