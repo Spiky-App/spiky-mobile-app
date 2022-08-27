@@ -28,6 +28,9 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons/faHashtag';
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation';
 import { faFlag } from '@fortawesome/free-solid-svg-icons/faFlag';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation';
+import { faEraser } from '@fortawesome/free-solid-svg-icons/faEraser';
 
 export {
     faUsers,
@@ -60,4 +63,7 @@ export {
     faChevronRight,
     faTriangleExclamation,
     faFlag,
+    faPaperPlane,
+    faCircleExclamation,
+    faEraser,
 };

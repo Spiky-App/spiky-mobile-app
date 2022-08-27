@@ -28,12 +28,21 @@ import { styles } from '../themes/appTheme';
 
 import { InputComment } from '../components/InputComment';
 import { ModalIdeaOptions } from '../components/ModalIdeaOptions';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import SpikyService from '../services/SpikyService';
+import { RootState } from '../store';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 
 let ideaOutComments = ideas[1];
 let idea = { ...ideaOutComments, respuestas: comentarios };
+const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
 export const OpenedIdeaScreen = () => {
     const uid = 1;
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
+    const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const fecha = getTime(idea.fecha);
     const { top, bottom } = useSafeAreaInsets();
@@ -42,6 +51,23 @@ export const OpenedIdeaScreen = () => {
         top: 0,
         left: 0,
     });
+
+    const handleReaction = (reactionTypeAux: number) => {
+        service.createReactionMsg(uid, ideaOutComments.id_mensaje, reactionTypeAux);
+
+        const messagesUpdated = messages.map(msg => {
+            if (msg.id === ideaOutComments.id_mensaje) {
+                return {
+                    ...msg,
+                    [reactioTypes[reactionTypeAux]]: msg[reactioTypes[reactionTypeAux]] + 1,
+                    reactionType: reactionTypeAux,
+                };
+            } else {
+                return msg;
+            }
+        });
+        dispatch(setMessages(messagesUpdated));
+    };
 
     useEffect(() => {
         if (position.top !== 0) {
@@ -61,7 +87,6 @@ export const OpenedIdeaScreen = () => {
                 position: 'relative',
             }}
         >
-            {/* goBack button */}
             <TouchableOpacity
                 style={{ position: 'absolute', top: 0, left: 0, marginLeft: 20 }}
                 onPress={() => navigation.goBack()}
@@ -107,12 +132,13 @@ export const OpenedIdeaScreen = () => {
                         justifyContent: 'space-between',
                     }}
                 >
+                    {/* {!idea.reactionType && !isOwner ? ( */}
                     {idea.reacciones.length === 0 ? (
                         <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
                             <TouchableHighlight
                                 style={stylescom.reactButton}
                                 underlayColor="#01192E"
-                                onPress={() => {}}
+                                onPress={() => handleReaction(2)}
                             >
                                 <FontAwesomeIcon icon={faXmark} color="white" size={18} />
                             </TouchableHighlight>
@@ -120,7 +146,7 @@ export const OpenedIdeaScreen = () => {
                             <TouchableHighlight
                                 style={stylescom.reactButton}
                                 underlayColor="#01192E"
-                                onPress={() => {}}
+                                onPress={() => handleReaction(1)}
                             >
                                 <FontAwesomeIcon icon={faCheck} color="white" size={18} />
                             </TouchableHighlight>
@@ -128,7 +154,7 @@ export const OpenedIdeaScreen = () => {
                             <TouchableHighlight
                                 style={stylescom.reactButton}
                                 underlayColor="#01192E"
-                                onPress={() => {}}
+                                onPress={() => handleReaction(0)}
                             >
                                 <FontAwesomeIcon icon={faMinus} color="white" size={18} />
                             </TouchableHighlight>

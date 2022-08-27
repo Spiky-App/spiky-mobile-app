@@ -1,3 +1,4 @@
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { StatusType } from './common';
 
 export interface University {
@@ -61,9 +62,17 @@ export interface Message {
     messageTrackingId?: number;
     answersNumber: number;
     draft: number;
+    sequence: number;
 }
 
 export interface Toast {
     message: string;
     type?: StatusType;
+}
+
+export interface ModalAlert {
+    isOpen: boolean;
+    text?: string;
+    icon?: IconDefinition;
+    color?: string;
 }

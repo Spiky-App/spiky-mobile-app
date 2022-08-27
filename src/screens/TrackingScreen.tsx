@@ -13,12 +13,17 @@ export const TrackingScreen = () => {
     useEffect(function () {
         dispatch(setFilter('/tracking'));
     }, []);
-    const { messages } = useMensajes();
+    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Siguiendo" />
-            <MessagesFeed messages={messages} />
+            <MessagesFeed
+                messages={messages}
+                loadMore={() => {
+                    if (moreMsg) fetchMessages();
+                }}
+            />
             <FloatButton />
         </BackgroundPaper>
     );

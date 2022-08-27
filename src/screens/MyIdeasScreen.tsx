@@ -13,13 +13,18 @@ export const MyIdeasScreen = () => {
     useEffect(function () {
         dispatch(setFilter('/user'));
     }, []);
-    const { messages } = useMensajes();
+    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Mis ideas" myideas={true} />
 
-            <MessagesFeed messages={messages} />
+            <MessagesFeed
+                messages={messages}
+                loadMore={() => {
+                    if (moreMsg) fetchMessages();
+                }}
+            />
             <FloatButton />
         </BackgroundPaper>
     );

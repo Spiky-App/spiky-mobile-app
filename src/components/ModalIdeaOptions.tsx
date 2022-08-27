@@ -1,13 +1,21 @@
 import React from 'react';
-import { Modal, Text, TouchableWithoutFeedback, View, TouchableOpacity } from 'react-native';
+import {
+    Modal,
+    Text,
+    TouchableWithoutFeedback,
+    View,
+    TouchableOpacity,
+    StyleSheet,
+} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBan, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
+import { faBan, faEraser, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
 
 interface Props {
     setIdeaOptions: (value: boolean) => void;
@@ -50,22 +58,46 @@ export const ModalIdeaOptions = ({
 
             const messagesUpdated = messages.map(msg => {
                 if (msg.id === messageId) {
-                    msg.messageTrackingId = id_tracking;
+                    return { ...msg, messageTrackingId: id_tracking };
+                } else {
+                    return msg;
                 }
-                return msg;
             });
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Tracking activado',
+                    color: '#FC702A',
+                    icon: faThumbtack,
+                })
+            );
             dispatch(setMessages(messagesUpdated));
         } else {
             await service.deleteTracking(messageTrackingId);
 
             const messagesUpdated = messages.map(msg => {
                 if (msg.id === messageId) {
-                    msg.messageTrackingId = undefined;
+                    return { ...msg, messageTrackingId: undefined };
+                } else {
+                    return msg;
                 }
-                return msg;
             });
+            dispatch(
+                setModalAlert({ isOpen: true, text: 'Tracking desactivado', icon: faThumbtack })
+            );
             dispatch(setMessages(messagesUpdated));
         }
+        setIdeaOptions(false);
+    };
+
+    const handleDelete = async () => {
+        const response = await service.deleteMessage(messageId);
+        const { data } = response;
+        const { msg: msgAlert } = data;
+
+        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        dispatch(setMessages(messagesUpdated));
+        dispatch(setModalAlert({ isOpen: true, text: msgAlert, icon: faEraser }));
         setIdeaOptions(false);
     };
 
@@ -81,32 +113,11 @@ export const ModalIdeaOptions = ({
                     }}
                 >
                     <TouchableWithoutFeedback>
-                        <View
-                            style={{
-                                backgroundColor: '#ffff',
-                                paddingVertical: 3,
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2,
-                                },
-                                shadowOpacity: 0.25,
-                                elevation: 7,
-                                borderRadius: 5,
-                                alignItems: 'flex-start',
-                                position: 'absolute',
-                                width: 150,
-                                top: top,
-                                left: left - 110,
-                            }}
-                        >
+                        <View style={{ ...stylescomp.container, top: top, left: left - 110 }}>
                             {!myIdea ? (
                                 <>
                                     <TouchableOpacity
-                                        style={{
-                                            ...styles.flex,
-                                            ...styles.center,
-                                            paddingHorizontal: 14,
-                                        }}
+                                        style={stylescomp.button}
                                         onPress={handleTracking}
                                     >
                                         <FontAwesomeIcon
@@ -114,81 +125,36 @@ export const ModalIdeaOptions = ({
                                             color="#01192E"
                                             size={13}
                                         />
-                                        <Text
-                                            style={{
-                                                ...styles.text,
-                                                fontSize: 13,
-                                                marginLeft: 8,
-                                                paddingVertical: 6,
-                                            }}
-                                        >
-                                            Tracking
-                                        </Text>
+                                        <Text style={stylescomp.text}>Tracking</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity
-                                        style={{
-                                            ...styles.flex,
-                                            ...styles.center,
-                                            paddingHorizontal: 14,
-                                        }}
-                                        onPress={() => {}}
-                                    >
+                                    <TouchableOpacity style={stylescomp.button} onPress={() => {}}>
                                         <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
-                                        <Text
-                                            style={{
-                                                ...styles.text,
-                                                fontSize: 13,
-                                                marginLeft: 8,
-                                                paddingVertical: 6,
-                                            }}
-                                        >
-                                            Replicar en priv
-                                        </Text>
+                                        <Text style={stylescomp.text}> Replicar en priv</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
-                                        style={{
-                                            ...styles.flex,
-                                            ...styles.center,
-                                            paddingHorizontal: 14,
-                                        }}
+                                        style={stylescomp.button}
                                         onPress={() => goToScreen('ReportIdeaScreen')}
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
-                                        <Text
-                                            style={{
-                                                ...styles.text,
-                                                fontSize: 13,
-                                                marginLeft: 8,
-                                                paddingVertical: 6,
-                                            }}
-                                        >
-                                            Reportar
-                                        </Text>
+                                        <Text style={stylescomp.text}>Reportar</Text>
                                     </TouchableOpacity>
                                 </>
                             ) : (
-                                <TouchableOpacity
-                                    style={{
-                                        ...styles.flex,
-                                        ...styles.center,
-                                        paddingHorizontal: 14,
-                                    }}
-                                    onPress={() => {}}
-                                >
-                                    <FontAwesomeIcon icon={faTrashCan} color="#01192E" size={13} />
-                                    <Text
-                                        style={{
-                                            ...styles.text,
-                                            fontSize: 13,
-                                            marginLeft: 8,
-                                            paddingVertical: 6,
-                                        }}
+                                <>
+                                    <TouchableOpacity
+                                        style={stylescomp.button}
+                                        onPress={handleDelete}
                                     >
-                                        Eliminar
-                                    </Text>
-                                </TouchableOpacity>
+                                        <FontAwesomeIcon
+                                            icon={faTrashCan}
+                                            color="#01192E"
+                                            size={13}
+                                        />
+                                        <Text style={stylescomp.text}>Eliminar</Text>
+                                    </TouchableOpacity>
+                                </>
                             )}
                         </View>
                     </TouchableWithoutFeedback>
@@ -197,3 +163,31 @@ export const ModalIdeaOptions = ({
         </Modal>
     );
 };
+
+const stylescomp = StyleSheet.create({
+    container: {
+        backgroundColor: '#ffff',
+        paddingVertical: 3,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        elevation: 7,
+        borderRadius: 5,
+        alignItems: 'flex-start',
+        position: 'absolute',
+        width: 150,
+    },
+    text: {
+        ...styles.text,
+        fontSize: 13,
+        marginLeft: 8,
+        paddingVertical: 6,
+    },
+    button: {
+        ...styles.flex,
+        ...styles.center,
+        paddingHorizontal: 14,
+    },
+});
