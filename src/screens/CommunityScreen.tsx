@@ -12,12 +12,17 @@ export const CommunityScreen = () => {
     useEffect(function () {
         dispatch(setFilter(''));
     }, []);
-    const { messages } = useMensajes();
+    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Comunidad" />
-            <MessagesFeed messages={messages} />
+            <MessagesFeed
+                messages={messages}
+                loadMore={() => {
+                    if (moreMsg) fetchMessages();
+                }}
+            />
             <FloatButton />
         </BackgroundPaper>
     );

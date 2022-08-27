@@ -3,7 +3,12 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import { MessageRequestData } from '../services/models/spikyService';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
-import { setMessages, setLoading } from '../store/feature/messages/messagesSlice';
+import {
+    setMessages,
+    setLoading,
+    setLastMessageId,
+    setMoreMsg,
+} from '../store/feature/messages/messagesSlice';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
@@ -11,7 +16,7 @@ import { Message, User } from '../types/store';
 
 export const useMensajes = (params: MessageRequestData = {}) => {
     const dispatch = useAppDispatch();
-    const { messages, filter, loading, moreMsg } = useAppSelector(
+    const { messages, filter, loading, moreMsg, lastMessageId } = useAppSelector(
         (state: RootState) => state.messages
     );
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -19,11 +24,15 @@ export const useMensajes = (params: MessageRequestData = {}) => {
 
     const fetchMessages = async () => {
         try {
-            const spikyClient = new SpikyService(config);
             dispatch(setLoading(true));
-            const { data: messagesData } = await spikyClient.getMessages(uid, 11, params, filter);
+            const spikyClient = new SpikyService(config);
+            const { data: messagesData } = await spikyClient.getMessages(
+                uid,
+                lastMessageId,
+                filter,
+                params
+            );
             const { mensajes } = messagesData;
-
             const messagesRetrived: Message[] = mensajes.map(mensaje => {
                 const user: User = {
                     id: mensaje.id_usuario,
@@ -34,14 +43,38 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 };
                 return generateMessageFromMensaje(mensaje, user);
             });
-            dispatch(setMessages(messagesRetrived));
+            if (messagesRetrived.length < 10) {
+                dispatch(setMoreMsg(false));
+            } else {
+                dispatch(setMoreMsg(true));
+            }
+
+            /*
+                Explanation:
+                + we might have an empty result so messagesRetrived[messagesRetrived.length - 1].id would be undefined, that's why we require a lenght > 0
+                + also, in api/mensajes/search we return all results (i'm not sure) 
+            */
+            if (messagesRetrived.length && !params.search) {
+                dispatch(setLastMessageId(messagesRetrived[messagesRetrived.length - 1].id));
+                dispatch(setMessages([...messages, ...messagesRetrived]));
+            }
+            if (params.search) {
+                dispatch(setMessages(messagesRetrived));
+            }
             dispatch(setLoading(false));
-        } catch {
+        } catch (e) {
+            console.log(e);
             dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
         }
     };
     useEffect(() => {
-        fetchMessages();
+        if (uid && config?.headers?.['x-token']) {
+            fetchMessages();
+        }
+        return () => {
+            dispatch(setLastMessageId(undefined));
+            dispatch(setMessages([]));
+        };
     }, [config, uid, filter]);
 
     return {

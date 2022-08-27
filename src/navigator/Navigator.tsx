@@ -41,8 +41,6 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    // const { messages } = useAppSelector((state: RootState) => state.messages);
-    console.info('render Navigator');
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
@@ -55,18 +53,26 @@ export const Navigator = () => {
                 })
             );
             dispatch(setUniversities(universitiesResponse));
-        } catch {
+        } catch (e) {
+            console.log(e);
             dispatch(
                 addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
             );
         }
     }
 
+    // I changed this because the token in store.auth can be
+    // defined before config.headers.x-token that is the one
+    // that we actually use here
+    // TODO: centralize in one place where to put the token,
+    // because i think it is saved in axios, in SecureStorage
+    // and in store's auth.token
     useEffect(() => {
-        if (token && !universities) {
+        console.log(config?.headers?.['x-token']);
+        if (config?.headers?.['x-token'] && !universities) {
             setSessionInfo();
         }
-    }, [token, universities, config]);
+    }, [universities, config]);
 
     return (
         <Stack.Navigator
