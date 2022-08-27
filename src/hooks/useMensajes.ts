@@ -50,7 +50,6 @@ export const useMensajes = (params: MessageRequestData = {}) => {
             if (messagesRetrived.length && !params.search) {
                 dispatch(setLastMessageId(messagesRetrived[messagesRetrived.length - 1].id));
                 dispatch(setMessages([...messages, ...messagesRetrived]));
-                console.log('holaaaaa');
             }
             if (params.search) {
                 dispatch(setMessages(messagesRetrived));

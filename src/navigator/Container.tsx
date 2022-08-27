@@ -13,6 +13,7 @@ import { setUser } from '../store/feature/user/userSlice';
 // Workaround to avoid error of axios [AxiosError: Unsupported protocol undefined:]
 // import { config as dotenvconfig } from '../constants/config';
 import Toast from '../components/common/Toast';
+import { ModalAlert } from '../components/ModalAlert';
 
 const Container = () => {
     const dispatch = useAppDispatch();
@@ -61,6 +62,7 @@ const Container = () => {
             <Toast>
                 <Navigator />
             </Toast>
+            <ModalAlert />
         </NavigationContainer>
     );
 };

@@ -10,6 +10,7 @@ import {
     CreateTrackingProps,
     DeleteTrackingProps,
     CreateReactionMsg,
+    DeleteMessageProps,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -96,6 +97,10 @@ class SpikyService {
             id_mensaje: messageId,
             tipo: reactionType,
         });
+    }
+
+    deleteMessage(messageId: number) {
+        return this.instance.post<DeleteMessageProps>(`mensajes/delete`, { id_mensaje: messageId });
     }
 }
 
