@@ -61,6 +61,7 @@ export interface Message {
     messageTrackingId?: number;
     answersNumber: number;
     draft: number;
+    sequence: number;
 }
 
 export interface Toast {

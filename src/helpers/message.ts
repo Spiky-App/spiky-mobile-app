@@ -1,7 +1,7 @@
 import { Message as Mensaje } from '../types/services/spiky';
-import { Message, ReactionType, User } from '../types/store';
+import { Message, ReactionType } from '../types/store';
 
-function generateMessageFromMensaje(mensaje: Mensaje, user: User): Message {
+function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number): Message {
     const reactionType: ReactionType | undefined = mensaje?.reacciones?.find(
         (reaccion, index) => index === 0
     )?.tipo;
@@ -15,11 +15,18 @@ function generateMessageFromMensaje(mensaje: Mensaje, user: User): Message {
         favor: mensaje.favor,
         neutral: mensaje.neutro,
         against: mensaje.contra,
-        user,
+        user: {
+            id: mensaje.id_usuario,
+            nickname: mensaje.usuario.alias,
+            university: {
+                shortname: mensaje.usuario.universidad.alias,
+            },
+        },
         reactionType,
         messageTrackingId,
         answersNumber: mensaje.num_respuestas ?? 0,
         draft: mensaje.draft,
+        sequence: msgIndex,
     };
 }
 

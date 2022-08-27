@@ -12,7 +12,7 @@ import {
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Message, User } from '../types/store';
+import { Message } from '../types/store';
 
 export const useMensajes = (params: MessageRequestData = {}) => {
     const dispatch = useAppDispatch();
@@ -33,17 +33,10 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 params
             );
             const { mensajes } = messagesData;
-            const messagesRetrived: Message[] = mensajes.map(mensaje => {
-                const user: User = {
-                    id: mensaje.id_usuario,
-                    nickname: mensaje.usuario.alias,
-                    university: {
-                        shortname: mensaje.usuario.universidad.alias,
-                    },
-                };
-                return generateMessageFromMensaje(mensaje, user);
+            const messagesRetrived: Message[] = mensajes.map((mensaje, index) => {
+                return generateMessageFromMensaje(mensaje, index);
             });
-            if (messagesRetrived.length < 10) {
+            if (messagesRetrived.length < 15) {
                 dispatch(setMoreMsg(false));
             } else {
                 dispatch(setMoreMsg(true));
@@ -57,6 +50,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
             if (messagesRetrived.length && !params.search) {
                 dispatch(setLastMessageId(messagesRetrived[messagesRetrived.length - 1].id));
                 dispatch(setMessages([...messages, ...messagesRetrived]));
+                console.log('holaaaaa');
             }
             if (params.search) {
                 dispatch(setMessages(messagesRetrived));
@@ -79,7 +73,6 @@ export const useMensajes = (params: MessageRequestData = {}) => {
 
     return {
         filter,
-        messages,
         loading,
         moreMsg,
         fetchMessages,

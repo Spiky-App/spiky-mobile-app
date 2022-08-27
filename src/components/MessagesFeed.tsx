@@ -5,15 +5,16 @@ import { useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
-import { Message } from '../types/store';
+import { useMensajes } from '../hooks/useMensajes';
 
-interface props {
-    messages: Message[];
-    loadMore: () => void;
-}
+const MessagesFeed = () => {
+    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
+    const { moreMsg, fetchMessages } = useMensajes();
 
-const MessagesFeed = ({ messages, loadMore }: props) => {
-    const { loading } = useAppSelector((state: RootState) => state.messages);
+    const loadMore = () => {
+        if (moreMsg) fetchMessages();
+    };
+
     return (
         <>
             {messages?.length !== 0 ? (

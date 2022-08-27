@@ -49,7 +49,7 @@ const Container = () => {
     useEffect(() => {
         validateToken();
         // dispatch(updateServiceConfig({ ...dotenvconfig }));
-        console.log(config);
+        // console.log(config);
     }, []);
 
     if (isLoading) {

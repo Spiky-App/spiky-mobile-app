@@ -50,9 +50,10 @@ export const ModalIdeaOptions = ({
 
             const messagesUpdated = messages.map(msg => {
                 if (msg.id === messageId) {
-                    msg.messageTrackingId = id_tracking;
+                    return { ...msg, messageTrackingId: id_tracking };
+                } else {
+                    return msg;
                 }
-                return msg;
             });
             dispatch(setMessages(messagesUpdated));
         } else {
@@ -60,9 +61,10 @@ export const ModalIdeaOptions = ({
 
             const messagesUpdated = messages.map(msg => {
                 if (msg.id === messageId) {
-                    msg.messageTrackingId = undefined;
+                    return { ...msg, messageTrackingId: undefined };
+                } else {
+                    return msg;
                 }
-                return msg;
             });
             dispatch(setMessages(messagesUpdated));
         }

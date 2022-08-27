@@ -52,15 +52,19 @@ export const OpenedIdeaScreen = () => {
         left: 0,
     });
 
-    const handleReaction = (reactionType: number) => {
-        service.createReactionMsg(uid, ideaOutComments.id_mensaje, reactionType);
+    const handleReaction = (reactionTypeAux: number) => {
+        service.createReactionMsg(uid, ideaOutComments.id_mensaje, reactionTypeAux);
 
         const messagesUpdated = messages.map(msg => {
             if (msg.id === ideaOutComments.id_mensaje) {
-                msg[reactioTypes[reactionType]] = msg[reactioTypes[reactionType]] + 1;
-                msg.reactionType = reactionType;
+                return {
+                    ...msg,
+                    [reactioTypes[reactionTypeAux]]: msg[reactioTypes[reactionTypeAux]] + 1,
+                    reactionType: reactionTypeAux,
+                };
+            } else {
+                return msg;
             }
-            return msg;
         });
         dispatch(setMessages(messagesUpdated));
     };

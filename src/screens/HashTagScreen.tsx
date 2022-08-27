@@ -16,13 +16,18 @@ export const HashTagScreen = ({ hashtag }: Props) => {
     useEffect(function () {
         dispatch(setFilter('/hashtag/' + hashtag));
     }, []);
-    const { messages } = useMensajes();
+    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'#' + hashtag} />
 
-            <MessagesFeed messages={messages} />
+            <MessagesFeed
+                messages={messages}
+                loadMore={() => {
+                    if (moreMsg) fetchMessages();
+                }}
+            />
             <FloatButton />
         </BackgroundPaper>
     );

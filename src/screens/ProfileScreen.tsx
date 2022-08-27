@@ -12,20 +12,23 @@ import MessagesFeed from '../components/MessagesFeed';
 type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 
 export const ProfileScreen = ({ route }: Props) => {
-    // TODO implementar el filtro por alias
-    //const alias = 'rooster0';
     const alias = route.params?.alias;
     const dispatch = useAppDispatch();
 
     useEffect(function () {
         dispatch(setFilter('/perfil'));
     }, []);
-    const { messages } = useMensajes({ alias });
+    const { messages, moreMsg, fetchMessages } = useMensajes({ alias });
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'@' + alias} />
-            <MessagesFeed messages={messages} />
+            <MessagesFeed
+                messages={messages}
+                loadMore={() => {
+                    if (moreMsg) fetchMessages();
+                }}
+            />
 
             <FloatButton />
         </BackgroundPaper>

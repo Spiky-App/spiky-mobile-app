@@ -29,7 +29,7 @@ interface Props {
 
 const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
-export const Idea = ({ idea, index }: Props) => {
+export const Idea = ({ idea }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -42,18 +42,35 @@ export const Idea = ({ idea, index }: Props) => {
         top: 0,
         left: 0,
     });
-    const isOwner = idea.user.id === uid;
-    const fecha = getTime(idea.date.toString());
+    const {
+        id,
+        message,
+        date,
+        user,
+        against,
+        answersNumber,
+        messageTrackingId,
+        reactionType,
+        sequence,
+        favor,
+    } = idea;
 
-    const handleReaction = (reactionType: number) => {
-        service.createReactionMsg(uid, idea.id, reactionType);
+    const isOwner = user.id === uid;
+    const fecha = getTime(date.toString());
+
+    const handleReaction = (reactionTypeAux: number) => {
+        service.createReactionMsg(uid, id, reactionTypeAux);
 
         const messagesUpdated = messages.map(msg => {
-            if (msg.id === idea.id) {
-                msg[reactioTypes[reactionType]] = msg[reactioTypes[reactionType]] + 1;
-                msg.reactionType = reactionType;
+            if (msg.id === id) {
+                return {
+                    ...msg,
+                    [reactioTypes[reactionTypeAux]]: msg[reactioTypes[reactionTypeAux]] + 1,
+                    reactionType: reactionTypeAux,
+                };
+            } else {
+                return msg;
             }
-            return msg;
         });
         dispatch(setMessages(messagesUpdated));
     };
@@ -65,7 +82,7 @@ export const Idea = ({ idea, index }: Props) => {
     }, [position]);
 
     useEffect(() => {
-        fadeIn(350, () => {}, index * 150);
+        fadeIn(350, () => {}, sequence * 150);
     }, []);
 
     return (
@@ -79,7 +96,7 @@ export const Idea = ({ idea, index }: Props) => {
                     </View>
                 )}
 
-                {idea.messageTrackingId && (
+                {messageTrackingId && (
                     <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
                         <View>
                             <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
@@ -91,25 +108,22 @@ export const Idea = ({ idea, index }: Props) => {
                     <TouchableOpacity
                         onPress={() => {
                             navigation.navigate('ProfileScreen', {
-                                alias: idea.user.nickname,
+                                alias: user.nickname,
                             });
                         }}
                     >
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
-                            @{idea.user.nickname}
+                            @{user.nickname}
                         </Text>
                     </TouchableOpacity>
                     <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
                     <Text style={{ ...styles.text, fontSize: 13 }}>
-                        {idea.user.university.shortname}
+                        {user.university.shortname}
                     </Text>
                 </View>
 
                 <View style={{ marginTop: 6 }}>
-                    <MsgTransform
-                        textStyle={{ ...styles.text, ...stylescom.msg }}
-                        text={idea.message}
-                    />
+                    <MsgTransform textStyle={{ ...styles.text, ...stylescom.msg }} text={message} />
                 </View>
 
                 <View
@@ -119,7 +133,7 @@ export const Idea = ({ idea, index }: Props) => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    {!idea.reactionType && !isOwner ? (
+                    {reactionType === undefined && !isOwner ? (
                         <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
                             <TouchableHighlight
                                 style={stylescom.reactButton}
@@ -152,14 +166,14 @@ export const Idea = ({ idea, index }: Props) => {
                                     <FontAwesomeIcon
                                         icon={faXmark}
                                         color={
-                                            idea.reactionType === ReactionType.AGAINST
+                                            reactionType === ReactionType.AGAINST
                                                 ? '#6A000E'
                                                 : '#bebebe'
                                         }
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.against === 0 ? '' : idea.against}
+                                        {against === 0 ? '' : against}
                                     </Text>
                                 </View>
 
@@ -167,14 +181,14 @@ export const Idea = ({ idea, index }: Props) => {
                                     <FontAwesomeIcon
                                         icon={faCheck}
                                         color={
-                                            idea.reactionType === ReactionType.FAVOR
+                                            reactionType === ReactionType.FAVOR
                                                 ? '#0B5F00'
                                                 : '#bebebe'
                                         }
                                         size={12}
                                     />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.favor === 0 ? '' : idea.favor}
+                                        {favor === 0 ? '' : favor}
                                     </Text>
                                 </View>
 
@@ -186,7 +200,7 @@ export const Idea = ({ idea, index }: Props) => {
                                 >
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.answersNumber === 0 ? '' : idea.answersNumber}
+                                        {answersNumber === 0 ? '' : answersNumber}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -212,8 +226,8 @@ export const Idea = ({ idea, index }: Props) => {
                                     ideaOptions={ideaOptions}
                                     position={position}
                                     myIdea={isOwner}
-                                    messageId={idea.id}
-                                    messageTrackingId={idea.messageTrackingId}
+                                    messageId={id}
+                                    messageTrackingId={messageTrackingId}
                                 />
                             </View>
                         </>
