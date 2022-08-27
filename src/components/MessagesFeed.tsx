@@ -2,7 +2,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import React from 'react';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
-import { ButtonMoreIdeas } from './ButtonMoreIdeas';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
@@ -10,10 +9,11 @@ import { Message } from '../types/store';
 
 interface props {
     messages: Message[];
+    loadMore: () => void;
 }
 
-const MessagesFeed = ({ messages }: props) => {
-    const { loading, moreMsg } = useAppSelector((state: RootState) => state.messages);
+const MessagesFeed = ({ messages, loadMore }: props) => {
+    const { loading } = useAppSelector((state: RootState) => state.messages);
     return (
         <>
             {messages?.length !== 0 ? (
@@ -23,9 +23,8 @@ const MessagesFeed = ({ messages }: props) => {
                     renderItem={({ item, index }) => <Idea idea={item} index={index} />}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
-                    ListFooterComponent={
-                        loading ? LoadingAnimated : moreMsg ? ButtonMoreIdeas : <></>
-                    }
+                    onEndReached={loadMore}
+                    ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                 />
             ) : loading ? (

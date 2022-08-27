@@ -11,6 +11,7 @@ import {
     DeleteTrackingProps,
     CreateReactionMsg,
 } from '../types/services/spiky';
+import { MessageRequestData } from '../services/models/spikyService';
 
 class SpikyService {
     private instance: AxiosInstance;
@@ -32,13 +33,17 @@ class SpikyService {
 
     getMessages(
         uid: number,
-        parameters: MessageRequestParams,
-        lastMessageId?: number,
-        filter?: string
+        lastMessageId: number | undefined,
+        filter: string,
+        parameters: MessageRequestData
     ) {
+        const defaultParams: MessageRequestData = {
+            cantidad: 15,
+        };
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
+            ...defaultParams,
             ...parameters,
         };
         return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, {
