@@ -21,6 +21,7 @@ import MsgTransform from './MsgTransform';
 import { useAnimation } from '../hooks/useAnimation';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { generateMessageFromMensaje } from '../helpers/message';
 
 interface Props {
     idea: Message;
@@ -73,6 +74,20 @@ export const Idea = ({ idea }: Props) => {
             }
         });
         dispatch(setMessages(messagesUpdated));
+    };
+
+    const handleOpenIdea = async () => {
+        const response = await service.getMessageAndComments(id);
+        const { data } = response;
+        const { mensaje, num_respuestas } = data;
+        const messagesRetrived: Message = generateMessageFromMensaje({
+            ...mensaje,
+            num_respuestas: num_respuestas,
+        });
+
+        navigation.navigate('OpenedIdeaScreen', {
+            message: messagesRetrived,
+        });
     };
 
     useEffect(() => {
@@ -194,9 +209,7 @@ export const Idea = ({ idea }: Props) => {
 
                                 <TouchableOpacity
                                     style={stylescom.reaction}
-                                    onPress={() => {
-                                        navigation.navigate('OpenedIdeaScreen');
-                                    }}
+                                    onPress={handleOpenIdea}
                                 >
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                                     <Text style={{ ...styles.text, ...stylescom.number }}>
@@ -272,8 +285,7 @@ const stylescom = StyleSheet.create({
     },
     msg: {
         fontSize: 13,
-        // fontWeight: '300',
-        textAlign: 'justify',
+        textAlign: 'left',
         flexShrink: 1,
     },
     reaction: {

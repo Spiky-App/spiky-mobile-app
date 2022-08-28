@@ -3,7 +3,6 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { FloatButton } from '../components/FloatButton';
 import { useAppDispatch } from '../store/hooks';
-import { useMensajes } from '../hooks/useMensajes';
 import { setFilter } from '../store/feature/messages/messagesSlice';
 import MessagesFeed from '../components/MessagesFeed';
 
@@ -16,18 +15,11 @@ export const HashTagScreen = ({ hashtag }: Props) => {
     useEffect(function () {
         dispatch(setFilter('/hashtag/' + hashtag));
     }, []);
-    const { messages, moreMsg, fetchMessages } = useMensajes();
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'#' + hashtag} />
-
-            <MessagesFeed
-                messages={messages}
-                loadMore={() => {
-                    if (moreMsg) fetchMessages();
-                }}
-            />
+            <MessagesFeed />
             <FloatButton />
         </BackgroundPaper>
     );

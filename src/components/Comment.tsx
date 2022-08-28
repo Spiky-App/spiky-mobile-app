@@ -4,27 +4,35 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { faReply, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ComentarioInterface } from '../data/respuestas';
 import { ModalReactComment } from './ModalReactComment';
 import { faCheck } from '../constants/icons/FontAwesome';
 import IconGray from './svg/IconGray';
+import { Comment as CommentProps, ReactionType } from '../types/store';
+import { useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import MsgTransform from './MsgTransform';
 
 interface Props {
-    comment: ComentarioInterface;
+    comment: CommentProps;
 }
 
 export const Comment = ({ comment }: Props) => {
-    const [reactComment, setReactComment] = useState(false);
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const [reactComment, setReactComment] = useState({
+        against: comment.against,
+        favor: comment.favor,
+        reactionCommentType: comment.reactionCommentType,
+    });
+    const [modalReact, setModalReact] = useState(false);
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
     });
-    const uid = 1;
-    const fecha = getTime(comment.fecha);
-
+    const date = getTime(comment.date.toString());
+    const { against, favor, reactionCommentType } = reactComment;
     useEffect(() => {
         if (position.top !== 0) {
-            setReactComment(true);
+            setModalReact(true);
         }
     }, [position]);
 
@@ -33,18 +41,16 @@ export const Comment = ({ comment }: Props) => {
             <View style={{ ...styles.flex }}>
                 <TouchableOpacity onPress={() => {}}>
                     <Text style={{ ...styles.user, ...styles.textbold }}>
-                        @{comment.usuario.alias}
+                        @{comment.user.nickname}
                     </Text>
                 </TouchableOpacity>
                 <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
                 <Text style={{ ...styles.text, fontSize: 13 }}>
-                    {comment.usuario.universidad.alias}
+                    {comment.user.university.shortname}
                 </Text>
 
-                <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>
-                    {fecha}
-                </Text>
-                {uid !== comment.usuario.id_usuario && (
+                <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
+                {uid !== comment.user.id && (
                     <>
                         <TouchableOpacity
                             style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
@@ -52,7 +58,7 @@ export const Comment = ({ comment }: Props) => {
                         >
                             <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
                         </TouchableOpacity>
-                        {comment.resp_reacciones.length === 0 && (
+                        {reactionCommentType === undefined && (
                             <TouchableOpacity
                                 style={{ width: 18, marginLeft: 6 }}
                                 onPress={event => {
@@ -65,7 +71,7 @@ export const Comment = ({ comment }: Props) => {
                                 <IconGray
                                     color="#E6E6E6"
                                     underlayColor={'#01192ebe'}
-                                    pressed={reactComment}
+                                    pressed={modalReact}
                                 />
                             </TouchableOpacity>
                         )}
@@ -73,9 +79,12 @@ export const Comment = ({ comment }: Props) => {
                 )}
             </View>
 
-            <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 0 }}>
-                {comment.respuesta}
-            </Text>
+            <View style={{ marginTop: 4, marginBottom: 0 }}>
+                <MsgTransform
+                    textStyle={{ ...styles.text, ...styles.msg }}
+                    text={comment.comment}
+                />
+            </View>
 
             <View style={{ flexDirection: 'row' }}>
                 <View
@@ -87,7 +96,7 @@ export const Comment = ({ comment }: Props) => {
                         marginTop: 3,
                     }}
                 >
-                    {comment.resp_reaccion_2 && (
+                    {against > 0 && (
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -97,13 +106,17 @@ export const Comment = ({ comment }: Props) => {
                         >
                             <FontAwesomeIcon
                                 icon={faXmark}
-                                color={comment.resp_reacciones[0]?.tipo === 2 ? '#01192E' : 'white'}
+                                color={
+                                    reactionCommentType === ReactionType.AGAINST
+                                        ? '#01192E'
+                                        : 'white'
+                                }
                                 size={14}
                             />
-                            <Text style={{ ...styles.text, ...stylescom.text }}>2</Text>
+                            <Text style={{ ...styles.text, ...stylescom.text }}>{against}</Text>
                         </View>
                     )}
-                    {comment.resp_reaccion_1 && (
+                    {favor > 0 && (
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -113,10 +126,12 @@ export const Comment = ({ comment }: Props) => {
                         >
                             <FontAwesomeIcon
                                 icon={faCheck}
-                                color={comment.resp_reacciones[0]?.tipo === 1 ? '#01192E' : 'white'}
+                                color={
+                                    reactionCommentType === ReactionType.FAVOR ? '#01192E' : 'white'
+                                }
                                 size={14}
                             />
-                            <Text style={{ ...styles.text, ...stylescom.text }}>2</Text>
+                            <Text style={{ ...styles.text, ...stylescom.text }}>{favor}</Text>
                         </View>
                     )}
                 </View>
@@ -124,9 +139,11 @@ export const Comment = ({ comment }: Props) => {
             </View>
 
             <ModalReactComment
-                setReactComment={setReactComment}
-                reactComment={reactComment}
+                setModalReact={setModalReact}
+                modalReact={modalReact}
                 position={position}
+                commentId={comment.id}
+                setReactComment={setReactComment}
             />
         </View>
     );

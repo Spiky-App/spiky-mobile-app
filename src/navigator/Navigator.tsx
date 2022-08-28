@@ -13,7 +13,7 @@ import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { University } from '../types/store';
+import { Message, University } from '../types/store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
@@ -28,7 +28,7 @@ export type RootStackParamList = {
     RegisterScreen: undefined;
     MenuMain: undefined;
     CreateIdeaScreen: undefined;
-    OpenedIdeaScreen: undefined;
+    OpenedIdeaScreen: { message: Message };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
     ReportIdeaScreen: undefined;
