@@ -22,7 +22,7 @@ import { RootState } from '../store';
 import SpikyService from '../services/SpikyService';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { addMessage } from '../store/feature/messages/messagesSlice';
-import { Message, User } from '../types/store';
+import { Message } from '../types/store';
 import { StatusType } from '../types/common';
 import ButtonIcon from '../components/common/ButtonIcon';
 import { generateMessageFromMensaje } from '../helpers/message';
@@ -37,7 +37,7 @@ type NavigationProp = CompositeNavigationProp<
 export const CreateIdeaScreen = () => {
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const { nickname, id, university } = useAppSelector((state: RootState) => state.user);
+    const { nickname, university } = useAppSelector((state: RootState) => state.user);
     const { form, onChange } = useForm({
         message: '',
     });
@@ -66,14 +66,15 @@ export const CreateIdeaScreen = () => {
             const response = await service.createMessage(message, draft ? 1 : 0);
             const { data } = response;
             const { mensaje } = data;
-            const user: User = {
-                nickname,
-                id,
-                university: {
-                    shortname: university,
+            createdMessage = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: nickname,
+                    universidad: {
+                        alias: university,
+                    },
                 },
-            };
-            createdMessage = generateMessageFromMensaje(mensaje, user);
+            });
         } catch {
             dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
         }

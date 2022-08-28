@@ -21,7 +21,6 @@ import MsgTransform from './MsgTransform';
 import { useAnimation } from '../hooks/useAnimation';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
-import { generateMessageFromMensaje } from '../helpers/message';
 
 interface Props {
     idea: Message;
@@ -76,17 +75,9 @@ export const Idea = ({ idea }: Props) => {
         dispatch(setMessages(messagesUpdated));
     };
 
-    const handleOpenIdea = async () => {
-        const response = await service.getMessageAndComments(id);
-        const { data } = response;
-        const { mensaje, num_respuestas } = data;
-        const messagesRetrived: Message = generateMessageFromMensaje({
-            ...mensaje,
-            num_respuestas: num_respuestas,
-        });
-
+    const handleOpenIdea = () => {
         navigation.navigate('OpenedIdeaScreen', {
-            message: messagesRetrived,
+            messageId: id,
         });
     };
 
