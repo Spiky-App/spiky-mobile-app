@@ -19,22 +19,25 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUser: (state, action: PayloadAction<UserState>) => {
+        setUser: (state: UserState, action: PayloadAction<UserState>) => {
             state.nickname = action.payload.nickname;
             state.notificationsNumber = action.payload.notificationsNumber;
             state.university = action.payload.university;
             state.id = action.payload.id;
         },
-        removeUser: state => {
+        removeUser: (state: UserState) => {
             state.nickname = initialState.nickname;
             state.notificationsNumber = initialState.notificationsNumber;
             state.university = initialState.university;
             state.id = initialState.id;
         },
+        updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {
+            state.notificationsNumber = action.payload;
+        },
     },
 });
 
-export const { setUser, removeUser } = userSlice.actions;
+export const { setUser, removeUser, updateNotificationsNumber } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
 

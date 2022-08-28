@@ -109,3 +109,7 @@ export interface Notification {
         mensaje: string;
     };
 }
+
+export interface UpdateNotifications {
+    ok: boolean;
+}

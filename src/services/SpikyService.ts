@@ -12,6 +12,7 @@ import {
     CreateReactionMsg,
     DeleteMessageProps,
     GetNotifications,
+    UpdateNotifications,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -106,6 +107,10 @@ class SpikyService {
 
     getNotifications() {
         return this.instance.get<GetNotifications>(`notif`);
+    }
+
+    updateNotifications(arrayIds: number[]) {
+        return this.instance.put<UpdateNotifications>(`notif`, { id_notificaciones: arrayIds });
     }
 }
 

@@ -11,7 +11,8 @@ import {
 import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import { updateNotificationsNumber } from '../store/feature/user/userSlice';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
 import { Notification } from './Notification';
@@ -25,6 +26,7 @@ interface Props {
 export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
+    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState<NotificationProps[]>([]);
 
@@ -37,6 +39,21 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
         );
         setNotifications(notificacionesRetrived);
         setLoading(false);
+    };
+
+    const cleanNotifications = () => {
+        let array_nofi: number[] = [];
+
+        let new_notis = notifications.map(n => {
+            if (!n.seen) {
+                n.seen = true;
+                array_nofi.push(n.id);
+            }
+            return n;
+        });
+        service.updateNotifications(array_nofi);
+        setNotifications(new_notis);
+        dispatch(updateNotificationsNumber(0));
     };
 
     useEffect(() => {
@@ -64,7 +81,10 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
                                     <Text style={styles.orange}>.</Text>
                                 </Text>
 
-                                <TouchableOpacity style={styles.center} onPress={() => {}}>
+                                <TouchableOpacity
+                                    style={styles.center}
+                                    onPress={cleanNotifications}
+                                >
                                     <Text
                                         style={{
                                             ...styles.text,
@@ -92,7 +112,12 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
                                 ) : notifications?.length !== 0 ? (
                                     <FlatList
                                         data={notifications}
-                                        renderItem={({ item }) => <Notification item={item} />}
+                                        renderItem={({ item }) => (
+                                            <Notification
+                                                notification={item}
+                                                setModalNotif={setModalNotif}
+                                            />
+                                        )}
                                         keyExtractor={item => item.id + ''}
                                         showsVerticalScrollIndicator={false}
                                     />
