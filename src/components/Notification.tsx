@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { NotificacionesInterface } from '../data/notificaciones';
 import { getTime } from '../helpers/getTime';
 import { styles } from '../themes/appTheme';
+import { Notification as NotificationProps } from '../types/store';
 
 interface PropsNotification {
-    item: NotificacionesInterface;
+    item: NotificationProps;
 }
 
 const msg_notif = [
@@ -56,11 +56,11 @@ export const Notification = ({ item }: PropsNotification) => {
         return msg_final;
     };
 
-    const new_mensaje = ReturnMsg(item.mensaje.mensaje);
+    const new_mensaje = ReturnMsg(item.message);
 
     return (
         <View>
-            {!item.visto && (
+            {!item.seen && (
                 <View style={stylescom.wrapnew}>
                     <View style={stylescom.new} />
                 </View>
@@ -71,12 +71,12 @@ export const Notification = ({ item }: PropsNotification) => {
                     <Text>
                         <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
                             {'@' +
-                                item.usuario2.alias +
+                                item.user.nickname +
                                 ' de ' +
-                                item.usuario2.universidad.alias +
+                                item.user.university.shortname +
                                 ' '}
                         </Text>
-                        <Text style={{ ...styles.text, fontSize: 13 }}>{msg_notif[item.tipo]}</Text>
+                        <Text style={{ ...styles.text, fontSize: 13 }}>{msg_notif[item.type]}</Text>
                     </Text>
                 </View>
                 <View style={{ ...styles.flex, marginTop: 3, justifyContent: 'space-between' }}>

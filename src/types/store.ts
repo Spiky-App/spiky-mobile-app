@@ -7,7 +7,7 @@ export interface University {
 }
 
 export interface User {
-    id: number;
+    id?: number;
     nickname: string;
     university: University;
 }
@@ -75,4 +75,24 @@ export interface ModalAlert {
     text?: string;
     icon?: IconDefinition;
     color?: string;
+}
+
+export interface Notification {
+    id: number;
+    messageId: number;
+    message: string;
+    type: NotificationType;
+    seen: boolean;
+    updatedAt: string | null;
+    createdAt: string;
+    user: User;
+}
+
+export enum NotificationType {
+    NOTHING = 0,
+    REACT_IDEA = 1,
+    COMMENT_IDEA = 2,
+    COMMENT_TRACKING = 3,
+    MENTION = 4,
+    REACT_COMMENT = 5,
 }

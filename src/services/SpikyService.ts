@@ -11,6 +11,7 @@ import {
     DeleteTrackingProps,
     CreateReactionMsg,
     DeleteMessageProps,
+    GetNotifications,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -101,6 +102,10 @@ class SpikyService {
 
     deleteMessage(messageId: number) {
         return this.instance.post<DeleteMessageProps>(`mensajes/delete`, { id_mensaje: messageId });
+    }
+
+    getNotifications() {
+        return this.instance.get<GetNotifications>(`notif`);
     }
 }
 

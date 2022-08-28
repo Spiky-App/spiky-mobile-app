@@ -91,3 +91,21 @@ export interface DeleteMessageProps {
     ok: boolean;
     msg: string;
 }
+
+export interface GetNotifications {
+    ok: boolean;
+    notificaciones: Notification[];
+}
+
+export interface Notification {
+    id_notificacion: number;
+    id_mensaje: number;
+    tipo: number;
+    visto: boolean;
+    updatedAt: string | null;
+    createdAt: string;
+    usuario2: User;
+    mensaje: {
+        mensaje: string;
+    };
+}
