@@ -20,9 +20,6 @@ export const IdeasHeader = ({ title, myideas = false }: Props) => {
     useEffect(() => {
         fadeIn(800);
     }, []);
-    useEffect(() => {
-        if (activeDraft) console.log('i wants the drafts');
-    }, [activeDraft]);
 
     return (
         <Animated.View

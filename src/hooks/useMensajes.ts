@@ -32,7 +32,6 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 filter,
                 params
             );
-            console.log(messagesData);
             const { mensajes } = messagesData;
             const messagesRetrived: Message[] = mensajes.map((mensaje, index) => {
                 return generateMessageFromMensaje(mensaje, index);
