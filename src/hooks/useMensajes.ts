@@ -14,13 +14,14 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { Message } from '../types/store';
 
-export const useMensajes = (params: MessageRequestData = {}) => {
+export const useMensajes = (params: MessageRequestData = { filter: '' }) => {
     const dispatch = useAppDispatch();
-    const { messages, filter, loading, moreMsg, lastMessageId } = useAppSelector(
+    const { messages, loading, moreMsg, lastMessageId } = useAppSelector(
         (state: RootState) => state.messages
     );
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const { id: uid } = useAppSelector((state: RootState) => state.user);
+    const { filter } = params;
 
     const fetchMessages = async () => {
         try {

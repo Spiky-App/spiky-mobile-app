@@ -7,9 +7,22 @@ import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
 import { useMensajes } from '../hooks/useMensajes';
 
-const MessagesFeed = () => {
+interface MessageParams {
+    filter: string;
+    alias?: string;
+    search?: string;
+    hashtag?: string;
+    univer?: number;
+    draft?: boolean;
+    cantidad?: number;
+}
+
+const MessagesFeed = (params: MessageParams) => {
     const { loading, messages } = useAppSelector((state: RootState) => state.messages);
-    const { moreMsg, fetchMessages } = useMensajes();
+    const { moreMsg, fetchMessages } = useMensajes({
+        ...params,
+    });
+    console.log(params);
 
     const loadMore = () => {
         if (moreMsg) fetchMessages();

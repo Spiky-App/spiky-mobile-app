@@ -14,14 +14,14 @@ export const ProfileScreen = ({ route }: Props) => {
     const alias = route.params?.alias;
     const dispatch = useAppDispatch();
 
-    useEffect(function () {
-        dispatch(setFilter('/perfil'));
-    }, []);
+    // useEffect(function () {
+    //     dispatch(setFilter('/perfil'));
+    // }, []);
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'@' + alias} />
-            <MessagesFeed />
+            <MessagesFeed alias={alias} filter={'/perfil'} />
             <FloatButton />
         </BackgroundPaper>
     );

@@ -58,6 +58,7 @@ export interface AuthRenewResponseData {
 }
 
 export interface MessageRequestData {
+    filter: string;
     alias?: string;
     search?: string;
     hashtag?: string;
