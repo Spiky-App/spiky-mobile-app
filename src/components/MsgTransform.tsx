@@ -46,18 +46,23 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             string.indexOf('[') + 1,
                             string.indexOf(']')
                         );
+                        const hashtag_text = hashtag.replace('#', '');
                         return (
                             <TouchableWithoutFeedback
                                 key={index}
                                 style={{ ...textStyle, backgroundColor: 'red' }}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    navigation.navigate('HashTagScreen', {
+                                        hashtag: hashtag_text,
+                                    });
+                                }}
                                 // ${hashtag.replace('#', '')}
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>
                                     <Text style={{ ...textStyle, ...styles.h5, ...styles.orange }}>
                                         #
                                     </Text>
-                                    {hashtag.replace('#', '')}
+                                    {hashtag_text}
                                 </Text>
                             </TouchableWithoutFeedback>
                         );

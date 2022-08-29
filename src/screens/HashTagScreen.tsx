@@ -5,21 +5,22 @@ import { FloatButton } from '../components/FloatButton';
 import { useAppDispatch } from '../store/hooks';
 import { setFilter } from '../store/feature/messages/messagesSlice';
 import MessagesFeed from '../components/MessagesFeed';
+import { DrawerParamList } from '../navigator/MenuMain';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 
-interface Props {
-    hashtag: string;
-}
-export const HashTagScreen = ({ hashtag }: Props) => {
+type Props = DrawerScreenProps<DrawerParamList, 'HashTagScreen'>;
+
+export const HashTagScreen = ({ route }: Props) => {
     const dispatch = useAppDispatch();
-
+    const hashtag = route.params?.hashtag;
     useEffect(function () {
-        dispatch(setFilter('/hashtag/' + hashtag));
+        dispatch(setFilter('/hashtag?hashtag=' + hashtag));
     }, []);
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'#' + hashtag} />
-            <MessagesFeed />
+            <MessagesFeed hashtag={hashtag} />
             <FloatButton />
         </BackgroundPaper>
     );

@@ -15,7 +15,7 @@ export const CommunityScreen = () => {
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title="Comunidad" />
-            <MessagesFeed filter={''} />
+            <MessagesFeed />
             <FloatButton />
         </BackgroundPaper>
     );

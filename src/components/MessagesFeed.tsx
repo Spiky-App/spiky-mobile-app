@@ -1,14 +1,13 @@
 import { FlatList } from 'react-native-gesture-handler';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
 import { useMensajes } from '../hooks/useMensajes';
-
+import { setLastMessageId, setMessages } from '../store/feature/messages/messagesSlice';
 interface MessageParams {
-    filter: string;
     alias?: string;
     search?: string;
     hashtag?: string;
@@ -17,17 +16,22 @@ interface MessageParams {
     cantidad?: number;
 }
 
-const MessagesFeed = (params: MessageParams) => {
-    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
+const MessagesFeed = (params: MessageParams = {}) => {
+    const dispatch = useAppDispatch();
     const { moreMsg, fetchMessages } = useMensajes({
         ...params,
     });
-    console.log(params);
 
+    useEffect(() => {
+        dispatch(setMessages([]));
+        dispatch(setLastMessageId(undefined));
+        fetchMessages();
+    }, [params]);
+
+    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
     const loadMore = () => {
         if (moreMsg) fetchMessages();
     };
-
     return (
         <>
             {messages?.length !== 0 ? (

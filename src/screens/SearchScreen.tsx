@@ -68,7 +68,7 @@ export const SearchScreen = () => {
                     </Animated.View>
 
                     <IdeasHeader title="Explorando" />
-                    <MessagesFeed />
+                    <MessagesFeed search={search} />
                     <FloatButton />
                 </>
             </TouchableWithoutFeedback>

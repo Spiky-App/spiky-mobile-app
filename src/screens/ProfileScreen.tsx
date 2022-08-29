@@ -13,7 +13,6 @@ type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 export const ProfileScreen = ({ route }: Props) => {
     const alias = route.params?.alias;
     const dispatch = useAppDispatch();
-
     useEffect(function () {
         dispatch(setFilter('/perfil'));
     }, []);
@@ -21,7 +20,7 @@ export const ProfileScreen = ({ route }: Props) => {
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'@' + alias} />
-            <MessagesFeed alias={alias} filter={'/perfil'} />
+            <MessagesFeed alias={alias} />
             <FloatButton />
         </BackgroundPaper>
     );
