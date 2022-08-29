@@ -11,10 +11,10 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 type Props = DrawerScreenProps<DrawerParamList, 'HashTagScreen'>;
 
 export const HashTagScreen = ({ route }: Props) => {
-    const dispatch = useAppDispatch();
     const hashtag = route.params?.hashtag;
+    const dispatch = useAppDispatch();
     useEffect(function () {
-        dispatch(setFilter('/hashtag?hashtag=' + hashtag));
+        dispatch(setFilter('/hashtag'));
     }, []);
 
     return (

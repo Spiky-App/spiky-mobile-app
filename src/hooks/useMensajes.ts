@@ -32,6 +32,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 filter,
                 params
             );
+            console.log(messagesData);
             const { mensajes } = messagesData;
             const messagesRetrived: Message[] = mensajes.map((mensaje, index) => {
                 return generateMessageFromMensaje(mensaje, index);
@@ -51,7 +52,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 dispatch(setLastMessageId(messagesRetrived[messagesRetrived.length - 1].id));
                 dispatch(setMessages([...messages, ...messagesRetrived]));
             }
-            if (params.search) {
+            if (params.search || params.alias || params.hashtag) {
                 dispatch(setMessages(messagesRetrived));
             }
             dispatch(setLoading(false));

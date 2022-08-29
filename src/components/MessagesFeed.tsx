@@ -16,19 +16,18 @@ interface MessageParams {
     cantidad?: number;
 }
 
-const MessagesFeed = (params: MessageParams = {}) => {
+const MessagesFeed = (params: MessageParams) => {
     const dispatch = useAppDispatch();
     const { moreMsg, fetchMessages } = useMensajes({
         ...params,
     });
-
+    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
     useEffect(() => {
         dispatch(setMessages([]));
         dispatch(setLastMessageId(undefined));
         fetchMessages();
     }, [params]);
 
-    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
     const loadMore = () => {
         if (moreMsg) fetchMessages();
     };
