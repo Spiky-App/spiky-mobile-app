@@ -63,6 +63,7 @@ export interface Message {
     answersNumber: number;
     draft: number;
     sequence: number;
+    comments?: Comment[];
 }
 
 export interface Toast {
@@ -75,4 +76,15 @@ export interface ModalAlert {
     text?: string;
     icon?: IconDefinition;
     color?: string;
+}
+
+export interface Comment {
+    id: number;
+    comment: string;
+    date: number;
+    messageId: number;
+    user: User;
+    favor: number;
+    against: number;
+    reactionCommentType?: ReactionType;
 }

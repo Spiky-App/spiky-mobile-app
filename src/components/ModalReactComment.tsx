@@ -3,22 +3,55 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Modal, TouchableWithoutFeedback, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { faCheck, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
+import { useAppSelector } from '../store/hooks';
+import SpikyService from '../services/SpikyService';
+import { RootState } from '../store';
+import { ReactionType } from '../types/store';
+
+interface ReactComment {
+    against: number;
+    favor: number;
+    reactionCommentType: ReactionType | undefined;
+}
 
 interface Props {
-    setReactComment: (value: boolean) => void;
-    reactComment: boolean;
+    setModalReact: (value: boolean) => void;
+    modalReact: boolean;
     position: {
         top: number;
         left: number;
     };
+    commentId: number;
+    setReactComment: React.Dispatch<React.SetStateAction<ReactComment>>;
 }
 
-export const ModalReactComment = ({ reactComment, setReactComment, position }: Props) => {
+const reactioTypes: ['favor', 'against'] = ['favor', 'against'];
+
+export const ModalReactComment = ({
+    modalReact,
+    setModalReact,
+    position,
+    commentId,
+    setReactComment,
+}: Props) => {
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
     const { top, left } = position;
 
+    const handleComment = (reactionTypeAux: number) => {
+        service.createReactionCmt(commentId, reactionTypeAux);
+        const newReactionType = reactionTypeAux === 1 ? ReactionType.FAVOR : ReactionType.AGAINST;
+        setReactComment((value: ReactComment) => ({
+            ...value,
+            [reactioTypes[reactionTypeAux - 1]]: value[reactioTypes[reactionTypeAux - 1]] + 1,
+            reactionCommentType: newReactionType,
+        }));
+        setModalReact(false);
+    };
+
     return (
-        <Modal animationType="fade" visible={reactComment} transparent={true}>
-            <TouchableWithoutFeedback onPress={() => setReactComment(false)}>
+        <Modal animationType="fade" visible={modalReact} transparent={true}>
+            <TouchableWithoutFeedback onPress={() => setModalReact(false)}>
                 <View
                     style={{
                         flex: 1,
@@ -49,10 +82,16 @@ export const ModalReactComment = ({ reactComment, setReactComment, position }: P
                                 left: left + 5,
                             }}
                         >
-                            <TouchableOpacity style={stylescom.button} onPress={() => {}}>
+                            <TouchableOpacity
+                                style={stylescom.button}
+                                onPress={() => handleComment(1)}
+                            >
                                 <FontAwesomeIcon icon={faCheck} size={20} color="white" />
                             </TouchableOpacity>
-                            <TouchableOpacity style={stylescom.button} onPress={() => {}}>
+                            <TouchableOpacity
+                                style={stylescom.button}
+                                onPress={() => handleComment(2)}
+                            >
                                 <FontAwesomeIcon icon={faXmark} size={20} color="white" />
                             </TouchableOpacity>
                         </View>

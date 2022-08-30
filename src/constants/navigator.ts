@@ -5,7 +5,7 @@ import {
     faMagnifyingGlass,
     faHashtag,
     faUser,
-} from '../constants/icons/FontAwesome';
+} from './icons/FontAwesome';
 
 export const menuInfo = [
     {

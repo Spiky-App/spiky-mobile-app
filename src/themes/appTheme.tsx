@@ -131,8 +131,7 @@ export const styles = StyleSheet.create({
     },
     msg: {
         fontSize: 13,
-        fontWeight: '300',
-        textAlign: 'justify',
+        textAlign: 'left',
         flexShrink: 1,
         width: '100%',
         marginVertical: 8,

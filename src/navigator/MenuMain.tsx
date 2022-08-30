@@ -25,7 +25,7 @@ import { styles } from '../themes/appTheme';
 // import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { menuInfo } from '../constants/navigatior';
+import { menuInfo } from '../constants/navigator';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
@@ -35,11 +35,10 @@ export type DrawerParamList = {
     TrackingScreen: undefined;
     SearchScreen: undefined;
     ConnectionScreen: undefined;
-    // ProfileScreen: { alias: '' } | undefined;
     ProfileScreen: { alias: string };
     ConfigurationScreen: undefined;
     ChangePasswordScreen: undefined;
-    HashTagScreen: { hashtag: '' } | undefined;
+    HashTagScreen: { hashtag: string };
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();

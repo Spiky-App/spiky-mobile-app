@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import {
     View,
     Text,
@@ -28,6 +28,18 @@ export const Header = () => {
     });
 
     const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
+
+    const changeScreen = (screen: string) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: screen, params: targetRoute?.params }],
+            })
+        );
+    };
 
     return (
         <ImageBackground
@@ -59,7 +71,7 @@ export const Header = () => {
                     </TouchableOpacity>
 
                     <View style={{ width: 75, marginLeft: 15 }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('CommunityScreen')}>
+                        <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
                             <LogoWhiteSvg />
                         </TouchableOpacity>
                     </View>
