@@ -81,11 +81,11 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             <TouchableWithoutFeedback
                                 key={index}
                                 style={{ ...textStyle, backgroundColor: 'red' }}
-                                onPress={() => {
-                                    navigation.navigate('HashTagScreen', {
+                                onPress={() =>
+                                    changeScreen('HashTagScreen', {
                                         hashtag: hashtag_text,
-                                    });
-                                }}
+                                    })
+                                }
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>
                                     <Text style={{ ...textStyle, ...styles.h5, ...styles.orange }}>
