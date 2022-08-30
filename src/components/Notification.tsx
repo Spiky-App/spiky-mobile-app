@@ -70,12 +70,14 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
     const new_mensaje = ReturnMsg(notification.message);
 
     const handleOpenIdea = () => {
-        service.updateNotifications([notification.id]);
-        dispatch(updateNotificationsNumber(notificationNumber - 1));
-        setModalNotif(false);
+        if (!notification.seen) {
+            service.updateNotifications([notification.id]);
+            dispatch(updateNotificationsNumber(notificationNumber - 1));
+        }
         navigation.navigate('OpenedIdeaScreen', {
             messageId: notification.messageId,
         });
+        setModalNotif(false);
     };
 
     return (

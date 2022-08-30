@@ -1,12 +1,11 @@
 import { FlatList } from 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { RootState } from '../store';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
 import { useMessages } from '../hooks/useMessages';
-import { setMessages } from '../store/feature/messages/messagesSlice';
 
 interface MessageParams {
     alias?: string;
@@ -23,25 +22,16 @@ interface MessagesFeedProp {
 }
 
 const MessagesFeed = ({ params = {}, filter }: MessagesFeedProp) => {
-    const dispatch = useAppDispatch();
-    const { messages, moreMsg, loading } = useAppSelector((state: RootState) => state.messages);
-    const { fetchMessages } = useMessages(filter);
+    const { messages } = useAppSelector((state: RootState) => state.messages);
+    const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
 
     const handleMessages = (newLoad: boolean) => {
-        fetchMessages(params, newLoad);
+        fetchMessages(newLoad);
     };
 
     const loadMore = () => {
         if (moreMsg) handleMessages(false);
     };
-
-    useEffect(() => {
-        if (params.search?.length === 0) {
-            dispatch(setMessages([]));
-        } else {
-            handleMessages(true);
-        }
-    }, [params.alias, params.search]);
 
     return (
         <>
