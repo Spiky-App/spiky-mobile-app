@@ -13,6 +13,8 @@ import {
     DeleteMessageProps,
     GetNotifications,
     UpdateNotifications,
+    GetMessageAndComments,
+    CreateReactionCmt,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -36,22 +38,16 @@ class SpikyService {
 
     getMessages(
         uid: number,
-        lastMessageId: number | undefined,
         filter: string,
+        lastMessageId: number | undefined,
         parameters: MessageRequestData
     ) {
-        const defaultParams: MessageRequestData = {
-            cantidad: 15,
-        };
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
-            ...defaultParams,
             ...parameters,
         };
-        return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, {
-            params,
-        });
+        return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, { params });
     }
 
     getAuthRenew(token: string) {
@@ -67,6 +63,7 @@ class SpikyService {
         });
     }
 
+    //Este servicio parece que no lo usan
     getUserMessages(uid: number, parameters?: MessageRequestParams) {
         const params = {
             uid,
@@ -103,6 +100,17 @@ class SpikyService {
 
     deleteMessage(messageId: number) {
         return this.instance.post<DeleteMessageProps>(`mensajes/delete`, { id_mensaje: messageId });
+    }
+
+    getMessageAndComments(messageId: number) {
+        return this.instance.get<GetMessageAndComments>(`mensajes/msg-resps/${messageId}`);
+    }
+
+    createReactionCmt(commentId: number, reactionType: number) {
+        return this.instance.post<CreateReactionCmt>(`reacc/resp`, {
+            id_respuesta: commentId,
+            tipo: reactionType,
+        });
     }
 
     getNotifications() {

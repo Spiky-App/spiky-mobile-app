@@ -27,6 +27,7 @@ interface Props {
     };
     messageId: number;
     messageTrackingId?: number;
+    setMessageTrackingId?: (value: number | undefined) => void;
 }
 
 export const ModalIdeaOptions = ({
@@ -36,6 +37,7 @@ export const ModalIdeaOptions = ({
     position,
     messageId,
     messageTrackingId,
+    setMessageTrackingId,
 }: Props) => {
     const { top, left } = position;
     const navigation = useNavigation<any>();
@@ -63,6 +65,9 @@ export const ModalIdeaOptions = ({
                     return msg;
                 }
             });
+            if (setMessageTrackingId) {
+                setMessageTrackingId(id_tracking);
+            }
             dispatch(
                 setModalAlert({
                     isOpen: true,
@@ -82,6 +87,9 @@ export const ModalIdeaOptions = ({
                     return msg;
                 }
             });
+            if (setMessageTrackingId) {
+                setMessageTrackingId(undefined);
+            }
             dispatch(
                 setModalAlert({ isOpen: true, text: 'Tracking desactivado', icon: faThumbtack })
             );
@@ -90,15 +98,14 @@ export const ModalIdeaOptions = ({
         setIdeaOptions(false);
     };
 
-    const handleDelete = async () => {
-        const response = await service.deleteMessage(messageId);
-        const { data } = response;
-        const { msg: msgAlert } = data;
+    const handleDelete = () => {
+        service.deleteMessage(messageId);
 
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
-        dispatch(setModalAlert({ isOpen: true, text: msgAlert, icon: faEraser }));
+        dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
+        navigation.goBack();
     };
 
     return (

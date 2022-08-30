@@ -16,7 +16,7 @@ import { Message } from '../types/store';
 
 export const useMensajes = (params: MessageRequestData = {}) => {
     const dispatch = useAppDispatch();
-    const { messages, filter, loading, moreMsg, lastMessageId } = useAppSelector(
+    const { messages, loading, moreMsg, lastMessageId, filter } = useAppSelector(
         (state: RootState) => state.messages
     );
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -51,7 +51,7 @@ export const useMensajes = (params: MessageRequestData = {}) => {
                 dispatch(setLastMessageId(messagesRetrived[messagesRetrived.length - 1].id));
                 dispatch(setMessages([...messages, ...messagesRetrived]));
             }
-            if (params.search) {
+            if (params.search || params.alias || params.hashtag) {
                 dispatch(setMessages(messagesRetrived));
             }
             dispatch(setLoading(false));

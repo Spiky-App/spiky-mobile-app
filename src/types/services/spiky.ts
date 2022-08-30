@@ -45,6 +45,7 @@ export interface Message {
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
     usuario: User;
+    respuestas?: Comment[];
 }
 
 interface User {
@@ -90,6 +91,30 @@ export interface CreateReactionMsg {
 export interface DeleteMessageProps {
     ok: boolean;
     msg: string;
+}
+
+export interface GetMessageAndComments {
+    ok: boolean;
+    mensaje: Message;
+    num_respuestas: number;
+}
+
+export interface Comment {
+    id_respuesta: number;
+    respuesta: string;
+    fecha: string | number;
+    id_mensaje: number;
+    id_usuario: number;
+    resp_reaccion_1: number | null;
+    resp_reaccion_2: number | null;
+    usuario: User;
+    resp_reacciones: {
+        tipo: number;
+    }[];
+}
+
+export interface CreateReactionCmt {
+    ok: boolean;
 }
 
 export interface GetNotifications {

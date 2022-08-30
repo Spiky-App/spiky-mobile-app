@@ -1,19 +1,47 @@
 import { FlatList } from 'react-native-gesture-handler';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
-import { useMensajes } from '../hooks/useMensajes';
+import { useMessages } from '../hooks/useMessages';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 
-const MessagesFeed = () => {
-    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
-    const { moreMsg, fetchMessages } = useMensajes();
+interface MessageParams {
+    alias?: string;
+    search?: string;
+    hashtag?: string;
+    univer?: number[];
+    draft?: boolean;
+    cantidad?: number;
+}
+
+interface MessagesFeedProp {
+    params: MessageParams;
+    filter: string;
+}
+
+const MessagesFeed = ({ params = {}, filter }: MessagesFeedProp) => {
+    const dispatch = useAppDispatch();
+    const { messages, moreMsg, loading } = useAppSelector((state: RootState) => state.messages);
+    const { fetchMessages } = useMessages(filter);
+
+    const handleMessages = (newLoad: boolean) => {
+        fetchMessages(params, newLoad);
+    };
 
     const loadMore = () => {
-        if (moreMsg) fetchMessages();
+        if (moreMsg) handleMessages(false);
     };
+
+    useEffect(() => {
+        if (params.search?.length === 0) {
+            dispatch(setMessages([]));
+        } else {
+            handleMessages(true);
+        }
+    }, [params.alias, params.search]);
 
     return (
         <>
