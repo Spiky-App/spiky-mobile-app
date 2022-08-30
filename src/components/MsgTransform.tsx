@@ -1,7 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { MessageRequestData } from '../services/models/spikyService';
 
 interface Props {
     text: string;
@@ -9,8 +12,39 @@ interface Props {
 }
 
 const MsgTransform = ({ text, textStyle }: Props) => {
+    const nickname = useAppSelector((state: RootState) => state.user.nickname);
     const [content, setContent] = useState<Element>(<Text></Text>);
     const navigation = useNavigation<any>();
+
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
+
+    const handleClickUser = (alias: string) => {
+        if (nickname === alias.replace('@', '')) {
+            changeScreen('MyIdeasScreen');
+        } else {
+            changeScreen('ProfileScreen', {
+                alias: alias.replace('@', ''),
+            });
+        }
+    };
 
     useEffect(() => {
         if (text !== '') {
@@ -32,11 +66,7 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             <TouchableWithoutFeedback
                                 key={index}
                                 style={{ alignItems: 'flex-end' }}
-                                onPress={() => {
-                                    navigation.navigate('ProfileScreen', {
-                                        alias: alias.replace('@', ''),
-                                    });
-                                }}
+                                onPress={() => handleClickUser(alias)}
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>{alias}</Text>
                             </TouchableWithoutFeedback>
@@ -56,7 +86,6 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                                         hashtag: hashtag_text,
                                     });
                                 }}
-                                // ${hashtag.replace('#', '')}
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>
                                     <Text style={{ ...textStyle, ...styles.h5, ...styles.orange }}>

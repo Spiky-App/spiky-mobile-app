@@ -36,22 +36,16 @@ class SpikyService {
 
     getMessages(
         uid: number,
-        lastMessageId: number | undefined,
         filter: string,
+        lastMessageId: number | undefined,
         parameters: MessageRequestData
     ) {
-        const defaultParams: MessageRequestData = {
-            cantidad: 15,
-        };
         const params = {
             uid: uid,
             id_ultimoMensaje: lastMessageId,
-            ...defaultParams,
             ...parameters,
         };
-        return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, {
-            params,
-        });
+        return this.instance.get<GetMessagesResponse>(`mensajes${filter}`, { params });
     }
 
     getAuthRenew(token: string) {
@@ -67,6 +61,7 @@ class SpikyService {
         });
     }
 
+    //Este servicio parece que no lo usan
     getUserMessages(uid: number, parameters?: MessageRequestParams) {
         const params = {
             uid,

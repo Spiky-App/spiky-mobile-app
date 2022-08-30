@@ -5,32 +5,44 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
-import { useMensajes } from '../hooks/useMensajes';
-import { setLastMessageId, setMessages } from '../store/feature/messages/messagesSlice';
+import { useMessages } from '../hooks/useMessages';
+import { setMessages } from '../store/feature/messages/messagesSlice';
+
 interface MessageParams {
     alias?: string;
     search?: string;
     hashtag?: string;
-    univer?: number;
+    univer?: number[];
     draft?: boolean;
     cantidad?: number;
 }
 
-const MessagesFeed = (params: MessageParams) => {
+interface MessagesFeedProp {
+    params: MessageParams;
+    filter: string;
+}
+
+const MessagesFeed = ({ params = {}, filter }: MessagesFeedProp) => {
     const dispatch = useAppDispatch();
-    const { moreMsg, fetchMessages } = useMensajes({
-        ...params,
-    });
-    const { loading, messages } = useAppSelector((state: RootState) => state.messages);
-    useEffect(() => {
-        dispatch(setMessages([]));
-        dispatch(setLastMessageId(undefined));
-        fetchMessages();
-    }, [params]);
+    const { messages, moreMsg, loading } = useAppSelector((state: RootState) => state.messages);
+    const { fetchMessages } = useMessages(filter);
+
+    const handleMessages = (newLoad: boolean) => {
+        fetchMessages(params, newLoad);
+    };
 
     const loadMore = () => {
-        if (moreMsg) fetchMessages();
+        if (moreMsg) handleMessages(false);
     };
+
+    useEffect(() => {
+        if (params.search?.length === 0) {
+            dispatch(setMessages([]));
+        } else {
+            handleMessages(true);
+        }
+    }, [params.alias, params.search]);
+
     return (
         <>
             {messages?.length !== 0 ? (

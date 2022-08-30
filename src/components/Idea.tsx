@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -21,6 +21,7 @@ import MsgTransform from './MsgTransform';
 import { useAnimation } from '../hooks/useAnimation';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { MessageRequestData } from '../services/models/spikyService';
 
 interface Props {
     idea: Message;
@@ -30,7 +31,7 @@ interface Props {
 const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
 export const Idea = ({ idea }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
@@ -81,6 +82,36 @@ export const Idea = ({ idea }: Props) => {
         });
     };
 
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
+
+    const handleClickUser = () => {
+        if (user.nickname === nickname) {
+            changeScreen('MyIdeasScreen');
+        } else {
+            changeScreen('ProfileScreen', {
+                alias: user.nickname,
+            });
+        }
+    };
+
     useEffect(() => {
         if (position.top !== 0) {
             setIdeaOptions(value => !value);
@@ -88,7 +119,7 @@ export const Idea = ({ idea }: Props) => {
     }, [position]);
 
     useEffect(() => {
-        fadeIn(350, () => {}, sequence * 150);
+        fadeIn(350, () => {}, sequence * 250);
     }, []);
 
     return (
@@ -111,13 +142,7 @@ export const Idea = ({ idea }: Props) => {
                 )}
 
                 <View style={styles.flex}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate('ProfileScreen', {
-                                alias: user.nickname,
-                            });
-                        }}
-                    >
+                    <TouchableOpacity onPress={() => handleClickUser()}>
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
                             @{user.nickname}
                         </Text>
