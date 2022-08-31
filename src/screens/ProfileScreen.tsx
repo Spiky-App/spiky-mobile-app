@@ -12,7 +12,7 @@ import MessagesFeed from '../components/MessagesFeed';
 type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 
 export const ProfileScreen = ({ route }: Props) => {
-    const alias = route.params?.alias;
+    const alias = route.params?.nickName;
     const dispatch = useAppDispatch();
 
     useEffect(function () {

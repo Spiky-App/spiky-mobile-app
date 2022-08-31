@@ -7,10 +7,14 @@ interface Props extends TouchableOpacityProps {
     icon: IconDefinition;
 }
 
-function ButtonIcon({ disabled, icon, onPress }: Props) {
+function ButtonIcon({ disabled, icon, onPress, style }: Props) {
     return (
         <TouchableOpacity
-            style={[styles.circleButton, { borderColor: disabled ? '#d4d4d4d3' : '#01192E' }]}
+            style={[
+                style,
+                styles.circleButton,
+                { borderColor: disabled ? '#d4d4d4d3' : '#01192E' },
+            ]}
             onPress={onPress}
             disabled={disabled}
         >

@@ -11,6 +11,8 @@ import {
     DeleteTrackingProps,
     CreateReactionMsg,
     DeleteMessageProps,
+    CreateMessageCommentResponse,
+    GetMessageCommentResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -101,6 +103,18 @@ class SpikyService {
 
     deleteMessage(messageId: number) {
         return this.instance.post<DeleteMessageProps>(`mensajes/delete`, { id_mensaje: messageId });
+    }
+
+    createMessageComment(messageId: number, uid: number, comment: string) {
+        return this.instance.post<CreateMessageCommentResponse>('/resp', {
+            id_mensaje: messageId,
+            uid,
+            respuesta: comment,
+        });
+    }
+
+    getMessageComments(messageId: number) {
+        return this.instance.get<GetMessageCommentResponse>(`/resp/${messageId}`);
     }
 }
 

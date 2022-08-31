@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -21,6 +21,7 @@ import MsgTransform from './MsgTransform';
 import { useAnimation } from '../hooks/useAnimation';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
     idea: Message;
@@ -35,7 +36,7 @@ export const Idea = ({ idea }: Props) => {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
     const dispatch = useAppDispatch();
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [ideaOptions, setIdeaOptions] = useState(false);
     const { opacity, fadeIn } = useAnimation();
     const [position, setPosition] = useState({
@@ -107,8 +108,9 @@ export const Idea = ({ idea }: Props) => {
                 <View style={styles.flex}>
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.navigate('ProfileScreen', {
-                                alias: user.nickname,
+                            navigation.navigate('MenuMain', {
+                                screen: 'ProfileScreen',
+                                params: { nickName: user.nickname },
                             });
                         }}
                     >
@@ -195,7 +197,9 @@ export const Idea = ({ idea }: Props) => {
                                 <TouchableOpacity
                                     style={stylescom.reaction}
                                     onPress={() => {
-                                        navigation.navigate('OpenedIdeaScreen');
+                                        navigation.navigate('OpenedIdeaScreen', {
+                                            messageId: idea.id,
+                                        });
                                     }}
                                 >
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />

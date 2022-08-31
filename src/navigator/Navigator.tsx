@@ -5,7 +5,7 @@ import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
-import { MenuMain } from './MenuMain';
+import { DrawerParamList, MenuMain } from './MenuMain';
 import { CreateIdeaScreen } from '../screens/CreateIdeaScreen';
 import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
 import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
@@ -18,6 +18,7 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -26,9 +27,9 @@ export type RootStackParamList = {
     CheckEmailScreen: undefined;
     ForgotPwdScreen: undefined;
     RegisterScreen: undefined;
-    MenuMain: undefined;
+    MenuMain: NavigatorScreenParams<DrawerParamList>;
     CreateIdeaScreen: undefined;
-    OpenedIdeaScreen: undefined;
+    OpenedIdeaScreen: { messageId: number };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
     ReportIdeaScreen: undefined;

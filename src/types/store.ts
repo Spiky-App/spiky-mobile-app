@@ -76,3 +76,11 @@ export interface ModalAlert {
     icon?: IconDefinition;
     color?: string;
 }
+
+export interface MessageComment {
+    comment: string;
+    date: number;
+    id: number;
+    messageId: number;
+    user: User;
+}

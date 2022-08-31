@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { faReply, faXmark } from '../constants/icons/FontAwesome';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { faReply } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ComentarioInterface } from '../data/respuestas';
 import { ModalReactComment } from './ModalReactComment';
-import { faCheck } from '../constants/icons/FontAwesome';
-import IconGray from './svg/IconGray';
+// import { faCheck } from '../constants/icons/FontAwesome';
+// import IconGray from './svg/IconGray';
+import { MessageComment } from '../types/store';
 
 interface Props {
-    comment: ComentarioInterface;
+    comment: MessageComment;
 }
 
 export const Comment = ({ comment }: Props) => {
     const [reactComment, setReactComment] = useState(false);
-    const [position, setPosition] = useState({
+    const [position] = useState({
         top: 0,
         left: 0,
     });
     const uid = 1;
-    const fecha = getTime(comment.fecha);
+    const fecha = getTime(comment.date.toString());
 
     useEffect(() => {
         if (position.top !== 0) {
@@ -33,18 +33,18 @@ export const Comment = ({ comment }: Props) => {
             <View style={{ ...styles.flex }}>
                 <TouchableOpacity onPress={() => {}}>
                     <Text style={{ ...styles.user, ...styles.textbold }}>
-                        @{comment.usuario.alias}
+                        @{comment.user.nickname}
                     </Text>
                 </TouchableOpacity>
                 <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
                 <Text style={{ ...styles.text, fontSize: 13 }}>
-                    {comment.usuario.universidad.alias}
+                    {comment.user.university.shortname}
                 </Text>
 
                 <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>
                     {fecha}
                 </Text>
-                {uid !== comment.usuario.id_usuario && (
+                {uid !== comment.user.id && (
                     <>
                         <TouchableOpacity
                             style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
@@ -52,7 +52,7 @@ export const Comment = ({ comment }: Props) => {
                         >
                             <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
                         </TouchableOpacity>
-                        {comment.resp_reacciones.length === 0 && (
+                        {/* {comment.resp_reacciones.length === 0 && (
                             <TouchableOpacity
                                 style={{ width: 18, marginLeft: 6 }}
                                 onPress={event => {
@@ -68,13 +68,13 @@ export const Comment = ({ comment }: Props) => {
                                     pressed={reactComment}
                                 />
                             </TouchableOpacity>
-                        )}
+                        )} */}
                     </>
                 )}
             </View>
 
             <Text style={{ ...styles.text, ...styles.msg, marginTop: 4, marginBottom: 0 }}>
-                {comment.respuesta}
+                {comment.comment}
             </Text>
 
             <View style={{ flexDirection: 'row' }}>
@@ -87,7 +87,7 @@ export const Comment = ({ comment }: Props) => {
                         marginTop: 3,
                     }}
                 >
-                    {comment.resp_reaccion_2 && (
+                    {/* {comment.resp_reaccion_2 && (
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -118,7 +118,7 @@ export const Comment = ({ comment }: Props) => {
                             />
                             <Text style={{ ...styles.text, ...stylescom.text }}>2</Text>
                         </View>
-                    )}
+                    )} */}
                 </View>
                 <View style={{ flex: 1 }} />
             </View>
@@ -132,10 +132,10 @@ export const Comment = ({ comment }: Props) => {
     );
 };
 
-const stylescom = StyleSheet.create({
-    text: {
-        color: '#ffff',
-        fontSize: 12,
-        marginLeft: 2,
-    },
-});
+// const stylescom = StyleSheet.create({
+//     text: {
+//         color: '#ffff',
+//         fontSize: 12,
+//         marginLeft: 2,
+//     },
+// });

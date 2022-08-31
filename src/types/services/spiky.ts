@@ -44,10 +44,10 @@ export interface Message {
     num_respuestas?: number;
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
-    usuario: User;
+    usuario: Usuario;
 }
 
-interface User {
+interface Usuario {
     alias: string;
     id_universidad?: number;
     universidad: University;
@@ -61,7 +61,7 @@ export interface CreateMessageResponse {
 
 export interface GetUsersSuggetionProps {
     ok: boolean;
-    usuarios: User[];
+    usuarios: Usuario[];
 }
 
 interface Hashtag {
@@ -90,4 +90,23 @@ export interface CreateReactionMsg {
 export interface DeleteMessageProps {
     ok: boolean;
     msg: string;
+}
+
+export interface CreateMessageCommentResponse {
+    ok: boolean;
+    respuesta: MessageComment;
+}
+
+export interface GetMessageCommentResponse {
+    ok: boolean;
+    resp: MessageComment[];
+}
+
+interface MessageComment {
+    id_respuesta: number;
+    respuesta: string;
+    id_mensaje: number;
+    id_usuario: number;
+    fecha: number;
+    usuario?: Usuario;
 }

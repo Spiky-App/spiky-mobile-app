@@ -7,6 +7,7 @@ import { BASE_URL, PORT } from 'react-native-dotenv';
 export const config: AxiosRequestConfig = {
     baseURL: `${BASE_URL}:${PORT}/api/`,
     timeout: 10000,
+
     headers: {},
 };
 

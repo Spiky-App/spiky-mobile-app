@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,12 +32,20 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigator/Navigator';
+import useSpikyService from '../hooks/useSpikyService';
+import { MessageComment } from '../types/store';
 
 let ideaOutComments = ideas[1];
 let idea = { ...ideaOutComments, respuestas: comentarios };
 const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
-export const OpenedIdeaScreen = () => {
+type Props = StackScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
+
+export const OpenedIdeaScreen = ({ route }: Props) => {
+    const { params } = route;
+    const { messageId } = params;
     const uid = 1;
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -51,6 +59,8 @@ export const OpenedIdeaScreen = () => {
         top: 0,
         left: 0,
     });
+    const { getMessageComments } = useSpikyService();
+    const [comments, setComments] = useState<MessageComment[]>();
 
     const handleReaction = (reactionTypeAux: number) => {
         service.createReactionMsg(uid, ideaOutComments.id_mensaje, reactionTypeAux);
@@ -69,11 +79,21 @@ export const OpenedIdeaScreen = () => {
         dispatch(setMessages(messagesUpdated));
     };
 
+    const fetchComments = useCallback(async () => {
+        const messageComments = await getMessageComments(messageId);
+        if (messageComments) {
+            setComments(messageComments);
+        } else {
+            setComments([]);
+        }
+    }, [getMessageComments]);
+
     useEffect(() => {
         if (position.top !== 0) {
             setIdeaOptions(value => !value);
         }
-    }, [position]);
+        fetchComments();
+    }, [position, fetchComments]);
 
     return (
         <KeyboardAvoidingView
@@ -93,7 +113,6 @@ export const OpenedIdeaScreen = () => {
             >
                 <FontAwesomeIcon icon={faArrowLeftLong} color="#bebebe" />
             </TouchableOpacity>
-
             <View style={stylescom.wrap}>
                 {uid === idea.id_usuario && (
                     <View style={stylescom.pin}>
@@ -102,7 +121,6 @@ export const OpenedIdeaScreen = () => {
                         </View>
                     </View>
                 )}
-
                 {idea.trackings.length > 0 && (
                     <View style={{ ...stylescom.pin, backgroundColor: '#FC702A' }}>
                         <View style={{ transform: [{ rotate: '45deg' }] }}>
@@ -110,7 +128,6 @@ export const OpenedIdeaScreen = () => {
                         </View>
                     </View>
                 )}
-
                 <View style={stylescom.flex}>
                     <TouchableOpacity onPress={() => {}}>
                         <Text style={{ ...styles.user, ...styles.textbold }}>
@@ -122,9 +139,7 @@ export const OpenedIdeaScreen = () => {
                         {idea.usuario.universidad.alias}
                     </Text>
                 </View>
-
                 <Text style={{ ...styles.text, ...stylescom.msg }}>{idea.mensaje}</Text>
-
                 <View
                     style={{
                         ...stylescom.container,
@@ -132,7 +147,6 @@ export const OpenedIdeaScreen = () => {
                         justifyContent: 'space-between',
                     }}
                 >
-                    {/* {!idea.reactionType && !isOwner ? ( */}
                     {idea.reacciones.length === 0 ? (
                         <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
                             <TouchableHighlight
@@ -142,7 +156,6 @@ export const OpenedIdeaScreen = () => {
                             >
                                 <FontAwesomeIcon icon={faXmark} color="white" size={18} />
                             </TouchableHighlight>
-
                             <TouchableHighlight
                                 style={stylescom.reactButton}
                                 underlayColor="#01192E"
@@ -150,7 +163,6 @@ export const OpenedIdeaScreen = () => {
                             >
                                 <FontAwesomeIcon icon={faCheck} color="white" size={18} />
                             </TouchableHighlight>
-
                             <TouchableHighlight
                                 style={stylescom.reactButton}
                                 underlayColor="#01192E"
@@ -174,7 +186,6 @@ export const OpenedIdeaScreen = () => {
                                         {idea.contra === 0 ? '' : idea.contra}
                                     </Text>
                                 </View>
-
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon
                                         icon={faCheck}
@@ -187,7 +198,6 @@ export const OpenedIdeaScreen = () => {
                                         {idea.favor === 0 ? '' : idea.favor}
                                     </Text>
                                 </View>
-
                                 <View style={stylescom.reaction}>
                                     <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
                                     <Text style={{ ...styles.text, ...styles.numberGray }}>
@@ -195,12 +205,10 @@ export const OpenedIdeaScreen = () => {
                                     </Text>
                                 </View>
                             </View>
-
                             <View style={{ ...stylescom.container, alignItems: 'center' }}>
                                 <Text style={{ ...styles.text, ...styles.numberGray }}>
                                     {fecha}
                                 </Text>
-
                                 <TouchableOpacity
                                     onPress={event => {
                                         setPosition({
@@ -213,7 +221,6 @@ export const OpenedIdeaScreen = () => {
                                         ...
                                     </Text>
                                 </TouchableOpacity>
-
                                 <ModalIdeaOptions
                                     setIdeaOptions={setIdeaOptions}
                                     ideaOptions={ideaOptions}
@@ -227,20 +234,20 @@ export const OpenedIdeaScreen = () => {
                     )}
                 </View>
             </View>
-
-            {/* Line gray  */}
-            <View
-                style={{ width: '90%', borderBottomWidth: 2, borderBottomColor: '#eeeeee' }}
-            ></View>
-
+            <View style={{ width: '90%', borderBottomWidth: 2, borderBottomColor: '#eeeeee' }} />
             {idea.reacciones.length !== 0 ? (
                 <>
                     {idea.respuestas.length !== 0 ? (
                         <FlatList
-                            style={{ flex: 1, width: '80%', marginTop: 20 }}
-                            data={comentarios}
+                            style={{
+                                flex: 1,
+                                marginTop: 20,
+                                paddingHorizontal: 30,
+                                marginRight: 30,
+                            }}
+                            data={comments}
                             renderItem={({ item }) => <Comment comment={item} />}
-                            keyExtractor={item => item.id_respuesta + ''}
+                            keyExtractor={item => item.id.toString()}
                             showsVerticalScrollIndicator={false}
                         />
                     ) : (
@@ -250,7 +257,7 @@ export const OpenedIdeaScreen = () => {
                             </Text>
                         </View>
                     )}
-                    <InputComment />
+                    <InputComment messageId={messageId} />
                 </>
             ) : (
                 <View style={stylescom.center}>

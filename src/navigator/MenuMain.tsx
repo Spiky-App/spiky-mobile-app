@@ -35,8 +35,7 @@ export type DrawerParamList = {
     TrackingScreen: undefined;
     SearchScreen: undefined;
     ConnectionScreen: undefined;
-    // ProfileScreen: { alias: '' } | undefined;
-    ProfileScreen: { alias: string };
+    ProfileScreen: { nickName: string };
     ConfigurationScreen: undefined;
     ChangePasswordScreen: undefined;
     HashTagScreen: { hashtag: '' } | undefined;
@@ -68,7 +67,7 @@ export const MenuMain = () => {
             <Drawer.Screen
                 name="ProfileScreen"
                 component={ProfileScreen}
-                initialParams={{ alias: 'alias' }}
+                initialParams={{ nickName: 'alias' }}
             />
             <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
             <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
