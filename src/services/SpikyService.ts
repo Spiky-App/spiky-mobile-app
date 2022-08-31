@@ -11,6 +11,8 @@ import {
     DeleteTrackingProps,
     CreateReactionMsg,
     DeleteMessageProps,
+    GetNotifications,
+    UpdateNotifications,
     GetMessageAndComments,
     CreateReactionCmt,
 } from '../types/services/spiky';
@@ -109,6 +111,14 @@ class SpikyService {
             id_respuesta: commentId,
             tipo: reactionType,
         });
+    }
+
+    getNotifications() {
+        return this.instance.get<GetNotifications>(`notif`);
+    }
+
+    updateNotifications(arrayIds: number[]) {
+        return this.instance.put<UpdateNotifications>(`notif`, { id_notificaciones: arrayIds });
     }
 }
 

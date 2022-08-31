@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Modal,
     StyleSheet,
@@ -8,9 +8,15 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
-import { notificaciones } from '../data/notificaciones';
+import { generateNotificationsFromNotificacion } from '../helpers/notification';
+import SpikyService from '../services/SpikyService';
+import { RootState } from '../store';
+import { updateNotificationsNumber } from '../store/feature/user/userSlice';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Notification as NotificationProps } from '../types/store';
 import { Notification } from './Notification';
+import { LoadingAnimated } from './svg/LoadingAnimated';
 
 interface Props {
     setModalNotif: (value: boolean) => void;
@@ -18,7 +24,44 @@ interface Props {
 }
 
 export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
-    const loading = false;
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
+    const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState(false);
+    const [notifications, setNotifications] = useState<NotificationProps[]>([]);
+
+    const getNotifications = async () => {
+        const response = await service.getNotifications();
+        const { data } = response;
+        const { notificaciones } = data;
+        const notificacionesRetrived = notificaciones.map(n =>
+            generateNotificationsFromNotificacion(n)
+        );
+        setNotifications(notificacionesRetrived);
+        setLoading(false);
+    };
+
+    const cleanNotifications = () => {
+        let array_nofi: number[] = [];
+
+        let new_notis = notifications.map(n => {
+            if (!n.seen) {
+                n.seen = true;
+                array_nofi.push(n.id);
+            }
+            return n;
+        });
+        service.updateNotifications(array_nofi);
+        setNotifications(new_notis);
+        dispatch(updateNotificationsNumber(0));
+    };
+
+    useEffect(() => {
+        if (modalNotif) {
+            setLoading(true);
+            getNotifications();
+        }
+    }, [modalNotif]);
 
     return (
         <Modal animationType="fade" visible={modalNotif} transparent={true}>
@@ -38,7 +81,10 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
                                     <Text style={styles.orange}>.</Text>
                                 </Text>
 
-                                <TouchableOpacity style={styles.center} onPress={() => {}}>
+                                <TouchableOpacity
+                                    style={styles.center}
+                                    onPress={cleanNotifications}
+                                >
                                     <Text
                                         style={{
                                             ...styles.text,
@@ -60,12 +106,19 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
                                 }}
                             >
                                 {loading ? (
-                                    <Text>Cargando...</Text>
-                                ) : notificaciones?.length !== 0 ? (
+                                    <View style={{ ...styles.center, flex: 1 }}>
+                                        <LoadingAnimated />
+                                    </View>
+                                ) : notifications?.length !== 0 ? (
                                     <FlatList
-                                        data={notificaciones}
-                                        renderItem={({ item }) => <Notification item={item} />}
-                                        keyExtractor={item => item.id_notificacion + ''}
+                                        data={notifications}
+                                        renderItem={({ item }) => (
+                                            <Notification
+                                                notification={item}
+                                                setModalNotif={setModalNotif}
+                                            />
+                                        )}
+                                        keyExtractor={item => item.id + ''}
                                         showsVerticalScrollIndicator={false}
                                     />
                                 ) : (

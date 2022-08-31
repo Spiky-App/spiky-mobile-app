@@ -1,11 +1,17 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { NotificacionesInterface } from '../data/notificaciones';
 import { getTime } from '../helpers/getTime';
+import SpikyService from '../services/SpikyService';
+import { RootState } from '../store';
+import { updateNotificationsNumber } from '../store/feature/user/userSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Notification as NotificationProps } from '../types/store';
 
 interface PropsNotification {
-    item: NotificacionesInterface;
+    notification: NotificationProps;
+    setModalNotif: (value: boolean) => void;
 }
 
 const msg_notif = [
@@ -17,9 +23,14 @@ const msg_notif = [
     'reacciono a tu comentario.',
 ];
 
-export const Notification = ({ item }: PropsNotification) => {
-    const timestamp = new Date(item.createdAt);
-    const fecha = getTime(timestamp.getTime() + '');
+export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
+    const notificationNumber = useAppSelector((state: RootState) => state.user.notificationsNumber);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
+    const dispatch = useAppDispatch();
+    const navigation = useNavigation<any>();
+    const timestamp = new Date(notification.createdAt);
+    const date = getTime(timestamp.getTime() + '');
 
     const ReturnMsg = (msg: string) => {
         const regexp_all = /(@\[@\w*\]\(\d*\))|(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
@@ -56,27 +67,43 @@ export const Notification = ({ item }: PropsNotification) => {
         return msg_final;
     };
 
-    const new_mensaje = ReturnMsg(item.mensaje.mensaje);
+    const new_mensaje = ReturnMsg(notification.message);
+
+    const handleOpenIdea = () => {
+        if (!notification.seen) {
+            service.updateNotifications([notification.id]);
+            dispatch(updateNotificationsNumber(notificationNumber - 1));
+        }
+        navigation.navigate('OpenedIdeaScreen', {
+            messageId: notification.messageId,
+        });
+        setModalNotif(false);
+    };
 
     return (
         <View>
-            {!item.visto && (
+            {!notification.seen && (
                 <View style={stylescom.wrapnew}>
                     <View style={stylescom.new} />
                 </View>
             )}
 
-            <TouchableOpacity style={{ marginVertical: 10, marginLeft: 18 }} onPress={() => {}}>
+            <TouchableOpacity
+                style={{ marginVertical: 10, marginLeft: 18 }}
+                onPress={handleOpenIdea}
+            >
                 <View style={styles.flex}>
                     <Text>
                         <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
                             {'@' +
-                                item.usuario2.alias +
+                                notification.user.nickname +
                                 ' de ' +
-                                item.usuario2.universidad.alias +
+                                notification.user.university.shortname +
                                 ' '}
                         </Text>
-                        <Text style={{ ...styles.text, fontSize: 13 }}>{msg_notif[item.tipo]}</Text>
+                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                            {msg_notif[notification.type]}
+                        </Text>
                     </Text>
                 </View>
                 <View style={{ ...styles.flex, marginTop: 3, justifyContent: 'space-between' }}>
@@ -85,9 +112,7 @@ export const Notification = ({ item }: PropsNotification) => {
                             ? new_mensaje.substring(0, 25) + '...'
                             : new_mensaje}
                     </Text>
-                    <Text style={{ ...styles.text, ...styles.textGray, fontSize: 11 }}>
-                        {fecha}
-                    </Text>
+                    <Text style={{ ...styles.text, ...styles.textGray, fontSize: 11 }}>{date}</Text>
                 </View>
             </TouchableOpacity>
         </View>
