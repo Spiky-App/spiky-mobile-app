@@ -138,3 +138,20 @@ export interface Notification {
 export interface UpdateNotifications {
     ok: boolean;
 }
+
+export interface GetUserInfo {
+    ok: boolean;
+    usuario: UsuariorData;
+}
+
+export interface UsuariorData {
+    correo: string;
+    universidad: string;
+    n_mensajes: number;
+    n_favor: number;
+    n_contra: number;
+}
+
+export interface UpdatePassword {
+    ok: boolean;
+}
