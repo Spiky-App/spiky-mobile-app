@@ -15,6 +15,7 @@ import {
     UpdateNotifications,
     GetMessageAndComments,
     CreateReactionCmt,
+    CreateReportIdea,
     GetUserInfo,
     UpdatePassword,
     CreateMessageCommentResponse,
@@ -141,6 +142,14 @@ class SpikyService {
             id_mensaje: messageId,
             uid,
             respuesta: comment,
+        });
+    }
+
+    createReportIdea(uid: number, messageId: number, reportReason: string) {
+        return this.instance.post<CreateReportIdea>(`report`, {
+            id_usuario: uid,
+            id_mensaje: messageId,
+            motivo_reporte: reportReason,
         });
     }
 }

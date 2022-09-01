@@ -47,9 +47,9 @@ export const ModalIdeaOptions = ({
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
 
-    const goToScreen = (screen: string) => {
+    const goToScreen = (screen: string, params?: { messageId: number }) => {
         setIdeaOptions(false);
-        navigation.navigate(screen);
+        navigation.navigate(screen, params);
     };
 
     const handleTracking = async () => {
@@ -142,7 +142,9 @@ export const ModalIdeaOptions = ({
 
                                     <TouchableOpacity
                                         style={stylescomp.button}
-                                        onPress={() => goToScreen('ReportIdeaScreen')}
+                                        onPress={() =>
+                                            goToScreen('ReportIdeaScreen', { messageId })
+                                        }
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text style={stylescomp.text}>Reportar</Text>

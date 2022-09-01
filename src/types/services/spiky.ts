@@ -169,3 +169,8 @@ interface MessageComment {
     fecha: number;
     usuario?: User;
 }
+
+export interface CreateReportIdea {
+    ok: boolean;
+    msg: string;
+}
