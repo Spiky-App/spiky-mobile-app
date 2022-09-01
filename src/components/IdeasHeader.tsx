@@ -6,6 +6,8 @@ import { styles } from '../themes/appTheme';
 import { ModalFilters } from './ModalFilters';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAnimation } from '../hooks/useAnimation';
+import { setDraft } from '../store/feature/messages/messagesSlice';
+import { useDispatch } from 'react-redux';
 
 interface Props {
     title: string;
@@ -16,10 +18,12 @@ export const IdeasHeader = ({ title, myideas = false }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
     const { opacity, fadeIn } = useAnimation();
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(setDraft(activeDraft));
         fadeIn(800);
-    }, []);
+    }, [activeDraft, myideas]);
 
     return (
         <Animated.View

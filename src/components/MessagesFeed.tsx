@@ -6,25 +6,27 @@ import { EmptyState } from './EmptyState';
 import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
 import { useMessages } from '../hooks/useMessages';
+import { IdeasHeader } from './IdeasHeader';
 
 interface MessageParams {
     alias?: string;
     search?: string;
     hashtag?: string;
     univer?: number[];
-    draft?: boolean;
+    draft?: number;
     cantidad?: number;
 }
 
 interface MessagesFeedProp {
     params: MessageParams;
     filter: string;
+    title: string;
+    myideas: boolean;
 }
 
-const MessagesFeed = ({ params = {}, filter }: MessagesFeedProp) => {
+const MessagesFeed = ({ params = {}, filter, title, myideas = false }: MessagesFeedProp) => {
     const { messages } = useAppSelector((state: RootState) => state.messages);
     const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
-
     const handleMessages = (newLoad: boolean) => {
         fetchMessages(newLoad);
     };
@@ -35,6 +37,7 @@ const MessagesFeed = ({ params = {}, filter }: MessagesFeedProp) => {
 
     return (
         <>
+            <IdeasHeader title={title} myideas={myideas} />
             {messages?.length !== 0 ? (
                 <FlatList
                     style={{ width: '90%' }}

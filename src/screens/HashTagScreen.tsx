@@ -1,6 +1,5 @@
 import React from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
 import { FloatButton } from '../components/FloatButton';
 import MessagesFeed from '../components/MessagesFeed';
 import { DrawerParamList } from '../navigator/MenuMain';
@@ -13,8 +12,12 @@ export const HashTagScreen = ({ route }: Props) => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            <IdeasHeader title={'#' + hashtag} />
-            <MessagesFeed params={{ hashtag }} filter={'/hashtag'} />
+            <MessagesFeed
+                params={{ hashtag }}
+                filter={'/hashtag'}
+                title={'#' + hashtag}
+                myideas={false}
+            />
             <FloatButton />
         </BackgroundPaper>
     );
