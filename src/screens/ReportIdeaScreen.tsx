@@ -14,25 +14,17 @@ import {
 } from 'react-native';
 import { faFlag } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
+import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { StatusType } from '../types/common';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReportIdeaScreen'>;
 
 export const ReportIdeaScreen = ({ route }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
-    const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
     const [buttonState, setButtonState] = useState(false);
+    const { createReportIdea } = useSpikyService();
     const { form, onChange } = useForm({
         reportReason: '',
     });
@@ -40,21 +32,9 @@ export const ReportIdeaScreen = ({ route }: Props) => {
 
     const { reportReason } = form;
 
-    const sumbitReport = async () => {
+    const handlecreateReportIdea = () => {
         setButtonState(false);
-        try {
-            const response = await service.createReportIdea(uid, messageId, reportReason);
-            const { data } = response;
-            const { msg } = data;
-            onChange({ reportReason: '' });
-            navigation.goBack();
-            dispatch(setModalAlert({ isOpen: true, text: msg, icon: faFlag }));
-        } catch (error) {
-            console.log(error);
-            onChange({ reportReason: '' });
-            navigation.goBack();
-            dispatch(addToast({ message: 'Error al reportar', type: StatusType.WARNING }));
-        }
+        createReportIdea(messageId, reportReason, onChange);
     };
 
     useEffect(() => {
@@ -131,7 +111,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
                             ...stylecom.circleButton,
                             borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
                         }}
-                        onPress={buttonState ? sumbitReport : () => {}}
+                        onPress={buttonState ? handlecreateReportIdea : () => {}}
                     >
                         <View
                             style={{
