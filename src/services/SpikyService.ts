@@ -18,6 +18,7 @@ import {
     CreateReportIdea,
     GetUserInfo,
     UpdatePassword,
+    CreateMessageCommentResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -133,6 +134,14 @@ class SpikyService {
             uid,
             actualContrasena: currentPassword,
             nuevaContrasena: newPassword,
+        });
+    }
+
+    createMessageComment(messageId: number, uid: number, comment: string) {
+        return this.instance.post<CreateMessageCommentResponse>('/resp', {
+            id_mensaje: messageId,
+            uid,
+            respuesta: comment,
         });
     }
 

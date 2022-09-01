@@ -1,37 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, TextInput, View } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
+import useSpikyService from '../hooks/useSpikyService';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Comment } from '../types/store';
+import ButtonIcon from './common/ButtonIcon';
 
-export const InputComment = () => {
+interface Form {
+    comment: string;
+}
+
+interface Props {
+    messageId: number;
+    updateComments: (comment: Comment) => void;
+}
+
+const MAX_LENGHT = 180;
+
+const DEFAULT_FORM: Form = {
+    comment: '',
+};
+
+export const InputComment = ({ messageId, updateComments }: Props) => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { createMessageComment } = useSpikyService();
     const [, setCounter] = useState(0);
-    const [buttonState, setButtonState] = useState(true);
-    const { form, onChange } = useForm({
-        respuestaInput: '',
-    });
+    const [isDisabled, setDisabled] = useState(true);
+    const { form, onChange } = useForm<Form>(DEFAULT_FORM);
 
-    const { respuestaInput } = form;
+    const { comment } = form;
+
+    async function onPress() {
+        setDisabled(true);
+        const messageComment = await createMessageComment(messageId, uid, comment);
+        if (messageComment) {
+            updateComments(messageComment);
+        }
+        onChange(DEFAULT_FORM);
+        Keyboard.dismiss();
+        setDisabled(false);
+    }
 
     useEffect(() => {
-        const max_length = 180;
-        setCounter(max_length - respuestaInput.length);
-        // changeCircleBorder('circleAR', max_length, respuestaInput.length);
-        if (respuestaInput.length <= max_length && respuestaInput.length > 0) {
-            if (buttonState) {
-                setButtonState(false);
+        const counterUpdated = MAX_LENGHT - comment.length;
+        setCounter(counterUpdated);
+        if (comment.length <= MAX_LENGHT && comment.length > 0) {
+            if (isDisabled) {
+                setDisabled(false);
             }
         } else {
-            setButtonState(true);
+            setDisabled(true);
         }
-    }, [respuestaInput]);
+    }, [comment]);
 
     return (
         <View
             style={{
                 backgroundColor: '#E6E6E6',
-                position: 'absolute',
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -55,25 +83,21 @@ export const InputComment = () => {
                     style={styles.textinput}
                     placeholder="Contribuye la idea..."
                     multiline={true}
-                    onChange={value => onChange(value, 'respuestaInput')}
+                    onChangeText={text => onChange({ comment: text })}
+                    value={comment}
                 />
             </View>
-
-            <TouchableOpacity
+            <ButtonIcon
+                icon={faLocationArrow}
                 style={{
                     paddingHorizontal: 10,
                     justifyContent: 'center',
                     transform: [{ rotate: '45deg' }],
                     borderRadius: 100,
                 }}
-                onPress={() => {}}
-            >
-                <FontAwesomeIcon
-                    icon={faLocationArrow}
-                    size={16}
-                    color={true ? '#d4d4d4d3' : '#01192E'}
-                />
-            </TouchableOpacity>
+                disabled={isDisabled}
+                onPress={onPress}
+            />
         </View>
     );
 };
