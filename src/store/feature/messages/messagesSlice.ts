@@ -47,6 +47,14 @@ export const messagesSlice = createSlice({
         addMessage: (state: MessagesState, action: PayloadAction<Message>) => {
             state.messages = [action.payload, ...state.messages];
         },
+        updateMessage: (state: MessagesState, action: PayloadAction<Message>) => {
+            state.messages = state.messages.map(m => {
+                if (m.id == action.payload.id) {
+                    m.message = action.payload.message;
+                }
+                return m;
+            });
+        },
     },
 });
 
@@ -58,6 +66,7 @@ export const {
     setLastMessageId,
     setDraft,
     addMessage,
+    updateMessage,
 } = messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;

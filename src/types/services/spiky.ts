@@ -44,7 +44,7 @@ export interface Message {
     num_respuestas?: number;
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
-    usuario: User;
+    usuario?: User;
     respuestas?: Comment[];
 }
 
@@ -57,6 +57,12 @@ interface User {
 
 export interface CreateMessageResponse {
     ok: boolean;
+    mensaje: Message;
+}
+
+export interface UpdateDraftResponse {
+    ok: boolean;
+    msg: string;
     mensaje: Message;
 }
 
