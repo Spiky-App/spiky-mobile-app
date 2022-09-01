@@ -138,3 +138,17 @@ export interface Notification {
 export interface UpdateNotifications {
     ok: boolean;
 }
+
+export interface CreateMessageCommentResponse {
+    ok: boolean;
+    respuesta: MessageComment;
+}
+
+interface MessageComment {
+    id_respuesta: number;
+    respuesta: string;
+    id_mensaje: number;
+    id_usuario: number;
+    fecha: number;
+    usuario?: User;
+}
