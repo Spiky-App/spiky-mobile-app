@@ -16,6 +16,8 @@ import {
     GetMessageAndComments,
     CreateReactionCmt,
     CreateReportIdea,
+    GetUserInfo,
+    UpdatePassword,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -120,6 +122,18 @@ class SpikyService {
 
     updateNotifications(arrayIds: number[]) {
         return this.instance.put<UpdateNotifications>(`notif`, { id_notificaciones: arrayIds });
+    }
+
+    getUserInfo() {
+        return this.instance.get<GetUserInfo>(`auth/info`);
+    }
+
+    updatePassword(uid: number, currentPassword: string, newPassword: string) {
+        return this.instance.put<UpdatePassword>('auth/change-password', {
+            uid,
+            actualContrasena: currentPassword,
+            nuevaContrasena: newPassword,
+        });
     }
 
     createReportIdea(uid: number, messageId: number, reportReason: string) {
