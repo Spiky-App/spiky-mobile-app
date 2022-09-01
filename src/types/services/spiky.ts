@@ -138,3 +138,8 @@ export interface Notification {
 export interface UpdateNotifications {
     ok: boolean;
 }
+
+export interface CreateReportIdea {
+    ok: boolean;
+    msg: string;
+}

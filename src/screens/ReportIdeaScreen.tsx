@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -13,28 +14,59 @@ import {
 } from 'react-native';
 import { faFlag } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
+import { RootStackParamList } from '../navigator/Navigator';
+import SpikyService from '../services/SpikyService';
+import { RootState } from '../store';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { StatusType } from '../types/common';
 
-export const ReportIdeaScreen = () => {
+type Props = DrawerScreenProps<RootStackParamList, 'ReportIdeaScreen'>;
+
+export const ReportIdeaScreen = ({ route }: Props) => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const service = new SpikyService(config);
+    const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
-    const [buttonState, setButtonState] = useState(true);
+    const [buttonState, setButtonState] = useState(false);
     const { form, onChange } = useForm({
-        mensaje: '',
+        reportReason: '',
     });
+    const messageId = route.params?.messageId;
 
-    const { mensaje } = form;
+    const { reportReason } = form;
+
+    const sumbitReport = async () => {
+        setButtonState(false);
+        try {
+            const response = await service.createReportIdea(uid, messageId, reportReason);
+            const { data } = response;
+            const { msg } = data;
+            onChange({ reportReason: '' });
+            navigation.goBack();
+            dispatch(setModalAlert({ isOpen: true, text: msg, icon: faFlag }));
+        } catch (error) {
+            console.log(error);
+            onChange({ reportReason: '' });
+            navigation.goBack();
+            dispatch(addToast({ message: 'Error al reportar', type: StatusType.WARNING }));
+        }
+    };
 
     useEffect(() => {
-        setCounter(220 - mensaje.length);
-        if (mensaje.length <= 220 && mensaje.length > 0) {
-            if (buttonState) {
-                setButtonState(false);
+        setCounter(220 - reportReason.length);
+        if (reportReason.length <= 220 && reportReason.length > 0) {
+            if (!buttonState) {
+                setButtonState(true);
             }
         } else {
-            setButtonState(true);
+            setButtonState(false);
         }
-    }, [mensaje]);
+    }, [reportReason]);
 
     return (
         <SafeAreaView style={stylecom.container}>
@@ -45,7 +77,7 @@ export const ReportIdeaScreen = () => {
                         placeholderTextColor="#707070"
                         style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
                         multiline={true}
-                        onChangeText={value => onChange({ mensaje: value })}
+                        onChangeText={value => onChange({ reportReason: value })}
                         autoFocus
                     />
                 </View>
@@ -85,7 +117,8 @@ export const ReportIdeaScreen = () => {
                                         ? stylecom.MaxCounterNIdeaColorRed
                                         : stylecom.MaxCounterNIdeaColor),
                                     width:
-                                        ((mensaje.length < 220 ? mensaje.length : 220) / 220) *
+                                        ((reportReason.length < 220 ? reportReason.length : 220) /
+                                            220) *
                                             100 +
                                         `%`,
                                 }}
@@ -96,9 +129,9 @@ export const ReportIdeaScreen = () => {
                     <TouchableOpacity
                         style={{
                             ...stylecom.circleButton,
-                            borderColor: buttonState ? '#d4d4d4d3' : '#01192E',
+                            borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
                         }}
-                        onPress={() => {}}
+                        onPress={buttonState ? sumbitReport : () => {}}
                     >
                         <View
                             style={{
@@ -108,7 +141,7 @@ export const ReportIdeaScreen = () => {
                             <FontAwesomeIcon
                                 icon={faFlag}
                                 size={16}
-                                color={buttonState ? '#d4d4d4d3' : '#01192E'}
+                                color={!buttonState ? '#d4d4d4d3' : '#01192E'}
                             />
                         </View>
                     </TouchableOpacity>

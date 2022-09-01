@@ -15,6 +15,7 @@ import {
     UpdateNotifications,
     GetMessageAndComments,
     CreateReactionCmt,
+    CreateReportIdea,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -119,6 +120,14 @@ class SpikyService {
 
     updateNotifications(arrayIds: number[]) {
         return this.instance.put<UpdateNotifications>(`notif`, { id_notificaciones: arrayIds });
+    }
+
+    createReportIdea(uid: number, messageId: number, reportReason: string) {
+        return this.instance.post<CreateReportIdea>(`report`, {
+            id_usuario: uid,
+            id_mensaje: messageId,
+            motivo_reporte: reportReason,
+        });
     }
 }
 
