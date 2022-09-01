@@ -85,7 +85,7 @@ export const LoginScreen = () => {
             <ArrowBack />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ marginBottom: 80 }}>
+                    <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
                     </View>
                     <View style={{ marginBottom: 20 }}>
@@ -103,7 +103,7 @@ export const LoginScreen = () => {
                             placeholder="Contraseña"
                             secureTextEntry={passVisible}
                             autoCorrect={false}
-                            style={styles.textinput}
+                            style={{ ...styles.textinput, ...styles.shadow }}
                             onChangeText={value => onChange({ password: value })}
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
@@ -133,7 +133,7 @@ export const LoginScreen = () => {
                                 ...(isLoading && { color: '#707070' }),
                             }}
                         >
-                            {(!isLoading ? 'Iniciar sesión' : 'Cargando...').toUpperCase()}
+                            {!isLoading ? 'Iniciar sesión' : 'Cargando...'}
                         </Text>
                     </TouchableHighlight>
                     <TouchableOpacity
