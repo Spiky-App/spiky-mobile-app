@@ -5,7 +5,7 @@ import { BASE_URL, PORT } from 'react-native-dotenv';
 // i'm searching for alternatives but for now it hasn't
 // hurt anyone
 export const config: AxiosRequestConfig = {
-    baseURL: `https://spiky-services.herokuapp.com/api/`,
+    baseURL: `${BASE_URL}:${PORT}/api/`,
     timeout: 10000,
     headers: {},
 };
