@@ -31,7 +31,7 @@ export type RootStackParamList = {
     OpenedIdeaScreen: { messageId: number };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
-    ReportIdeaScreen: undefined;
+    ReportIdeaScreen: { messageId: number };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

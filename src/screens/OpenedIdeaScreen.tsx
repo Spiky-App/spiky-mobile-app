@@ -32,7 +32,7 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Message, ReactionType } from '../types/store';
+import { Comment as CommentState, Message, ReactionType } from '../types/store';
 import MsgTransform from '../components/MsgTransform';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
@@ -76,6 +76,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
         top: 0,
         left: 0,
     });
+    const [comments, setComments] = useState<CommentState[]>();
     const date = getTime(message.date.toString());
     const isOwner = message.user.id === uid;
 
@@ -104,10 +105,16 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
             ...mensaje,
             num_respuestas: num_respuestas,
         });
-
         setMessage(messagesRetrived);
+        setComments(messagesRetrived.comments ?? []);
         setMessageTrackingId(messagesRetrived.messageTrackingId);
         setLoading(false);
+    };
+
+    const updateComments = (comment: CommentState) => {
+        if (comments) {
+            setComments([comment, ...comments]);
+        }
     };
 
     useEffect(() => {
@@ -301,7 +308,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
 
                     {message.reactionType !== undefined || isOwner ? (
                         <>
-                            {message.answersNumber > 0 ? (
+                            {comments && comments.length > 0 ? (
                                 <FlatList
                                     style={{
                                         flex: 1,
@@ -309,7 +316,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                         marginTop: 20,
                                         marginBottom: 60,
                                     }}
-                                    data={message.comments}
+                                    data={comments}
                                     renderItem={({ item }) => <Comment comment={item} />}
                                     keyExtractor={item => item.id + ''}
                                     showsVerticalScrollIndicator={false}
@@ -321,7 +328,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                     </Text>
                                 </View>
                             )}
-                            <InputComment />
+                            <InputComment messageId={messageId} updateComments={updateComments} />
                         </>
                     ) : (
                         <View style={stylescom.center}>

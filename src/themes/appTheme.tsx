@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     },
     textb: {
         fontWeight: '300',
-        fontSize: 14,
+        fontSize: 15,
     },
     button: {
         borderWidth: 1,
