@@ -38,7 +38,7 @@ function TextInputCustom(props: Props) {
                 />
                 {icon && (
                     <TouchableOpacity {...touchableOpacityProps}>
-                        <FontAwesomeIcon icon={icon} size={27} color="#d4d4d4" />
+                        <FontAwesomeIcon icon={icon} size={23} color="#d4d4d4" />
                     </TouchableOpacity>
                 )}
             </View>
