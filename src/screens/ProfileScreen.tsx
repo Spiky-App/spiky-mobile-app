@@ -1,6 +1,5 @@
 import React from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
 import { FloatButton } from '../components/FloatButton';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerScreenProps } from '@react-navigation/drawer';
@@ -13,8 +12,12 @@ export const ProfileScreen = ({ route }: Props) => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            <IdeasHeader title={'@' + alias} />
-            <MessagesFeed params={{ alias }} filter={'/perfil'} />
+            <MessagesFeed
+                params={{ alias }}
+                filter={'/perfil'}
+                title={'@' + alias}
+                myideas={false}
+            />
             <FloatButton />
         </BackgroundPaper>
     );

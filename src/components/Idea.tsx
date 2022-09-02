@@ -9,7 +9,15 @@ import {
     View,
 } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
+import {
+    faCheck,
+    faLightbulb,
+    faMessage,
+    faMinus,
+    faXmark,
+    faPen,
+    faChevronRight,
+} from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
@@ -22,6 +30,8 @@ import { useAnimation } from '../hooks/useAnimation';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { MessageRequestData } from '../services/models/spikyService';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
 
 interface Props {
     idea: Message;
@@ -54,9 +64,10 @@ export const Idea = ({ idea }: Props) => {
         reactionType,
         sequence,
         favor,
+        draft,
     } = idea;
-
     const isOwner = user.id === uid;
+    const isDraft = draft === 1;
     const fecha = getTime(date.toString());
 
     const handleReaction = (reactionTypeAux: number) => {
@@ -74,6 +85,13 @@ export const Idea = ({ idea }: Props) => {
             }
         });
         dispatch(setMessages(messagesUpdated));
+    };
+    const handleDelete = () => {
+        service.deleteMessage(id);
+
+        const messagesUpdated = messages.filter(msg => msg.id !== id);
+        dispatch(setMessages(messagesUpdated));
+        dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
     };
 
     const handleOpenIdea = () => {
@@ -128,7 +146,11 @@ export const Idea = ({ idea }: Props) => {
                 {isOwner && (
                     <View style={stylescom.corner}>
                         <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                            <FontAwesomeIcon icon={faLightbulb} color="white" size={13} />
+                            <FontAwesomeIcon
+                                icon={isDraft ? faPen : faLightbulb}
+                                color="white"
+                                size={13}
+                            />
                         </View>
                     </View>
                 )}
@@ -192,63 +214,96 @@ export const Idea = ({ idea }: Props) => {
                         </View>
                     ) : (
                         <>
-                            <View style={stylescom.container}>
-                                <View style={stylescom.reaction}>
-                                    <FontAwesomeIcon
-                                        icon={faXmark}
-                                        color={
-                                            reactionType === ReactionType.AGAINST
-                                                ? '#6A000E'
-                                                : '#bebebe'
-                                        }
-                                        size={12}
-                                    />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {against === 0 ? '' : against}
-                                    </Text>
-                                </View>
-
-                                <View style={stylescom.reaction}>
-                                    <FontAwesomeIcon
-                                        icon={faCheck}
-                                        color={
-                                            reactionType === ReactionType.FAVOR
-                                                ? '#0B5F00'
-                                                : '#bebebe'
-                                        }
-                                        size={12}
-                                    />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {favor === 0 ? '' : favor}
-                                    </Text>
-                                </View>
-
+                            {isDraft ? (
                                 <TouchableOpacity
-                                    style={stylescom.reaction}
-                                    onPress={handleOpenIdea}
+                                    style={stylescom.eraseDraft}
+                                    onPress={handleDelete}
                                 >
-                                    <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {answersNumber === 0 ? '' : answersNumber}
-                                    </Text>
+                                    <FontAwesomeIcon icon={faTrash} color="#bebebe" size={16} />
                                 </TouchableOpacity>
-                            </View>
+                            ) : (
+                                <View style={stylescom.container}>
+                                    <View style={stylescom.reaction}>
+                                        <FontAwesomeIcon
+                                            icon={faXmark}
+                                            color={
+                                                reactionType === ReactionType.AGAINST
+                                                    ? '#6A000E'
+                                                    : '#bebebe'
+                                            }
+                                            size={12}
+                                        />
+                                        <Text style={{ ...styles.text, ...stylescom.number }}>
+                                            {against === 0 ? '' : against}
+                                        </Text>
+                                    </View>
+
+                                    <View style={stylescom.reaction}>
+                                        <FontAwesomeIcon
+                                            icon={faCheck}
+                                            color={
+                                                reactionType === ReactionType.FAVOR
+                                                    ? '#0B5F00'
+                                                    : '#bebebe'
+                                            }
+                                            size={12}
+                                        />
+                                        <Text style={{ ...styles.text, ...stylescom.number }}>
+                                            {favor === 0 ? '' : favor}
+                                        </Text>
+                                    </View>
+
+                                    <TouchableOpacity
+                                        style={stylescom.reaction}
+                                        onPress={handleOpenIdea}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faMessage}
+                                            color={'#bebebe'}
+                                            size={12}
+                                        />
+                                        <Text style={{ ...styles.text, ...stylescom.number }}>
+                                            {answersNumber === 0 ? '' : answersNumber}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
 
                             <View style={stylescom.container}>
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
-
-                                <TouchableOpacity
-                                    onPress={event => {
-                                        setPosition({
-                                            top: event.nativeEvent.pageY,
-                                            left: event.nativeEvent.pageX,
-                                        });
-                                    }}
-                                >
-                                    <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                        ...
-                                    </Text>
-                                </TouchableOpacity>
+                                {isDraft ? (
+                                    <TouchableOpacity
+                                        style={stylescom.publishDraft}
+                                        onPress={() =>
+                                            navigation.navigate('CreateIdeaScreen', {
+                                                draftedIdea: message,
+                                                draftID: id,
+                                            })
+                                        }
+                                    >
+                                        <Text style={{ ...styles.text, ...stylescom.publish }}>
+                                            {'editar / publicar'}
+                                        </Text>
+                                        <FontAwesomeIcon
+                                            icon={faChevronRight}
+                                            color="#01192E"
+                                            size={12}
+                                        />
+                                    </TouchableOpacity>
+                                ) : (
+                                    <TouchableOpacity
+                                        onPress={event => {
+                                            setPosition({
+                                                top: event.nativeEvent.pageY,
+                                                left: event.nativeEvent.pageX,
+                                            });
+                                        }}
+                                    >
+                                        <Text style={{ ...styles.textbold, ...stylescom.dots }}>
+                                            ...
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
 
                                 <ModalIdeaOptions
                                     setIdeaOptions={setIdeaOptions}
@@ -310,11 +365,37 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    publishDraft: {
+        flexDirection: 'row',
+        marginLeft: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
+    },
+    eraseDraft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
+        marginBottom: 5,
+    },
     number: {
         fontWeight: '300',
         fontSize: 12,
         color: '#bebebe',
         marginLeft: 3,
+    },
+    publish: {
+        fontWeight: '300',
+        fontSize: 12,
+        color: '#01192E',
+        marginLeft: 1,
+    },
+    erase: {
+        fontWeight: '300',
+        fontSize: 12,
+        color: '#01192E',
+        marginLeft: 1,
     },
     dots: {
         fontWeight: '600',

@@ -62,6 +62,6 @@ export interface MessageRequestData {
     search?: string;
     hashtag?: string;
     univer?: number[];
-    draft?: boolean;
+    draft?: number;
     cantidad?: number;
 }

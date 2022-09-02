@@ -15,6 +15,7 @@ import {
     UpdateNotifications,
     GetMessageAndComments,
     CreateReactionCmt,
+    UpdateDraftResponse,
     CreateReportIdea,
     GetUserInfo,
     UpdatePassword,
@@ -64,6 +65,13 @@ class SpikyService {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
             draft,
+        });
+    }
+    updateDraft(message: string, id: number, post: boolean) {
+        return this.instance.put<UpdateDraftResponse>('mensajes/draft/update', {
+            id_mensaje: id,
+            mensaje: message,
+            post,
         });
     }
 

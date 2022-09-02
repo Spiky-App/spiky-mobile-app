@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { FloatButton } from '../components/FloatButton';
@@ -47,8 +46,12 @@ export const SearchScreen = () => {
                         </TouchableOpacity>
                     </Animated.View>
 
-                    <IdeasHeader title="Explorando" />
-                    <MessagesFeed params={{ search }} filter={'/search'} />
+                    <MessagesFeed
+                        params={{ search }}
+                        filter={'/search'}
+                        title={'Explorando'}
+                        myideas={false}
+                    />
                     <FloatButton />
                 </>
             </TouchableWithoutFeedback>

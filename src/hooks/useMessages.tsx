@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 export const useMessages = (filter: string, params: MessageRequestData) => {
     const { id: uid } = useAppSelector((state: RootState) => state.user);
-    const { messages } = useAppSelector((state: RootState) => state.messages);
+    const { messages, draft } = useAppSelector((state: RootState) => state.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const [loading, setLoading] = useState(false);
     const [moreMsg, setMoreMsg] = useState(true);
@@ -19,6 +19,9 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
     const dispatch = useAppDispatch();
 
     const fetchMessages = async (newLoad: boolean) => {
+        if (draft) {
+            params = { draft: draft ? 1 : 0, ...params };
+        }
         const lastMessageId =
             messages.length > 0 && !newLoad ? messages[messages.length - 1].id : undefined;
 
@@ -67,7 +70,7 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
         return () => {
             dispatch(setMessages([]));
         };
-    }, [params, uid]);
+    }, [params, uid, draft]);
 
     return {
         fetchMessages,
