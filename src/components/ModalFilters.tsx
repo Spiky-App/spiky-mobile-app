@@ -36,8 +36,6 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
         }
     }, [universities, selectAll]);
 
-    console.log(formValues);
-
     const handleChange = (id: number) => {
         if (id === 0) {
             setSelectAll(!selectAll);
