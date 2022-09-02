@@ -92,7 +92,6 @@ export const Idea = ({ idea }: Props) => {
         const messagesUpdated = messages.filter(msg => msg.id !== id);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
-        //navigation.goBack();
     };
 
     const handleOpenIdea = () => {
