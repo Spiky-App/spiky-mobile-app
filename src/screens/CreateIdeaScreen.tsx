@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SpikyService from '../services/SpikyService';
 import { addToast } from '../store/feature/toast/toastSlice';
-import { addMessage, updateMessage } from '../store/feature/messages/messagesSlice';
+import { addMessage, setDraft, updateMessage } from '../store/feature/messages/messagesSlice';
 import { Message } from '../types/store';
 import { StatusType } from '../types/common';
 import ButtonIcon from '../components/common/ButtonIcon';
@@ -28,6 +28,7 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { renderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
@@ -103,28 +104,26 @@ export const CreateIdeaScreen = ({ route }: Props) => {
         }
         return createdMessage;
     }
-
+    const { draft } = useAppSelector((state: RootState) => state.messages);
     async function onPressLocationArrow() {
         setLoading(true);
-        if (isDraft) {
-            const message = await updateDraft(form.message, idDraft, true);
-            if (message) {
-                dispatch(addMessage(message));
-                nav.navigate('CommunityScreen');
-                dispatch(addToast({ message: 'Borrador publicado', type: StatusType.DEFAULT }));
-            }
-        } else {
-            const message = await createMessage(form.message);
-            if (message) {
-                dispatch(addMessage(message));
-                nav.navigate('CommunityScreen');
-                dispatch(addToast({ message: 'Idea publicada', type: StatusType.DEFAULT }));
-            }
+        const message = idDraft
+            ? await updateDraft(form.message, idDraft, true)
+            : await createMessage(form.message);
+        if (message) {
+            dispatch(setDraft(false));
+            nav.navigate('CommunityScreen');
+            dispatch(addMessage(message));
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Idea publicada.',
+                    icon: faFlagCheckered,
+                })
+            );
         }
         setLoading(false);
     }
-
-    const { draft } = useAppSelector((state: RootState) => state.messages);
     async function onPressPenToSquare() {
         setLoading(true);
         if (isDraft) {
