@@ -1,5 +1,5 @@
 import { FlatList } from 'react-native-gesture-handler';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { EmptyState } from './EmptyState';
@@ -7,14 +7,13 @@ import { Idea } from './Idea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
 import { useMessages } from '../hooks/useMessages';
 import { IdeasHeader } from './IdeasHeader';
+import { setUniversitiesFilter } from '../store/feature/messages/messagesSlice';
+import { useDispatch } from 'react-redux';
 
 interface MessageParams {
     alias?: string;
     search?: string;
     hashtag?: string;
-    univer?: number[];
-    draft?: number;
-    cantidad?: number;
 }
 
 interface MessagesFeedProp {
@@ -24,7 +23,12 @@ interface MessagesFeedProp {
     myideas: boolean;
 }
 
-const MessagesFeed = ({ params = {}, filter, title, myideas = false }: MessagesFeedProp) => {
+const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedProp) => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(setUniversitiesFilter(undefined));
+    }, []);
     const { messages } = useAppSelector((state: RootState) => state.messages);
     const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
     const handleMessages = (newLoad: boolean) => {

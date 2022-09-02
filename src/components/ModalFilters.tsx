@@ -8,7 +8,9 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { RootState } from '../store';
+import { setUniversitiesFilter } from '../store/feature/messages/messagesSlice';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { CheckBox } from './CheckBox';
@@ -20,21 +22,37 @@ interface Props {
 
 export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    const [formValues, setFormValues] = useState<any>({
+    const [formValues, setFormValues] = useState<{ [id: string]: boolean }>({
         [0]: false,
     });
-
-    const handleChange = (id: number) => {
-        setFormValues({ ...formValues, [id]: !formValues[id] });
-    };
-
+    const [selectAll, setSelectAll] = useState(false);
     useEffect(() => {
         if (universities?.length !== 0) {
             let objUnivers = {};
-            universities?.forEach(item => (objUnivers = { ...objUnivers, [item.id]: false }));
-            setFormValues({ ...formValues, ...objUnivers });
+            universities?.forEach(
+                item => item.id && (objUnivers = { ...objUnivers, [item.id]: selectAll })
+            );
+            setFormValues({ ...formValues, ...objUnivers, ...{ [0]: selectAll } });
         }
-    }, [universities]);
+    }, [universities, selectAll]);
+
+    console.log(formValues);
+
+    const handleChange = (id: number) => {
+        if (id === 0) {
+            setSelectAll(!selectAll);
+        } else {
+            setFormValues({ ...formValues, [id]: !formValues[id] });
+        }
+    };
+    const dispatch = useDispatch();
+    const submitFilter = () => {
+        const filters = Object.keys(formValues)
+            .filter(n => formValues[n] && n != '0')
+            .join('|');
+        dispatch(setUniversitiesFilter(filters));
+        setModalFilter(false);
+    };
 
     return (
         <Modal animationType="fade" visible={modalFilter} transparent={true}>
@@ -102,7 +120,7 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                             </View>
 
                             <View style={{ ...styles.center, marginTop: 25 }}>
-                                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                                <TouchableOpacity style={styles.button} onPress={submitFilter}>
                                     <Text style={{ ...styles.text, fontSize: 11 }}>Aplicar</Text>
                                 </TouchableOpacity>
                             </View>

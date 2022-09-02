@@ -10,6 +10,7 @@ interface MessagesState {
     activeMsg?: ActiveMessage;
     lastMessageId?: number;
     draft: boolean;
+    univers?: string | undefined;
 }
 
 const initialState: MessagesState = {
@@ -20,6 +21,7 @@ const initialState: MessagesState = {
     activeMsg: undefined,
     lastMessageId: undefined,
     draft: false,
+    univers: undefined,
 };
 
 export const messagesSlice = createSlice({
@@ -44,6 +46,12 @@ export const messagesSlice = createSlice({
         setDraft: (state: MessagesState, action: PayloadAction<boolean>) => {
             state.draft = action.payload;
         },
+        setUniversitiesFilter: (
+            state: MessagesState,
+            action: PayloadAction<string | undefined>
+        ) => {
+            state.univers = action.payload;
+        },
         addMessage: (state: MessagesState, action: PayloadAction<Message>) => {
             state.messages = [action.payload, ...state.messages];
         },
@@ -67,6 +75,7 @@ export const {
     setDraft,
     addMessage,
     updateMessage,
+    setUniversitiesFilter,
 } = messagesSlice.actions;
 
 export const selectMessages = (state: RootState) => state.messages;
