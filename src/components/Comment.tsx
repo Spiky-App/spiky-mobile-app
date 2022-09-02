@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { faReply, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -11,12 +11,16 @@ import { Comment as CommentProps, ReactionType } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
+import { FormComment } from './InputComment';
 
 interface Props {
     comment: CommentProps;
+    formComment: FormComment;
+    onChangeComment: (stateUpdated: Partial<FormComment>) => void;
+    refInputComment: React.RefObject<TextInput>;
 }
 
-export const Comment = ({ comment }: Props) => {
+export const Comment = ({ comment, formComment, onChangeComment, refInputComment }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const [reactComment, setReactComment] = useState({
         against: comment.against,
@@ -30,6 +34,15 @@ export const Comment = ({ comment }: Props) => {
     });
     const date = getTime(comment.date.toString());
     const { against, favor, reactionCommentType } = reactComment;
+
+    const handleReply = () => {
+        const commentMsg = formComment.comment + ' ';
+        onChangeComment({
+            comment: `${commentMsg}@[@${comment.user.nickname}](${comment.user.id}) `,
+        });
+        refInputComment.current?.focus();
+    };
+
     useEffect(() => {
         if (position.top !== 0) {
             setModalReact(true);
@@ -54,7 +67,7 @@ export const Comment = ({ comment }: Props) => {
                     <>
                         <TouchableOpacity
                             style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
-                            onPress={() => {}}
+                            onPress={handleReply}
                         >
                             <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
                         </TouchableOpacity>

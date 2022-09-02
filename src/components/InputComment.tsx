@@ -1,38 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Keyboard, TextInput, View } from 'react-native';
+import { MentionInput } from 'react-native-controlled-mentions';
+import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
-import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Comment } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
+import { renderSuggetions } from './Suggestions';
 
-interface Form {
+export interface FormComment {
     comment: string;
 }
 
 interface Props {
     messageId: number;
     updateComments: (comment: Comment) => void;
+    form: FormComment;
+    onChange: (stateUpdated: Partial<FormComment>) => void;
+    refInputComment: React.RefObject<TextInput>;
 }
 
 const MAX_LENGHT = 180;
 
-const DEFAULT_FORM: Form = {
+const DEFAULT_FORM: FormComment = {
     comment: '',
 };
 
-export const InputComment = ({ messageId, updateComments }: Props) => {
+export const InputComment = ({
+    messageId,
+    updateComments,
+    form,
+    onChange,
+    refInputComment,
+}: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { createMessageComment } = useSpikyService();
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
-    const { form, onChange } = useForm<Form>(DEFAULT_FORM);
-
+    const [inputHeight, setInputHeight] = useState(0);
+    // const refInputComment = useRef<TextInput>();
     const { comment } = form;
-
     async function onPress() {
         setDisabled(true);
         const messageComment = await createMessageComment(messageId, uid, comment);
@@ -58,6 +68,10 @@ export const InputComment = ({ messageId, updateComments }: Props) => {
 
     return (
         <View
+            onLayout={event => {
+                const { height } = event.nativeEvent.layout;
+                setInputHeight(height);
+            }}
             style={{
                 backgroundColor: '#E6E6E6',
                 bottom: 0,
@@ -79,12 +93,26 @@ export const InputComment = ({ messageId, updateComments }: Props) => {
                     borderRadius: 5,
                 }}
             >
-                <TextInput
-                    style={styles.textinput}
-                    placeholder="Contribuye la idea..."
+                <MentionInput
+                    inputRef={refInputComment}
+                    placeholder="Perpetua tu idea.."
+                    placeholderTextColor="#707070"
+                    style={{ ...styles.textinput, fontSize: 16 }}
                     multiline={true}
-                    onChangeText={text => onChange({ comment: text })}
                     value={comment}
+                    onChange={text => onChange({ comment: text })}
+                    partTypes={[
+                        {
+                            trigger: '@',
+                            renderSuggestions: props =>
+                                renderSuggetions({ ...props, isMention: true, inputHeight }),
+                            textStyle: { ...styles.h5, color: '#5c71ad' },
+                            allowedSpacesCount: 0,
+                            isInsertSpaceAfterMention: true,
+                            // isBottomMentionSuggestionsRender: true,
+                            getPlainString: ({ name }: MentionData) => name,
+                        },
+                    ]}
                 />
             </View>
             <ButtonIcon
