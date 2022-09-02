@@ -28,7 +28,7 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { renderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
-import { faFlag, faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
