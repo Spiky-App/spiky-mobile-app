@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView,
     StyleSheet,
     Text,
+    TextInput,
     TouchableHighlight,
     TouchableOpacity,
     View,
@@ -24,7 +25,7 @@ import {
 import { getTime } from '../helpers/getTime';
 import { styles } from '../themes/appTheme';
 
-import { InputComment } from '../components/InputComment';
+import { FormComment, InputComment } from '../components/InputComment';
 import { ModalIdeaOptions } from '../components/ModalIdeaOptions';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
@@ -36,6 +37,11 @@ import { Comment as CommentState, Message, ReactionType } from '../types/store';
 import MsgTransform from '../components/MsgTransform';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
+import { useForm } from '../hooks/useForm';
+
+const DEFAULT_FORM: FormComment = {
+    comment: '',
+};
 
 const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 const initialMessage = {
@@ -72,6 +78,8 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const [message, setMessage] = useState<Message>(initialMessage);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const [ideaOptions, setIdeaOptions] = useState(false);
+    const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
+    const refInputComment = React.createRef<TextInput>();
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
@@ -314,10 +322,16 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                         flex: 1,
                                         width: '80%',
                                         marginTop: 20,
-                                        marginBottom: 60,
                                     }}
                                     data={comments}
-                                    renderItem={({ item }) => <Comment comment={item} />}
+                                    renderItem={({ item }) => (
+                                        <Comment
+                                            comment={item}
+                                            formComment={form}
+                                            onChangeComment={onChange}
+                                            refInputComment={refInputComment}
+                                        />
+                                    )}
                                     keyExtractor={item => item.id + ''}
                                     showsVerticalScrollIndicator={false}
                                 />
@@ -328,7 +342,13 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                     </Text>
                                 </View>
                             )}
-                            <InputComment messageId={messageId} updateComments={updateComments} />
+                            <InputComment
+                                messageId={messageId}
+                                updateComments={updateComments}
+                                form={form}
+                                onChange={onChange}
+                                refInputComment={refInputComment}
+                            />
                         </>
                     ) : (
                         <View style={stylescom.center}>

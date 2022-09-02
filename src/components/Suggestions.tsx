@@ -1,23 +1,36 @@
 import React, { FC, useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { MentionSuggestionsProps, Suggestion } from 'react-native-controlled-mentions';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Dimensions } from 'react-native';
 
 interface RenderSuggestionsProps extends MentionSuggestionsProps {
     isMention: boolean;
+    inputHeight?: number;
 }
 
 export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     keyword,
     onSuggestionPress,
     isMention,
+    inputHeight,
 }) => {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
+
+    const InputStyles: StyleProp<ViewStyle> = inputHeight
+        ? {
+              ...stylecom.containermention,
+              width: Dimensions.get('window').width - 40,
+              position: 'absolute',
+              left: -10,
+              bottom: inputHeight - 30,
+          }
+        : stylecom.containermention;
 
     const getUserSuggestions = async (word: string) => {
         if (word !== '@') {
@@ -63,7 +76,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     if (keyword === undefined || suggestions.length === 0) return null;
 
     return (
-        <View style={stylecom.containermention}>
+        <View style={InputStyles}>
             {suggestions.map(one => (
                 <TouchableOpacity
                     key={one.id}
