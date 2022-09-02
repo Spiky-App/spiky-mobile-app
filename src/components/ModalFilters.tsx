@@ -51,6 +51,13 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
         dispatch(setUniversitiesFilter(filters));
         setModalFilter(false);
     };
+    const resetFilter = () => {
+        setFormValues({
+            [0]: false,
+        });
+        dispatch(setUniversitiesFilter(undefined));
+        setModalFilter(false);
+    };
 
     return (
         <Modal animationType="fade" visible={modalFilter} transparent={true}>
@@ -70,7 +77,7 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
                                     <Text style={styles.orange}>.</Text>
                                 </Text>
 
-                                <TouchableOpacity style={styles.center}>
+                                <TouchableOpacity style={styles.center} onPress={resetFilter}>
                                     <Text style={{ ...styles.text, ...styles.link }}>
                                         Restaurar
                                     </Text>
