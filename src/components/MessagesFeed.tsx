@@ -25,20 +25,18 @@ interface MessagesFeedProp {
 
 const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedProp) => {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(setUniversitiesFilter(undefined));
-    }, []);
     const { messages } = useAppSelector((state: RootState) => state.messages);
     const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
     const handleMessages = (newLoad: boolean) => {
         fetchMessages(newLoad);
     };
-
     const loadMore = () => {
         if (moreMsg) handleMessages(false);
     };
 
+    useEffect(() => {
+        dispatch(setUniversitiesFilter(undefined));
+    }, []);
     return (
         <>
             <IdeasHeader title={title} myideas={myideas} />
