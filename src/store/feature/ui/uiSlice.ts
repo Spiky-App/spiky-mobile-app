@@ -12,7 +12,7 @@ const initialState: UIState = {
     universities: undefined,
     modalAlert: {
         isOpen: false,
-        text: 'Upps...               algo salio mal',
+        text: 'Upps...               algo salió mal',
         icon: faCircleExclamation,
         color: '#01192E',
     },

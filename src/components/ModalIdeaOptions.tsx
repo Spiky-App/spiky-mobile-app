@@ -68,7 +68,6 @@ export const ModalIdeaOptions = ({
 
     const handleDelete = () => {
         service.deleteMessage(messageId);
-
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));

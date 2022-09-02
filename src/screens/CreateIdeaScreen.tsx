@@ -8,40 +8,42 @@ import {
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
-import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { MentionInput } from 'react-native-controlled-mentions';
 import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 import { DrawerParamList } from '../navigator/MenuMain';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { DrawerNavigationProp, DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SpikyService from '../services/SpikyService';
 import { addToast } from '../store/feature/toast/toastSlice';
-import { addMessage } from '../store/feature/messages/messagesSlice';
+import { addMessage, setDraft, updateMessage } from '../store/feature/messages/messagesSlice';
 import { Message } from '../types/store';
 import { StatusType } from '../types/common';
 import ButtonIcon from '../components/common/ButtonIcon';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { renderSuggetions } from '../components/Suggestions';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 
-type NavigationProp = CompositeNavigationProp<
-    DrawerNavigationProp<DrawerParamList>,
-    StackNavigationProp<RootStackParamList, 'CreateIdeaScreen'>
->;
+type NavigationProp = DrawerNavigationProp<DrawerParamList>;
+type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
 
-export const CreateIdeaScreen = () => {
+export const CreateIdeaScreen = ({ route }: Props) => {
+    const draftedIdea = route.params?.draftedIdea;
+    const idDraft = route.params?.draftID;
+    const isDraft = idDraft !== undefined;
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const { nickname, university } = useAppSelector((state: RootState) => state.user);
     const { form, onChange } = useForm({
-        message: '',
+        message: draftedIdea || '',
     });
-    const navigation = useNavigation<NavigationProp>();
+    const nav = useNavigation<NavigationProp>();
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
 
@@ -80,24 +82,78 @@ export const CreateIdeaScreen = () => {
         }
         return createdMessage;
     }
-
+    async function updateDraft(message: string, id: number, post: boolean) {
+        let createdMessage: Message | undefined = undefined;
+        try {
+            const response = await service.updateDraft(message, id, post);
+            const { data } = response;
+            const { mensaje } = data;
+            createdMessage = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: nickname,
+                    universidad: {
+                        alias: university,
+                    },
+                },
+            });
+        } catch {
+            dispatch(
+                addToast({ message: 'Error actualizando borrador', type: StatusType.WARNING })
+            );
+        }
+        return createdMessage;
+    }
+    const { draft } = useAppSelector((state: RootState) => state.messages);
     async function onPressLocationArrow() {
         setLoading(true);
-        const message = await createMessage(form.message);
+        const message = idDraft
+            ? await updateDraft(form.message, idDraft, true)
+            : await createMessage(form.message);
         if (message) {
+            dispatch(setDraft(false));
+            nav.navigate('CommunityScreen');
             dispatch(addMessage(message));
-            navigation.goBack();
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Idea publicada.',
+                    icon: faFlagCheckered,
+                })
+            );
         }
         setLoading(false);
     }
-
     async function onPressPenToSquare() {
         setLoading(true);
-        const message = await createMessage(form.message, true);
-        if (message) {
-            dispatch(addMessage(message));
-            navigation.goBack();
+        if (isDraft) {
+            const message = await updateDraft(form.message, idDraft, false);
+            if (message) {
+                if (draft) {
+                    dispatch(updateMessage(message));
+                }
+                nav.goBack();
+                dispatch(
+                    setModalAlert({
+                        isOpen: true,
+                        text: 'Borrador actualizado.',
+                        icon: faPenToSquare,
+                    })
+                );
+            }
+        } else {
+            const message = await createMessage(form.message, true);
+            if (message) {
+                if (draft) {
+                    dispatch(addMessage(message));
+                }
+                nav.goBack();
+                dispatch(
+                    setModalAlert({ isOpen: true, text: 'Borrador guardado.', icon: faPenToSquare })
+                );
+            }
         }
+
         setLoading(false);
     }
 
@@ -155,7 +211,7 @@ export const CreateIdeaScreen = () => {
                         bottom: Platform.OS === 'ios' ? 70 : 50,
                     }}
                 >
-                    <TouchableOpacity onPress={() => navigation.goBack()} disabled={isLoading}>
+                    <TouchableOpacity onPress={() => nav.goBack()} disabled={isLoading}>
                         <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
                     </TouchableOpacity>
                     <View style={stylecom.WrapperMaxCounterNIdea}>
