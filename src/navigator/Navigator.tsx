@@ -28,7 +28,7 @@ export type RootStackParamList = {
     RegisterScreen: undefined;
     MenuMain: undefined;
     CreateIdeaScreen: undefined;
-    OpenedIdeaScreen: { messageId: number };
+    OpenedIdeaScreen: { messageId: number; filter?: string };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
     ReportIdeaScreen: { messageId: number };

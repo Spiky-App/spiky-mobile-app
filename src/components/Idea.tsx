@@ -25,12 +25,12 @@ import { MessageRequestData } from '../services/models/spikyService';
 
 interface Props {
     idea: Message;
-    index: number;
+    filter: string;
 }
 
 const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
-export const Idea = ({ idea }: Props) => {
+export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -79,6 +79,7 @@ export const Idea = ({ idea }: Props) => {
     const handleOpenIdea = () => {
         navigation.navigate('OpenedIdeaScreen', {
             messageId: id,
+            filter: filter,
         });
     };
 
@@ -257,6 +258,7 @@ export const Idea = ({ idea }: Props) => {
                                     myIdea={isOwner}
                                     messageId={id}
                                     messageTrackingId={messageTrackingId}
+                                    filter={filter}
                                 />
                             </View>
                         </>
