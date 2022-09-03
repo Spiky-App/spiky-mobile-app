@@ -16,6 +16,7 @@ import { RootState } from '../store';
 import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface Props {
     setIdeaOptions: (value: boolean) => void;
@@ -28,6 +29,7 @@ interface Props {
     messageId: number;
     messageTrackingId?: number;
     setMessageTrackingId?: (value: number | undefined) => void;
+    filter?: string;
 }
 
 export const ModalIdeaOptions = ({
@@ -38,65 +40,31 @@ export const ModalIdeaOptions = ({
     messageId,
     messageTrackingId,
     setMessageTrackingId,
+    filter,
 }: Props) => {
     const { top, left } = position;
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
-    const uid = useAppSelector((state: RootState) => state.user.id);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
+    const { createTracking, deleteTracking } = useSpikyService();
 
     const goToScreen = (screen: string, params?: { messageId: number }) => {
         setIdeaOptions(false);
         navigation.navigate(screen, params);
     };
 
-    const handleTracking = async () => {
+    async function handleTracking() {
         if (!messageTrackingId) {
-            const response = await service.createTracking(uid, messageId);
-            const { data } = response;
-            const { id_tracking } = data;
-
-            const messagesUpdated = messages.map(msg => {
-                if (msg.id === messageId) {
-                    return { ...msg, messageTrackingId: id_tracking };
-                } else {
-                    return msg;
-                }
-            });
-            if (setMessageTrackingId) {
-                setMessageTrackingId(id_tracking);
-            }
-            dispatch(
-                setModalAlert({
-                    isOpen: true,
-                    text: 'Tracking activado',
-                    color: '#FC702A',
-                    icon: faThumbtack,
-                })
-            );
-            dispatch(setMessages(messagesUpdated));
+            const id_tracking = await createTracking(messageId);
+            if (setMessageTrackingId) setMessageTrackingId(id_tracking);
         } else {
-            await service.deleteTracking(messageTrackingId);
-
-            const messagesUpdated = messages.map(msg => {
-                if (msg.id === messageId) {
-                    return { ...msg, messageTrackingId: undefined };
-                } else {
-                    return msg;
-                }
-            });
-            if (setMessageTrackingId) {
-                setMessageTrackingId(undefined);
-            }
-            dispatch(
-                setModalAlert({ isOpen: true, text: 'Tracking desactivado', icon: faThumbtack })
-            );
-            dispatch(setMessages(messagesUpdated));
+            await deleteTracking(messageId, filter);
+            if (setMessageTrackingId) setMessageTrackingId(undefined);
         }
         setIdeaOptions(false);
-    };
+    }
 
     const handleDelete = () => {
         service.deleteMessage(messageId);
@@ -104,6 +72,7 @@ export const ModalIdeaOptions = ({
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
+        if (setMessageTrackingId) navigation.goBack();
     };
 
     return (

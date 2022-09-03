@@ -73,9 +73,11 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const messageId = route.params?.messageId;
+    const filter = route.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<Message>(initialMessage);
+    const [answersNumber, setAnswersNumber] = useState<number>(message.answersNumber);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const [ideaOptions, setIdeaOptions] = useState(false);
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
@@ -116,12 +118,14 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
         setMessage(messagesRetrived);
         setComments(messagesRetrived.comments ?? []);
         setMessageTrackingId(messagesRetrived.messageTrackingId);
+        setAnswersNumber(messagesRetrived.comments?.length || 0);
         setLoading(false);
     };
 
     const updateComments = (comment: CommentState) => {
         if (comments) {
             setComments([comment, ...comments]);
+            setAnswersNumber(comments.length + 1);
         }
     };
 
@@ -269,9 +273,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                                 size={12}
                                             />
                                             <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {message.answersNumber === 0
-                                                    ? ''
-                                                    : message.answersNumber}
+                                                {answersNumber === 0 ? '' : answersNumber}
                                             </Text>
                                         </View>
                                     </View>
@@ -302,6 +304,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                             messageId={message.id}
                                             messageTrackingId={messageTrackingId}
                                             setMessageTrackingId={setMessageTrackingId}
+                                            filter={filter}
                                         />
                                     </View>
                                 </>

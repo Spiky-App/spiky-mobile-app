@@ -103,7 +103,7 @@ export const styles = StyleSheet.create({
     link: {
         color: '#5c71ad',
         fontSize: 11,
-        fontWeight: '300',
+        fontFamily: 'Helvetica',
     },
     linkPad: {
         color: '#5c71ad',

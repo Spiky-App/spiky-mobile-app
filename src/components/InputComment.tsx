@@ -41,7 +41,6 @@ export const InputComment = ({
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const [inputHeight, setInputHeight] = useState(0);
-    // const refInputComment = useRef<TextInput>();
     const { comment } = form;
     async function onPress() {
         setDisabled(true);

@@ -44,7 +44,7 @@ const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedPr
                 <FlatList
                     style={{ width: '90%' }}
                     data={messages}
-                    renderItem={({ item, index }) => <Idea idea={item} index={index} />}
+                    renderItem={({ item }) => <Idea idea={item} filter={filter} />}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
                     onEndReached={loadMore}
