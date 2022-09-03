@@ -10,7 +10,7 @@ import { styles } from '../themes/appTheme';
 
 const termsAndConditions = [
     {
-        title: 'Nosotros',
+        title: 'Nosotros terms',
         paragraphs: [
             'Spiky® es una plataforma de tipo red social en internet para unir en diálogo a universitarios. Para conseguir una cuenta es necesario contar con un correo electrónico  universitario institucional y verificar su pertenencia desde su bandeja de entrada.',
         ],
@@ -30,7 +30,7 @@ const termsAndConditions = [
 
 const noticeOfPrivacy = [
     {
-        title: 'Nosotros',
+        title: 'Nosotros aviso',
         paragraphs: [
             'Spiky® es una plataforma de tipo red social en internet para unir en diálogo a universitarios. Para conseguir una cuenta es necesario contar con un correo electrónico  universitario institucional y verificar su pertenencia desde su bandeja de entrada.',
         ],
@@ -51,13 +51,16 @@ const noticeOfPrivacy = [
 export const TermAndConditionsScreen = () => {
     const [terms, setTerms] = useState(true);
     const [info, setInfo] = useState(termsAndConditions);
-    const [title, setTitle] = useState(['Términos y', 'condiciones']);
+    const [title, setTitle] = useState(['Términos y ', 'condiciones']);
+    const [alternateTitle, setAlternateTitle] = useState(['Aviso de ', 'privacidad']);
     const { opacity, fadeIn, fadeOut } = useAnimation();
 
     useEffect(() => {
         fadeOut(400, () => {
             setInfo(terms ? termsAndConditions : noticeOfPrivacy);
-            setTitle(terms ? ['Términos y ', 'condiciones'] : ['Aviso de ', 'privacidad']);
+            console.log(terms);
+            setTitle(alternateTitle);
+            setAlternateTitle(title);
             fadeIn(400, () => {}, 300);
         });
     }, [terms]);
@@ -72,7 +75,9 @@ export const TermAndConditionsScreen = () => {
                     style={{ ...styles.center, flexDirection: 'row', paddingBottom: 10 }}
                     onPress={() => setTerms(!terms)}
                 >
-                    <Text style={{ ...styles.text, ...styles.link, fontSize: 16 }}>{title}</Text>
+                    <Text style={{ ...styles.text, ...styles.link, fontSize: 16 }}>
+                        {alternateTitle}
+                    </Text>
                     <FontAwesomeIcon icon={faChevronRight} color="#5c71ad" size={16} />
                 </TouchableOpacity>
             </Animated.View>
@@ -117,9 +122,9 @@ const ContainerInfo = ({ sections }: PropsInfo) => {
 const stylescom = StyleSheet.create({
     container: {
         ...styles.shadow,
-        marginTop: 30,
+        marginTop: 10,
         marginBottom: 20,
-        marginHorizontal: 40,
+        marginHorizontal: 10,
         padding: 20,
         backgroundColor: '#ffff',
         maxHeight: '75%',
