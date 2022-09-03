@@ -18,6 +18,8 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { useSocket } from '../hooks/useSocket';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -41,6 +43,8 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
+    const { online } = useSocket();
+    console.log(online);
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
@@ -61,6 +65,30 @@ export const Navigator = () => {
         }
     }
 
+    const [permissions, setPermissions] = useState({});
+
+    useEffect(() => {
+        const type = 'notification';
+        PushNotificationIOS.addEventListener(type, onRemoteNotification);
+        return () => {
+            PushNotificationIOS.removeEventListener(type);
+        };
+    });
+
+    const onRemoteNotification = (
+        notification: Parameters<NonNullable<PushNotificationOptions['onNotification']>>[0]
+    ) => {
+        const isClicked = notification.getData().userInteraction === 1;
+
+        if (isClicked) {
+            // Navigate user to another screen
+            console.log('clicked');
+        } else {
+            // Do something else with push notification
+            console.log('something else');
+        }
+    };
+
     // I changed this because the token in store.auth can be
     // defined before config.headers.x-token that is the one
     // that we actually use here
@@ -68,7 +96,6 @@ export const Navigator = () => {
     // because i think it is saved in axios, in SecureStorage
     // and in store's auth.token
     useEffect(() => {
-        // console.log(config?.headers?.['x-token']);
         if (config?.headers?.['x-token'] && !universities) {
             setSessionInfo();
         }
