@@ -16,7 +16,6 @@ import {
     faMinus,
     faXmark,
     faPen,
-    faChevronRight,
 } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -271,39 +270,47 @@ export const Idea = ({ idea, filter }: Props) => {
                             )}
 
                             <View style={stylescom.container}>
-                                <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                                 {isDraft ? (
-                                    <TouchableOpacity
-                                        style={stylescom.publishDraft}
-                                        onPress={() =>
-                                            navigation.navigate('CreateIdeaScreen', {
-                                                draftedIdea: message,
-                                                draftID: id,
-                                            })
-                                        }
-                                    >
-                                        <Text style={{ ...styles.text, ...stylescom.publish }}>
-                                            {'editar / publicar'}
+                                    <>
+                                        <TouchableOpacity
+                                            style={stylescom.publishDraft}
+                                            onPress={() =>
+                                                navigation.navigate('CreateIdeaScreen', {
+                                                    draftedIdea: message,
+                                                    draftID: id,
+                                                })
+                                            }
+                                        >
+                                            <View style={stylescom.publishContainer}>
+                                                <Text style={stylescom.publish}>
+                                                    {'editar / publicar'}
+                                                </Text>
+                                                {/* <FontAwesomeIcon
+                                                    icon={faChevronRight}
+                                                    color="white"
+                                                    size={13}
+                                                /> */}
+                                            </View>
+                                        </TouchableOpacity>
+                                        <Text style={{ ...styles.text, ...stylescom.number }}>
+                                            {fecha}
                                         </Text>
-                                        <FontAwesomeIcon
-                                            icon={faChevronRight}
-                                            color="#01192E"
-                                            size={12}
-                                        />
-                                    </TouchableOpacity>
+                                    </>
                                 ) : (
-                                    <TouchableOpacity
-                                        onPress={event => {
-                                            setPosition({
-                                                top: event.nativeEvent.pageY,
-                                                left: event.nativeEvent.pageX,
-                                            });
-                                        }}
-                                    >
-                                        <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                            ...
-                                        </Text>
-                                    </TouchableOpacity>
+                                    <>
+                                        <TouchableOpacity
+                                            onPress={event => {
+                                                setPosition({
+                                                    top: event.nativeEvent.pageY,
+                                                    left: event.nativeEvent.pageX,
+                                                });
+                                            }}
+                                        >
+                                            <Text style={{ ...styles.textbold, ...stylescom.dots }}>
+                                                ...
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </>
                                 )}
 
                                 <ModalIdeaOptions
@@ -387,11 +394,20 @@ const stylescom = StyleSheet.create({
         color: '#bebebe',
         marginLeft: 3,
     },
+    publishContainer: {
+        backgroundColor: '#D4D4D4',
+        borderRadius: 4,
+        paddingHorizontal: 6,
+        paddingVertical: 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginRight: 10,
+    },
     publish: {
-        fontWeight: '300',
-        fontSize: 12,
-        color: '#01192E',
-        marginLeft: 1,
+        ...styles.h5,
+        fontSize: 13,
+        color: 'white',
     },
     erase: {
         fontWeight: '300',
