@@ -43,10 +43,11 @@ export const ChangePasswordScreen = () => {
                 dispatch(
                     setModalAlert({
                         isOpen: true,
-                        text: 'Constraseña restablecida',
+                        text: 'Contraseña restablecida',
                         icon: faLock,
                     })
                 );
+                navigation.navigate('ConfigurationScreen');
             } catch (error) {
                 console.log(error);
                 dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
@@ -54,14 +55,14 @@ export const ChangePasswordScreen = () => {
         } else if (!passwordValid) {
             dispatch(
                 addToast({
-                    message: 'Contraseña no cumple los criterios',
+                    message: 'La contraseña no cumple los criterios',
                     type: StatusType.WARNING,
                 })
             );
         } else if (newPassword !== confirmPassword) {
             dispatch(
                 addToast({
-                    message: 'Las contraseñan no coinciden',
+                    message: 'Las contraseñas no coinciden',
                     type: StatusType.WARNING,
                 })
             );
