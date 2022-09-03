@@ -37,7 +37,7 @@ interface Props {
     filter: string;
 }
 
-const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
+const reactionTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 
 export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
@@ -76,7 +76,7 @@ export const Idea = ({ idea, filter }: Props) => {
             if (msg.id === id) {
                 return {
                     ...msg,
-                    [reactioTypes[reactionTypeAux]]: msg[reactioTypes[reactionTypeAux]] + 1,
+                    [reactionTypes[reactionTypeAux]]: msg[reactionTypes[reactionTypeAux]] + 1,
                     reactionType: reactionTypeAux,
                 };
             } else {
