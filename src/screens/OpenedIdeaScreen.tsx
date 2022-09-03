@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
     FlatList,
     KeyboardAvoidingView,
+    Platform,
     StyleSheet,
     Text,
     TextInput,
@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { Comment } from '../components/Comment';
 import {
-    faArrowLeftLong,
     faCheck,
     faLightbulb,
     faMessage,
@@ -38,6 +37,7 @@ import MsgTransform from '../components/MsgTransform';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
+import { BackgroundPaper } from '../components/BackgroundPaper';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -71,7 +71,6 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
     const dispatch = useAppDispatch();
-    const navigation = useNavigation();
     const messageId = route.params?.messageId;
     const filter = route.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
@@ -142,231 +141,268 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     }, [messageId]);
 
     return (
-        <KeyboardAvoidingView
-            behavior="height"
-            style={{
-                width: '100%',
-                alignItems: 'center',
-                marginTop: top + 10,
-                marginBottom: bottom,
-                flex: 1,
-                position: 'relative',
-            }}
-        >
-            <TouchableOpacity
-                style={{ position: 'absolute', top: 0, left: 0, marginLeft: 20 }}
-                onPress={() => navigation.goBack()}
+        <BackgroundPaper>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    paddingTop: top ? 0 : 15,
+                    paddingBottom: bottom ? 0 : 15,
+                    flex: 1,
+                    position: 'relative',
+                }}
             >
-                <FontAwesomeIcon icon={faArrowLeftLong} color="#bebebe" />
-            </TouchableOpacity>
-
-            {!loading ? (
-                <>
-                    <View style={stylescom.wrap}>
-                        {isOwner && (
-                            <View style={stylescom.pin}>
-                                <View>
-                                    <FontAwesomeIcon icon={faLightbulb} color="white" size={13} />
-                                </View>
-                            </View>
-                        )}
-
-                        {messageTrackingId && (
-                            <View style={{ ...stylescom.pin, backgroundColor: '#FC702A' }}>
-                                <View style={{ transform: [{ rotate: '45deg' }] }}>
-                                    <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
-                                </View>
-                            </View>
-                        )}
-
-                        <View style={stylescom.flex}>
-                            <TouchableOpacity onPress={() => {}}>
-                                <Text style={{ ...styles.user, ...styles.textbold }}>
-                                    @{message.user.nickname}
-                                </Text>
-                            </TouchableOpacity>
-                            <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-                            <Text style={{ ...styles.text, fontSize: 13 }}>
-                                {message.user.university.shortname}
-                            </Text>
-                        </View>
-
-                        <View style={{ marginVertical: 8 }}>
-                            <MsgTransform
-                                textStyle={{ ...styles.text, ...stylescom.msg }}
-                                text={message.message}
-                            />
-                        </View>
-
-                        <View
-                            style={{
-                                ...stylescom.container,
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            {!message.reactionType && !isOwner ? (
-                                <View
-                                    style={{ ...stylescom.container, ...stylescom.containerReact }}
-                                >
-                                    <TouchableHighlight
-                                        style={stylescom.reactButton}
-                                        underlayColor="#01192E"
-                                        onPress={() => handleReaction(2)}
-                                    >
-                                        <FontAwesomeIcon icon={faXmark} color="white" size={18} />
-                                    </TouchableHighlight>
-
-                                    <TouchableHighlight
-                                        style={stylescom.reactButton}
-                                        underlayColor="#01192E"
-                                        onPress={() => handleReaction(1)}
-                                    >
-                                        <FontAwesomeIcon icon={faCheck} color="white" size={18} />
-                                    </TouchableHighlight>
-
-                                    <TouchableHighlight
-                                        style={stylescom.reactButton}
-                                        underlayColor="#01192E"
-                                        onPress={() => handleReaction(0)}
-                                    >
-                                        <FontAwesomeIcon icon={faMinus} color="white" size={18} />
-                                    </TouchableHighlight>
-                                </View>
-                            ) : (
-                                <>
-                                    <View style={stylescom.container}>
-                                        <View style={stylescom.reaction}>
+                {!loading ? (
+                    <>
+                        <View style={stylescom.wrap}>
+                            <View style={stylescom.subwrap}>
+                                {isOwner && (
+                                    <View style={stylescom.corner}>
+                                        <View style={{ transform: [{ rotate: '-45deg' }] }}>
                                             <FontAwesomeIcon
-                                                icon={faXmark}
-                                                color={
-                                                    message.reactionType === ReactionType.AGAINST
-                                                        ? '#6A000E'
-                                                        : '#bebebe'
-                                                }
-                                                size={12}
+                                                icon={faLightbulb}
+                                                color="white"
+                                                size={13}
                                             />
-                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {message.against === 0 ? '' : message.against}
-                                            </Text>
-                                        </View>
-
-                                        <View style={stylescom.reaction}>
-                                            <FontAwesomeIcon
-                                                icon={faCheck}
-                                                color={
-                                                    message.reactionType === ReactionType.FAVOR
-                                                        ? '#0B5F00'
-                                                        : '#bebebe'
-                                                }
-                                                size={12}
-                                            />
-                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {message.favor === 0 ? '' : message.favor}
-                                            </Text>
-                                        </View>
-
-                                        <View style={stylescom.reaction}>
-                                            <FontAwesomeIcon
-                                                icon={faMessage}
-                                                color={'#bebebe'}
-                                                size={12}
-                                            />
-                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {answersNumber === 0 ? '' : answersNumber}
-                                            </Text>
                                         </View>
                                     </View>
+                                )}
 
-                                    <View style={{ ...stylescom.container, alignItems: 'center' }}>
-                                        <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                            {date}
+                                {messageTrackingId && (
+                                    <View
+                                        style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}
+                                    >
+                                        <View>
+                                            <FontAwesomeIcon
+                                                icon={faThumbtack}
+                                                color="white"
+                                                size={13}
+                                            />
+                                        </View>
+                                    </View>
+                                )}
+
+                                <View style={stylescom.flex}>
+                                    <TouchableOpacity onPress={() => {}}>
+                                        <Text style={{ ...styles.user, fontSize: 14 }}>
+                                            @{message.user.nickname}
                                         </Text>
-
-                                        <TouchableOpacity
-                                            onPress={event => {
-                                                setPosition({
-                                                    top: event.nativeEvent.pageY,
-                                                    left: event.nativeEvent.pageX,
-                                                });
-                                            }}
-                                        >
-                                            <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                                ...
-                                            </Text>
-                                        </TouchableOpacity>
-
-                                        <ModalIdeaOptions
-                                            setIdeaOptions={setIdeaOptions}
-                                            ideaOptions={ideaOptions}
-                                            position={position}
-                                            myIdea={isOwner}
-                                            messageId={message.id}
-                                            messageTrackingId={messageTrackingId}
-                                            setMessageTrackingId={setMessageTrackingId}
-                                            filter={filter}
-                                        />
-                                    </View>
-                                </>
-                            )}
-                        </View>
-                    </View>
-
-                    {/* Line gray  */}
-                    <View
-                        style={{ width: '90%', borderBottomWidth: 2, borderBottomColor: '#eeeeee' }}
-                    ></View>
-
-                    {message.reactionType !== undefined || isOwner ? (
-                        <>
-                            {comments && comments.length > 0 ? (
-                                <FlatList
-                                    style={{
-                                        flex: 1,
-                                        width: '80%',
-                                        marginTop: 20,
-                                    }}
-                                    data={comments}
-                                    renderItem={({ item }) => (
-                                        <Comment
-                                            comment={item}
-                                            formComment={form}
-                                            onChangeComment={onChange}
-                                            refInputComment={refInputComment}
-                                        />
-                                    )}
-                                    keyExtractor={item => item.id + ''}
-                                    showsVerticalScrollIndicator={false}
-                                />
-                            ) : (
-                                <View style={stylescom.center}>
-                                    <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                        Se el primero en contribuir a esta idea.
+                                    </TouchableOpacity>
+                                    <Text style={{ ...styles.text, fontSize: 14 }}> de </Text>
+                                    <Text style={{ ...styles.text, fontSize: 14 }}>
+                                        {message.user.university.shortname}
                                     </Text>
                                 </View>
-                            )}
-                            <InputComment
-                                messageId={messageId}
-                                updateComments={updateComments}
-                                form={form}
-                                onChange={onChange}
-                                refInputComment={refInputComment}
-                            />
-                        </>
-                    ) : (
-                        <View style={stylescom.center}>
-                            <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                Toma una postura antes de participar
-                            </Text>
+
+                                <View style={{ marginVertical: 8 }}>
+                                    <MsgTransform
+                                        textStyle={{
+                                            ...styles.text,
+                                            ...stylescom.msg,
+                                            fontSize: 14,
+                                        }}
+                                        text={message.message}
+                                    />
+                                </View>
+
+                                <View
+                                    style={{
+                                        ...stylescom.container,
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    {!message.reactionType && !isOwner ? (
+                                        <View
+                                            style={{
+                                                ...stylescom.container,
+                                                ...stylescom.containerReact,
+                                            }}
+                                        >
+                                            <TouchableHighlight
+                                                style={stylescom.reactButton}
+                                                underlayColor="#01192E"
+                                                onPress={() => handleReaction(2)}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faXmark}
+                                                    color="white"
+                                                    size={18}
+                                                />
+                                            </TouchableHighlight>
+
+                                            <TouchableHighlight
+                                                style={stylescom.reactButton}
+                                                underlayColor="#01192E"
+                                                onPress={() => handleReaction(1)}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faCheck}
+                                                    color="white"
+                                                    size={18}
+                                                />
+                                            </TouchableHighlight>
+
+                                            <TouchableHighlight
+                                                style={stylescom.reactButton}
+                                                underlayColor="#01192E"
+                                                onPress={() => handleReaction(0)}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faMinus}
+                                                    color="white"
+                                                    size={18}
+                                                />
+                                            </TouchableHighlight>
+                                        </View>
+                                    ) : (
+                                        <>
+                                            <View style={stylescom.container}>
+                                                <View style={stylescom.reaction}>
+                                                    <FontAwesomeIcon
+                                                        icon={faXmark}
+                                                        color={
+                                                            message.reactionType ===
+                                                            ReactionType.AGAINST
+                                                                ? '#6A000E'
+                                                                : '#bebebe'
+                                                        }
+                                                        size={12}
+                                                    />
+                                                    <Text style={styles.numberGray}>
+                                                        {message.against === 0
+                                                            ? ' '
+                                                            : message.against}
+                                                    </Text>
+                                                </View>
+
+                                                <View style={stylescom.reaction}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        color={
+                                                            message.reactionType ===
+                                                            ReactionType.FAVOR
+                                                                ? '#0B5F00'
+                                                                : '#bebebe'
+                                                        }
+                                                        size={12}
+                                                    />
+                                                    <Text style={styles.numberGray}>
+                                                        {message.favor === 0 ? ' ' : message.favor}
+                                                    </Text>
+                                                </View>
+
+                                                <View style={stylescom.reaction}>
+                                                    <FontAwesomeIcon
+                                                        icon={faMessage}
+                                                        color={'#bebebe'}
+                                                        size={12}
+                                                    />
+                                                    <Text style={styles.numberGray}>
+                                                        {answersNumber === 0 ? ' ' : answersNumber}
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={stylescom.container}>
+                                                <Text
+                                                    style={{ ...styles.text, ...styles.numberGray }}
+                                                >
+                                                    {date}
+                                                </Text>
+
+                                                <TouchableOpacity
+                                                    onPress={event => {
+                                                        setPosition({
+                                                            top: event.nativeEvent.pageY,
+                                                            left: event.nativeEvent.pageX,
+                                                        });
+                                                    }}
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            ...styles.textbold,
+                                                            ...stylescom.dots,
+                                                        }}
+                                                    >
+                                                        ...
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                <ModalIdeaOptions
+                                                    setIdeaOptions={setIdeaOptions}
+                                                    ideaOptions={ideaOptions}
+                                                    position={position}
+                                                    myIdea={isOwner}
+                                                    messageId={message.id}
+                                                    messageTrackingId={messageTrackingId}
+                                                    setMessageTrackingId={setMessageTrackingId}
+                                                    filter={filter}
+                                                />
+                                            </View>
+                                        </>
+                                    )}
+                                </View>
+                            </View>
                         </View>
-                    )}
-                </>
-            ) : (
-                <View style={{ ...styles.center, flex: 1 }}>
-                    <LoadingAnimated />
-                </View>
-            )}
-        </KeyboardAvoidingView>
+
+                        {message.reactionType !== undefined || isOwner ? (
+                            <>
+                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                </View>
+                                {comments && comments.length > 0 ? (
+                                    <View style={stylescom.commentWrap}>
+                                        <FlatList
+                                            style={{
+                                                width: '100%',
+                                            }}
+                                            data={comments}
+                                            renderItem={({ item }) => (
+                                                <Comment
+                                                    comment={item}
+                                                    formComment={form}
+                                                    onChangeComment={onChange}
+                                                    refInputComment={refInputComment}
+                                                />
+                                            )}
+                                            keyExtractor={item => item.id + ''}
+                                            showsVerticalScrollIndicator={false}
+                                        />
+                                    </View>
+                                ) : (
+                                    <View style={stylescom.center}>
+                                        <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                            Se el primero en contribuir a esta idea.
+                                        </Text>
+                                    </View>
+                                )}
+                                <InputComment
+                                    messageId={messageId}
+                                    updateComments={updateComments}
+                                    form={form}
+                                    onChange={onChange}
+                                    refInputComment={refInputComment}
+                                />
+                            </>
+                        ) : (
+                            <View style={stylescom.center}>
+                                <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                    Toma una postura antes de participar
+                                </Text>
+                            </View>
+                        )}
+                    </>
+                ) : (
+                    <View style={{ ...styles.center, flex: 1 }}>
+                        <LoadingAnimated />
+                    </View>
+                )}
+            </KeyboardAvoidingView>
+        </BackgroundPaper>
     );
 };
 
@@ -384,11 +420,28 @@ const stylescom = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
+        alignItems: 'center',
     },
     wrap: {
-        width: '75%',
-        paddingBottom: 10,
-        marginTop: 25,
+        width: '90%',
+        backgroundColor: 'white',
+        borderRadius: 8,
+        marginVertical: 8,
+        shadowColor: '#4d4d4d',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 6,
+    },
+    subwrap: {
+        paddingTop: 15,
+        paddingBottom: 8,
+        paddingHorizontal: 25,
+        borderRadius: 8,
+        overflow: 'hidden',
     },
     msg: {
         fontSize: 13,
@@ -427,18 +480,6 @@ const stylescom = StyleSheet.create({
         color: '#707070',
         fontSize: 14,
     },
-    pin: {
-        position: 'absolute',
-        top: -4,
-        right: 0,
-        // transform: [{ rotate: '45deg' }],
-        backgroundColor: '#01192E',
-        borderRadius: 6,
-        width: 35,
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     corner: {
         position: 'absolute',
         top: -4,
@@ -448,5 +489,23 @@ const stylescom = StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 4,
         paddingHorizontal: 30,
+    },
+    commentWrap: {
+        flex: 1,
+        alignItems: 'center',
+        marginBottom: 10,
+        width: '90%',
+        borderRadius: 8,
+        backgroundColor: 'white',
+        shadowColor: '#4d4d4d',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 6,
+        paddingHorizontal: 25,
+        // paddingVertical: 8,
     },
 });

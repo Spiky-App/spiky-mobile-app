@@ -81,6 +81,8 @@ export const InputComment = ({
                 justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
+                borderRadius: 8,
+                width: '95%',
             }}
         >
             <View
@@ -89,7 +91,7 @@ export const InputComment = ({
                     backgroundColor: 'white',
                     paddingHorizontal: 20,
                     paddingVertical: 10,
-                    borderRadius: 5,
+                    borderRadius: 8,
                 }}
             >
                 <MentionInput
@@ -108,23 +110,24 @@ export const InputComment = ({
                             textStyle: { ...styles.h5, color: '#5c71ad' },
                             allowedSpacesCount: 0,
                             isInsertSpaceAfterMention: true,
-                            // isBottomMentionSuggestionsRender: true,
                             getPlainString: ({ name }: MentionData) => name,
                         },
                     ]}
                 />
             </View>
-            <ButtonIcon
-                icon={faLocationArrow}
-                style={{
-                    paddingHorizontal: 10,
-                    justifyContent: 'center',
-                    transform: [{ rotate: '45deg' }],
-                    borderRadius: 100,
-                }}
-                disabled={isDisabled}
-                onPress={onPress}
-            />
+            <View style={{ paddingLeft: 8 }}>
+                <ButtonIcon
+                    icon={faLocationArrow}
+                    style={{
+                        paddingHorizontal: 10,
+                        justifyContent: 'center',
+                        borderRadius: 100,
+                    }}
+                    iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                    disabled={isDisabled}
+                    onPress={onPress}
+                />
+            </View>
         </View>
     );
 };

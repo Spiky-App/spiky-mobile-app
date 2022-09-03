@@ -255,6 +255,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                         disabled={isLoading || invalid()}
                         icon={faLocationArrow}
                         onPress={onPressLocationArrow}
+                        iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     />
                 </View>
             </KeyboardAvoidingView>

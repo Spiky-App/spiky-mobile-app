@@ -285,11 +285,6 @@ export const Idea = ({ idea, filter }: Props) => {
                                                 <Text style={stylescom.publish}>
                                                     {'editar / publicar'}
                                                 </Text>
-                                                {/* <FontAwesomeIcon
-                                                    icon={faChevronRight}
-                                                    color="white"
-                                                    size={13}
-                                                /> */}
                                             </View>
                                         </TouchableOpacity>
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
@@ -298,6 +293,9 @@ export const Idea = ({ idea, filter }: Props) => {
                                     </>
                                 ) : (
                                     <>
+                                        <Text style={{ ...styles.text, ...stylescom.number }}>
+                                            {fecha}
+                                        </Text>
                                         <TouchableOpacity
                                             onPress={event => {
                                                 setPosition({
