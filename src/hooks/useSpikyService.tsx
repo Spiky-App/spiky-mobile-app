@@ -44,12 +44,9 @@ function useSpikyService() {
                     against: 0,
                 };
                 const messagesUpdated = messages.map(msg => {
-                    if (msg.id === messageId) {
-                        console.log();
-                        return { ...msg, answersNumber: msg.answersNumber + 1 };
-                    } else {
-                        return msg;
-                    }
+                    return msg.id === messageId
+                        ? { ...msg, answersNumber: msg.answersNumber + 1 }
+                        : msg;
                 });
                 dispatch(setMessages(messagesUpdated));
             } catch {
