@@ -58,7 +58,6 @@ export const TermAndConditionsScreen = () => {
     useEffect(() => {
         fadeOut(400, () => {
             setInfo(terms ? termsAndConditions : noticeOfPrivacy);
-            console.log(terms);
             setTitle(alternateTitle);
             setAlternateTitle(title);
             fadeIn(400, () => {}, 300);
