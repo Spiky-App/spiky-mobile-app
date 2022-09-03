@@ -16,11 +16,11 @@ interface PropsNotification {
 
 const msg_notif = [
     '',
-    'reacciono a tu idea.',
+    'reaccionó a tu idea.',
     'respondió a tu idea.',
     'respondió en tu tracking.',
     'te mencionó.',
-    'reacciono a tu comentario.',
+    'reaccionó a tu comentario.',
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
