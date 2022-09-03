@@ -126,7 +126,8 @@ export const styles = StyleSheet.create({
         fontWeight: '300',
     },
     user: {
-        fontWeight: '600',
+        fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
         fontSize: 13,
     },
     msg: {
@@ -137,7 +138,7 @@ export const styles = StyleSheet.create({
         marginVertical: 8,
     },
     numberGray: {
-        fontWeight: '300',
+        fontFamily: 'Helvetica',
         fontSize: 12,
         color: '#bebebe',
         marginLeft: 3,

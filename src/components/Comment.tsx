@@ -50,8 +50,8 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
     }, [position]);
 
     return (
-        <View style={{ marginBottom: 25 }}>
-            <View style={{ ...styles.flex }}>
+        <View style={stylescom.wrap}>
+            <View style={{ ...styles.flex, marginTop: 4 }}>
                 <TouchableOpacity onPress={() => {}}>
                     <Text style={{ ...styles.user, ...styles.textbold }}>
                         @{comment.user.nickname}
@@ -62,11 +62,11 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
                     {comment.user.university.shortname}
                 </Text>
 
-                <Text style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
+                <Text style={{ ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
                 {uid !== comment.user.id && (
                     <>
                         <TouchableOpacity
-                            style={{ ...styles.text, ...styles.numberGray, marginLeft: 10 }}
+                            style={{ ...styles.numberGray, marginLeft: 10 }}
                             onPress={handleReply}
                         >
                             <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
@@ -92,7 +92,7 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
                 )}
             </View>
 
-            <View style={{ marginTop: 4, marginBottom: 0 }}>
+            <View style={{ marginTop: 4 }}>
                 <MsgTransform
                     textStyle={{ ...styles.text, ...styles.msg }}
                     text={comment.comment}
@@ -148,7 +148,6 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
                         </View>
                     )}
                 </View>
-                <View style={{ flex: 1 }} />
             </View>
 
             <ModalReactComment
@@ -163,6 +162,9 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
 };
 
 const stylescom = StyleSheet.create({
+    wrap: {
+        marginVertical: 8,
+    },
     text: {
         color: '#ffff',
         fontSize: 12,
