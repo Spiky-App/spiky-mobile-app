@@ -18,7 +18,6 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
-import { useSocket } from '../hooks/useSocket';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -42,8 +41,6 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    const { online } = useSocket();
-    console.log(online);
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
