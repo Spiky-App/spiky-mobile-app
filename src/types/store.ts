@@ -10,6 +10,7 @@ export interface User {
     id?: number;
     nickname: string;
     university: University;
+    online?: boolean;
 }
 interface Response {
     fecha: string;
@@ -107,4 +108,21 @@ export enum NotificationType {
     COMMENT_TRACKING = 3,
     MENTION = 4,
     REACT_COMMENT = 5,
+}
+
+export interface Conversation {
+    id: number;
+    user_1: User;
+    user_2: User;
+    chatmessages: ChatMessage[];
+}
+
+export interface ChatMessage {
+    id: number;
+    conversationId: number;
+    userId: number;
+    message: string;
+    date: number;
+    messageId?: number;
+    seens?: number;
 }

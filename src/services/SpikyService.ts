@@ -20,6 +20,8 @@ import {
     GetUserInfo,
     UpdatePassword,
     CreateMessageCommentResponse,
+    CreateChatMsgWithReply,
+    GetConversations,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -159,6 +161,19 @@ class SpikyService {
             id_mensaje: messageId,
             motivo_reporte: reportReason,
         });
+    }
+
+    createChatMsgWithReply(uid: number, userId: number, messageId: number, chatMessage: string) {
+        return this.instance.post<CreateChatMsgWithReply>(`conver`, {
+            id_usuario1: uid,
+            id_usuario2: userId,
+            chatmensaje: chatMessage,
+            id_mensaje: messageId,
+        });
+    }
+
+    getConversations() {
+        return this.instance.get<GetConversations>(`conver`);
     }
 }
 

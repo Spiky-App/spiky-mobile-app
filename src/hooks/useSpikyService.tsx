@@ -6,9 +6,10 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Comment, Message } from '../types/store';
-import { faFlag, faThumbtack } from '../constants/icons/FontAwesome';
+import { Comment, Conversation, Message } from '../types/store';
+import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { generateConversationFromConversacion } from '../helpers/conversations';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -128,7 +129,46 @@ function useSpikyService() {
         dispatch(setMessages(messagesUpdated));
     };
 
-    return { createMessageComment, createReportIdea, createTracking, deleteTracking };
+    const createChatMsgWithReply = async (
+        userId: number = 0,
+        messageId: number,
+        chatMessage: string
+    ) => {
+        try {
+            await service.createChatMsgWithReply(user.id, userId, messageId, chatMessage);
+            navigation.goBack();
+            dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
+        } catch (error) {
+            console.log(error);
+            navigation.goBack();
+            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
+        }
+    };
+
+    const getConversations = async () => {
+        try {
+            const response = await service.getConversations();
+            const { data } = response;
+            const { convers } = data;
+            const conversationsRetrived: Conversation[] = convers.map(conver => {
+                return generateConversationFromConversacion(conver);
+            });
+            return conversationsRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
+            return [];
+        }
+    };
+
+    return {
+        createMessageComment,
+        createReportIdea,
+        createTracking,
+        deleteTracking,
+        createChatMsgWithReply,
+        getConversations,
+    };
 }
 
 export default useSpikyService;

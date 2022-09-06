@@ -5,6 +5,7 @@ import {
     faMagnifyingGlass,
     faHashtag,
     faUser,
+    faCircleNodes,
 } from './icons/FontAwesome';
 
 export const menuInfo = [
@@ -28,11 +29,11 @@ export const menuInfo = [
         screen: 'SearchScreen',
         icon: faMagnifyingGlass,
     },
-    // {
-    //     name: 'Conexiones',
-    //     screen: 'ConnectionScreen',
-    //     icon: faCircleNodes,
-    // },
+    {
+        name: 'Conexiones',
+        screen: 'ConnectionsScreen',
+        icon: faCircleNodes,
+    },
     {
         name: 'Hashtag',
         screen: 'HashTagScreen',

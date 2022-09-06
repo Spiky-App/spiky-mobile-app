@@ -301,8 +301,13 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                             ideaOptions={ideaOptions}
                                             position={position}
                                             myIdea={isOwner}
-                                            messageId={message.id}
-                                            messageTrackingId={messageTrackingId}
+                                            message={{
+                                                messageId,
+                                                message: message.message,
+                                                user: message.user,
+                                                messageTrackingId,
+                                                date: message.date,
+                                            }}
                                             setMessageTrackingId={setMessageTrackingId}
                                             filter={filter}
                                         />

@@ -53,6 +53,7 @@ interface User {
     id_universidad?: number;
     universidad: University;
     id_usuario?: number;
+    online?: boolean;
 }
 
 export interface CreateMessageResponse {
@@ -179,4 +180,30 @@ interface MessageComment {
 export interface CreateReportIdea {
     ok: boolean;
     msg: string;
+}
+
+export interface CreateChatMsgWithReply {
+    ok: boolean;
+}
+
+export interface GetConversations {
+    ok: boolean;
+    convers: Conversation[];
+}
+
+export interface Conversation {
+    id_conversacion: number;
+    usuario1: User;
+    usuario2: User;
+    chatmensajes: ChatMessage[];
+}
+
+export interface ChatMessage {
+    id_chatmensaje: number;
+    id_conversacion: number;
+    id_usuario: number;
+    chatmensaje: string;
+    fecha: string;
+    id_mensaje?: number;
+    seen?: string[];
 }

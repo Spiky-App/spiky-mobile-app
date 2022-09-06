@@ -137,6 +137,7 @@ export const styles = StyleSheet.create({
         marginVertical: 8,
     },
     numberGray: {
+        fontFamily: 'Helvetica',
         fontWeight: '300',
         fontSize: 12,
         color: '#bebebe',

@@ -17,6 +17,8 @@ import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
+import { User } from '../types/store';
+import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
     setIdeaOptions: (value: boolean) => void;
@@ -26,8 +28,13 @@ interface Props {
         top: number;
         left: number;
     };
-    messageId: number;
-    messageTrackingId?: number;
+    message: {
+        messageId: number;
+        message: string;
+        user: User;
+        date: number;
+        messageTrackingId?: number;
+    };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
 }
@@ -37,8 +44,7 @@ export const ModalIdeaOptions = ({
     ideaOptions,
     myIdea,
     position,
-    messageId,
-    messageTrackingId,
+    message,
     setMessageTrackingId,
     filter,
 }: Props) => {
@@ -49,8 +55,12 @@ export const ModalIdeaOptions = ({
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
     const { createTracking, deleteTracking } = useSpikyService();
+    const { messageId, messageTrackingId } = message;
 
-    const goToScreen = (screen: string, params?: { messageId: number }) => {
+    const goToScreen = (
+        screen: string,
+        params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
+    ) => {
         setIdeaOptions(false);
         navigation.navigate(screen, params);
     };
@@ -102,16 +112,26 @@ export const ModalIdeaOptions = ({
                                         <Text style={stylescomp.text}>Tracking</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity style={stylescomp.button} onPress={() => {}}>
+                                    <TouchableOpacity
+                                        style={stylescomp.button}
+                                        onPress={() =>
+                                            goToScreen('ReplyIdeaScreen', {
+                                                message: {
+                                                    messageId: 6,
+                                                    message: message.message,
+                                                    user: message.user,
+                                                    date: message.date,
+                                                },
+                                            })
+                                        }
+                                    >
                                         <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
                                         <Text style={stylescomp.text}> Replicar en priv</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
                                         style={stylescomp.button}
-                                        onPress={() =>
-                                            goToScreen('ReportIdeaScreen', { messageId })
-                                        }
+                                        onPress={() => goToScreen('ReportIdeaScreen')}
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text style={stylescomp.text}>Reportar</Text>
