@@ -1,6 +1,6 @@
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { FormChat, InputChat } from '../components/InputChat';
@@ -38,7 +38,7 @@ export const ChatScreen = ({ route }: Props) => {
             {!isLoading ? (
                 <View style={stylescomp.wrap}>
                     <View style={{ flex: 1 }} />
-                    <InputChat form={form} />
+                    <InputChat form={form} onChange={onChange} />
                 </View>
             ) : (
                 <View style={{ ...styles.center, flex: 1 }}>

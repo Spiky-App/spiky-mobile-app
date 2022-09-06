@@ -42,6 +42,7 @@ export const InputChat = ({ form, onChange }: Props) => {
             onLayout={event => {
                 const { height } = event.nativeEvent.layout;
                 setInputHeight(height);
+                console.log(inputHeight);
             }}
             style={{
                 backgroundColor: '#E6E6E6',
@@ -70,7 +71,7 @@ export const InputChat = ({ form, onChange }: Props) => {
                     style={{ ...styles.textinput, fontSize: 16 }}
                     multiline={true}
                     value={message}
-                    onChange={text => onChange({ message: text })}
+                    onChangeText={text => onChange({ message: text })}
                 />
             </View>
             <ButtonIcon
