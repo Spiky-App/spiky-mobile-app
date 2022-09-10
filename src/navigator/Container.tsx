@@ -14,6 +14,7 @@ import { setUser } from '../store/feature/user/userSlice';
 // import { config as dotenvconfig } from '../constants/config';
 import Toast from '../components/common/Toast';
 import { ModalAlert } from '../components/ModalAlert';
+import SocketContextComponent from '../context/Socket/Component';
 
 const Container = () => {
     const dispatch = useAppDispatch();
@@ -49,8 +50,6 @@ const Container = () => {
 
     useEffect(() => {
         validateToken();
-        // dispatch(updateServiceConfig({ ...dotenvconfig }));
-        // console.log(config);
     }, []);
 
     if (isLoading) {
@@ -58,12 +57,14 @@ const Container = () => {
     }
 
     return (
-        <NavigationContainer>
-            <Toast>
-                <Navigator />
-            </Toast>
-            <ModalAlert />
-        </NavigationContainer>
+        <SocketContextComponent>
+            <NavigationContainer>
+                <Toast>
+                    <Navigator />
+                </Toast>
+                <ModalAlert />
+            </NavigationContainer>
+        </SocketContextComponent>
     );
 };
 
