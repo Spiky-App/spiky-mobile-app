@@ -165,10 +165,9 @@ class SpikyService {
         });
     }
 
-    createChatMsgWithReply(uid: number, userId: number, messageId: number, chatMessage: string) {
+    createChatMsgWithReply(userId: number, messageId: number, chatMessage: string) {
         return this.instance.post<CreateChatMsgWithReply>(`conver`, {
-            id_usuario1: uid,
-            id_usuario2: userId,
+            id_usuario: userId,
             chatmensaje: chatMessage,
             id_mensaje: messageId,
         });

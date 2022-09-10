@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -18,13 +18,14 @@ import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
-import { ChatMessage } from '../types/store';
+import { ChatMessage, User } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
+import SocketContext from '../context/Socket/Context';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -41,8 +42,9 @@ export const ChatScreen = ({ route }: Props) => {
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
     const { getChatMessages } = useSpikyService();
     const navigation = useNavigation<any>();
+    const { SocketState } = useContext(SocketContext);
     const conversationId = route.params?.conversationId;
-    const toUser = route.params?.toUser;
+    const [toUser, setToUser] = useState<User>(route.params?.toUser);
 
     async function loadConversation() {
         setIsLoading(true);
@@ -56,6 +58,23 @@ export const ChatScreen = ({ route }: Props) => {
             setChatMessages([chatMessage, ...chatMessages]);
         }
     };
+
+    useEffect(() => {
+        SocketState.socket?.on('userOnline', resp => {
+            const { converId } = resp;
+            if (converId === conversationId) setToUser({ ...toUser, online: true });
+        });
+        SocketState.socket?.on('userOffline', resp => {
+            const { converId } = resp;
+            if (converId === conversationId) setToUser({ ...toUser, online: false });
+        });
+        SocketState.socket?.on('newChatMsg', resp => {
+            const { chatmsg, converId } = resp;
+            if (converId === conversationId) {
+                updateChatMessages(chatmsg);
+            }
+        });
+    }, [SocketState.socket]);
 
     useEffect(() => {
         if (conversationId) {
@@ -90,7 +109,7 @@ export const ChatScreen = ({ route }: Props) => {
                     <Text style={{ ...styles.text, ...styles.h3, color: '#ffff' }}>
                         {'@' + toUser.nickname + ' de ' + toUser.university.shortname}
                     </Text>
-                    <View style={stylescomp.online} />
+                    {toUser.online && <View style={stylescomp.online} />}
                 </View>
 
                 {!isLoading ? (
@@ -117,6 +136,7 @@ export const ChatScreen = ({ route }: Props) => {
                     updateChatMessages={updateChatMessages}
                     conversationId={conversationId}
                     refFlatList={refFlatList}
+                    toUser={toUser}
                 />
             </KeyboardAvoidingView>
         </BackgroundPaper>

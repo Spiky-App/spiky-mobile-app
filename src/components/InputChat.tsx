@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Keyboard, TextInput, View, FlatList } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
+import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
-import { ChatMessage } from '../types/store';
+import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
 
 export interface FormChat {
@@ -16,6 +17,7 @@ interface Props {
     updateChatMessages: (chatMessage: ChatMessage) => void;
     onChange: (stateUpdated: Partial<FormChat>) => void;
     refFlatList: React.RefObject<FlatList>;
+    toUser: User;
 }
 
 const MAX_LENGHT = 200;
@@ -30,15 +32,22 @@ export const InputChat = ({
     updateChatMessages,
     conversationId,
     refFlatList,
+    toUser,
 }: Props) => {
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMessage } = useSpikyService();
+    const { SocketState } = useContext(SocketContext);
     const { message } = form;
 
     async function onPress() {
         setDisabled(true);
         const newChatMessages = await createChatMessage(conversationId, message);
+        SocketState.socket?.emit('newChatMsg', {
+            chatmsg: newChatMessages,
+            converId: conversationId,
+            userto: toUser.id,
+        });
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
         }

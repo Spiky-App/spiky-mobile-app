@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { EmptyState } from '../components/EmptyState';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
+import SocketContext from '../context/Socket/Context';
 import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
@@ -18,6 +19,7 @@ export const ConnectionsScreen = () => {
     const navigation = useNavigation<any>();
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { getConversations } = useSpikyService();
+    const { SocketState } = useContext(SocketContext);
 
     async function loadConversations() {
         setLoading(true);
@@ -46,6 +48,59 @@ export const ConnectionsScreen = () => {
             toUser,
         });
     };
+
+    const updateUserOnline = (online: boolean, converId: number) => {
+        const newConversations: Conversation[] = conversations.map(conver => {
+            if (conver.id === converId) {
+                const userNumber: 'user_1' | 'user_2' =
+                    conver.user_1.id !== uid ? 'user_1' : 'user_2';
+                let converUpdated = {
+                    ...conver,
+                    [userNumber]: { ...conver[userNumber], online },
+                };
+                return converUpdated;
+            } else {
+                return conver;
+            }
+        });
+        setConversations(newConversations);
+    };
+
+    const updateConversations = (newConver: boolean, converToUpdate: Conversation) => {
+        if (!newConver) {
+            const newConversations: Conversation[] = conversations.map(conver => {
+                if (conver.id === converToUpdate.id) {
+                    return converToUpdate;
+                } else {
+                    return conver;
+                }
+            });
+            setConversations(newConversations);
+        } else {
+            setConversations([converToUpdate, ...conversations]);
+        }
+    };
+
+    useEffect(() => {
+        SocketState.socket?.on('userOnline', resp => {
+            const { converId } = resp;
+            updateUserOnline(true, converId);
+        });
+        SocketState.socket?.on('userOffline', resp => {
+            const { converId } = resp;
+            updateUserOnline(false, converId);
+        });
+        SocketState.socket?.on('newChatMsgWithReply', resp => {
+            const { conver, newConver } = resp;
+            updateConversations(newConver, conver);
+        });
+        SocketState.socket?.on('newChatMsg', resp => {
+            const { chatmsg, converId } = resp;
+            const converToUpdate = conversations.find(conver => conver.id === converId);
+            if (converToUpdate)
+                updateConversations(false, { ...converToUpdate, chatmessage: chatmsg });
+        });
+    }, [SocketState.socket]);
 
     useEffect(() => {
         loadConversations();
@@ -101,7 +156,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         <Text style={{ ...styles.text, fontSize: 14 }}>
                             {toUser.university.shortname}
                         </Text>
-                        <View style={stylescomp.online} />
+                        {toUser.online && <View style={stylescomp.online} />}
                     </View>
                     <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ ...styles.text, fontSize: 13 }}>

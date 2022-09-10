@@ -138,9 +138,15 @@ function useSpikyService() {
         chatMessage: string
     ) => {
         try {
-            await service.createChatMsgWithReply(user.id, userId, messageId, chatMessage);
+            const response = await service.createChatMsgWithReply(userId, messageId, chatMessage);
+            const { data } = response;
+            const { content } = data;
+            const { userto, conver, newConver } = content;
+            console.log(conver);
+            const converRetrived = generateConversationFromConversacion(conver, user.id);
             navigation.goBack();
             dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
+            return { userto, newConver, conver: converRetrived };
         } catch (error) {
             console.log(error);
             navigation.goBack();

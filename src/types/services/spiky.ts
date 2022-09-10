@@ -184,6 +184,11 @@ export interface CreateReportIdea {
 
 export interface CreateChatMsgWithReply {
     ok: boolean;
+    content: {
+        userto: number;
+        conver: Conversation;
+        newConver: boolean;
+    };
 }
 
 export interface GetConversations {

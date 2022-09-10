@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
     Platform,
@@ -20,6 +20,7 @@ import ButtonIcon from '../components/common/ButtonIcon';
 import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
 import { transformMsg } from '../helpers/transformMsg';
+import SocketContext from '../context/Socket/Context';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReplyIdeaScreen'>;
 
@@ -28,6 +29,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMsgWithReply } = useSpikyService();
+    const { SocketState } = useContext(SocketContext);
     const { message, messageId, user, date } = route.params?.message;
     const { form, onChange } = useForm({
         messageReply: '',
@@ -43,7 +45,11 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setDisabled(true);
-        await createChatMsgWithReply(user.id, messageId, messageReply);
+        const content = await createChatMsgWithReply(user.id, messageId, messageReply);
+        if (content) {
+            const { conver, newConver, userto } = content;
+            SocketState.socket?.emit('newChatMsgWithReply', { conver, userto, newConver });
+        }
         setDisabled(false);
     }
 
