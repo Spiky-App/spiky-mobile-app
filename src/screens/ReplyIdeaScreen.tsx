@@ -19,13 +19,14 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import ButtonIcon from '../components/common/ButtonIcon';
 import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
+import { transformMsg } from '../helpers/transformMsg';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReplyIdeaScreen'>;
 
 export const ReplyIdeaScreen = ({ route }: Props) => {
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
-    const [isLoading, setLoading] = useState(false);
+    const [isDisabled, setDisabled] = useState(true);
     const { createChatMsgWithReply } = useSpikyService();
     const { message, messageId, user, date } = route.params?.message;
     const { form, onChange } = useForm({
@@ -36,26 +37,32 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     const MSG_MAX_LENGHT = 200;
     const messageLenght = form.messageReply.length;
 
-    function invalid() {
-        if (!message || messageReply.length > MSG_MAX_LENGHT) {
-            return true;
-        }
-        return false;
-    }
-
     function getPercentage(value: number, maxValue: number): number {
         return (value / maxValue) * 100;
     }
 
     async function onPressLocationArrow() {
-        setLoading(true);
+        setDisabled(true);
         await createChatMsgWithReply(user.id, messageId, messageReply);
+        setDisabled(false);
     }
 
     useEffect(() => {
         const { messageReply: mensaje } = form;
         setCounter(MSG_MAX_LENGHT - mensaje.length);
     }, [form]);
+
+    useEffect(() => {
+        const counterUpdated = MSG_MAX_LENGHT - messageReply.length;
+        setCounter(counterUpdated);
+        if (messageReply.length <= MSG_MAX_LENGHT && messageReply.length > 0) {
+            if (isDisabled) {
+                setDisabled(false);
+            }
+        } else {
+            setDisabled(true);
+        }
+    }, [messageReply]);
 
     return (
         <BackgroundPaper style={stylecom.container}>
@@ -79,7 +86,9 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                                 </Text>
                             </View>
                             <View style={{ paddingTop: 8 }}>
-                                <Text style={{ ...styles.text, fontSize: 13 }}>{message}</Text>
+                                <Text style={{ ...styles.text, fontSize: 13 }}>
+                                    {transformMsg(message)}
+                                </Text>
                             </View>
                             <View style={{ ...stylecom.posAbsolute, bottom: 4 }}>
                                 <Text style={{ ...styles.textGray, fontSize: 12 }}>{fecha}</Text>
@@ -104,7 +113,6 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             justifyContent: 'space-between',
                             width: '90%',
                             position: 'absolute',
-                            // bottom: Platform.OS === 'ios' ? 50 : 0,
                             bottom: 20,
                         }}
                     >
@@ -146,9 +154,10 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                         </View>
 
                         <ButtonIcon
-                            disabled={isLoading || invalid()}
+                            disabled={isDisabled}
                             icon={faLocationArrow}
                             onPress={onPressLocationArrow}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
                         />
                     </View>
                 </View>

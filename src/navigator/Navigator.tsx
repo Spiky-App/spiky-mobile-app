@@ -42,7 +42,7 @@ export type RootStackParamList = {
             date: number;
         };
     };
-    ChatScreen: { conversationId: number };
+    ChatScreen: { conversationId: number; toUser: User };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

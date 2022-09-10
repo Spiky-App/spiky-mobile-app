@@ -198,12 +198,34 @@ export interface Conversation {
     chatmensajes: ChatMessage[];
 }
 
+export interface GetChatMessages {
+    ok: boolean;
+    chatmensajes: ChatMessage[];
+}
+
 export interface ChatMessage {
     id_chatmensaje: number;
     id_conversacion: number;
     id_usuario: number;
     chatmensaje: string;
     fecha: string;
-    id_mensaje?: number;
-    seen?: string[];
+    mensaje?: ReplyMessage;
+    seens?: Seen[];
+}
+
+export interface Seen {
+    id_usuario: number;
+    fecha: string;
+}
+
+interface ReplyMessage {
+    id_mensaje: number;
+    mensaje: string;
+    usuario: User;
+}
+
+export interface CreateChatMessage {
+    ok: boolean;
+    chatmensaje: ChatMessage;
+    userto: number;
 }

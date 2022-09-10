@@ -117,7 +117,7 @@ export const ModalIdeaOptions = ({
                                         onPress={() =>
                                             goToScreen('ReplyIdeaScreen', {
                                                 message: {
-                                                    messageId: 6,
+                                                    messageId: message.messageId,
                                                     message: message.message,
                                                     user: message.user,
                                                     date: message.date,

@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getTime } from '../helpers/getTime';
+import { transformMsg } from '../helpers/transformMsg';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { updateNotificationsNumber } from '../store/feature/user/userSlice';
@@ -32,42 +33,7 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
     const timestamp = new Date(notification.createdAt);
     const date = getTime(timestamp.getTime() + '');
 
-    const ReturnMsg = (msg: string) => {
-        const regexp_all = /(@\[@\w*\]\(\d*\))|(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
-        const regexp_mention = /(@\[@\w*\]\(\d*\))/g;
-        const regexp_hashtag = /(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
-        const mentions = msg.match(regexp_all);
-        const mensaje_split = msg.split(regexp_all);
-        let msg_final;
-        let msg_trasnform: string[] = [];
-        if (mentions) {
-            mensaje_split.forEach(string => {
-                if (string !== undefined) {
-                    if (regexp_mention.test(string)) {
-                        const alias = string.substring(
-                            string.indexOf('[') + 1,
-                            string.indexOf(']')
-                        );
-                        msg_trasnform.push(alias);
-                    } else if (regexp_hashtag.test(string)) {
-                        const hashtag = string.substring(
-                            string.indexOf('[') + 1,
-                            string.indexOf(']')
-                        );
-                        msg_trasnform.push(hashtag);
-                    } else {
-                        msg_trasnform.push(string);
-                    }
-                }
-            });
-            msg_final = msg_trasnform.join('');
-        } else {
-            msg_final = msg;
-        }
-        return msg_final;
-    };
-
-    const new_mensaje = ReturnMsg(notification.message);
+    const new_mensaje = transformMsg(notification.message);
 
     const handleOpenIdea = () => {
         if (!notification.seen) {

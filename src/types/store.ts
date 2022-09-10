@@ -114,7 +114,7 @@ export interface Conversation {
     id: number;
     user_1: User;
     user_2: User;
-    chatmessages: ChatMessage[];
+    chatmessage: ChatMessage;
 }
 
 export interface ChatMessage {
@@ -123,6 +123,18 @@ export interface ChatMessage {
     userId: number;
     message: string;
     date: number;
-    messageId?: number;
-    seens?: number;
+    replyMessage?: replyMessage;
+    seens?: Seen[];
+    new: boolean;
+}
+
+export interface Seen {
+    userId: number;
+    date: number;
+}
+
+interface replyMessage {
+    id: number;
+    message: string;
+    user: User;
 }

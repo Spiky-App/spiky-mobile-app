@@ -15,6 +15,7 @@ import { Conversation, User } from '../types/store';
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
     const [conversations, setConversations] = useState<Conversation[]>([]);
+    const navigation = useNavigation<any>();
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { getConversations } = useSpikyService();
 
@@ -24,6 +25,27 @@ export const ConnectionsScreen = () => {
         setConversations(newConversations);
         setLoading(false);
     }
+
+    const onOpenConversation = (id: number, newMsg: boolean, toUser: User) => {
+        if (newMsg) {
+            const newConversations: Conversation[] = conversations.map(conver => {
+                if (conver.id === id) {
+                    let converUpdated = {
+                        ...conver,
+                        chatmessage: { ...conver.chatmessage, new: false },
+                    };
+                    return converUpdated;
+                } else {
+                    return conver;
+                }
+            });
+            setConversations(newConversations);
+        }
+        navigation.navigate('ChatScreen', {
+            conversationId: id,
+            toUser,
+        });
+    };
 
     useEffect(() => {
         loadConversations();
@@ -36,11 +58,15 @@ export const ConnectionsScreen = () => {
                 <FlatList
                     style={{ width: '90%' }}
                     data={conversations}
-                    renderItem={({ item }) => <ConversationItem conver={item} uid={uid} />}
+                    renderItem={({ item }) => (
+                        <ConversationItem
+                            conver={item}
+                            uid={uid}
+                            onOpenConversation={onOpenConversation}
+                        />
+                    )}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
-                    // onEndReached={loadMore}
-                    ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                 />
             ) : loading ? (
@@ -55,44 +81,37 @@ export const ConnectionsScreen = () => {
 interface ConversationItemProp {
     conver: Conversation;
     uid: number;
+    onOpenConversation: (id: number, newMsg: boolean, toUser: User) => void;
 }
 
-const ConversationItem = ({ conver, uid }: ConversationItemProp) => {
-    const navigation = useNavigation<any>();
+const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemProp) => {
     const toUser: User = conver.user_1.id !== uid ? conver.user_1 : conver.user_2;
-    const time = getTime(conver.chatmessages[0].date.toString());
-
-    const handleOpenChat = () => {
-        navigation.navigate('ChatScreen', {
-            conversationId: conver.id,
-        });
-    };
+    const time = getTime(conver.chatmessage.date.toString());
+    const { chatmessage } = conver;
+    const { new: newMsg } = chatmessage;
 
     return (
-        <TouchableOpacity style={{}} onPress={handleOpenChat}>
+        <TouchableOpacity onPress={() => onOpenConversation(conver.id, newMsg, toUser)}>
             <View style={stylescomp.converWrap}>
-                <View
-                    style={{
-                        ...stylescomp.newChatMsg,
-                        backgroundColor: true ? '#FC702A' : 'white',
-                    }}
-                />
-                <View style={{ ...styles.flex, alignItems: 'center' }}>
-                    <Text style={{ ...styles.textbold, fontSize: 14 }}>@{toUser.nickname}</Text>
-                    <Text style={{ ...styles.text, fontSize: 14 }}> de </Text>
-                    <Text style={{ ...styles.text, fontSize: 14 }}>
-                        {toUser.university.shortname}
-                    </Text>
-                    <View style={stylescomp.online} />
+                {newMsg && <View style={stylescomp.newChatMsg} />}
+                <View style={stylescomp.converContainer}>
+                    <View style={{ ...styles.flex, alignItems: 'center' }}>
+                        <Text style={{ ...styles.textbold, fontSize: 14 }}>@{toUser.nickname}</Text>
+                        <Text style={{ ...styles.text, fontSize: 14 }}> de </Text>
+                        <Text style={{ ...styles.text, fontSize: 14 }}>
+                            {toUser.university.shortname}
+                        </Text>
+                        <View style={stylescomp.online} />
+                    </View>
+                    <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
+                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                            {conver.chatmessage.message.length > 80
+                                ? conver.chatmessage.message.substring(0, 80) + '...'
+                                : conver.chatmessage.message}
+                        </Text>
+                    </View>
+                    <Text style={stylescomp.date}>{time}</Text>
                 </View>
-                <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
-                    <Text style={{ ...styles.text, fontSize: 13 }}>
-                        {conver.chatmessages[0].message.length > 80
-                            ? conver.chatmessages[0].message.substring(0, 80) + '...'
-                            : conver.chatmessages[0].message}
-                    </Text>
-                </View>
-                <Text style={stylescomp.date}>{time}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -103,20 +122,24 @@ const stylescomp = StyleSheet.create({
         flexDirection: 'row',
     },
     converWrap: {
+        flexDirection: 'row',
+        marginBottom: 20,
+    },
+    converContainer: {
         ...styles.shadow,
         backgroundColor: 'white',
+        height: 70,
         borderRadius: 6,
-        height: 75,
-        paddingHorizontal: 18,
+        paddingHorizontal: 10,
         paddingVertical: 10,
+        flex: 1,
     },
     newChatMsg: {
-        position: 'absolute',
-        top: 8,
-        bottom: 8,
-        left: 6,
+        backgroundColor: '#FC702A',
+        marginRight: 8,
         borderRadius: 3,
-        width: 8,
+        width: 12,
+        height: 70,
     },
     date: {
         ...styles.textGray,

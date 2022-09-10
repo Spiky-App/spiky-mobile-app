@@ -22,6 +22,8 @@ import {
     CreateMessageCommentResponse,
     CreateChatMsgWithReply,
     GetConversations,
+    GetChatMessages,
+    CreateChatMessage,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -174,6 +176,21 @@ class SpikyService {
 
     getConversations() {
         return this.instance.get<GetConversations>(`conver`);
+    }
+
+    getChatMessages(conversationId: number, lastChatMessageId?: number) {
+        const params = {
+            conver: conversationId,
+            id_ultimoChatmensaje: lastChatMessageId,
+        };
+        return this.instance.get<GetChatMessages>(`conver/chatmsg`, { params });
+    }
+
+    createChatMessage(conversationId: number, chatMessage: string) {
+        return this.instance.post<CreateChatMessage>(`conver/chatmsg`, {
+            id_conversacion: conversationId,
+            chatmensaje: chatMessage,
+        });
     }
 }
 

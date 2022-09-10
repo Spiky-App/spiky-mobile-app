@@ -6,10 +6,13 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Comment, Conversation, Message } from '../types/store';
+import { ChatMessage, Comment, Conversation, Message } from '../types/store';
 import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
-import { generateConversationFromConversacion } from '../helpers/conversations';
+import {
+    generateChatMsgFromChatMensaje,
+    generateConversationFromConversacion,
+} from '../helpers/conversations';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -151,13 +154,48 @@ function useSpikyService() {
             const { data } = response;
             const { convers } = data;
             const conversationsRetrived: Conversation[] = convers.map(conver => {
-                return generateConversationFromConversacion(conver);
+                return generateConversationFromConversacion(conver, user.id);
             });
             return conversationsRetrived;
         } catch (error) {
             console.log(error);
             dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
             return [];
+        }
+    };
+
+    const getChatMessages = async (conversationId: number, lastChatMessageId?: number) => {
+        try {
+            const response = await service.getChatMessages(conversationId, lastChatMessageId);
+            const { data } = response;
+            const { chatmensajes } = data;
+            const chatMessagesRetrived: ChatMessage[] = chatmensajes.map(chatmsg => {
+                return generateChatMsgFromChatMensaje(chatmsg, user.id);
+            });
+            return chatMessagesRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({ message: 'Error al cargar los mensajes', type: StatusType.WARNING })
+            );
+            return [];
+        }
+    };
+
+    const createChatMessage = async (conversationId: number, chatMessage: string) => {
+        try {
+            const response = await service.createChatMessage(conversationId, chatMessage);
+            const { data } = response;
+            const { chatmensaje } = data;
+            const chatMessageRetrived: ChatMessage = generateChatMsgFromChatMensaje(
+                chatmensaje,
+                user.id
+            );
+
+            return chatMessageRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
         }
     };
 
@@ -168,6 +206,8 @@ function useSpikyService() {
         deleteTracking,
         createChatMsgWithReply,
         getConversations,
+        getChatMessages,
+        createChatMessage,
     };
 }
 

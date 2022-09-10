@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { Keyboard, TextInput, View, FlatList } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
+import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
+import { ChatMessage } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
 
 export interface FormChat {
@@ -9,21 +11,42 @@ export interface FormChat {
 }
 
 interface Props {
+    conversationId: number;
     form: FormChat;
+    updateChatMessages: (chatMessage: ChatMessage) => void;
     onChange: (stateUpdated: Partial<FormChat>) => void;
+    refFlatList: React.RefObject<FlatList>;
 }
 
 const MAX_LENGHT = 200;
 
-// const DEFAULT_FORM: FormChat = {
-//     message: '',
-// };
+const DEFAULT_FORM: FormChat = {
+    message: '',
+};
 
-export const InputChat = ({ form, onChange }: Props) => {
+export const InputChat = ({
+    form,
+    onChange,
+    updateChatMessages,
+    conversationId,
+    refFlatList,
+}: Props) => {
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
-    const [inputHeight, setInputHeight] = useState(0);
+    const { createChatMessage } = useSpikyService();
     const { message } = form;
+
+    async function onPress() {
+        setDisabled(true);
+        const newChatMessages = await createChatMessage(conversationId, message);
+        if (newChatMessages) {
+            updateChatMessages(newChatMessages);
+        }
+        onChange(DEFAULT_FORM);
+        refFlatList.current?.scrollToIndex({ index: 0 });
+        Keyboard.dismiss();
+        setDisabled(false);
+    }
 
     useEffect(() => {
         const counterUpdated = MAX_LENGHT - message.length;
@@ -39,11 +62,6 @@ export const InputChat = ({ form, onChange }: Props) => {
 
     return (
         <View
-            onLayout={event => {
-                const { height } = event.nativeEvent.layout;
-                setInputHeight(height);
-                console.log(inputHeight);
-            }}
             style={{
                 backgroundColor: '#E6E6E6',
                 bottom: 0,
@@ -54,14 +72,16 @@ export const InputChat = ({ form, onChange }: Props) => {
                 justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
+                borderRadius: 8,
+                width: '100%',
             }}
         >
             <View
                 style={{
                     flex: 1,
                     backgroundColor: 'white',
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
+                    paddingHorizontal: 8,
+                    justifyContent: 'center',
                     borderRadius: 5,
                 }}
             >
@@ -74,17 +94,21 @@ export const InputChat = ({ form, onChange }: Props) => {
                     onChangeText={text => onChange({ message: text })}
                 />
             </View>
-            <ButtonIcon
-                icon={faLocationArrow}
-                style={{
-                    paddingHorizontal: 10,
-                    justifyContent: 'center',
-                    transform: [{ rotate: '45deg' }],
-                    borderRadius: 100,
-                }}
-                disabled={isDisabled}
-                // onPress={onPress}
-            />
+            <View style={{ paddingLeft: 6 }}>
+                <ButtonIcon
+                    icon={faLocationArrow}
+                    style={{
+                        paddingHorizontal: 10,
+                        justifyContent: 'center',
+                        borderRadius: 100,
+                        height: 40,
+                        width: 40,
+                    }}
+                    iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                    disabled={isDisabled}
+                    onPress={onPress}
+                />
+            </View>
         </View>
     );
 };
