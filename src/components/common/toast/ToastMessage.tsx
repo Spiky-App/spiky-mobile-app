@@ -4,7 +4,7 @@ import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'reac
 import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { StatusType } from '../../../types/common';
-import { faTriangleExclamation, faXmark } from '../../../constants/icons/FontAwesome';
+import { faTriangleExclamation, faXmark, faBell } from '../../../constants/icons/FontAwesome';
 import { styles } from '../../../themes/appTheme';
 
 interface Props {
@@ -28,6 +28,8 @@ function ToastMessage({ message, status }: Props) {
         switch (status) {
             case StatusType.WARNING:
                 return stylescom.warningContainer;
+            case StatusType.NOTIFICATION:
+                return stylescom.notificationContainer;
             default:
                 return {};
         }
@@ -37,39 +39,51 @@ function ToastMessage({ message, status }: Props) {
         switch (status) {
             case StatusType.WARNING:
                 return '#FC702A';
+            case StatusType.NOTIFICATION:
+                return '#FC702A';
             default:
                 return '#01192E';
         }
     };
+    const icon = () => {
+        switch (status) {
+            case StatusType.WARNING:
+                return faTriangleExclamation;
+            case StatusType.NOTIFICATION:
+                return faBell;
+            default:
+                return faTriangleExclamation;
+        }
+    };
 
     return (
-        <Animated.View
-            style={[
-                stylescom.container,
-                {
-                    opacity,
-                    transform: [
-                        {
-                            translateY: opacity.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [1, 0],
-                            }),
-                        },
-                    ],
-                },
-                containerStyle(),
-            ]}
-        >
-            <FontAwesomeIcon icon={faTriangleExclamation} color={iconColor()} size={20} />
-            <Text style={[stylescom.text]}>{message}</Text>
-            <View style={stylescom.xmark}>
-                <TouchableWithoutFeedback
-                // onPress={()=>{}}
-                >
-                    <FontAwesomeIcon icon={faXmark} color={'#bebebe'} size={18} />
-                </TouchableWithoutFeedback>
-            </View>
-        </Animated.View>
+        <>
+            <Animated.View
+                style={[
+                    stylescom.container,
+                    {
+                        opacity,
+                        transform: [
+                            {
+                                translateY: opacity.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [1, 0],
+                                }),
+                            },
+                        ],
+                    },
+                    containerStyle(),
+                ]}
+            >
+                <FontAwesomeIcon icon={icon()} color={iconColor()} size={20} />
+                <Text style={[stylescom.text]}>{message}</Text>
+                <View style={stylescom.xmark}>
+                    <TouchableWithoutFeedback>
+                        <FontAwesomeIcon icon={faXmark} color={'#bebebe'} size={18} />
+                    </TouchableWithoutFeedback>
+                </View>
+            </Animated.View>
+        </>
     );
 }
 
@@ -95,6 +109,7 @@ const stylescom = StyleSheet.create({
         flexDirection: 'row',
     },
     warningContainer: {},
+    notificationContainer: {},
     text: {
         ...styles.text,
         fontSize: 13,

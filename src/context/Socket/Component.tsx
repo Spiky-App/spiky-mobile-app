@@ -8,6 +8,14 @@ import { StatusType } from '../../types/common';
 import { SocketReducer, defaultSocketContextState, SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
+const mensajes = [
+    '',
+    'reaccionó a tu idea.',
+    'respondió a tu idea.',
+    'respondió en tu tracking',
+    'te mencionó.',
+    'reacciono a tu comentario.',
+];
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
     const { children } = props;
@@ -63,6 +71,12 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
         socket?.on('notify', resp => {
             console.log(resp);
+            dispatch(
+                addToast({
+                    message: resp.alias + ' ' + mensajes[resp.tipo],
+                    type: StatusType.NOTIFICATION,
+                })
+            );
         });
 
         /** Connection / reconnection listeners */
