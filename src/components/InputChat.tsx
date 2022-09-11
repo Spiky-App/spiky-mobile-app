@@ -18,6 +18,7 @@ interface Props {
     onChange: (stateUpdated: Partial<FormChat>) => void;
     refFlatList: React.RefObject<FlatList>;
     toUser: User;
+    HideKeyboardAfterSumbit?: boolean;
 }
 
 const MAX_LENGHT = 200;
@@ -33,6 +34,7 @@ export const InputChat = ({
     conversationId,
     refFlatList,
     toUser,
+    HideKeyboardAfterSumbit,
 }: Props) => {
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
@@ -53,7 +55,7 @@ export const InputChat = ({
         }
         onChange(DEFAULT_FORM);
         refFlatList.current?.scrollToIndex({ index: 0 });
-        Keyboard.dismiss();
+        if (!HideKeyboardAfterSumbit) Keyboard.dismiss();
         setDisabled(false);
     }
 

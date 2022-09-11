@@ -53,11 +53,11 @@ export const ChatScreen = ({ route }: Props) => {
         setIsLoading(false);
     }
 
-    const updateChatMessages = (chatMessage: ChatMessage) => {
+    function updateChatMessages(chatMessage: ChatMessage) {
         if (chatMessages) {
-            setChatMessages([chatMessage, ...chatMessages]);
+            setChatMessages(v => [chatMessage, ...v]);
         }
-    };
+    }
 
     useEffect(() => {
         SocketState.socket?.on('userOnline', resp => {
@@ -137,6 +137,7 @@ export const ChatScreen = ({ route }: Props) => {
                     conversationId={conversationId}
                     refFlatList={refFlatList}
                     toUser={toUser}
+                    HideKeyboardAfterSumbit
                 />
             </KeyboardAvoidingView>
         </BackgroundPaper>

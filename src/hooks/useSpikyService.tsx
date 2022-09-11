@@ -142,7 +142,6 @@ function useSpikyService() {
             const { data } = response;
             const { content } = data;
             const { userto, conver, newConver } = content;
-            console.log(conver);
             const converRetrived = generateConversationFromConversacion(conver, user.id);
             navigation.goBack();
             dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));

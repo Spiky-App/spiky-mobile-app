@@ -28,58 +28,61 @@ export const ConnectionsScreen = () => {
         setLoading(false);
     }
 
-    const onOpenConversation = (id: number, newMsg: boolean, toUser: User) => {
+    function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
         if (newMsg) {
-            const newConversations: Conversation[] = conversations.map(conver => {
-                if (conver.id === id) {
-                    let converUpdated = {
-                        ...conver,
-                        chatmessage: { ...conver.chatmessage, new: false },
-                    };
-                    return converUpdated;
-                } else {
-                    return conver;
-                }
-            });
-            setConversations(newConversations);
+            setConversations(c =>
+                c.map(conver => {
+                    if (conver.id === id) {
+                        let converUpdated = {
+                            ...conver,
+                            chatmessage: { ...conver.chatmessage, new: false },
+                        };
+                        return converUpdated;
+                    } else {
+                        return conver;
+                    }
+                })
+            );
         }
         navigation.navigate('ChatScreen', {
             conversationId: id,
             toUser,
         });
-    };
+    }
 
-    const updateUserOnline = (online: boolean, converId: number) => {
-        const newConversations: Conversation[] = conversations.map(conver => {
-            if (conver.id === converId) {
-                const userNumber: 'user_1' | 'user_2' =
-                    conver.user_1.id !== uid ? 'user_1' : 'user_2';
-                let converUpdated = {
-                    ...conver,
-                    [userNumber]: { ...conver[userNumber], online },
-                };
-                return converUpdated;
-            } else {
-                return conver;
-            }
-        });
-        setConversations(newConversations);
-    };
-
-    const updateConversations = (newConver: boolean, converToUpdate: Conversation) => {
-        if (!newConver) {
-            const newConversations: Conversation[] = conversations.map(conver => {
-                if (conver.id === converToUpdate.id) {
-                    return converToUpdate;
+    function updateUserOnline(online: boolean, converId: number) {
+        setConversations(c =>
+            c.map(conver => {
+                if (conver.id === converId) {
+                    const userNumber: 'user_1' | 'user_2' =
+                        conver.user_1.id !== uid ? 'user_1' : 'user_2';
+                    let converUpdated = {
+                        ...conver,
+                        [userNumber]: { ...conver[userNumber], online },
+                    };
+                    return converUpdated;
                 } else {
                     return conver;
                 }
-            });
-            setConversations(newConversations);
+            })
+        );
+    }
+
+    function updateConversations(newConver: boolean, converToUpdate: Conversation) {
+        if (!newConver) {
+            setConversations(c =>
+                c.map(conver => {
+                    if (conver.id === converToUpdate.id) {
+                        return converToUpdate;
+                    } else {
+                        return conver;
+                    }
+                })
+            );
         } else {
-            setConversations([converToUpdate, ...conversations]);
+            setConversations(c => [converToUpdate, ...c]);
         }
-    };
+    }
 
     useEffect(() => {
         SocketState.socket?.on('userOnline', resp => {
@@ -92,13 +95,19 @@ export const ConnectionsScreen = () => {
         });
         SocketState.socket?.on('newChatMsgWithReply', resp => {
             const { conver, newConver } = resp;
-            updateConversations(newConver, conver);
+            updateConversations(newConver, {
+                ...conver,
+                chatmessage: { ...conver.chatmessage, new: true },
+            });
         });
         SocketState.socket?.on('newChatMsg', resp => {
             const { chatmsg, converId } = resp;
             const converToUpdate = conversations.find(conver => conver.id === converId);
             if (converToUpdate)
-                updateConversations(false, { ...converToUpdate, chatmessage: chatmsg });
+                updateConversations(false, {
+                    ...converToUpdate,
+                    chatmessage: { ...chatmsg, new: true },
+                });
         });
     }, [SocketState.socket]);
 
