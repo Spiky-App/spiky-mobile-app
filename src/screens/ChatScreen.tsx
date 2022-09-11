@@ -40,7 +40,7 @@ export const ChatScreen = ({ route }: Props) => {
     const [isLoading, setIsLoading] = useState(true);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
-    const { getChatMessages } = useSpikyService();
+    const { getChatMessages, createChatMessageSeen } = useSpikyService();
     const navigation = useNavigation<any>();
     const { SocketState } = useContext(SocketContext);
     const conversationId = route.params?.conversationId;
@@ -53,9 +53,14 @@ export const ChatScreen = ({ route }: Props) => {
         setIsLoading(false);
     }
 
+    function backToConnectionsScreen() {
+        navigation.goBack();
+    }
+
     function updateChatMessages(chatMessage: ChatMessage) {
         if (chatMessages) {
             setChatMessages(v => [chatMessage, ...v]);
+            if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
         }
     }
 
@@ -102,14 +107,19 @@ export const ChatScreen = ({ route }: Props) => {
                             marginRight: 5,
                             marginLeft: 10,
                         }}
-                        onPress={() => navigation.goBack()}
+                        onPress={backToConnectionsScreen}
                     >
                         <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                     </TouchableOpacity>
                     <Text style={{ ...styles.text, ...styles.h3, color: '#ffff' }}>
                         {'@' + toUser.nickname + ' de ' + toUser.university.shortname}
                     </Text>
-                    {toUser.online && <View style={stylescomp.online} />}
+                    <View
+                        style={{
+                            ...stylescomp.online,
+                            backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
+                        }}
+                    />
                 </View>
 
                 {!isLoading ? (

@@ -165,7 +165,12 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         <Text style={{ ...styles.text, fontSize: 14 }}>
                             {toUser.university.shortname}
                         </Text>
-                        {toUser.online && <View style={stylescomp.online} />}
+                        <View
+                            style={{
+                                ...stylescomp.online,
+                                backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
+                            }}
+                        />
                     </View>
                     <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ ...styles.text, fontSize: 13 }}>
@@ -215,7 +220,6 @@ const stylescomp = StyleSheet.create({
         height: 8,
         width: 8,
         borderRadius: 5,
-        backgroundColor: '#FC702A',
         marginLeft: 8,
     },
 });

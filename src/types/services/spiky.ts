@@ -221,6 +221,8 @@ export interface ChatMessage {
 export interface Seen {
     id_usuario: number;
     fecha: string;
+    id_conversacion?: number;
+    id_chatmensaje?: number;
 }
 
 interface ReplyMessage {
@@ -233,4 +235,12 @@ export interface CreateChatMessage {
     ok: boolean;
     chatmensaje: ChatMessage;
     userto: number;
+}
+
+export interface CreateChatMessageSeen {
+    ok: boolean;
+    content: {
+        chatmsg_seen: Seen;
+        userto: number;
+    };
 }

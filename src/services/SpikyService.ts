@@ -24,6 +24,7 @@ import {
     GetConversations,
     GetChatMessages,
     CreateChatMessage,
+    CreateChatMessageSeen,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -189,6 +190,12 @@ class SpikyService {
         return this.instance.post<CreateChatMessage>(`conver/chatmsg`, {
             id_conversacion: conversationId,
             chatmensaje: chatMessage,
+        });
+    }
+
+    createChatMessageSeen(chatMessageId: number) {
+        return this.instance.post<CreateChatMessageSeen>(`conver/seen`, {
+            id_chatmensaje: chatMessageId,
         });
     }
 }

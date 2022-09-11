@@ -41,9 +41,7 @@ function generateChatMsgFromChatMensaje(chatmensaje: ChatMensaje, uid: number): 
         return generateSeensFromVistos(seen);
     });
     const newRetrived =
-        (!chatmensaje.seens?.find(seen => seen.id_usuario % 2 === uid) &&
-            chatmensaje.id_usuario !== uid) ||
-        (!seensRetrived && chatmensaje.id_usuario !== uid)
+        !chatmensaje.seens?.find(seen => seen.id_usuario === uid) && chatmensaje.id_usuario !== uid
             ? true
             : false;
 

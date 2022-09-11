@@ -204,6 +204,23 @@ function useSpikyService() {
         }
     };
 
+    const createChatMessageSeen = async (chatMessageId: number) => {
+        try {
+            const response = await service.createChatMessageSeen(chatMessageId);
+            const { data } = response;
+            const { content } = data;
+            const { chatmsg_seen, userto } = content;
+            return {
+                conversationId: chatmsg_seen.id_conversacion,
+                chatMessageId,
+                toUser: userto,
+            };
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -213,6 +230,7 @@ function useSpikyService() {
         getConversations,
         getChatMessages,
         createChatMessage,
+        createChatMessageSeen,
     };
 }
 
