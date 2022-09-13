@@ -180,5 +180,6 @@ const stylescomp = StyleSheet.create({
     },
     wrap: {
         width: '100%',
+        marginBottom: 10,
     },
 });
