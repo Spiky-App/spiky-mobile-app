@@ -511,7 +511,7 @@ const stylescom = StyleSheet.create({
     commentWrap: {
         flex: 1,
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 15,
         width: '90%',
         borderRadius: 8,
         backgroundColor: 'white',

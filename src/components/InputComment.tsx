@@ -73,11 +73,11 @@ export const InputComment = ({
             }}
             style={{
                 backgroundColor: '#E6E6E6',
-                bottom: 0,
+                bottom: 6,
                 left: 0,
                 right: 0,
                 paddingHorizontal: 10,
-                paddingVertical: 15,
+                paddingVertical: 13,
                 justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -89,8 +89,8 @@ export const InputComment = ({
                 style={{
                     flex: 1,
                     backgroundColor: 'white',
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
+                    paddingHorizontal: 8,
+                    justifyContent: 'center',
                     borderRadius: 8,
                 }}
             >
@@ -122,6 +122,8 @@ export const InputComment = ({
                         paddingHorizontal: 10,
                         justifyContent: 'center',
                         borderRadius: 100,
+                        height: 36,
+                        width: 36,
                     }}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     disabled={isDisabled}

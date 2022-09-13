@@ -18,14 +18,14 @@ import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
-import { ChatMessage, User } from '../types/store';
+import { ChatMessage as ChatMessageProp, User } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { getTime } from '../helpers/getTime';
-import { transformMsg } from '../helpers/transformMsg';
 import SocketContext from '../context/Socket/Context';
+import { ChatMessage } from '../components/ChatMessage';
+import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -35,10 +35,12 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 
 export const ChatScreen = ({ route }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const dispatch = useAppDispatch();
     const { top, bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [moreChatMsg, setMoreChatMsg] = useState(true);
+    const [chatMessages, setChatMessages] = useState<ChatMessageProp[]>([]);
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
     const { getChatMessages, createChatMessageSeen } = useSpikyService();
     const navigation = useNavigation<any>();
@@ -46,18 +48,26 @@ export const ChatScreen = ({ route }: Props) => {
     const conversationId = route.params?.conversationId;
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
 
-    async function loadConversation() {
+    async function loadChatMessages(loadMore?: boolean) {
         setIsLoading(true);
-        const newChatMessages = await getChatMessages(conversationId);
-        setChatMessages(newChatMessages);
+        setMoreChatMsg(false);
+        const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
+        const newChatMessages = await getChatMessages(conversationId, lastChatMessageId);
+        if (newChatMessages.length === 20) setMoreChatMsg(true);
+        setChatMessages([...chatMessages, ...newChatMessages]);
         setIsLoading(false);
     }
 
-    function backToConnectionsScreen() {
+    function loadMoreChatMsg() {
+        if (moreChatMsg) loadChatMessages(true);
+    }
+
+    async function backToConnectionsScreen() {
+        dispatch(updateLastChatMsgConversation(chatMessages[0]));
         navigation.goBack();
     }
 
-    function updateChatMessages(chatMessage: ChatMessage) {
+    function updateChatMessages(chatMessage: ChatMessageProp) {
         if (chatMessages) {
             setChatMessages(v => [chatMessage, ...v]);
             if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
@@ -83,7 +93,7 @@ export const ChatScreen = ({ route }: Props) => {
 
     useEffect(() => {
         if (conversationId) {
-            loadConversation();
+            loadChatMessages();
         }
     }, [conversationId]);
 
@@ -121,25 +131,22 @@ export const ChatScreen = ({ route }: Props) => {
                         }}
                     />
                 </View>
-
-                {!isLoading ? (
-                    <FlatList
-                        ref={refFlatList}
-                        style={stylescomp.wrap}
-                        data={chatMessages}
-                        renderItem={({ item }) => <Message msg={item} uid={uid} />}
-                        keyExtractor={item => item.id + ''}
-                        showsVerticalScrollIndicator={false}
-                        inverted
-                        // onEndReached={loadMore}
-                        // ListFooterComponent={loading ? LoadingAnimated : <></>}
-                        // ListFooterComponentStyle={{ marginVertical: 12 }}
-                    />
-                ) : (
-                    <View style={{ ...styles.center, flex: 1 }}>
-                        <LoadingAnimated />
-                    </View>
-                )}
+                <FlatList
+                    ref={refFlatList}
+                    style={stylescomp.wrap}
+                    data={chatMessages}
+                    renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
+                    keyExtractor={item => item.id + ''}
+                    showsVerticalScrollIndicator={false}
+                    inverted
+                    onEndReached={loadMoreChatMsg}
+                    ListFooterComponent={isLoading ? LoadingAnimated : <></>}
+                    ListFooterComponentStyle={{ marginVertical: 12 }}
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: 'flex-end',
+                    }}
+                />
                 <InputChat
                     form={form}
                     onChange={onChange}
@@ -151,51 +158,6 @@ export const ChatScreen = ({ route }: Props) => {
                 />
             </KeyboardAvoidingView>
         </BackgroundPaper>
-    );
-};
-
-interface MessageProp {
-    msg: ChatMessage;
-    uid: number;
-}
-
-const Message = ({ msg, uid }: MessageProp) => {
-    const owner = msg.userId === uid;
-    const time = getTime(msg.date.toString());
-    const replyMessage = transformMsg(msg.replyMessage?.message || '');
-
-    return (
-        <View style={owner ? stylescomp.containerMessageRight : stylescomp.containerMessageLeft}>
-            <View>
-                {msg.replyMessage && (
-                    <View style={stylescomp.containerReplyMsg}>
-                        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
-                            <Text style={{ ...styles.textbold, fontSize: 12 }}>
-                                @{msg.replyMessage.user.nickname}
-                            </Text>
-                            <Text style={{ ...styles.text, fontSize: 12 }}> de </Text>
-                            <Text style={{ ...styles.text, fontSize: 12 }}>
-                                {msg.replyMessage.user.university.shortname}
-                            </Text>
-                        </View>
-                        <Text style={{ ...styles.text, fontSize: 12 }}>
-                            {replyMessage.length > 73
-                                ? replyMessage.substring(0, 73) + '...'
-                                : replyMessage}
-                        </Text>
-                    </View>
-                )}
-                <View
-                    style={{
-                        ...stylescomp.message,
-                        justifyContent: owner ? 'flex-end' : 'flex-start',
-                    }}
-                >
-                    <Text style={stylescomp.text}>{msg.message}</Text>
-                    <Text style={stylescomp.time}>{time}</Text>
-                </View>
-            </View>
-        </View>
     );
 };
 
@@ -218,40 +180,5 @@ const stylescomp = StyleSheet.create({
     },
     wrap: {
         width: '100%',
-    },
-    containerMessageRight: {
-        marginVertical: 8,
-        alignItems: 'flex-end',
-    },
-    containerMessageLeft: {
-        marginVertical: 8,
-        alignItems: 'flex-start',
-    },
-    message: {
-        ...styles.shadow,
-        maxWidth: 280,
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        backgroundColor: 'white',
-        flexWrap: 'wrap',
-    },
-    text: {
-        ...styles.text,
-        fontSize: 14,
-    },
-    time: {
-        ...styles.textGray,
-        textAlign: 'right',
-        paddingLeft: 5,
-        marginTop: 2,
-    },
-    containerReplyMsg: {
-        backgroundColor: '#e8e6e6',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        maxWidth: 280,
     },
 });

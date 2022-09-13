@@ -75,11 +75,11 @@ export const InputChat = ({
         <View
             style={{
                 backgroundColor: '#E6E6E6',
-                bottom: 0,
+                bottom: 6,
                 left: 0,
                 right: 0,
                 paddingHorizontal: 10,
-                paddingVertical: 15,
+                paddingVertical: 13,
                 justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -112,8 +112,8 @@ export const InputChat = ({
                         paddingHorizontal: 10,
                         justifyContent: 'center',
                         borderRadius: 100,
-                        height: 40,
-                        width: 40,
+                        height: 36,
+                        width: 36,
                     }}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     disabled={isDisabled}

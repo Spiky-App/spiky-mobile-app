@@ -9,40 +9,36 @@ import SocketContext from '../context/Socket/Context';
 import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import {
+    addConversation,
+    openNewMsgConversation,
+    setConversations,
+    setUserStateConversation,
+    updateConversations,
+} from '../store/feature/chats/chatsSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Conversation, User } from '../types/store';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
-    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const { conversations } = useAppSelector((state: RootState) => state.chats);
     const navigation = useNavigation<any>();
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { getConversations } = useSpikyService();
+    const dispatch = useAppDispatch();
     const { SocketState } = useContext(SocketContext);
 
     async function loadConversations() {
         setLoading(true);
         const newConversations = await getConversations();
-        setConversations(newConversations);
+        dispatch(setConversations(newConversations));
         setLoading(false);
     }
 
     function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
         if (newMsg) {
-            setConversations(c =>
-                c.map(conver => {
-                    if (conver.id === id) {
-                        let converUpdated = {
-                            ...conver,
-                            chatmessage: { ...conver.chatmessage, new: false },
-                        };
-                        return converUpdated;
-                    } else {
-                        return conver;
-                    }
-                })
-            );
+            dispatch(openNewMsgConversation(id));
         }
         navigation.navigate('ChatScreen', {
             conversationId: id,
@@ -51,36 +47,14 @@ export const ConnectionsScreen = () => {
     }
 
     function updateUserOnline(online: boolean, converId: number) {
-        setConversations(c =>
-            c.map(conver => {
-                if (conver.id === converId) {
-                    const userNumber: 'user_1' | 'user_2' =
-                        conver.user_1.id !== uid ? 'user_1' : 'user_2';
-                    let converUpdated = {
-                        ...conver,
-                        [userNumber]: { ...conver[userNumber], online },
-                    };
-                    return converUpdated;
-                } else {
-                    return conver;
-                }
-            })
-        );
+        dispatch(setUserStateConversation({ online, converId, uid }));
     }
 
-    function updateConversations(newConver: boolean, converToUpdate: Conversation) {
+    function loadNewConversations(newConver: boolean, converToUpdate: Conversation) {
         if (!newConver) {
-            setConversations(c =>
-                c.map(conver => {
-                    if (conver.id === converToUpdate.id) {
-                        return converToUpdate;
-                    } else {
-                        return conver;
-                    }
-                })
-            );
+            dispatch(updateConversations(converToUpdate));
         } else {
-            setConversations(c => [converToUpdate, ...c]);
+            dispatch(addConversation(converToUpdate));
         }
     }
 
@@ -95,7 +69,7 @@ export const ConnectionsScreen = () => {
         });
         SocketState.socket?.on('newChatMsgWithReply', resp => {
             const { conver, newConver } = resp;
-            updateConversations(newConver, {
+            loadNewConversations(newConver, {
                 ...conver,
                 chatmessage: { ...conver.chatmessage, new: true },
             });
@@ -104,7 +78,7 @@ export const ConnectionsScreen = () => {
             const { chatmsg, converId } = resp;
             const converToUpdate = conversations.find(conver => conver.id === converId);
             if (converToUpdate)
-                updateConversations(false, {
+                loadNewConversations(false, {
                     ...converToUpdate,
                     chatmessage: { ...chatmsg, new: true },
                 });
