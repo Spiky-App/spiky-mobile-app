@@ -71,7 +71,7 @@ export const ConnectionsScreen = () => {
             const { conver, newConver } = resp;
             loadNewConversations(newConver, {
                 ...conver,
-                chatmessage: { ...conver.chatmessage, new: true },
+                chatmessage: { ...conver.chatmessage, newMsg: true },
             });
         });
         SocketState.socket?.on('newChatMsg', resp => {
@@ -80,7 +80,7 @@ export const ConnectionsScreen = () => {
             if (converToUpdate)
                 loadNewConversations(false, {
                     ...converToUpdate,
-                    chatmessage: { ...chatmsg, new: true },
+                    chatmessage: { ...chatmsg, newMsg: true },
                 });
         });
     }, [SocketState.socket]);
@@ -126,7 +126,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
     const toUser: User = conver.user_1.id !== uid ? conver.user_1 : conver.user_2;
     const time = getTime(conver.chatmessage.date.toString());
     const { chatmessage } = conver;
-    const { new: newMsg } = chatmessage;
+    const { newMsg } = chatmessage;
 
     return (
         <TouchableOpacity onPress={() => onOpenConversation(conver.id, newMsg, toUser)}>

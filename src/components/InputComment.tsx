@@ -50,7 +50,6 @@ export const InputComment = ({
         }
         onChange(DEFAULT_FORM);
         Keyboard.dismiss();
-        setDisabled(false);
     }
 
     useEffect(() => {

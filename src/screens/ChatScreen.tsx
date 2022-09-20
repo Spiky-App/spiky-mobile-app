@@ -62,16 +62,17 @@ export const ChatScreen = ({ route }: Props) => {
         if (moreChatMsg) loadChatMessages(true);
     }
 
-    async function backToConnectionsScreen() {
-        dispatch(updateLastChatMsgConversation(chatMessages[0]));
-        navigation.goBack();
-    }
-
     function updateChatMessages(chatMessage: ChatMessageProp) {
         if (chatMessages) {
             setChatMessages(v => [chatMessage, ...v]);
+            dispatch(updateLastChatMsgConversation(chatMessage));
             if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
         }
+    }
+
+    function handleGoBack() {
+        navigation.setParams({ conversationId: 0 });
+        navigation.goBack();
     }
 
     useEffect(() => {
@@ -87,6 +88,12 @@ export const ChatScreen = ({ route }: Props) => {
             const { chatmsg, converId } = resp;
             if (converId === conversationId) {
                 updateChatMessages(chatmsg);
+            }
+        });
+        SocketState.socket?.on('newChatMsgWithReply', resp => {
+            const { conver } = resp;
+            if (conver.id === conversationId) {
+                updateChatMessages({ ...conver.chatmessage });
             }
         });
     }, [SocketState.socket]);
@@ -117,7 +124,7 @@ export const ChatScreen = ({ route }: Props) => {
                             marginRight: 5,
                             marginLeft: 10,
                         }}
-                        onPress={backToConnectionsScreen}
+                        onPress={handleGoBack}
                     >
                         <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                     </TouchableOpacity>

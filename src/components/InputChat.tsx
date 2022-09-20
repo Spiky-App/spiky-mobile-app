@@ -42,8 +42,7 @@ export const InputChat = ({
     const { SocketState } = useContext(SocketContext);
     const { message } = form;
 
-    async function onPress() {
-        setDisabled(true);
+    async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
         SocketState.socket?.emit('newChatMsg', {
             chatmsg: newChatMessages,
@@ -53,10 +52,14 @@ export const InputChat = ({
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
         }
+    }
+
+    function onPress() {
+        setDisabled(true);
+        handleCreateChatMessage();
         onChange(DEFAULT_FORM);
         refFlatList.current?.scrollToIndex({ index: 0 });
         if (!HideKeyboardAfterSumbit) Keyboard.dismiss();
-        setDisabled(false);
     }
 
     useEffect(() => {

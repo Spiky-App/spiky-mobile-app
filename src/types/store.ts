@@ -125,7 +125,7 @@ export interface ChatMessage {
     date: number;
     replyMessage?: replyMessage;
     seens?: Seen[];
-    new: boolean;
+    newMsg: boolean;
 }
 
 export interface Seen {

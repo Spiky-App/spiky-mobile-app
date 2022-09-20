@@ -22,7 +22,7 @@ export const chatsSlice = createSlice({
                 if (conver.id === action.payload) {
                     let converUpdated = {
                         ...conver,
-                        chatmessage: { ...conver.chatmessage, new: false },
+                        chatmessage: { ...conver.chatmessage, newMsg: false },
                     };
                     return converUpdated;
                 } else {
@@ -52,22 +52,28 @@ export const chatsSlice = createSlice({
             state.conversations = [action.payload, ...state.conversations];
         },
         updateConversations: (state: ChatsState, action: PayloadAction<Conversation>) => {
-            state.conversations = state.conversations.map(conver => {
+            let conver_no_sorted = state.conversations.map(conver => {
                 if (conver.id === action.payload.id) {
                     return action.payload;
                 } else {
                     return conver;
                 }
             });
+            state.conversations = conver_no_sorted.sort(
+                (a, b) => b.chatmessage.date - a.chatmessage.date
+            );
         },
         updateLastChatMsgConversation: (state: ChatsState, action: PayloadAction<ChatMessage>) => {
-            state.conversations = state.conversations.map(conver => {
+            let conver_no_sorted = state.conversations.map(conver => {
                 if (conver.id === action.payload.conversationId) {
-                    return { ...conver, chatmessage: { ...action.payload, new: false } };
+                    return { ...conver, chatmessage: { ...action.payload, newMsg: false } };
                 } else {
                     return conver;
                 }
             });
+            state.conversations = conver_no_sorted.sort(
+                (a, b) => b.chatmessage.date - a.chatmessage.date
+            );
         },
     },
 });

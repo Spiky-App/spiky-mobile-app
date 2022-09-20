@@ -198,9 +198,23 @@ export interface GetConversations {
 
 export interface Conversation {
     id_conversacion: number;
-    usuario1: User;
-    usuario2: User;
-    chatmensajes: ChatMessage[];
+    'usuario1.id_usuario': number;
+    'usuario1.alias': string;
+    'usuario1.online': boolean;
+    'usuario1.universidad.id_universidad': number;
+    'usuario1.universidad.alias': string;
+    'usuario2.id_usuario': number;
+    'usuario2.alias': string;
+    'usuario2.online': boolean;
+    'usuario2.universidad.id_universidad': number;
+    'usuario2.universidad.alias': string;
+    'chatmensajes.id_chatmensaje': number;
+    'chatmensajes.id_usuario': number;
+    'chatmensajes.chatmensaje': string;
+    'chatmensajes.fecha': string;
+    'chatmensajes.mensaje'?: ReplyMessage;
+    'chatmensajes.seens.id_usuario': number;
+    'chatmensajes.seens.fecha': string;
 }
 
 export interface GetChatMessages {
@@ -214,6 +228,7 @@ export interface ChatMessage {
     id_usuario: number;
     chatmensaje: string;
     fecha: string;
+    id_mensaje?: number | null;
     mensaje?: ReplyMessage;
     seens?: Seen[];
 }
