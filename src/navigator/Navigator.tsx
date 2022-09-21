@@ -68,7 +68,6 @@ export const Navigator = () => {
     // because i think it is saved in axios, in SecureStorage
     // and in store's auth.token
     useEffect(() => {
-        // console.log(config?.headers?.['x-token']);
         if (config?.headers?.['x-token'] && !universities) {
             setSessionInfo();
         }

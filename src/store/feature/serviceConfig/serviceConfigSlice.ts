@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosRequestConfig } from 'axios';
 import { RootState } from '../..';
-import config from '../../../constants/config';
+import { config } from '../../../constants/config';
 
 interface ServiceConfigState {
     config: AxiosRequestConfig;
