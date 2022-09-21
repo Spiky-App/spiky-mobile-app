@@ -47,7 +47,10 @@ const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedPr
                     renderItem={({ item }) => <Idea idea={item} filter={filter} />}
                     keyExtractor={item => item.id + ''}
                     showsVerticalScrollIndicator={false}
-                    onEndReached={loadMore}
+                    scrollEventThrottle={3000}
+                    onEndReached={() => {
+                        !loading && loadMore();
+                    }}
                     ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                 />

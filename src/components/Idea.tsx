@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     Animated,
+    Pressable,
     StyleSheet,
     Text,
     TouchableHighlight,
-    TouchableOpacity,
+    // TouchableOpacity,
     View,
 } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
@@ -120,7 +121,7 @@ export const Idea = ({ idea, filter }: Props) => {
         );
     };
 
-    const handleClickUser = () => {
+    const handleClickUser = useCallback(() => {
         if (user.nickname === nickname) {
             changeScreen('MyIdeasScreen');
         } else {
@@ -128,7 +129,7 @@ export const Idea = ({ idea, filter }: Props) => {
                 alias: user.nickname,
             });
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         if (position.top !== 0) {
@@ -137,7 +138,7 @@ export const Idea = ({ idea, filter }: Props) => {
     }, [position]);
 
     useEffect(() => {
-        fadeIn(350, () => {}, sequence * 250);
+        fadeIn(150, () => {}, sequence * 150);
     }, []);
 
     return (
@@ -164,11 +165,11 @@ export const Idea = ({ idea, filter }: Props) => {
                 )}
 
                 <View style={styles.flex}>
-                    <TouchableOpacity onPress={() => handleClickUser()}>
+                    <Pressable onPress={handleClickUser}>
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
                             @{user.nickname}
                         </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                     <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
                     <Text style={{ ...styles.text, fontSize: 13 }}>
                         {user.university.shortname}
@@ -215,12 +216,9 @@ export const Idea = ({ idea, filter }: Props) => {
                     ) : (
                         <>
                             {isDraft ? (
-                                <TouchableOpacity
-                                    style={stylescom.eraseDraft}
-                                    onPress={handleDelete}
-                                >
+                                <Pressable style={stylescom.eraseDraft} onPress={handleDelete}>
                                     <FontAwesomeIcon icon={faTrash} color="#bebebe" size={16} />
-                                </TouchableOpacity>
+                                </Pressable>
                             ) : (
                                 <View style={stylescom.container}>
                                     <View style={stylescom.reaction}>
@@ -253,10 +251,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                         </Text>
                                     </View>
 
-                                    <TouchableOpacity
-                                        style={stylescom.reaction}
-                                        onPress={handleOpenIdea}
-                                    >
+                                    <Pressable style={stylescom.reaction} onPress={handleOpenIdea}>
                                         <FontAwesomeIcon
                                             icon={faMessage}
                                             color={'#bebebe'}
@@ -265,14 +260,14 @@ export const Idea = ({ idea, filter }: Props) => {
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {answersNumber === 0 ? '' : answersNumber}
                                         </Text>
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </View>
                             )}
 
                             <View style={stylescom.container}>
                                 {isDraft ? (
                                     <>
-                                        <TouchableOpacity
+                                        <Pressable
                                             style={stylescom.publishDraft}
                                             onPress={() =>
                                                 navigation.navigate('CreateIdeaScreen', {
@@ -286,7 +281,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                                     {'editar / publicar'}
                                                 </Text>
                                             </View>
-                                        </TouchableOpacity>
+                                        </Pressable>
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {fecha}
                                         </Text>
@@ -296,7 +291,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {fecha}
                                         </Text>
-                                        <TouchableOpacity
+                                        <Pressable
                                             onPress={event => {
                                                 setPosition({
                                                     top: event.nativeEvent.pageY,
@@ -307,7 +302,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                             <Text style={{ ...styles.textbold, ...stylescom.dots }}>
                                                 ...
                                             </Text>
-                                        </TouchableOpacity>
+                                        </Pressable>
                                     </>
                                 )}
 
