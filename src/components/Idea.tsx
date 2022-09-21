@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     Animated,
@@ -31,6 +31,7 @@ import { setMessages } from '../store/feature/messages/messagesSlice';
 import { MessageRequestData } from '../services/models/spikyService';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
+import SocketContext from '../context/Socket/Context';
 
 interface Props {
     idea: Message;
@@ -48,6 +49,8 @@ export const Idea = ({ idea, filter }: Props) => {
     const navigation = useNavigation<any>();
     const [ideaOptions, setIdeaOptions] = useState(false);
     const { opacity, fadeIn } = useAnimation();
+    const { SocketState } = useContext(SocketContext);
+    const socket = SocketState.socket;
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
@@ -74,6 +77,12 @@ export const Idea = ({ idea, filter }: Props) => {
 
         const messagesUpdated = messages.map(msg => {
             if (msg.id === id) {
+                socket?.emit('notify', {
+                    id_usuario1: msg.user.id,
+                    id_usuario2: uid,
+                    id_mensaje: msg.id,
+                    tipo: 1,
+                });
                 return {
                     ...msg,
                     [reactionTypes[reactionTypeAux]]: msg[reactionTypes[reactionTypeAux]] + 1,
