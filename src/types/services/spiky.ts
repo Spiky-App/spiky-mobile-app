@@ -44,7 +44,7 @@ export interface Message {
     num_respuestas?: number;
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
-    usuario?: User;
+    usuario: User;
     respuestas?: Comment[];
 }
 
