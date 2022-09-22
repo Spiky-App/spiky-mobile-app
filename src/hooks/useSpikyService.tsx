@@ -6,9 +6,13 @@ import { addToast } from '../store/feature/toast/toastSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Comment, Message } from '../types/store';
-import { faFlag, faThumbtack } from '../constants/icons/FontAwesome';
+import { ChatMessage, Comment, Conversation, Message } from '../types/store';
+import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import {
+    generateChatMsgFromChatMensaje,
+    generateConversationFromConversacion,
+} from '../helpers/conversations';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -128,7 +132,106 @@ function useSpikyService() {
         dispatch(setMessages(messagesUpdated));
     };
 
-    return { createMessageComment, createReportIdea, createTracking, deleteTracking };
+    const createChatMsgWithReply = async (
+        userId: number = 0,
+        messageId: number,
+        chatMessage: string
+    ) => {
+        try {
+            const response = await service.createChatMsgWithReply(userId, messageId, chatMessage);
+            const { data } = response;
+            const { content } = data;
+            const { userto, conver, newConver } = content;
+            const converRetrived = generateConversationFromConversacion(conver, user.id);
+            navigation.goBack();
+            dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
+            return { userto, newConver, conver: converRetrived };
+        } catch (error) {
+            console.log(error);
+            navigation.goBack();
+            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
+        }
+    };
+
+    const getConversations = async () => {
+        try {
+            const response = await service.getConversations();
+            const { data } = response;
+            const { convers } = data;
+            const conversationsRetrived: Conversation[] = convers.map(conver => {
+                return generateConversationFromConversacion(conver, user.id);
+            });
+            return conversationsRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
+            return [];
+        }
+    };
+
+    const getChatMessages = async (conversationId: number, lastChatMessageId?: number) => {
+        try {
+            const response = await service.getChatMessages(conversationId, lastChatMessageId);
+            const { data } = response;
+            const { chatmensajes } = data;
+            const chatMessagesRetrived: ChatMessage[] = chatmensajes.map(chatmsg => {
+                return generateChatMsgFromChatMensaje(chatmsg, user.id);
+            });
+            return chatMessagesRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({ message: 'Error al cargar los mensajes', type: StatusType.WARNING })
+            );
+            return [];
+        }
+    };
+
+    const createChatMessage = async (conversationId: number, chatMessage: string) => {
+        try {
+            const response = await service.createChatMessage(conversationId, chatMessage);
+            const { data } = response;
+            const { chatmensaje } = data;
+            const chatMessageRetrived: ChatMessage = generateChatMsgFromChatMensaje(
+                chatmensaje,
+                user.id
+            );
+
+            return chatMessageRetrived;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
+        }
+    };
+
+    const createChatMessageSeen = async (chatMessageId: number) => {
+        try {
+            const response = await service.createChatMessageSeen(chatMessageId);
+            const { data } = response;
+            const { content } = data;
+            const { chatmsg_seen, userto } = content;
+            return {
+                conversationId: chatmsg_seen.id_conversacion,
+                chatMessageId,
+                toUser: userto,
+            };
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
+        }
+    };
+
+    return {
+        createMessageComment,
+        createReportIdea,
+        createTracking,
+        deleteTracking,
+        createChatMsgWithReply,
+        getConversations,
+        getChatMessages,
+        createChatMessage,
+        createChatMessageSeen,
+    };
 }
 
 export default useSpikyService;

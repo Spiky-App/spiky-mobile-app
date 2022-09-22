@@ -20,6 +20,11 @@ import {
     GetUserInfo,
     UpdatePassword,
     CreateMessageCommentResponse,
+    CreateChatMsgWithReply,
+    GetConversations,
+    GetChatMessages,
+    CreateChatMessage,
+    CreateChatMessageSeen,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 
@@ -158,6 +163,39 @@ class SpikyService {
             id_usuario: uid,
             id_mensaje: messageId,
             motivo_reporte: reportReason,
+        });
+    }
+
+    createChatMsgWithReply(userId: number, messageId: number, chatMessage: string) {
+        return this.instance.post<CreateChatMsgWithReply>(`conver`, {
+            id_usuario: userId,
+            chatmensaje: chatMessage,
+            id_mensaje: messageId,
+        });
+    }
+
+    getConversations() {
+        return this.instance.get<GetConversations>(`conver`);
+    }
+
+    getChatMessages(conversationId: number, lastChatMessageId?: number) {
+        const params = {
+            conver: conversationId,
+            id_ultimoChatmensaje: lastChatMessageId,
+        };
+        return this.instance.get<GetChatMessages>(`conver/chatmsg`, { params });
+    }
+
+    createChatMessage(conversationId: number, chatMessage: string) {
+        return this.instance.post<CreateChatMessage>(`conver/chatmsg`, {
+            id_conversacion: conversationId,
+            chatmensaje: chatMessage,
+        });
+    }
+
+    createChatMessageSeen(chatMessageId: number) {
+        return this.instance.post<CreateChatMessageSeen>(`conver/seen`, {
+            id_chatmensaje: chatMessageId,
         });
     }
 }

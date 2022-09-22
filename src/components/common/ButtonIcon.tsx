@@ -15,10 +15,14 @@ interface Props extends TouchableOpacityProps {
     iconStyle?: StyleProp<ViewStyle>;
 }
 
-function ButtonIcon({ disabled, icon, onPress, iconStyle }: Props) {
+function ButtonIcon({ disabled, icon, onPress, iconStyle, style }: Props) {
     return (
         <TouchableOpacity
-            style={[styles.circleButton, { backgroundColor: disabled ? '#d4d4d4d3' : '#01192E' }]}
+            style={[
+                styles.circleButton,
+                { backgroundColor: disabled ? '#d4d4d4d3' : '#01192E' },
+                style,
+            ]}
             onPress={onPress}
             disabled={disabled}
         >

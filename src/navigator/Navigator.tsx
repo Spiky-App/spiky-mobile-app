@@ -13,11 +13,13 @@ import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { University } from '../types/store';
+import { University, User } from '../types/store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
+import { ChatScreen } from '../screens/ChatScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -32,6 +34,15 @@ export type RootStackParamList = {
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
     ReportIdeaScreen: { messageId: number };
+    ReplyIdeaScreen: {
+        message: {
+            messageId: number;
+            message: string;
+            user: User;
+            date: number;
+        };
+    };
+    ChatScreen: { conversationId: number; toUser: User };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -68,7 +79,6 @@ export const Navigator = () => {
     // because i think it is saved in axios, in SecureStorage
     // and in store's auth.token
     useEffect(() => {
-        // console.log(config?.headers?.['x-token']);
         if (config?.headers?.['x-token'] && !universities) {
             setSessionInfo();
         }
@@ -98,6 +108,8 @@ export const Navigator = () => {
                     <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
                     <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
                     <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
+                    <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
+                    <Stack.Screen name="ChatScreen" component={ChatScreen} />
                     <Stack.Screen
                         name="TermAndConditionsScreen"
                         component={TermAndConditionsScreen}
