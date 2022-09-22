@@ -6,13 +6,12 @@ import {
     DrawerContentScrollView,
     useDrawerStatus,
 } from '@react-navigation/drawer';
-import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
 import { TrackingScreen } from '../screens/TrackingScreen';
 import { SearchScreen } from '../screens/SearchScreen';
-import { ConnectionScreen } from '../screens/ConnectionScreen';
 import { Header } from '../components/Header';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { ModalNotification } from '../components/ModalNotification';
@@ -26,6 +25,7 @@ import { styles } from '../themes/appTheme';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { menuInfo } from '../constants/navigator';
+import { ConnectionsScreen } from '../screens/ConnectionsScreen';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
@@ -39,16 +39,16 @@ export type DrawerParamList = {
     ConfigurationScreen: undefined;
     ChangePasswordScreen: undefined;
     HashTagScreen: { hashtag: string };
+    ConnectionsScreen: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 export const MenuMain = () => {
-    const { width } = useWindowDimensions();
     return (
         <Drawer.Navigator
             screenOptions={{
-                drawerType: width >= 768 ? 'permanent' : 'front', // Menú modo horizontal
+                drawerType: 'front', // Menú modo horizontal
                 headerShown: true,
                 header: () => {
                     return <Header />;
@@ -63,7 +63,7 @@ export const MenuMain = () => {
             <Drawer.Screen name="MyIdeasScreen" component={MyIdeasScreen} />
             <Drawer.Screen name="TrackingScreen" component={TrackingScreen} />
             <Drawer.Screen name="SearchScreen" component={SearchScreen} />
-            <Drawer.Screen name="ConnectionScreen" component={ConnectionScreen} />
+            <Drawer.Screen name="ConnectionsScreen" component={ConnectionsScreen} />
             <Drawer.Screen
                 name="ProfileScreen"
                 component={ProfileScreen}

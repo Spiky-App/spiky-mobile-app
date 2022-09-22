@@ -44,7 +44,7 @@ export interface Message {
     num_respuestas?: number;
     reacciones?: [{ tipo: number }];
     trackings?: [{ id_tracking: number }];
-    usuario?: User;
+    usuario: User;
     respuestas?: Comment[];
 }
 
@@ -53,6 +53,7 @@ interface User {
     id_universidad?: number;
     universidad: University;
     id_usuario?: number;
+    online?: boolean;
 }
 
 export interface CreateMessageResponse {
@@ -179,4 +180,82 @@ interface MessageComment {
 export interface CreateReportIdea {
     ok: boolean;
     msg: string;
+}
+
+export interface CreateChatMsgWithReply {
+    ok: boolean;
+    content: {
+        userto: number;
+        conver: Conversation;
+        newConver: boolean;
+    };
+}
+
+export interface GetConversations {
+    ok: boolean;
+    convers: Conversation[];
+}
+
+export interface Conversation {
+    id_conversacion: number;
+    'usuario1.id_usuario': number;
+    'usuario1.alias': string;
+    'usuario1.online': boolean;
+    'usuario1.universidad.id_universidad': number;
+    'usuario1.universidad.alias': string;
+    'usuario2.id_usuario': number;
+    'usuario2.alias': string;
+    'usuario2.online': boolean;
+    'usuario2.universidad.id_universidad': number;
+    'usuario2.universidad.alias': string;
+    'chatmensajes.id_chatmensaje': number;
+    'chatmensajes.id_usuario': number;
+    'chatmensajes.chatmensaje': string;
+    'chatmensajes.fecha': string;
+    'chatmensajes.mensaje'?: ReplyMessage;
+    'chatmensajes.seens.id_usuario': number;
+    'chatmensajes.seens.fecha': string;
+}
+
+export interface GetChatMessages {
+    ok: boolean;
+    chatmensajes: ChatMessage[];
+}
+
+export interface ChatMessage {
+    id_chatmensaje: number;
+    id_conversacion: number;
+    id_usuario: number;
+    chatmensaje: string;
+    fecha: string;
+    id_mensaje?: number | null;
+    mensaje?: ReplyMessage;
+    seens?: Seen[];
+}
+
+export interface Seen {
+    id_usuario: number;
+    fecha: string;
+    id_conversacion?: number;
+    id_chatmensaje?: number;
+}
+
+interface ReplyMessage {
+    id_mensaje: number;
+    mensaje: string;
+    usuario: User;
+}
+
+export interface CreateChatMessage {
+    ok: boolean;
+    chatmensaje: ChatMessage;
+    userto: number;
+}
+
+export interface CreateChatMessageSeen {
+    ok: boolean;
+    content: {
+        chatmsg_seen: Seen;
+        userto: number;
+    };
 }

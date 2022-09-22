@@ -32,13 +32,15 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     });
 
     useEffect(() => {
-        socket.io.opts.query = {
-            'x-token': token,
-        };
-        socket.connect();
-        SocketDispatch({ type: 'update_socket', payload: socket });
-        StartListeners();
-        SendHandshake();
+        if (token) {
+            socket.io.opts.query = {
+                'x-token': token,
+            };
+            socket.connect();
+            SocketDispatch({ type: 'update_socket', payload: socket });
+            StartListeners();
+            SendHandshake();
+        }
     }, [token]);
 
     const StartListeners = () => {
@@ -52,23 +54,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             console.log(reason);
         });
 
-        /** Get conversations */
-        socket?.on('get-convers', convers => {
-            console.log(convers);
-        });
-
-        /** Get active chat messages */
-        socket?.on('activechat', resp => {
-            console.log(resp);
-        });
-        /** Starting up anew conversation */
-        socket?.on('add-conver', resp => {
-            console.log(resp);
-        });
-        /** Send a new message in conversation */
-        socket?.on('chatmsg', resp => {
-            console.log(resp);
-        });
         socket?.on('notify', resp => {
             console.log(resp);
             dispatch(

@@ -325,8 +325,13 @@ export const Idea = ({ idea, filter }: Props) => {
                                     ideaOptions={ideaOptions}
                                     position={position}
                                     myIdea={isOwner}
-                                    messageId={id}
-                                    messageTrackingId={messageTrackingId}
+                                    message={{
+                                        messageId: id,
+                                        message,
+                                        user,
+                                        messageTrackingId,
+                                        date,
+                                    }}
                                     filter={filter}
                                 />
                             </View>

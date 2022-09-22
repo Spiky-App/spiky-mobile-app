@@ -12,9 +12,10 @@ import { useDispatch } from 'react-redux';
 interface Props {
     title: string;
     myideas?: boolean;
+    connections?: boolean;
 }
 
-export const IdeasHeader = ({ title, myideas = false }: Props) => {
+export const IdeasHeader = ({ title, myideas, connections }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
     const { opacity, fadeIn } = useAnimation();
@@ -37,51 +38,52 @@ export const IdeasHeader = ({ title, myideas = false }: Props) => {
                 <Text style={styles.orange}>.</Text>
             </Text>
 
-            {!myideas ? (
-                <TouchableHighlight
-                    style={stylecom.filterContainer}
-                    underlayColor="#01192E"
-                    onPress={() => setModalFilter(true)}
-                >
-                    <View style={stylecom.flexCenter}>
-                        <FontAwesomeIcon icon={faFilter} color="white" size={17} />
-                        <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
-                    </View>
-                </TouchableHighlight>
-            ) : (
-                <View
-                    style={{
-                        ...styles.center,
-                        flexDirection: 'row',
-                        backgroundColor: '#D4D4D4',
-                        borderRadius: 5,
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.buttonDraft,
-                            backgroundColor: activeDraft ? '#D4D4D4' : '#01192E',
-                        }}
-                        onPress={() => setActiveDraft(false)}
+            {!connections &&
+                (!myideas ? (
+                    <TouchableHighlight
+                        style={stylecom.filterContainer}
+                        underlayColor="#01192E"
+                        onPress={() => setModalFilter(true)}
                     >
-                        <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
-                            Publicadas.
-                        </Text>
-                    </TouchableOpacity>
+                        <View style={stylecom.flexCenter}>
+                            <FontAwesomeIcon icon={faFilter} color="white" size={17} />
+                            <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
+                        </View>
+                    </TouchableHighlight>
+                ) : (
+                    <View
+                        style={{
+                            ...styles.center,
+                            flexDirection: 'row',
+                            backgroundColor: '#D4D4D4',
+                            borderRadius: 5,
+                        }}
+                    >
+                        <TouchableOpacity
+                            style={{
+                                ...stylecom.buttonDraft,
+                                backgroundColor: activeDraft ? '#D4D4D4' : '#01192E',
+                            }}
+                            onPress={() => setActiveDraft(false)}
+                        >
+                            <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                Publicadas.
+                            </Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.buttonDraft,
-                            backgroundColor: activeDraft ? '#01192E' : '#D4D4D4',
-                        }}
-                        onPress={() => setActiveDraft(true)}
-                    >
-                        <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
-                            Borradores.
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+                        <TouchableOpacity
+                            style={{
+                                ...stylecom.buttonDraft,
+                                backgroundColor: activeDraft ? '#01192E' : '#D4D4D4',
+                            }}
+                            onPress={() => setActiveDraft(true)}
+                        >
+                            <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                Borradores.
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                ))}
 
             <ModalFilters setModalFilter={setModalFilter} modalFilter={modalFilter} />
         </Animated.View>

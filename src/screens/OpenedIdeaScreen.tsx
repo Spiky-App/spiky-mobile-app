@@ -15,6 +15,7 @@ import {
 import { Comment } from '../components/Comment';
 import {
     faCheck,
+    faChevronLeft,
     faLightbulb,
     faMessage,
     faMinus,
@@ -38,6 +39,7 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
+import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -81,6 +83,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const [ideaOptions, setIdeaOptions] = useState(false);
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
+    const navigation = useNavigation<any>();
     const [position, setPosition] = useState({
         top: 0,
         left: 0,
@@ -184,6 +187,16 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                 )}
 
                                 <View style={stylescom.flex}>
+                                    <TouchableOpacity
+                                        style={stylescom.backArrow}
+                                        onPress={() => navigation.goBack()}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faChevronLeft}
+                                            color={'#01192E'}
+                                            size={15}
+                                        />
+                                    </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {}}>
                                         <Text style={{ ...styles.user, fontSize: 14 }}>
                                             @{message.user.nickname}
@@ -334,8 +347,13 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                                     ideaOptions={ideaOptions}
                                                     position={position}
                                                     myIdea={isOwner}
-                                                    messageId={message.id}
-                                                    messageTrackingId={messageTrackingId}
+                                                    message={{
+                                                        messageId,
+                                                        message: message.message,
+                                                        user: message.user,
+                                                        messageTrackingId,
+                                                        date: message.date,
+                                                    }}
                                                     setMessageTrackingId={setMessageTrackingId}
                                                     filter={filter}
                                                 />
@@ -374,7 +392,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                         />
                                     </View>
                                 ) : (
-                                    <View style={stylescom.center}>
+                                    <View style={{ ...stylescom.commentWrap, ...styles.center }}>
                                         <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
                                             Se el primero en contribuir a esta idea.
                                         </Text>
@@ -389,7 +407,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                 />
                             </>
                         ) : (
-                            <View style={stylescom.center}>
+                            <View style={{ ...stylescom.commentWrap, ...styles.center }}>
                                 <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
                                     Toma una postura antes de participar
                                 </Text>
@@ -493,7 +511,7 @@ const stylescom = StyleSheet.create({
     commentWrap: {
         flex: 1,
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 15,
         width: '90%',
         borderRadius: 8,
         backgroundColor: 'white',
@@ -507,5 +525,12 @@ const stylescom = StyleSheet.create({
         elevation: 6,
         paddingHorizontal: 25,
         // paddingVertical: 8,
+    },
+    backArrow: {
+        ...styles.center,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: -16,
     },
 });

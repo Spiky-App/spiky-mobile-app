@@ -5,6 +5,7 @@ import serviceConfigSlice from './feature/serviceConfig/serviceConfigSlice';
 import toastSlice from './feature/toast/toastSlice';
 import uiSlice from './feature/ui/uiSlice';
 import userSlice from './feature/user/userSlice';
+import chatsSlice from './feature/chats/chatsSlice';
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         ui: uiSlice,
         messages: messagesSlice,
         toast: toastSlice,
+        chats: chatsSlice,
     },
 });
 
