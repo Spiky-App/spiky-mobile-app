@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -20,7 +20,7 @@ import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
 import { ChatMessage as ChatMessageProp, User } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
@@ -45,7 +45,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { getChatMessages, createChatMessageSeen } = useSpikyService();
     const navigation = useNavigation<any>();
     const { SocketState } = useContext(SocketContext);
-    const conversationId = route.params?.conversationId;
+    const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
 
     async function loadChatMessages(loadMore?: boolean) {
@@ -71,9 +71,17 @@ export const ChatScreen = ({ route }: Props) => {
     }
 
     function handleGoBack() {
-        navigation.setParams({ conversationId: 0 });
-        navigation.goBack();
+        navigation.pop();
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            setConversationId(route.params?.conversationId);
+            return () => {
+                setConversationId(0);
+            };
+        }, [route.params?.conversationId])
+    );
 
     useEffect(() => {
         SocketState.socket?.on('userOnline', resp => {
@@ -86,6 +94,7 @@ export const ChatScreen = ({ route }: Props) => {
         });
         SocketState.socket?.on('newChatMsg', resp => {
             const { chatmsg, converId } = resp;
+            console.log(converId, conversationId);
             if (converId === conversationId) {
                 updateChatMessages(chatmsg);
             }
