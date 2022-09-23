@@ -31,7 +31,7 @@ export const CheckEmailScreen = () => {
         <BackgroundPaper>
             <ArrowBack />
 
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <BigTitle texts={['Sé parte', 'del cambio']} />
 
