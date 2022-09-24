@@ -31,7 +31,7 @@ export const RegisterScreen = () => {
         <BackgroundPaper>
             <ArrowBack />
 
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <BigTitle texts={['Escribe eso', 'que no saben']} />
 

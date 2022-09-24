@@ -32,12 +32,16 @@ export const userSlice = createSlice({
             state.id = initialState.id;
         },
         updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {
-            state.notificationsNumber = action.payload;
+            state.notificationsNumber += action.payload;
+        },
+        clearNotificationsNumber: (state: UserState) => {
+            state.notificationsNumber = 0;
         },
     },
 });
 
-export const { setUser, removeUser, updateNotificationsNumber } = userSlice.actions;
+export const { setUser, removeUser, updateNotificationsNumber, clearNotificationsNumber } =
+    userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
 

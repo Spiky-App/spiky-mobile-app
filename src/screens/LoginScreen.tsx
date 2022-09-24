@@ -83,7 +83,7 @@ export const LoginScreen = () => {
     return (
         <BackgroundPaper>
             <ArrowBack />
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
