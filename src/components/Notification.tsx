@@ -25,7 +25,6 @@ const msg_notif = [
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
-    const notificationNumber = useAppSelector((state: RootState) => state.user.notificationsNumber);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const service = new SpikyService(config);
     const dispatch = useAppDispatch();
@@ -38,7 +37,7 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
     const handleOpenIdea = () => {
         if (!notification.seen) {
             service.updateNotifications([notification.id]);
-            dispatch(updateNotificationsNumber(notificationNumber - 1));
+            dispatch(updateNotificationsNumber(-1));
         }
         navigation.navigate('OpenedIdeaScreen', {
             messageId: notification.messageId,
