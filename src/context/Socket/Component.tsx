@@ -3,7 +3,10 @@ import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
 import { addToast } from '../../store/feature/toast/toastSlice';
-import { increaseNewChatMessagesNumber } from '../../store/feature/user/userSlice';
+import {
+    increaseNewChatMessagesNumber,
+    updateNotificationsNumber,
+} from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
 import { ChatMessage, Conversation } from '../../types/store';
@@ -68,7 +71,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
 
         socket?.on('notify', resp => {
-            console.log(resp);
+            dispatch(updateNotificationsNumber(1));
             dispatch(
                 addToast({
                     message: resp.alias + ' ' + mensajes[resp.tipo],

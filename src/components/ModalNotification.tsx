@@ -11,7 +11,7 @@ import {
 import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
-import { updateNotificationsNumber } from '../store/feature/user/userSlice';
+import { clearNotificationsNumber } from '../store/feature/user/userSlice';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
@@ -53,7 +53,7 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
         });
         service.updateNotifications(array_nofi);
         setNotifications(new_notis);
-        dispatch(updateNotificationsNumber(0));
+        dispatch(clearNotificationsNumber());
     };
 
     useEffect(() => {

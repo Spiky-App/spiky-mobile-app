@@ -35,7 +35,10 @@ export const userSlice = createSlice({
             state.id = initialState.id;
         },
         updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {
-            state.notificationsNumber = action.payload;
+            state.notificationsNumber += action.payload;
+        },
+        clearNotificationsNumber: (state: UserState) => {
+            state.notificationsNumber = 0;
         },
         increaseNotificationsNumber: (state: UserState) => {
             state.notificationsNumber = state.notificationsNumber + 1;
@@ -53,6 +56,7 @@ export const {
     setUser,
     removeUser,
     updateNotificationsNumber,
+    clearNotificationsNumber,
     increaseNotificationsNumber,
     updateNewChatMessagesNumber,
     increaseNewChatMessagesNumber,

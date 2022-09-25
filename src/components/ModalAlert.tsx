@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useRef, useEffect } from 'react';
-import { Modal, StyleSheet, View, Text } from 'react-native';
+import { Modal, StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 import { RootState } from '../store';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -14,25 +14,31 @@ export const ModalAlert = () => {
 
     useEffect(() => {
         if (isOpen) {
-            timeoutRef.current = setTimeout(() => dispatch(setModalAlert({ isOpen: false })), 1800);
+            timeoutRef.current = setTimeout(() => dispatch(setModalAlert({ isOpen: false })), 5800);
         }
-    }, [isOpen]);
+    }, []);
 
     return (
-        <Modal animationType="fade" visible={isOpen} transparent={true}>
-            <View style={stylescom.back}>
-                <View
-                    style={{
-                        ...stylescom.container,
-                        ...styles.center,
-                        paddingHorizontal: 20,
-                        paddingVertical: 5,
-                    }}
-                >
-                    <FontAwesomeIcon icon={icon || faCircleExclamation} color={color} size={60} />
-                    <Text style={stylescom.text}>{text}</Text>
+        <Modal transparent={true} visible={isOpen} animationType="fade">
+            <TouchableWithoutFeedback onPressOut={() => dispatch(setModalAlert({ isOpen: false }))}>
+                <View style={stylescom.back}>
+                    <View
+                        style={{
+                            ...stylescom.container,
+                            ...styles.center,
+                            paddingHorizontal: 20,
+                            paddingVertical: 5,
+                        }}
+                    >
+                        <FontAwesomeIcon
+                            icon={icon || faCircleExclamation}
+                            color={color}
+                            size={60}
+                        />
+                        <Text style={stylescom.text}>{text}</Text>
+                    </View>
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </Modal>
     );
 };
