@@ -29,7 +29,7 @@ const Container = () => {
             try {
                 const response = await spikyService.getAuthRenew(tokenStorage);
                 const { data } = response;
-                const { token, alias, n_notificaciones, universidad, uid } = data;
+                const { token, alias, n_notificaciones, universidad, uid, n_chatmensajes } = data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token);
                 dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
                 dispatch(signIn(token));
@@ -37,6 +37,7 @@ const Container = () => {
                     setUser({
                         nickname: alias,
                         notificationsNumber: n_notificaciones,
+                        newChatMessagesNumber: n_chatmensajes,
                         university: universidad,
                         id: uid,
                     })

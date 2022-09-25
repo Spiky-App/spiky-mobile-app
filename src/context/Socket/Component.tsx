@@ -1,11 +1,13 @@
-import React, { PropsWithChildren, useEffect, useReducer } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
 import { addToast } from '../../store/feature/toast/toastSlice';
+import { increaseNewChatMessagesNumber } from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
-import { SocketReducer, defaultSocketContextState, SocketContextProvider } from './Context';
+import { ChatMessage, Conversation } from '../../types/store';
+import { SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
 const mensajes = [
@@ -20,8 +22,9 @@ const mensajes = [
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
     const { children } = props;
     const dispatch = useAppDispatch();
-    const [SocketState, SocketDispatch] = useReducer(SocketReducer, defaultSocketContextState);
     const token = useAppSelector((state: RootState) => state.auth.token);
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { activeConversationId } = useAppSelector((state: RootState) => state.chats);
     const socket = useSocket(socketBaseUrl, {
         transports: ['websocket'],
         autoConnect: true,
@@ -32,18 +35,28 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     });
 
     useEffect(() => {
-        if (token) {
+        if (uid) {
             socket.io.opts.query = {
                 'x-token': token,
             };
             socket.connect();
-            SocketDispatch({ type: 'update_socket', payload: socket });
-            StartListeners();
-            SendHandshake();
         }
-    }, [token]);
+    }, [uid]);
 
-    const StartListeners = () => {
+    useEffect(() => {
+        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
+            const { conver } = resp;
+            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
+        });
+
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId)
+                dispatch(increaseNewChatMessagesNumber());
+        });
+    }, [socket, activeConversationId]);
+
+    useEffect(() => {
         /** Socket connected */
         socket?.on('connect', () => {
             console.log('connected');
@@ -88,7 +101,9 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 })
             );
         });
-    };
+        SendHandshake();
+    }, [socket]);
+
     const SendHandshake = async () => {
         console.info('Sending handshake to server ...');
 
@@ -97,10 +112,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
     };
 
-    return (
-        <SocketContextProvider value={{ SocketState, SocketDispatch }}>
-            {children}
-        </SocketContextProvider>
-    );
+    return <SocketContextProvider value={{ socket }}>{children}</SocketContextProvider>;
 };
 export default SocketContextComponent;

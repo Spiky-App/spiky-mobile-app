@@ -4,6 +4,7 @@ import { RootState } from '../..';
 interface UserState {
     nickname: string;
     notificationsNumber: number;
+    newChatMessagesNumber: number;
     university: string;
     id: number;
 }
@@ -11,6 +12,7 @@ interface UserState {
 const initialState: UserState = {
     nickname: '',
     notificationsNumber: 0,
+    newChatMessagesNumber: 0,
     university: '',
     id: 0,
 };
@@ -22,6 +24,7 @@ export const userSlice = createSlice({
         setUser: (state: UserState, action: PayloadAction<UserState>) => {
             state.nickname = action.payload.nickname;
             state.notificationsNumber = action.payload.notificationsNumber;
+            state.newChatMessagesNumber = action.payload.newChatMessagesNumber;
             state.university = action.payload.university;
             state.id = action.payload.id;
         },
@@ -34,10 +37,26 @@ export const userSlice = createSlice({
         updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {
             state.notificationsNumber = action.payload;
         },
+        increaseNotificationsNumber: (state: UserState) => {
+            state.notificationsNumber = state.notificationsNumber + 1;
+        },
+        updateNewChatMessagesNumber: (state: UserState, action: PayloadAction<number>) => {
+            state.newChatMessagesNumber = action.payload;
+        },
+        increaseNewChatMessagesNumber: (state: UserState) => {
+            state.newChatMessagesNumber = state.newChatMessagesNumber + 1;
+        },
     },
 });
 
-export const { setUser, removeUser, updateNotificationsNumber } = userSlice.actions;
+export const {
+    setUser,
+    removeUser,
+    updateNotificationsNumber,
+    increaseNotificationsNumber,
+    updateNewChatMessagesNumber,
+    increaseNewChatMessagesNumber,
+} = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
 

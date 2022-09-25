@@ -4,6 +4,7 @@ export interface LoginResponse {
     alias: string;
     universidad: string;
     n_notificaciones: number;
+    n_chatmensajes: number;
     token: string;
 }
 
@@ -220,6 +221,7 @@ export interface Conversation {
 export interface GetChatMessages {
     ok: boolean;
     chatmensajes: ChatMessage[];
+    n_chatmensajes_unseens: number;
 }
 
 export interface ChatMessage {

@@ -50,8 +50,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const navigation = useNavigation<any>();
     const [ideaOptions, setIdeaOptions] = useState(false);
     const { opacity, fadeIn } = useAnimation();
-    const { SocketState } = useContext(SocketContext);
-    const socket = SocketState.socket;
+    const { socket } = useContext(SocketContext);
     const [position, setPosition] = useState({
         top: 0,
         left: 0,

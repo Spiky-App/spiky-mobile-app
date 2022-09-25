@@ -39,14 +39,13 @@ export const InputChat = ({
     const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMessage } = useSpikyService();
-    const { SocketState } = useContext(SocketContext);
+    const { socket } = useContext(SocketContext);
     const { message } = form;
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        SocketState.socket?.emit('newChatMsg', {
+        socket?.emit('newChatMsg', {
             chatmsg: newChatMessages,
-            converId: conversationId,
             userto: toUser.id,
         });
         if (newChatMessages) {
