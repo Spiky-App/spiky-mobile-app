@@ -15,9 +15,7 @@ function generateCommentFromComentario(comentario: Comentario): Comment {
         user: {
             id: comentario.id_usuario,
             nickname: comentario.usuario.alias,
-            university: {
-                shortname: comentario.usuario.universidad.alias,
-            },
+            universityId: comentario.usuario.id_universidad,
         },
         reactionCommentType,
     };

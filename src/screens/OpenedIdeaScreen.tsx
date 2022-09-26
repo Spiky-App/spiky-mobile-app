@@ -40,6 +40,7 @@ import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
+import UniversityTag from '../components/common/UniversityTag';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -56,9 +57,7 @@ const initialMessage = {
     user: {
         id: 0,
         nickname: '',
-        university: {
-            shortname: '',
-        },
+        universityId: 0,
     },
     answersNumber: 0,
     draft: 0,
@@ -202,10 +201,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                             @{message.user.nickname}
                                         </Text>
                                     </TouchableOpacity>
-                                    <Text style={{ ...styles.text, fontSize: 14 }}> de </Text>
-                                    <Text style={{ ...styles.text, fontSize: 14 }}>
-                                        {message.user.university.shortname}
-                                    </Text>
+                                    <UniversityTag id={message.user.universityId} fontSize={14} />
                                 </View>
 
                                 <View style={{ marginVertical: 8 }}>

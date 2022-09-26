@@ -2,7 +2,7 @@ export interface LoginResponse {
     ok: boolean;
     uid: number;
     alias: string;
-    universidad: string;
+    id_universidad: number;
     n_notificaciones: number;
     token: string;
 }
@@ -13,8 +13,10 @@ export interface UniversityResponse {
 }
 
 interface University {
-    id_universidad?: number;
+    id_universidad: number;
     alias: string;
+    color: string;
+    background_color: string;
 }
 
 export interface MessageRequestParams {
@@ -50,8 +52,7 @@ export interface Message {
 
 interface User {
     alias: string;
-    id_universidad?: number;
-    universidad: University;
+    id_universidad: number;
     id_usuario?: number;
     online?: boolean;
 }
@@ -201,13 +202,11 @@ export interface Conversation {
     'usuario1.id_usuario': number;
     'usuario1.alias': string;
     'usuario1.online': boolean;
-    'usuario1.universidad.id_universidad': number;
-    'usuario1.universidad.alias': string;
+    'usuario1.id_universidad': number;
     'usuario2.id_usuario': number;
     'usuario2.alias': string;
     'usuario2.online': boolean;
-    'usuario2.universidad.id_universidad': number;
-    'usuario2.universidad.alias': string;
+    'usuario2.id_universidad': number;
     'chatmensajes.id_chatmensaje': number;
     'chatmensajes.id_usuario': number;
     'chatmensajes.chatmensaje': string;

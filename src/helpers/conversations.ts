@@ -35,17 +35,13 @@ function generateConversationFromConversacion(
         user_1: {
             id: conversacion['usuario1.id_usuario'],
             nickname: conversacion['usuario1.alias'],
-            university: {
-                shortname: conversacion['usuario1.universidad.alias'],
-            },
+            universityId: conversacion['usuario1.id_universidad'],
             online: conversacion['usuario1.online'],
         },
         user_2: {
             id: conversacion['usuario2.id_usuario'],
             nickname: conversacion['usuario2.alias'],
-            university: {
-                shortname: conversacion['usuario2.universidad.alias'],
-            },
+            universityId: conversacion['usuario2.id_universidad'],
             online: conversacion['usuario2.online'],
         },
         chatmessage: chatsMsgRetrived,
@@ -74,9 +70,7 @@ function generateChatMsgFromChatMensaje(chatmensaje: ChatMensaje, uid: number): 
                   user: {
                       id: chatmensaje.mensaje.usuario.id_usuario,
                       nickname: chatmensaje.mensaje.usuario.alias,
-                      university: {
-                          shortname: chatmensaje.mensaje.usuario.universidad.alias,
-                      },
+                      universityId: chatmensaje.mensaje.usuario.id_universidad,
                   },
               }
             : undefined,
