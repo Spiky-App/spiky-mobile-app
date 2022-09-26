@@ -28,18 +28,17 @@ import { styles } from '../themes/appTheme';
 import { FormComment, InputComment } from '../components/InputComment';
 import { ModalIdeaOptions } from '../components/ModalIdeaOptions';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
 import { Comment as CommentState, Message, ReactionType } from '../types/store';
 import MsgTransform from '../components/MsgTransform';
-import { generateMessageFromMensaje } from '../helpers/message';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
+import useSpikyService from '../hooks/useSpikyService';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -70,8 +69,6 @@ type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 export const OpenedIdeaScreen = ({ route }: Props) => {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const uid = useAppSelector((state: RootState) => state.user.id);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
     const dispatch = useAppDispatch();
     const messageId = route.params?.messageId;
     const filter = route.params?.filter;
@@ -91,9 +88,10 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const [comments, setComments] = useState<CommentState[]>();
     const date = getTime(message.date.toString());
     const isOwner = message.user.id === uid;
+    const { createReactionMsg, getIdeaWithComments } = useSpikyService();
 
     const handleReaction = (reactionTypeAux: number) => {
-        service.createReactionMsg(uid, message.id, reactionTypeAux);
+        createReactionMsg(uid, message.id, reactionTypeAux);
 
         const messagesUpdated = messages.map(msg => {
             if (msg.id === message?.id) {
@@ -110,17 +108,11 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     };
 
     const handleOpenIdea = async () => {
-        const response = await service.getMessageAndComments(messageId);
-        const { data } = response;
-        const { mensaje, num_respuestas } = data;
-        const messagesRetrived: Message = generateMessageFromMensaje({
-            ...mensaje,
-            num_respuestas: num_respuestas,
-        });
-        setMessage(messagesRetrived);
-        setComments(messagesRetrived.comments ?? []);
-        setMessageTrackingId(messagesRetrived.messageTrackingId);
-        setAnswersNumber(messagesRetrived.comments?.length || 0);
+        const messageRetrived = await getIdeaWithComments(messageId);
+        setMessage(messageRetrived);
+        setComments(messageRetrived.comments ?? []);
+        setMessageTrackingId(messageRetrived.messageTrackingId);
+        setAnswersNumber(messageRetrived.comments?.length || 0);
         setLoading(false);
     };
 

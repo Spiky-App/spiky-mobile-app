@@ -7,12 +7,12 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
 import { useForm } from '../hooks/useForm';
-import SpikyService from '../services/SpikyService';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
+import useSpikyService from '../hooks/useSpikyService';
 
 const initialSate = {
     currentPassword: '',
@@ -22,8 +22,7 @@ const initialSate = {
 
 export const ChangePasswordScreen = () => {
     const uid = useAppSelector((state: RootState) => state.user.id);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { updatePassword } = useSpikyService();
     const dispatch = useAppDispatch();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
@@ -38,7 +37,7 @@ export const ChangePasswordScreen = () => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
-                await service.updatePassword(uid, currentPassword, newPassword);
+                await updatePassword(uid, currentPassword, newPassword);
                 onChange(initialSate);
                 dispatch(
                     setModalAlert({

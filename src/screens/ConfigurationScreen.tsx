@@ -8,8 +8,8 @@ import { styles } from '../themes/appTheme';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import SpikyService from '../services/SpikyService';
 import { UsuariorData } from '../types/services/spiky';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface UserData {
     email: string;
@@ -31,8 +31,7 @@ function generateDataFromData(data: UsuariorData): UserData {
 
 export const ConfigurationScreen = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { loadUserInfo } = useSpikyService();
     const navigation = useNavigation<any>();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<UserData>({
@@ -44,9 +43,7 @@ export const ConfigurationScreen = () => {
     });
 
     const loadData = async () => {
-        const response = await service.getUserInfo();
-        const { data: fetchData } = response;
-        const { usuario } = fetchData;
+        const usuario = await loadUserInfo();
         setData(generateDataFromData(usuario));
         setLoading(false);
     };
