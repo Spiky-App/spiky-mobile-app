@@ -22,12 +22,10 @@ interface Props {
 }
 
 export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
-    const { updateNotifications } = useSpikyService();
+    const { updateNotifications, retrieveNotifications } = useSpikyService();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState<NotificationProps[]>([]);
-    const { retrieveNotifications } = useSpikyService();
-
     const getNotifications = async () => {
         const retrievedNotifications = retrieveNotifications();
         retrievedNotifications && setNotifications(await retrievedNotifications);
