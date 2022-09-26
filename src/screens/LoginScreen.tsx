@@ -108,6 +108,7 @@ export const LoginScreen = () => {
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
                             touchableOpacityProps={{ onPress: () => setPassVisible(!passVisible) }}
+                            onSubmitEditing={login}
                         />
                     </View>
                     <TouchableOpacity

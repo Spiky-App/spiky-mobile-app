@@ -106,6 +106,7 @@ export const InputChat = ({
                     multiline={true}
                     value={message}
                     onChangeText={text => onChange({ message: text })}
+                    onSubmitEditing={onPress}
                 />
             </View>
             <View style={{ paddingLeft: 6 }}>
