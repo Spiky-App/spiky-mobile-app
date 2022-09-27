@@ -75,7 +75,7 @@ export const ChangePasswordScreen = () => {
     }, [currentPassword, newPassword, confirmPassword]);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <View style={{ ...styles.center, marginTop: 30 }}>
                 <TouchableOpacity
                     style={{ ...styles.center, position: 'absolute', left: -40, top: 0, bottom: 0 }}

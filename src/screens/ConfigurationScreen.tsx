@@ -53,7 +53,7 @@ export const ConfigurationScreen = () => {
     });
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             {!loading ? (
                 <>
                     <Text style={{ ...styles.text, ...styles.h3, marginTop: 30 }}>

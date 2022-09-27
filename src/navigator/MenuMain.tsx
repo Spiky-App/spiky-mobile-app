@@ -6,7 +6,7 @@ import {
     DrawerContentScrollView,
     useDrawerStatus,
 } from '@react-navigation/drawer';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
@@ -45,6 +45,11 @@ export type DrawerParamList = {
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 export const MenuMain = () => {
+    const colorScheme = useColorScheme();
+    const [isDarkScheme, setIsDarkAppearance] = useState(false);
+    useEffect(() => {
+        setIsDarkAppearance(colorScheme === 'dark');
+    }, [colorScheme]);
     return (
         <Drawer.Navigator
             screenOptions={{
@@ -53,7 +58,10 @@ export const MenuMain = () => {
                 header: () => {
                     return <Header />;
                 },
-                drawerStyle: { backgroundColor: '#F8F8F8', width: '60%' },
+                drawerStyle: {
+                    backgroundColor: isDarkScheme ? '#b8b8b8' : '#F8F8F8',
+                    width: '60%',
+                },
                 overlayColor: '#6363635c',
             }}
             useLegacyImplementation={true}
@@ -105,7 +113,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     return (
         <DrawerContentScrollView
             contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
-            style={{ flexDirection: 'row' }}
+            style={{
+                flexDirection: 'row',
+            }}
         >
             <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>

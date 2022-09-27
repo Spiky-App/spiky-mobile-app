@@ -90,7 +90,7 @@ export const ConnectionsScreen = () => {
     }, []);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <IdeasHeader title={'Conexiones'} connections={true} />
             {conversations?.length !== 0 ? (
                 <FlatList

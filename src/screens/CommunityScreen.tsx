@@ -5,7 +5,7 @@ import MessagesFeed from '../components/MessagesFeed';
 
 export const CommunityScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed params={{}} filter={''} title={'Comunidad'} myideas={false} />
             <FloatButton />
         </BackgroundPaper>

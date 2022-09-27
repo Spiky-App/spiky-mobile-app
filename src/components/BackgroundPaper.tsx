@@ -1,13 +1,28 @@
-import React from 'react';
-import { ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ImageBackground, SafeAreaView, StyleSheet, useColorScheme, View } from 'react-native';
 
-export const BackgroundPaper = ({ children, style }: any) => {
+export const BackgroundPaper = ({ children, style, hasHeader = false }: any) => {
+    const colorScheme = useColorScheme();
+    const [isDarkScheme, setIsDarkAppearance] = useState(false);
+    useEffect(() => {
+        setIsDarkAppearance(colorScheme === 'dark');
+        console.log(isDarkScheme);
+    }, [isDarkScheme]);
     return (
         <ImageBackground
             source={require('../constants/images/background-paper.png')}
             resizeMode="cover"
             style={stylescom.imageback}
         >
+            {isDarkScheme && !hasHeader && (
+                <View
+                    style={{
+                        backgroundColor: '#FC702A',
+                        height: 40,
+                        width: '100%',
+                    }}
+                ></View>
+            )}
             <SafeAreaView
                 style={style ? { ...stylescom.container, ...style } : stylescom.container}
             >

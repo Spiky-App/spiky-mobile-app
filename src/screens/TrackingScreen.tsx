@@ -5,7 +5,7 @@ import MessagesFeed from '../components/MessagesFeed';
 
 export const TrackingScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed params={{}} filter={'/tracking'} title={'Siguiendo'} myideas={false} />
             <FloatButton />
         </BackgroundPaper>

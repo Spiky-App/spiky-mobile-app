@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import {
@@ -8,6 +8,7 @@ import {
     ImageBackground,
     SafeAreaView,
     TouchableOpacity,
+    useColorScheme,
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
@@ -26,6 +27,11 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
+    const colorScheme = useColorScheme();
+    const [isDarkScheme, setIsDarkAppearance] = useState(false);
+    useEffect(() => {
+        setIsDarkAppearance(colorScheme === 'dark');
+    }, [colorScheme]);
 
     const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
 
@@ -45,10 +51,18 @@ export const Header = () => {
         <ImageBackground
             source={require('../constants/images/background-paper.png')}
             resizeMode="cover"
+            imageStyle={
+                isDarkScheme && {
+                    tintColor: '#01192E',
+                }
+            }
         >
             <SafeAreaView>
                 <View
-                    style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}
+                    style={{
+                        ...stylescom.container,
+                        marginTop: top > 0 ? 0 : 15,
+                    }}
                     onLayout={({ nativeEvent }) => {
                         setPosition({
                             top: nativeEvent.layout.y + 10,
