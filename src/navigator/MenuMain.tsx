@@ -45,11 +45,6 @@ export type DrawerParamList = {
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 export const MenuMain = () => {
-    const colorScheme = useColorScheme();
-    const [isDarkScheme, setIsDarkAppearance] = useState(false);
-    useEffect(() => {
-        setIsDarkAppearance(colorScheme === 'dark');
-    }, [colorScheme]);
     return (
         <Drawer.Navigator
             screenOptions={{
@@ -59,10 +54,10 @@ export const MenuMain = () => {
                     return <Header />;
                 },
                 drawerStyle: {
-                    backgroundColor: isDarkScheme ? '#b8b8b8' : '#F8F8F8',
+                    backgroundColor: '#F8F8F8',
                     width: '60%',
                 },
-                overlayColor: '#6363635c',
+                /* overlayColor: '#6363635c', */
             }}
             useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
@@ -85,6 +80,11 @@ export const MenuMain = () => {
 };
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
+    const colorScheme = useColorScheme();
+    const [isDarkScheme, setIsDarkAppearance] = useState(false);
+    useEffect(() => {
+        setIsDarkAppearance(colorScheme === 'dark');
+    }, [colorScheme]);
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
@@ -117,6 +117,21 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 flexDirection: 'row',
             }}
         >
+            {isDarkScheme && (
+                <View
+                    style={{
+                        width: 100,
+                        height: 30,
+                        backgroundColor: '#FC702A',
+                        marginTop: 20,
+                        position: 'absolute',
+                        top: -10,
+                        left: 0,
+                        borderBottomRightRadius: 10,
+                        borderTopRightRadius: 10,
+                    }}
+                ></View>
+            )}
             <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
