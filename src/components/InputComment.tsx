@@ -134,7 +134,7 @@ export const InputComment = ({
                         style={{
                             fontSize: 14,
                             fontWeight: '300',
-                            color: counter < 0 ? '#9b0000' : '#9C9C9C',
+                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
                             textAlign: 'center',
                             margin: 'auto',
                             bottom: '-50%',
@@ -150,7 +150,7 @@ export const InputComment = ({
 
 const stylesInputComment = StyleSheet.create({
     borderTextbox: {
-        borderColor: '#9b0000',
+        borderColor: '#FC702A',
         borderWidth: 0.2,
     },
 });
