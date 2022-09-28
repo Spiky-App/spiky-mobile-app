@@ -12,7 +12,6 @@ interface Props {
 function UniversityTag({ id, fontSize }: Props) {
     const universities = useAppSelector((state: RootState) => state.ui.universities);
     const university = universities?.find(u => u.id === id);
-    console.log(university);
 
     return (
         <View style={{ ...stylescomp.container, backgroundColor: university?.backgroundColor }}>
