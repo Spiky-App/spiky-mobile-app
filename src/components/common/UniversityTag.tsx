@@ -11,11 +11,13 @@ interface Props {
 
 function UniversityTag({ id, fontSize }: Props) {
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    const unversity = universities?.find(u => u.id === id);
+    const university = universities?.find(u => u.id === id);
+    console.log(university);
+
     return (
-        <View style={{ ...stylescomp.container, backgroundColor: unversity?.backgroundColor }}>
-            <Text style={{ ...stylescomp.text, color: unversity?.color, fontSize: fontSize - 4 }}>
-                {unversity?.shortname}
+        <View style={{ ...stylescomp.container, backgroundColor: university?.backgroundColor }}>
+            <Text style={{ ...stylescomp.text, color: university?.color, fontSize: fontSize - 4 }}>
+                {university?.shortname}
             </Text>
         </View>
     );
