@@ -24,7 +24,7 @@ export const ForgotPwdScreen = () => {
         <BackgroundPaper>
             <ArrowBack />
 
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <BigTitle texts={['Olvida eso', 'que te detiene']} />
 

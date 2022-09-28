@@ -15,13 +15,17 @@ export const BackgroundPaper = ({ children, style, hasHeader = false }: any) => 
             style={stylescom.imageback}
         >
             {isDarkScheme && !hasHeader && (
-                <View
-                    style={{
-                        backgroundColor: '#FC702A',
-                        height: 40,
-                        width: '100%',
-                    }}
-                ></View>
+                <>
+                    <View
+                        style={{
+                            backgroundColor: '#01192E',
+                            height: 45,
+                            width: '100%',
+                            position: 'absolute',
+                            top: 0,
+                        }}
+                    ></View>
+                </>
             )}
             <SafeAreaView
                 style={style ? { ...stylescom.container, ...style } : stylescom.container}

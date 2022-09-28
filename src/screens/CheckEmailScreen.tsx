@@ -21,8 +21,6 @@ import LogoSvg from '../components/svg/LogoSvg';
 export const CheckEmailScreen = () => {
     //Borrar este hook
     const navigation = useNavigation<any>();
-
-    // const { form, onChange } = useForm({
     const { onChange } = useForm({
         email: '',
     });
@@ -31,7 +29,7 @@ export const CheckEmailScreen = () => {
         <BackgroundPaper>
             <ArrowBack />
 
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <BigTitle texts={['Sé parte', 'del cambio']} />
 

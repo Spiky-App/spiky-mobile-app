@@ -121,7 +121,7 @@ export const ChatScreen = ({ route }: Props) => {
                     width: '100%',
                     alignItems: 'center',
                     paddingHorizontal: 15,
-                    paddingTop: top ? 0 : 15,
+                    paddingTop: top ? 5 : 15,
                     paddingBottom: bottom ? 0 : 15,
                     flex: 1,
                 }}

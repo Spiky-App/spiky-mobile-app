@@ -6,7 +6,7 @@ import {
     DrawerContentScrollView,
     useDrawerStatus,
 } from '@react-navigation/drawer';
-import { Text, View, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
@@ -80,11 +80,6 @@ export const MenuMain = () => {
 };
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
-    const colorScheme = useColorScheme();
-    const [isDarkScheme, setIsDarkAppearance] = useState(false);
-    useEffect(() => {
-        setIsDarkAppearance(colorScheme === 'dark');
-    }, [colorScheme]);
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
@@ -117,21 +112,6 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 flexDirection: 'row',
             }}
         >
-            {isDarkScheme && (
-                <View
-                    style={{
-                        width: 100,
-                        height: 30,
-                        backgroundColor: '#FC702A',
-                        marginTop: 20,
-                        position: 'absolute',
-                        top: -10,
-                        left: 0,
-                        borderBottomRightRadius: 10,
-                        borderTopRightRadius: 10,
-                    }}
-                ></View>
-            )}
             <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />

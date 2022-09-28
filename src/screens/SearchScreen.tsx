@@ -24,7 +24,7 @@ export const SearchScreen = () => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <>
                     <Animated.View
                         style={{
