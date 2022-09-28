@@ -94,7 +94,6 @@ export const ChatScreen = ({ route }: Props) => {
         });
         SocketState.socket?.on('newChatMsg', resp => {
             const { chatmsg, converId } = resp;
-            console.log(converId, conversationId);
             if (converId === conversationId) {
                 updateChatMessages(chatmsg);
             }
