@@ -6,7 +6,6 @@ export const BackgroundPaper = ({ children, style, hasHeader = false }: any) => 
     const [isDarkScheme, setIsDarkAppearance] = useState(false);
     useEffect(() => {
         setIsDarkAppearance(colorScheme === 'dark');
-        console.log(isDarkScheme);
     }, [isDarkScheme]);
     return (
         <ImageBackground
