@@ -156,6 +156,7 @@ export const ChatScreen = ({ route }: Props) => {
                     showsVerticalScrollIndicator={false}
                     inverted
                     onEndReached={loadMoreChatMsg}
+                    ListHeaderComponent={true ? <WrittingBubble /> : <></>}
                     ListFooterComponent={isLoading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                     contentContainerStyle={{
@@ -177,6 +178,12 @@ export const ChatScreen = ({ route }: Props) => {
     );
 };
 
+const WrittingBubble = () => (
+    <View style={stylescomp.writting}>
+        <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
+    </View>
+);
+
 const stylescomp = StyleSheet.create({
     containerHeader: {
         backgroundColor: '#01192E',
@@ -197,5 +204,22 @@ const stylescomp = StyleSheet.create({
     wrap: {
         width: '100%',
         marginBottom: 10,
+    },
+    writting: {
+        ...styles.shadow,
+        height: 30,
+        width: 60,
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        marginVertical: 8,
+    },
+    dots: {
+        fontWeight: '600',
+        color: '#bebebe',
+        fontSize: 35,
+        marginLeft: 20,
+        position: 'absolute',
+        top: -15,
+        left: -5,
     },
 });
