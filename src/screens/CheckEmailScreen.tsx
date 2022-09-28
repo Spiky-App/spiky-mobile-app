@@ -21,7 +21,7 @@ import LogoSvg from '../components/svg/LogoSvg';
 export const CheckEmailScreen = () => {
     //Borrar este hook
     const navigation = useNavigation<any>();
-    const { onChange } = useForm({
+    const { onChange, email } = useForm({
         email: '',
     });
 
@@ -37,6 +37,7 @@ export const CheckEmailScreen = () => {
                         <TextInput
                             placeholder="Correo universitario"
                             autoCorrect={false}
+                            autoCapitalize="none"
                             keyboardType="email-address"
                             style={styles.textinput}
                             onChangeText={value => onChange({ email: value })}
@@ -45,7 +46,7 @@ export const CheckEmailScreen = () => {
 
                     <TouchableHighlight
                         underlayColor="#01192ebe"
-                        onPress={() => {}}
+                        onPress={() => console.log('verifying email', email)}
                         style={{ ...styles.button, paddingHorizontal: 30 }}
                     >
                         <Text style={{ ...styles.text, ...styles.textb }}>Verificar correo</Text>
