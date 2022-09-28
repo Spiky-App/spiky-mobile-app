@@ -9,6 +9,7 @@ import { useMessages } from '../hooks/useMessages';
 import { IdeasHeader } from './IdeasHeader';
 import { setUniversitiesFilter } from '../store/feature/messages/messagesSlice';
 import { useDispatch } from 'react-redux';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 interface MessageParams {
     alias?: string;
@@ -21,9 +22,10 @@ interface MessagesFeedProp {
     filter: string;
     title: string;
     myideas: boolean;
+    icon: IconDefinition;
 }
 
-const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedProp) => {
+const MessagesFeed = ({ params, filter, title, myideas = false, icon }: MessagesFeedProp) => {
     const dispatch = useDispatch();
     const { messages } = useAppSelector((state: RootState) => state.messages);
     const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
@@ -39,7 +41,7 @@ const MessagesFeed = ({ params, filter, title, myideas = false }: MessagesFeedPr
     }, []);
     return (
         <>
-            <IdeasHeader title={title} myideas={myideas} />
+            <IdeasHeader title={title} myideas={myideas} icon={icon} />
             {messages?.length !== 0 ? (
                 <FlatList
                     style={{ width: '90%' }}

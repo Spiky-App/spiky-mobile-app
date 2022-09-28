@@ -12,6 +12,7 @@ import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
 import { FormComment } from './InputComment';
+import UniversityTag from './common/UniversityTag';
 
 interface Props {
     comment: CommentProps;
@@ -57,10 +58,7 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
                         @{comment.user.nickname}
                     </Text>
                 </TouchableOpacity>
-                <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-                <Text style={{ ...styles.text, fontSize: 13 }}>
-                    {comment.user.university.shortname}
-                </Text>
+                <UniversityTag id={comment.user.universityId} fontSize={13} />
 
                 <Text style={{ ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
                 {uid !== comment.user.id && (
