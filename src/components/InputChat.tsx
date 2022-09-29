@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Keyboard, TextInput, View, FlatList } from 'react-native';
+import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
@@ -36,17 +36,25 @@ export const InputChat = ({
     toUser,
     HideKeyboardAfterSumbit,
 }: Props) => {
-    const [, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMessage } = useSpikyService();
-    const { SocketState } = useContext(SocketContext);
+    const { socket } = useContext(SocketContext);
     const { message } = form;
+    const [counter, setCounter] = useState(0);
+    const IDEA_MAX_LENGHT = 200;
+
+    function invalid() {
+        const { message: mensaje } = form;
+        if (!mensaje || mensaje.length > IDEA_MAX_LENGHT) {
+            return true;
+        }
+        return false;
+    }
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        SocketState.socket?.emit('newChatMsg', {
+        socket?.emit('newChatMsg', {
             chatmsg: newChatMessages,
-            converId: conversationId,
             userto: toUser.id,
         });
         if (newChatMessages) {
@@ -63,17 +71,18 @@ export const InputChat = ({
     }
 
     useEffect(() => {
-        const counterUpdated = MAX_LENGHT - message.length;
+        const messageLength = message.length;
+        const counterUpdated = MAX_LENGHT - messageLength;
         setCounter(counterUpdated);
-        if (message.length <= MAX_LENGHT && message.length > 0) {
-            if (isDisabled) {
-                setDisabled(false);
-            }
-        } else {
-            setDisabled(true);
-        }
+        if (messageLength <= MAX_LENGHT && messageLength > 0) {
+            if (isDisabled) setDisabled(false);
+        } else setDisabled(true);
     }, [message]);
 
+    useEffect(() => {
+        const { message: mensaje } = form;
+        setCounter(IDEA_MAX_LENGHT - mensaje.length);
+    }, [form]);
     return (
         <View
             style={{
@@ -83,7 +92,7 @@ export const InputChat = ({
                 right: 0,
                 paddingHorizontal: 10,
                 paddingVertical: 13,
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 borderRadius: 8,
@@ -95,34 +104,62 @@ export const InputChat = ({
                     flex: 1,
                     backgroundColor: 'white',
                     paddingHorizontal: 8,
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     borderRadius: 5,
+                    ...(counter < 0 && stylesInputChat.borderTextbox),
                 }}
             >
                 <TextInput
                     placeholder=""
                     placeholderTextColor="#707070"
-                    style={{ ...styles.textinput, fontSize: 16 }}
+                    style={{
+                        ...styles.textinput,
+                        fontSize: 16,
+                    }}
                     multiline={true}
                     value={message}
                     onChangeText={text => onChange({ message: text })}
                 />
             </View>
-            <View style={{ paddingLeft: 6 }}>
+            <View
+                style={{
+                    paddingLeft: 10,
+                }}
+            >
                 <ButtonIcon
                     icon={faLocationArrow}
                     style={{
                         paddingHorizontal: 10,
-                        justifyContent: 'center',
                         borderRadius: 100,
                         height: 36,
                         width: 36,
                     }}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                    disabled={isDisabled}
+                    disabled={isDisabled || invalid()}
                     onPress={onPress}
                 />
+                {counter <= 40 && (
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: '300',
+                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                            textAlign: 'center',
+                            margin: 'auto',
+                            bottom: '-50%',
+                        }}
+                    >
+                        {counter}
+                    </Text>
+                )}
             </View>
         </View>
     );
 };
+
+const stylesInputChat = StyleSheet.create({
+    borderTextbox: {
+        borderColor: '#FC702A',
+        borderWidth: 0.2,
+    },
+});

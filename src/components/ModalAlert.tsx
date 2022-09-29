@@ -14,9 +14,9 @@ export const ModalAlert = () => {
 
     useEffect(() => {
         if (isOpen) {
-            timeoutRef.current = setTimeout(() => dispatch(setModalAlert({ isOpen: false })), 5800);
+            timeoutRef.current = setTimeout(() => dispatch(setModalAlert({ isOpen: false })), 2000);
         }
-    }, []);
+    }, [isOpen]);
 
     return (
         <Modal transparent={true} visible={isOpen} animationType="fade">

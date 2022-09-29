@@ -8,11 +8,9 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
-import { generateNotificationsFromNotificacion } from '../helpers/notification';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
+import useSpikyService from '../hooks/useSpikyService';
 import { clearNotificationsNumber } from '../store/feature/user/userSlice';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
 import { Notification } from './Notification';
@@ -24,20 +22,13 @@ interface Props {
 }
 
 export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { updateNotifications, retrieveNotifications } = useSpikyService();
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState<NotificationProps[]>([]);
-
     const getNotifications = async () => {
-        const response = await service.getNotifications();
-        const { data } = response;
-        const { notificaciones } = data;
-        const notificacionesRetrived = notificaciones.map(n =>
-            generateNotificationsFromNotificacion(n)
-        );
-        setNotifications(notificacionesRetrived);
+        const retrievedNotifications = retrieveNotifications();
+        retrievedNotifications && setNotifications(await retrievedNotifications);
         setLoading(false);
     };
 
@@ -51,7 +42,7 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
             }
             return n;
         });
-        service.updateNotifications(array_nofi);
+        updateNotifications(array_nofi);
         setNotifications(new_notis);
         dispatch(clearNotificationsNumber());
     };

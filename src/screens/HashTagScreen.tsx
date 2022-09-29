@@ -12,7 +12,7 @@ export const HashTagScreen = ({ route }: Props) => {
     const hashtag = route.params?.hashtag;
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed
                 params={{ hashtag }}
                 filter={'/hashtag'}
