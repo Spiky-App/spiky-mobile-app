@@ -8,14 +8,16 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAnimation } from '../hooks/useAnimation';
 import { setDraft } from '../store/feature/messages/messagesSlice';
 import { useDispatch } from 'react-redux';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 interface Props {
     title: string;
     myideas?: boolean;
     connections?: boolean;
+    icon: IconDefinition;
 }
 
-export const IdeasHeader = ({ title, myideas, connections }: Props) => {
+export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
     const { opacity, fadeIn } = useAnimation();
@@ -34,6 +36,9 @@ export const IdeasHeader = ({ title, myideas, connections }: Props) => {
             }}
         >
             <Text style={{ ...styles.text, ...styles.h3 }}>
+                <View style={{ marginRight: 4 }}>
+                    <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
+                </View>
                 {title}
                 <Text style={styles.orange}>.</Text>
             </Text>

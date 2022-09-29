@@ -12,9 +12,7 @@ function generateNotificationsFromNotificacion(notificacion: Notificacion): Noti
         createdAt: notificacion.createdAt,
         user: {
             nickname: notificacion.usuario2.alias,
-            university: {
-                shortname: notificacion.usuario2.universidad.alias,
-            },
+            universityId: notificacion.usuario2.id_universidad,
         },
     };
 }

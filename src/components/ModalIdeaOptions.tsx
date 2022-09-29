@@ -131,7 +131,11 @@ export const ModalIdeaOptions = ({
 
                                     <TouchableOpacity
                                         style={stylescomp.button}
-                                        onPress={() => goToScreen('ReportIdeaScreen')}
+                                        onPress={() =>
+                                            goToScreen('ReportIdeaScreen', {
+                                                messageId: message.messageId,
+                                            })
+                                        }
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text style={stylescomp.text}>Reportar</Text>

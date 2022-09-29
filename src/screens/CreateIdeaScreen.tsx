@@ -39,7 +39,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const isDraft = idDraft !== undefined;
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const { nickname, university } = useAppSelector((state: RootState) => state.user);
+    const { nickname, universityId } = useAppSelector((state: RootState) => state.user);
     const { form, onChange } = useForm({
         message: draftedIdea || '',
     });
@@ -72,9 +72,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 ...mensaje,
                 usuario: {
                     alias: nickname,
-                    universidad: {
-                        alias: university,
-                    },
+                    id_universidad: universityId,
                 },
             });
         } catch {
@@ -92,9 +90,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 ...mensaje,
                 usuario: {
                     alias: nickname,
-                    universidad: {
-                        alias: university,
-                    },
+                    id_universidad: universityId,
                 },
             });
         } catch {

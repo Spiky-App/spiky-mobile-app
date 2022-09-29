@@ -4,6 +4,7 @@ import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { styles } from '../themes/appTheme';
 import { ChatMessage as ChatMessageProp } from '../types/store';
+import UniversityTag from './common/UniversityTag';
 
 interface MessageProp {
     msg: ChatMessageProp;
@@ -25,9 +26,7 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                                 @{msg.replyMessage.user.nickname}
                             </Text>
                             <Text style={{ ...styles.text, fontSize: 12 }}> de </Text>
-                            <Text style={{ ...styles.text, fontSize: 12 }}>
-                                {msg.replyMessage.user.university.shortname}
-                            </Text>
+                            <UniversityTag id={msg.replyMessage.user.universityId} fontSize={12} />
                         </View>
                         <Text style={{ ...styles.text, fontSize: 12 }}>
                             {replyMessage.length > 73

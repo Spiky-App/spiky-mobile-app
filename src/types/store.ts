@@ -2,14 +2,16 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { StatusType } from './common';
 
 export interface University {
-    id?: number;
+    id: number;
     shortname: string;
+    backgroundColor: string;
+    color: string;
 }
 
 export interface User {
     id?: number;
     nickname: string;
-    university: University;
+    universityId: number;
     online?: boolean;
 }
 interface Response {
