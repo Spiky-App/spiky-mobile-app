@@ -40,16 +40,18 @@ export const IdeasHeader = ({ title, myideas, connections }: Props) => {
 
             {!connections &&
                 (!myideas ? (
-                    <TouchableHighlight
-                        style={stylecom.filterContainer}
-                        underlayColor="#01192E"
-                        onPress={() => setModalFilter(true)}
-                    >
-                        <View style={stylecom.flexCenter}>
-                            <FontAwesomeIcon icon={faFilter} color="white" size={17} />
-                            <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
-                        </View>
-                    </TouchableHighlight>
+                    <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
+                        <TouchableHighlight
+                            style={stylecom.filterContainer}
+                            underlayColor="#01192E"
+                            onPress={() => setModalFilter(true)}
+                        >
+                            <View style={stylecom.flexCenter}>
+                                <FontAwesomeIcon icon={faFilter} color="white" size={17} />
+                                <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
                 ) : (
                     <View
                         style={{
@@ -103,9 +105,10 @@ const stylecom = StyleSheet.create({
         backgroundColor: '#D4D4D4',
         borderRadius: 3,
         paddingHorizontal: 10,
-        paddingVertical: 0,
+        paddingVertical: 3,
         justifyContent: 'center',
         alignItems: 'center',
+        width: 100,
     },
     filterText: {
         fontSize: 15,
