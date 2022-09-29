@@ -4,6 +4,7 @@ import { FloatButton } from '../components/FloatButton';
 import MessagesFeed from '../components/MessagesFeed';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerScreenProps } from '@react-navigation/drawer';
+import { faHashtag } from '../constants/icons/FontAwesome';
 
 type Props = DrawerScreenProps<DrawerParamList, 'HashTagScreen'>;
 
@@ -11,12 +12,13 @@ export const HashTagScreen = ({ route }: Props) => {
     const hashtag = route.params?.hashtag;
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed
                 params={{ hashtag }}
                 filter={'/hashtag'}
-                title={'#' + hashtag}
+                title={hashtag}
                 myideas={false}
+                icon={faHashtag}
             />
             <FloatButton />
         </BackgroundPaper>

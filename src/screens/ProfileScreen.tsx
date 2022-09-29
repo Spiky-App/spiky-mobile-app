@@ -4,6 +4,7 @@ import { FloatButton } from '../components/FloatButton';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import MessagesFeed from '../components/MessagesFeed';
+import { faUser } from '../constants/icons/FontAwesome';
 
 type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 
@@ -11,12 +12,13 @@ export const ProfileScreen = ({ route }: Props) => {
     const alias = route.params?.alias;
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed
                 params={{ alias }}
                 filter={'/perfil'}
                 title={'@' + alias}
                 myideas={false}
+                icon={faUser}
             />
             <FloatButton />
         </BackgroundPaper>

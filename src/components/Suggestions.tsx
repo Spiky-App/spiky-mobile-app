@@ -1,11 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { MentionSuggestionsProps, Suggestion } from 'react-native-controlled-mentions';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Dimensions } from 'react-native';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface RenderSuggestionsProps extends MentionSuggestionsProps {
     isMention: boolean;
@@ -19,8 +17,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     inputHeight,
 }) => {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { getHashtagsSuggestions, getUsersSuggestions } = useSpikyService();
 
     const InputStyles: StyleProp<ViewStyle> = inputHeight
         ? {
@@ -35,9 +32,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     const getUserSuggestions = async (word: string) => {
         if (word !== '@') {
             if (word !== '') {
-                const response = await service.getUserSuggestions(word);
-                const { data } = response;
-                const { usuarios } = data;
+                const usuarios = await getUsersSuggestions(word);
                 setSuggestions(
                     usuarios.map((user: any) => ({ name: '@' + user.alias, id: user.id_usuario }))
                 );
@@ -50,13 +45,7 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     const getHashtagSuggestions = async (word: string) => {
         if (word === '') word = 'anyhashtag0320';
         if (word !== '#') {
-            const response = await service.getHashtagsSuggestions(word);
-            const { data } = response;
-            const { hashtags } = data;
-            const newHashtags =
-                word === 'anyhashtag0320'
-                    ? hashtags
-                    : [{ hashtag: word, id_hashtag: 0 }, ...hashtags];
+            const newHashtags = await getHashtagsSuggestions(word);
             setSuggestions(
                 newHashtags.map((hash: any) => ({ name: '#' + hash.hashtag, id: hash.id_hashtag }))
             );

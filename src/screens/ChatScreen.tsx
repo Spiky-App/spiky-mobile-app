@@ -26,6 +26,7 @@ import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
 import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
+import UniversityTag from '../components/common/UniversityTag';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -92,9 +93,9 @@ export const ChatScreen = ({ route }: Props) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessageProp }) => {
-            const { chatmsg } = resp;
-            if (chatmsg.conversationId === conversationId) {
+        socket?.on('newChatMsg', resp => {
+            const { chatmsg, converId } = resp;
+            if (converId === conversationId) {
                 updateChatMessages(chatmsg);
             }
         });
@@ -120,7 +121,7 @@ export const ChatScreen = ({ route }: Props) => {
                     width: '100%',
                     alignItems: 'center',
                     paddingHorizontal: 15,
-                    paddingTop: top ? 0 : 15,
+                    paddingTop: top ? 5 : 15,
                     paddingBottom: bottom ? 0 : 15,
                     flex: 1,
                 }}
@@ -136,9 +137,10 @@ export const ChatScreen = ({ route }: Props) => {
                     >
                         <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                     </TouchableOpacity>
-                    <Text style={{ ...styles.text, ...styles.h3, color: '#ffff' }}>
-                        {'@' + toUser.nickname + ' de ' + toUser.university.shortname}
+                    <Text style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}>
+                        {'@' + toUser.nickname}
                     </Text>
+                    <UniversityTag id={toUser.universityId} fontSize={23} />
                     <View
                         style={{
                             ...stylescomp.online,

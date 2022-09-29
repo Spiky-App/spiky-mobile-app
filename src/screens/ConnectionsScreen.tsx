@@ -2,6 +2,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
+import UniversityTag from '../components/common/UniversityTag';
 import { EmptyState } from '../components/EmptyState';
 import { IdeasHeader } from '../components/IdeasHeader';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
@@ -20,6 +21,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Conversation, User, ChatMessage } from '../types/store';
+import { faCircleNodes } from '../constants/icons/FontAwesome';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
@@ -101,8 +103,8 @@ export const ConnectionsScreen = () => {
     );
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            <IdeasHeader title={'Conexiones'} connections={true} />
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+            <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
             {conversations?.length !== 0 ? (
                 <FlatList
                     style={{ width: '90%' }}
@@ -146,10 +148,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                 <View style={stylescomp.converContainer}>
                     <View style={{ ...styles.flex, alignItems: 'center' }}>
                         <Text style={{ ...styles.textbold, fontSize: 14 }}>@{toUser.nickname}</Text>
-                        <Text style={{ ...styles.text, fontSize: 14 }}> de </Text>
-                        <Text style={{ ...styles.text, fontSize: 14 }}>
-                            {toUser.university.shortname}
-                        </Text>
+                        <UniversityTag id={toUser.universityId} fontSize={14} />
                         <View
                             style={{
                                 ...stylescomp.online,
@@ -158,7 +157,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         />
                     </View>
                     <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
-                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                        <Text style={{ ...styles.text, fontSize: 13, overflow: 'scroll' }}>
                             {conver.chatmessage.message.length > 80
                                 ? conver.chatmessage.message.substring(0, 80) + '...'
                                 : conver.chatmessage.message}
@@ -182,7 +181,7 @@ const stylescomp = StyleSheet.create({
     converContainer: {
         ...styles.shadow,
         backgroundColor: 'white',
-        height: 70,
+        height: 80,
         borderRadius: 6,
         paddingHorizontal: 10,
         paddingVertical: 10,

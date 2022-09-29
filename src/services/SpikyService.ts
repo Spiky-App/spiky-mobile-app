@@ -27,14 +27,12 @@ import {
     CreateChatMessageSeen,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
-
 class SpikyService {
     private instance: AxiosInstance;
 
     constructor(config?: AxiosRequestConfig) {
         this.instance = axios.create(config);
     }
-
     login(email: string, password: string) {
         return this.instance.post<LoginResponse>('auth/login', {
             contrasena: password,

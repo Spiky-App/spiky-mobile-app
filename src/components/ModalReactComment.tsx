@@ -3,10 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Modal, TouchableWithoutFeedback, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { faCheck, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
-import { useAppSelector } from '../store/hooks';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
 import { ReactionType } from '../types/store';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface ReactComment {
     against: number;
@@ -34,12 +32,11 @@ export const ModalReactComment = ({
     commentId,
     setReactComment,
 }: Props) => {
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { createReactionToComment } = useSpikyService();
     const { top, left } = position;
 
     const handleComment = (reactionTypeAux: number) => {
-        service.createReactionCmt(commentId, reactionTypeAux);
+        createReactionToComment(commentId, reactionTypeAux);
         const newReactionType = reactionTypeAux === 1 ? ReactionType.FAVOR : ReactionType.AGAINST;
         setReactComment((value: ReactComment) => ({
             ...value,

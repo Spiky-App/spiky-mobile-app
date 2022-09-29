@@ -13,7 +13,6 @@ import { styles } from '../themes/appTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
@@ -52,8 +51,7 @@ export const ModalIdeaOptions = ({
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { deleteIdea } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
     const { messageId, messageTrackingId } = message;
 
@@ -77,7 +75,7 @@ export const ModalIdeaOptions = ({
     }
 
     const handleDelete = () => {
-        service.deleteMessage(messageId);
+        deleteIdea(messageId);
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
@@ -131,7 +129,11 @@ export const ModalIdeaOptions = ({
 
                                     <TouchableOpacity
                                         style={stylescomp.button}
-                                        onPress={() => goToScreen('ReportIdeaScreen')}
+                                        onPress={() =>
+                                            goToScreen('ReportIdeaScreen', {
+                                                messageId: message.messageId,
+                                            })
+                                        }
                                     >
                                         <FontAwesomeIcon icon={faBan} color="#01192E" size={12} />
                                         <Text style={stylescomp.text}>Reportar</Text>

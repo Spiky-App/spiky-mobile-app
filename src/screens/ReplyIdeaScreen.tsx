@@ -21,6 +21,7 @@ import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
 import { transformMsg } from '../helpers/transformMsg';
 import SocketContext from '../context/Socket/Context';
+import UniversityTag from '../components/common/UniversityTag';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReplyIdeaScreen'>;
 
@@ -86,10 +87,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                                 <Text style={{ ...styles.user, ...styles.textbold }}>
                                     @{user.nickname}
                                 </Text>
-                                <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-                                <Text style={{ ...styles.text, fontSize: 13 }}>
-                                    {user.university.shortname}
-                                </Text>
+                                <UniversityTag id={user.universityId} fontSize={13} />
                             </View>
                             <View style={{ paddingTop: 8 }}>
                                 <Text style={{ ...styles.text, fontSize: 13 }}>

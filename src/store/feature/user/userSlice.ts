@@ -5,7 +5,7 @@ interface UserState {
     nickname: string;
     notificationsNumber: number;
     newChatMessagesNumber: number;
-    university: string;
+    universityId: number;
     id: number;
 }
 
@@ -13,7 +13,7 @@ const initialState: UserState = {
     nickname: '',
     notificationsNumber: 0,
     newChatMessagesNumber: 0,
-    university: '',
+    universityId: 0,
     id: 0,
 };
 
@@ -25,13 +25,13 @@ export const userSlice = createSlice({
             state.nickname = action.payload.nickname;
             state.notificationsNumber = action.payload.notificationsNumber;
             state.newChatMessagesNumber = action.payload.newChatMessagesNumber;
-            state.university = action.payload.university;
+            state.universityId = action.payload.universityId;
             state.id = action.payload.id;
         },
         removeUser: (state: UserState) => {
             state.nickname = initialState.nickname;
             state.notificationsNumber = initialState.notificationsNumber;
-            state.university = initialState.university;
+            state.universityId = initialState.universityId;
             state.id = initialState.id;
         },
         updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {

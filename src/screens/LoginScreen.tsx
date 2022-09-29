@@ -50,7 +50,8 @@ export const LoginScreen = () => {
             try {
                 const response = await spikyService.login(email, password);
                 const { data } = response;
-                const { token, alias, n_notificaciones, universidad, uid, n_chatmensajes } = data;
+                const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                    data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token);
                 dispatch(signIn(token));
                 dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
@@ -59,7 +60,7 @@ export const LoginScreen = () => {
                         nickname: alias,
                         notificationsNumber: n_notificaciones,
                         newChatMessagesNumber: n_chatmensajes,
-                        university: universidad,
+                        universityId: id_universidad,
                         id: uid,
                     })
                 );
@@ -84,7 +85,7 @@ export const LoginScreen = () => {
     return (
         <BackgroundPaper>
             <ArrowBack />
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
@@ -109,6 +110,7 @@ export const LoginScreen = () => {
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
                             touchableOpacityProps={{ onPress: () => setPassVisible(!passVisible) }}
+                            onSubmitEditing={login}
                         />
                     </View>
                     <TouchableOpacity

@@ -53,8 +53,11 @@ export const MenuMain = () => {
                 header: () => {
                     return <Header />;
                 },
-                drawerStyle: { backgroundColor: '#F8F8F8', width: '60%' },
-                overlayColor: '#6363635c',
+                drawerStyle: {
+                    backgroundColor: '#F8F8F8',
+                    width: '60%',
+                },
+                /* overlayColor: '#6363635c', */
             }}
             useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
@@ -107,7 +110,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     return (
         <DrawerContentScrollView
             contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
-            style={{ flexDirection: 'row' }}
+            style={{
+                flexDirection: 'row',
+            }}
         >
             <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>

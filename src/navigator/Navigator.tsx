@@ -59,8 +59,10 @@ export const Navigator = () => {
             const { universidades } = universitiesData;
             const universitiesResponse: University[] = universidades.map<University>(
                 university => ({
-                    id: university.id_universidad ?? 0,
+                    id: university.id_universidad,
                     shortname: university.alias,
+                    color: university.color,
+                    backgroundColor: university.background_color,
                 })
             );
             dispatch(setUniversities(universitiesResponse));
