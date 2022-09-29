@@ -30,7 +30,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMsgWithReply } = useSpikyService();
-    const { SocketState } = useContext(SocketContext);
+    const { socket } = useContext(SocketContext);
     const { message, messageId, user, date } = route.params?.message;
     const { form, onChange } = useForm({
         messageReply: '',
@@ -49,7 +49,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
         const content = await createChatMsgWithReply(user.id, messageId, messageReply);
         if (content) {
             const { conver, newConver, userto } = content;
-            SocketState.socket?.emit('newChatMsgWithReply', { conver, userto, newConver });
+            socket?.emit('newChatMsgWithReply', { conver, userto, newConver });
         }
         setDisabled(false);
     }

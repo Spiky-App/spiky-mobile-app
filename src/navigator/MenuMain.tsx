@@ -83,7 +83,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
-    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
+    const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
+        (state: RootState) => state.user
+    );
 
     const changeScreen = (screen: string) => {
         const targetRoute = navigation.getState().routes.find(route => route.name === screen);
@@ -149,6 +151,14 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                                     >
                                         {item.name}
                                     </Text>
+                                    {newChatMessagesNumber > 0 &&
+                                        item.screen === 'ConnectionsScreen' && (
+                                            <View style={stylescom.notif}>
+                                                <Text style={stylescom.textnotif}>
+                                                    {newChatMessagesNumber}
+                                                </Text>
+                                            </View>
+                                        )}
                                 </TouchableOpacity>
                             </View>
                         );
@@ -166,9 +176,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 >
                     <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />
                     <Text style={stylescom.textmenu}>Notificaciones</Text>
-                    {n_notificaciones > 0 && (
+                    {notificationsNumber > 0 && (
                         <View style={stylescom.notif}>
-                            <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
+                            <Text style={stylescom.textnotif}>{notificationsNumber}</Text>
                         </View>
                     )}
                 </TouchableOpacity>
@@ -190,9 +200,6 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     }}
                 >
                     <FontAwesomeIcon icon={faPlus} size={20} color="#01192E" />
-                    {/* <View style={{ width: 22, justifyContent: 'center' }}>
-                        <IconGray color="#01192E" underlayColor={'#E6E6E6'} />
-                    </View> */}
                     <Text
                         style={{
                             ...stylescom.textmenu,

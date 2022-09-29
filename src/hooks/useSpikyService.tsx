@@ -14,6 +14,7 @@ import {
     generateChatMsgFromChatMensaje,
     generateConversationFromConversacion,
 } from '../helpers/conversations';
+import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
 import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { removeUser } from '../store/feature/user/userSlice';
@@ -196,10 +197,13 @@ function useSpikyService() {
         try {
             const response = await service.getChatMessages(conversationId, lastChatMessageId);
             const { data } = response;
-            const { chatmensajes } = data;
+            const { chatmensajes, n_chatmensajes_unseens } = data;
             const chatMessagesRetrived: ChatMessage[] = chatmensajes.map(chatmsg => {
                 return generateChatMsgFromChatMensaje(chatmsg, user.id);
             });
+            dispatch(
+                updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
+            );
             return chatMessagesRetrived;
         } catch (error) {
             console.log(error);

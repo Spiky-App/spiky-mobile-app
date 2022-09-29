@@ -50,7 +50,8 @@ export const LoginScreen = () => {
             try {
                 const response = await spikyService.login(email, password);
                 const { data } = response;
-                const { token, alias, n_notificaciones, id_universidad, uid } = data;
+                const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                    data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token);
                 dispatch(signIn(token));
                 dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
@@ -58,6 +59,7 @@ export const LoginScreen = () => {
                     setUser({
                         nickname: alias,
                         notificationsNumber: n_notificaciones,
+                        newChatMessagesNumber: n_chatmensajes,
                         universityId: id_universidad,
                         id: uid,
                     })

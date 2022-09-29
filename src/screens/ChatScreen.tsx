@@ -18,7 +18,7 @@ import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
-import { ChatMessage as ChatMessageProp, User } from '../types/store';
+import { ChatMessage as ChatMessageProp, User, Conversation } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -45,7 +45,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
     const { getChatMessages, createChatMessageSeen } = useSpikyService();
     const navigation = useNavigation<any>();
-    const { SocketState } = useContext(SocketContext);
+    const { socket } = useContext(SocketContext);
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
 
@@ -66,7 +66,7 @@ export const ChatScreen = ({ route }: Props) => {
     function updateChatMessages(chatMessage: ChatMessageProp) {
         if (chatMessages) {
             setChatMessages(v => [chatMessage, ...v]);
-            dispatch(updateLastChatMsgConversation(chatMessage));
+            dispatch(updateLastChatMsgConversation({ chatMsg: chatMessage, newMsg: false }));
             if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
         }
     }
@@ -85,27 +85,27 @@ export const ChatScreen = ({ route }: Props) => {
     );
 
     useEffect(() => {
-        SocketState.socket?.on('userOnline', resp => {
+        socket?.on('userOnline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: true });
         });
-        SocketState.socket?.on('userOffline', resp => {
+        socket?.on('userOffline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
-        SocketState.socket?.on('newChatMsg', resp => {
+        socket?.on('newChatMsg', resp => {
             const { chatmsg, converId } = resp;
             if (converId === conversationId) {
                 updateChatMessages(chatmsg);
             }
         });
-        SocketState.socket?.on('newChatMsgWithReply', resp => {
+        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
                 updateChatMessages({ ...conver.chatmessage });
             }
         });
-    }, [SocketState.socket]);
+    }, [socket, conversationId]);
 
     useEffect(() => {
         if (conversationId) {

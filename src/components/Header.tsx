@@ -33,7 +33,9 @@ export const Header = () => {
         setIsDarkAppearance(colorScheme === 'dark');
     }, [colorScheme]);
 
-    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
+    const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
+        (state: RootState) => state.user
+    );
 
     const changeScreen = (screen: string) => {
         const targetRoute = navigation
@@ -76,10 +78,15 @@ export const Header = () => {
                     >
                         <View style={{ ...stylescom.flexConte, marginLeft: 20 }}>
                             <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
-                            {n_notificaciones > 0 && (
-                                <View style={stylescom.notif}>
-                                    <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
-                                </View>
+                            {notificationsNumber + newChatMessagesNumber > 0 && (
+                                <>
+                                    <View style={stylescom.newChats} />
+                                    <View style={stylescom.notif}>
+                                        <Text style={stylescom.textnotif}>
+                                            {notificationsNumber + newChatMessagesNumber}
+                                        </Text>
+                                    </View>
+                                </>
                             )}
                         </View>
                     </TouchableOpacity>
@@ -148,6 +155,16 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         top: 6,
         right: -6,
+    },
+    newChats: {
+        ...styles.center,
+        backgroundColor: '#D4D4D4',
+        height: 18,
+        width: 18,
+        borderRadius: 100,
+        position: 'absolute',
+        top: 6,
+        right: -9,
     },
     textnotif: {
         ...styles.text,
