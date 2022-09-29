@@ -6,7 +6,7 @@ import { faLightbulb } from '../constants/icons/FontAwesome';
 
 export const MyIdeasScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed
                 params={{}}
                 filter={'/user'}

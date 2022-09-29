@@ -12,7 +12,7 @@ export const ProfileScreen = ({ route }: Props) => {
     const alias = route.params?.alias;
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <MessagesFeed
                 params={{ alias }}
                 filter={'/perfil'}

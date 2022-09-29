@@ -83,7 +83,7 @@ export const LoginScreen = () => {
     return (
         <BackgroundPaper>
             <ArrowBack />
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
@@ -108,6 +108,7 @@ export const LoginScreen = () => {
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
                             touchableOpacityProps={{ onPress: () => setPassVisible(!passVisible) }}
+                            onSubmitEditing={login}
                         />
                     </View>
                     <TouchableOpacity

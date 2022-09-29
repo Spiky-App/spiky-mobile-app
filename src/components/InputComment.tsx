@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Keyboard, TextInput, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MentionInput } from 'react-native-controlled-mentions';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
@@ -38,7 +38,7 @@ export const InputComment = ({
 }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { createMessageComment } = useSpikyService();
-    const [, setCounter] = useState(0);
+    const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const [inputHeight, setInputHeight] = useState(0);
     const { comment } = form;
@@ -91,6 +91,7 @@ export const InputComment = ({
                     paddingHorizontal: 8,
                     justifyContent: 'center',
                     borderRadius: 8,
+                    ...(counter < 0 && stylesInputComment.borderTextbox),
                 }}
             >
                 <MentionInput
@@ -128,7 +129,28 @@ export const InputComment = ({
                     disabled={isDisabled}
                     onPress={onPress}
                 />
+                {counter <= 40 && (
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: '300',
+                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                            textAlign: 'center',
+                            margin: 'auto',
+                            bottom: '-50%',
+                        }}
+                    >
+                        {counter}
+                    </Text>
+                )}
             </View>
         </View>
     );
 };
+
+const stylesInputComment = StyleSheet.create({
+    borderTextbox: {
+        borderColor: '#FC702A',
+        borderWidth: 0.2,
+    },
+});

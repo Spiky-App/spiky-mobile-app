@@ -22,7 +22,7 @@ export const ArrowBack = () => {
 const stylescom = StyleSheet.create({
     arrow: {
         position: 'absolute',
-        top: 0,
+        top: 50,
         left: 0,
         paddingLeft: 15,
     },

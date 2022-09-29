@@ -19,12 +19,12 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
 import { useAnimation } from '../hooks/useAnimation';
-import SpikyService from '../services/SpikyService';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { MessageRequestData } from '../services/models/spikyService';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import SocketContext from '../context/Socket/Context';
+import useSpikyService from '../hooks/useSpikyService';
 import UniversityTag from './common/UniversityTag';
 
 interface Props {
@@ -37,8 +37,7 @@ const reactionTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'aga
 export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { createReactionMsg, deleteIdea } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
     const [ideaOptions, setIdeaOptions] = useState(false);
@@ -67,7 +66,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const fecha = getTime(date.toString());
 
     const handleReaction = (reactionTypeAux: number) => {
-        service.createReactionMsg(uid, id, reactionTypeAux);
+        createReactionMsg(uid, id, reactionTypeAux);
 
         const messagesUpdated = messages.map(msg => {
             if (msg.id === id) {
@@ -89,7 +88,7 @@ export const Idea = ({ idea, filter }: Props) => {
         dispatch(setMessages(messagesUpdated));
     };
     const handleDelete = () => {
-        service.deleteMessage(id);
+        deleteIdea(id);
 
         const messagesUpdated = messages.filter(msg => msg.id !== id);
         dispatch(setMessages(messagesUpdated));

@@ -92,7 +92,7 @@ export const ConnectionsScreen = () => {
     }, []);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
             <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
             {conversations?.length !== 0 ? (
                 <FlatList
@@ -146,7 +146,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         />
                     </View>
                     <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
-                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                        <Text style={{ ...styles.text, fontSize: 13, overflow: 'scroll' }}>
                             {conver.chatmessage.message.length > 80
                                 ? conver.chatmessage.message.substring(0, 80) + '...'
                                 : conver.chatmessage.message}
@@ -170,7 +170,7 @@ const stylescomp = StyleSheet.create({
     converContainer: {
         ...styles.shadow,
         backgroundColor: 'white',
-        height: 70,
+        height: 80,
         borderRadius: 6,
         paddingHorizontal: 10,
         paddingVertical: 10,

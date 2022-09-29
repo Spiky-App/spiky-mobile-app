@@ -9,10 +9,19 @@ import { StatusType } from '../types/common';
 import { ChatMessage, Comment, Conversation, Message } from '../types/store';
 import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
+import { generateMessageFromMensaje } from '../helpers/message';
 import {
     generateChatMsgFromChatMensaje,
     generateConversationFromConversacion,
 } from '../helpers/conversations';
+import { signOut } from '../store/feature/auth/authSlice';
+import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { removeUser } from '../store/feature/user/userSlice';
+import { StorageKeys } from '../types/storage';
+import { decodeToken } from '../utils/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { generateNotificationsFromNotificacion } from '../helpers/notification';
+import { MessageRequestData } from '../services/models/spikyService';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -21,7 +30,23 @@ function useSpikyService() {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [service, setService] = useState<SpikyService>(new SpikyService(config));
-
+    const token = useAppSelector((state: RootState) => state.auth.token);
+    useEffect(() => {
+        if (token) {
+            const decoded_token = decodeToken(token);
+            const exp_date = JSON.parse(decoded_token.toString()).exp;
+            const value = new Date().setTime(exp_date * 1000);
+            if (Date.now() > value) {
+                onExpiredToken();
+            }
+        }
+    }, []);
+    async function onExpiredToken() {
+        await AsyncStorage.removeItem(StorageKeys.TOKEN);
+        dispatch(signOut());
+        dispatch(restartConfig());
+        dispatch(removeUser());
+    }
     useEffect(() => {
         setService(new SpikyService(config));
     }, [config]);
@@ -218,6 +243,142 @@ function useSpikyService() {
             dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
         }
     };
+    const createIdea = async (message: string, draft?: boolean) => {
+        let createdMessage: Message | undefined = undefined;
+        try {
+            const response = await service.createMessage(message, draft ? 1 : 0);
+            const { data } = response;
+            const { mensaje } = data;
+            createdMessage = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    universidad: {
+                        alias: user.university,
+                    },
+                },
+            });
+        } catch {
+            dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
+        }
+        return createdMessage;
+    };
+    const updateDraft = async (message: string, id: number, post: boolean) => {
+        let createdMessage: Message | undefined = undefined;
+        try {
+            const response = await service.updateDraft(message, id, post);
+            const { data } = response;
+            const { mensaje } = data;
+            createdMessage = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    universidad: {
+                        alias: user.university,
+                    },
+                },
+            });
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({ message: 'Error actualizando borrador', type: StatusType.WARNING })
+            );
+        }
+        return createdMessage;
+    };
+    const createReactionMsg = async (uid: number, messageId: number, reactionType: number) => {
+        service.createReactionMsg(uid, messageId, reactionType);
+    };
+    const deleteIdea = async (messageId: number) => {
+        service.deleteMessage(messageId);
+    };
+    const updateNotifications = async (arrayIds: number[]) => {
+        service.updateNotifications(arrayIds);
+    };
+    const retrieveNotifications = async () => {
+        try {
+            const response = await service.getNotifications();
+            const { data } = response;
+            const { notificaciones } = data;
+            return notificaciones.map(n => generateNotificationsFromNotificacion(n));
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({ message: 'Error al obtener notificaciones', type: StatusType.WARNING })
+            );
+            return [];
+        }
+    };
+    const createReactionToComment = async (commentId: number, reactionTypeAux: number) => {
+        service.createReactionCmt(commentId, reactionTypeAux);
+    };
+
+    const getUsersSuggestions = async (word: string) => {
+        try {
+            const response = await service.getUserSuggestions(word);
+            const { data } = response;
+            const { usuarios } = data;
+            return usuarios;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    };
+    const getHashtagsSuggestions = async (word: string) => {
+        try {
+            const response = await service.getHashtagsSuggestions(word);
+            const { data } = response;
+            const { hashtags } = data;
+            return word === 'anyhashtag0320'
+                ? hashtags
+                : [{ hashtag: word, id_hashtag: 0 }, ...hashtags];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    };
+    const getIdeaWithComments = async (messageId: number) => {
+        const response = await service.getMessageAndComments(messageId);
+        const { data } = response;
+        const { mensaje, num_respuestas } = data;
+        return generateMessageFromMensaje({
+            ...mensaje,
+            num_respuestas: num_respuestas,
+        });
+    };
+    const loadUserInfo = async () => {
+        const response = await service.getUserInfo();
+        const { data: fetchData } = response;
+        const { usuario } = fetchData;
+        return usuario;
+    };
+    const updatePassword = async (uid: number, currentPassword: string, newPassword: string) => {
+        await service.updatePassword(uid, currentPassword, newPassword);
+    };
+
+    const getIdeas = async (
+        uid: number,
+        filter: string,
+        lastMessageId: number | undefined,
+        parameters: MessageRequestData
+    ) => {
+        try {
+            const { data: messagesData } = await service.getMessages(
+                uid,
+                filter,
+                lastMessageId,
+                parameters
+            );
+            const { mensajes } = messagesData;
+            return mensajes.map((mensaje, index) => {
+                return generateMessageFromMensaje(mensaje, index);
+            });
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
+            return [];
+        }
+    };
 
     return {
         createMessageComment,
@@ -229,6 +390,19 @@ function useSpikyService() {
         getChatMessages,
         createChatMessage,
         createChatMessageSeen,
+        createIdea,
+        updateDraft,
+        createReactionMsg,
+        deleteIdea,
+        updateNotifications,
+        retrieveNotifications,
+        createReactionToComment,
+        getUsersSuggestions,
+        getHashtagsSuggestions,
+        getIdeaWithComments,
+        loadUserInfo,
+        updatePassword,
+        getIdeas,
     };
 }
 

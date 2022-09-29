@@ -3,10 +3,9 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
+import useSpikyService from '../hooks/useSpikyService';
 import { updateNotificationsNumber } from '../store/feature/user/userSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
 import UniversityTag from './common/UniversityTag';
@@ -26,8 +25,7 @@ const msg_notif = [
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const service = new SpikyService(config);
+    const { updateNotifications } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
     const timestamp = new Date(notification.createdAt);
@@ -37,7 +35,7 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
 
     const handleOpenIdea = () => {
         if (!notification.seen) {
-            service.updateNotifications([notification.id]);
+            updateNotifications([notification.id]);
             dispatch(updateNotificationsNumber(-1));
         }
         navigation.navigate('OpenedIdeaScreen', {

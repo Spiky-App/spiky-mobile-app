@@ -18,17 +18,13 @@ import { DrawerNavigationProp, DrawerScreenProps } from '@react-navigation/drawe
 import { RootStackParamList } from '../navigator/Navigator';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import SpikyService from '../services/SpikyService';
-import { addToast } from '../store/feature/toast/toastSlice';
 import { addMessage, setDraft, updateMessage } from '../store/feature/messages/messagesSlice';
-import { Message } from '../types/store';
-import { StatusType } from '../types/common';
 import ButtonIcon from '../components/common/ButtonIcon';
-import { generateMessageFromMensaje } from '../helpers/message';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { renderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
+import useSpikyService from '../hooks/useSpikyService';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
@@ -38,16 +34,13 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const idDraft = route.params?.draftID;
     const isDraft = idDraft !== undefined;
     const dispatch = useAppDispatch();
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const { nickname, universityId } = useAppSelector((state: RootState) => state.user);
     const { form, onChange } = useForm({
         message: draftedIdea || '',
     });
     const nav = useNavigation<NavigationProp>();
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
-
-    const service = new SpikyService(config);
+    const { createIdea, updateDraft } = useSpikyService();
     const IDEA_MAX_LENGHT = 220;
 
     function invalid() {
@@ -61,51 +54,12 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     function getPercentage(value: number, maxValue: number): number {
         return (value / maxValue) * 100;
     }
-
-    async function createMessage(message: string, draft?: boolean) {
-        let createdMessage: Message | undefined = undefined;
-        try {
-            const response = await service.createMessage(message, draft ? 1 : 0);
-            const { data } = response;
-            const { mensaje } = data;
-            createdMessage = generateMessageFromMensaje({
-                ...mensaje,
-                usuario: {
-                    alias: nickname,
-                    id_universidad: universityId,
-                },
-            });
-        } catch {
-            dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
-        }
-        return createdMessage;
-    }
-    async function updateDraft(message: string, id: number, post: boolean) {
-        let createdMessage: Message | undefined = undefined;
-        try {
-            const response = await service.updateDraft(message, id, post);
-            const { data } = response;
-            const { mensaje } = data;
-            createdMessage = generateMessageFromMensaje({
-                ...mensaje,
-                usuario: {
-                    alias: nickname,
-                    id_universidad: universityId,
-                },
-            });
-        } catch {
-            dispatch(
-                addToast({ message: 'Error actualizando borrador', type: StatusType.WARNING })
-            );
-        }
-        return createdMessage;
-    }
     const { draft } = useAppSelector((state: RootState) => state.messages);
     async function onPressLocationArrow() {
         setLoading(true);
         const message = idDraft
             ? await updateDraft(form.message, idDraft, true)
-            : await createMessage(form.message);
+            : await createIdea(form.message);
         if (message) {
             dispatch(setDraft(false));
             nav.navigate('CommunityScreen');
@@ -138,7 +92,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 );
             }
         } else {
-            const message = await createMessage(form.message, true);
+            const message = await createIdea(form.message, true);
             if (message) {
                 if (draft) {
                     dispatch(addMessage(message));
