@@ -2,13 +2,15 @@ export interface LoginResponseData {
     ok: boolean;
     uid: number;
     alias: string;
-    universidad: string;
+    id_universidad: string;
     n_notificaciones: number;
     token: string;
 }
 export interface Universidad {
     id_universidad: number;
-    alias?: string;
+    alias: string;
+    color: string;
+    background_color: string;
 }
 export interface UniversitiesResponseData {
     ok: boolean;
@@ -17,7 +19,6 @@ export interface UniversitiesResponseData {
 interface Usuario {
     alias: string;
     id_universidad: number;
-    universidad: Universidad;
 }
 
 interface Reaccion {
@@ -52,7 +53,7 @@ export interface AuthRenewResponseData {
     token: string;
     uid: number;
     alias: string;
-    universidad: string;
+    id_universidad: number;
     n_notificaciones: number;
     msg: string;
 }

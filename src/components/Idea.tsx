@@ -1,14 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {
-    Animated,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableHighlight,
-    // TouchableOpacity,
-    View,
-} from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import {
     faCheck,
@@ -33,6 +25,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
+import UniversityTag from './common/UniversityTag';
 
 interface Props {
     idea: Message;
@@ -178,10 +171,7 @@ export const Idea = ({ idea, filter }: Props) => {
                             @{user.nickname}
                         </Text>
                     </Pressable>
-                    <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-                    <Text style={{ ...styles.text, fontSize: 13 }}>
-                        {user.university.shortname}
-                    </Text>
+                    <UniversityTag id={user.universityId} fontSize={13} />
                 </View>
 
                 <View style={{ marginTop: 6 }}>

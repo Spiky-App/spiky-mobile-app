@@ -65,9 +65,7 @@ function useSpikyService() {
                     user: {
                         id: user.id,
                         nickname: user.nickname,
-                        university: {
-                            shortname: user.university,
-                        },
+                        universityId: user.universityId,
                     },
                     favor: 0,
                     against: 0,

@@ -8,6 +8,7 @@ import { updateNotificationsNumber } from '../store/feature/user/userSlice';
 import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
+import UniversityTag from './common/UniversityTag';
 
 interface PropsNotification {
     notification: NotificationProps;
@@ -56,14 +57,13 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
                 onPress={handleOpenIdea}
             >
                 <View style={styles.flex}>
-                    <Text>
-                        <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
-                            {'@' +
-                                notification.user.nickname +
-                                ' de ' +
-                                notification.user.university.shortname +
-                                ' '}
-                        </Text>
+                    <Text style={styles.flex}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
+                                {'@' + notification.user.nickname}
+                            </Text>
+                            <UniversityTag id={notification.user.universityId} fontSize={13} />
+                        </View>
                         <Text style={{ ...styles.text, fontSize: 13 }}>
                             {msg_notif[notification.type]}
                         </Text>

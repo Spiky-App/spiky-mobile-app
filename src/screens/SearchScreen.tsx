@@ -51,6 +51,7 @@ export const SearchScreen = () => {
                         filter={'/search'}
                         title={'Explorando'}
                         myideas={false}
+                        icon={faMagnifyingGlass}
                     />
                     <FloatButton />
                 </>

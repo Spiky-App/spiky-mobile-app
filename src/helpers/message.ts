@@ -24,9 +24,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         user: {
             id: mensaje.id_usuario,
             nickname: mensaje.usuario.alias,
-            university: {
-                shortname: mensaje.usuario.universidad.alias,
-            },
+            universityId: mensaje.usuario.id_universidad,
         },
         reactionType,
         messageTrackingId,
