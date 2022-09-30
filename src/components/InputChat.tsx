@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
@@ -37,10 +37,12 @@ export const InputChat = ({
     HideKeyboardAfterSumbit,
 }: Props) => {
     const [isDisabled, setDisabled] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
     const { createChatMessage } = useSpikyService();
     const { socket } = useContext(SocketContext);
     const { message } = form;
     const [counter, setCounter] = useState(0);
+    const timeoutRef = useRef<null | number>(null);
     const IDEA_MAX_LENGHT = 200;
 
     function invalid() {
@@ -57,6 +59,10 @@ export const InputChat = ({
             chatmsg: newChatMessages,
             userto: toUser.id,
         });
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            setIsTyping(false);
+        }
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
         }
@@ -77,6 +83,14 @@ export const InputChat = ({
         if (messageLength <= MAX_LENGHT && messageLength > 0) {
             if (isDisabled) setDisabled(false);
         } else setDisabled(true);
+        if (!isTyping || toUser.online) {
+            setIsTyping(true);
+            socket?.emit('isTyping', {
+                converId: conversationId,
+                userto: toUser.id,
+            });
+            timeoutRef.current = setTimeout(() => setIsTyping(false), 5000);
+        }
     }, [message]);
 
     useEffect(() => {
