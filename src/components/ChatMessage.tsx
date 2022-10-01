@@ -18,7 +18,7 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
 
     return (
         <View style={owner ? stylescomp.containerMessageRight : stylescomp.containerMessageLeft}>
-            <View>
+            <View style={{ minWidth: 200 }}>
                 {msg.replyMessage && (
                     <View style={stylescomp.containerReplyMsg}>
                         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
@@ -66,7 +66,7 @@ const stylescomp = StyleSheet.create({
         maxWidth: 280,
         paddingHorizontal: 15,
         paddingVertical: 10,
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'flex-end',
         backgroundColor: 'white',
         flexWrap: 'wrap',
@@ -80,10 +80,13 @@ const stylescomp = StyleSheet.create({
         textAlign: 'right',
         paddingLeft: 5,
         marginTop: 2,
+        left: 0,
+        width: '100%',
     },
     containerReplyMsg: {
         backgroundColor: '#e8e6e6',
-        borderTopRadius: 10,
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 5,
         maxWidth: 280,
