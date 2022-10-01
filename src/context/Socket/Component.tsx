@@ -3,9 +3,13 @@ import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
 import { addToast } from '../../store/feature/toast/toastSlice';
-import { updateNotificationsNumber } from '../../store/feature/user/userSlice';
+import {
+    increaseNewChatMessagesNumber,
+    updateNotificationsNumber,
+} from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
+import { Conversation, ChatMessage } from '../../types/store';
 import { SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
@@ -23,6 +27,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     const dispatch = useAppDispatch();
     const token = useAppSelector((state: RootState) => state.auth.token);
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const { activeConversationId } = useAppSelector((state: RootState) => state.chats);
     const socket = useSocket(socketBaseUrl, {
         transports: ['websocket'],
         autoConnect: true,
@@ -87,6 +92,18 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
         SendHandshake();
     }, [socket]);
+    useEffect(() => {
+        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
+            const { conver } = resp;
+            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
+        });
+
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId)
+                dispatch(increaseNewChatMessagesNumber());
+        });
+    }, [socket, activeConversationId]);
 
     const SendHandshake = async () => {
         console.info('Sending handshake to server ...');
