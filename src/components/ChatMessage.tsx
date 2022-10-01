@@ -36,10 +36,13 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                     </View>
                 )}
                 <View
-                    style={{
-                        ...stylescomp.message,
-                        justifyContent: owner ? 'flex-end' : 'flex-start',
-                    }}
+                    style={[
+                        {
+                            ...stylescomp.message,
+                            justifyContent: owner ? 'flex-end' : 'flex-start',
+                        },
+                        msg.replyMessage && { borderTopLeftRadius: 0, borderTopRightRadius: 0 },
+                    ]}
                 >
                     <Text style={stylescomp.text}>{msg.message}</Text>
                     <Text style={stylescomp.time}>{time}</Text>
@@ -80,7 +83,7 @@ const stylescomp = StyleSheet.create({
     },
     containerReplyMsg: {
         backgroundColor: '#e8e6e6',
-        borderRadius: 5,
+        borderTopRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
         maxWidth: 280,

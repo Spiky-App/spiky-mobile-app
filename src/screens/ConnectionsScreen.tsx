@@ -82,9 +82,6 @@ export const ConnectionsScreen = () => {
             const { conver, newConver } = resp;
             loadNewConversations(newConver, conver);
         });
-    }, [socket]);
-
-    useEffect(() => {
         socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
             const { chatmsg: chatMsg } = resp;
             if (activeConversationId !== chatMsg.conversationId)
