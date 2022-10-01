@@ -27,7 +27,6 @@ import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
 import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
-import { increaseNewChatMessagesNumber } from '../store/feature/user/userSlice';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -98,14 +97,12 @@ export const ChatScreen = ({ route }: Props) => {
             const { chatmsg } = resp;
             if (chatmsg.conversationId === conversationId) {
                 updateChatMessages(chatmsg);
-                dispatch(increaseNewChatMessagesNumber());
             }
         });
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
                 updateChatMessages({ ...conver.chatmessage });
-                dispatch(increaseNewChatMessagesNumber());
             }
         });
     }, [socket, conversationId]);
