@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -14,6 +15,7 @@ interface Props {
 function Toast({ children }: Props) {
     const toastQueue = useAppSelector((state: RootState) => state.toast.queue);
     const [modalNotif, setModalNotif] = useState(false);
+    const navigation = useNavigation<any>();
     return (
         <>
             {children}
@@ -24,6 +26,9 @@ function Toast({ children }: Props) {
                         onPress={() => {
                             if (toast.type === StatusType.NOTIFICATION) {
                                 setModalNotif(true);
+                            } else if (toast.type === StatusType.NUDGE) {
+                                // TODO: Go directly to the conversation
+                                navigation.navigate('ConnectionsScreen');
                             }
                         }}
                     >

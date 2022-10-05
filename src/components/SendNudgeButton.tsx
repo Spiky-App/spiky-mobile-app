@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import { Animated, Easing, StyleSheet } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import Svg, { Rect, Path, G, Circle } from 'react-native-svg';
 import SocketContext from '../context/Socket/Context';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 
 const styles = StyleSheet.create({
     iconContainer: {
@@ -10,67 +11,52 @@ const styles = StyleSheet.create({
         width: 70,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
     },
 });
 interface Props {
     conversationId: number;
     toUser?: number;
+    isOnline?: boolean;
 }
 
-const SendNudgeButton = ({ conversationId, toUser }: Props) => {
+const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     const { socket } = useContext(SocketContext);
+    const { nickname } = useAppSelector((state: RootState) => state.user);
     async function handleSendNudge() {
-        console.log('Nudge sent');
         socket?.emit('sendNudge', {
             converId: conversationId,
             userto: toUser,
+            nickname: nickname,
         });
     }
-    // This value is used for inputRange
-    // Initial value set to 0, which maps to scale 1 in the following buttonScale
-    // that means the initially the button is not scaled.
     const animatedValue = new Animated.Value(0);
-
-    // This will be used for scale transform style in Animated.View
-    // 0, 0.5 and 1 are animatedValue over a period of time specificed by duration.
-    // 1, 1.25 and 1.5 are the scale value for the component at each inputRange values.
-    // 0 mapes to 1, 0.5 maps to 1.25, and 1 maps to 1.5
-    const buttonColor = animatedValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['rgb(90,210,244)', 'rgb(224,82,99)'],
+    const buttonScale = animatedValue.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [1, 1.25, 1.5],
     });
 
-    // When button is pressed in, animate the animatedValue
-    // to 1 in 250 milliseconds.
     const onPress = () => {
         Animated.sequence([
             Animated.timing(animatedValue, {
                 toValue: 1,
-                duration: 2000,
-                easing: Easing.linear,
+                duration: 300,
                 useNativeDriver: true,
             }),
-        ]).start(() => {
-            handleSendNudge();
-            Animated.sequence([
-                Animated.timing(animatedValue, {
-                    toValue: 0,
-                    duration: 200,
-                    easing: Easing.linear,
-                    useNativeDriver: true,
-                }),
-            ]).start();
-        });
+            Animated.timing(animatedValue, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+        ]).start(() => handleSendNudge());
     };
     const animatedStyle = {
-        backgroundColor: buttonColor,
+        transform: [{ scale: buttonScale }],
     };
 
     return (
-        <TouchableWithoutFeedback onPressIn={onPress}>
+        <TouchableOpacity onPressIn={onPress} disabled={!isOnline}>
             <Animated.View style={[styles.iconContainer, animatedStyle]}>
-                <Svg height="90%" width="90%" viewBox="0 0 250 200">
+                <Svg height="90%" width="90%" viewBox="0 0 250 200" opacity={isOnline ? 1 : 0.3}>
                     <G data-name="Grupo 293" transform="rotate(-22 -260.916 2657.335)">
                         <Path
                             data-name="Trazado 307"
@@ -111,7 +97,7 @@ const SendNudgeButton = ({ conversationId, toUser }: Props) => {
                     </G>
                 </Svg>
             </Animated.View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
     );
 };
 

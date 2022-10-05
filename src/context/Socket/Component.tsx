@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useEffect } from 'react';
+import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
@@ -47,6 +48,19 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             const { chatmsg } = resp;
             if (activeConversationId !== chatmsg.conversationId)
                 dispatch(increaseNewChatMessagesNumber());
+        });
+        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
+            const { nickname, converId } = resp;
+            // TODO: The notification is shown even if such chat is open
+            if (activeConversationId !== converId) {
+                Vibration.vibrate();
+                dispatch(
+                    addToast({
+                        message: 'Zumbido de ' + nickname,
+                        type: StatusType.NUDGE,
+                    })
+                );
+            }
         });
     }, [socket, activeConversationId]);
 

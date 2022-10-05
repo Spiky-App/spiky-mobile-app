@@ -120,8 +120,6 @@ export const ChatScreen = ({ route }: Props) => {
             }
         });
         socket?.on('sendNudge', (resp: { converId: number }) => {
-            console.log('Nudge received');
-
             const { converId } = resp;
             if (converId === conversationId) {
                 Vibration.vibrate();

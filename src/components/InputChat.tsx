@@ -114,9 +114,13 @@ export const InputChat = ({
                 width: '100%',
             }}
         >
-            {toUser.online === true && (
-                <SendNudgeButton conversationId={conversationId} toUser={toUser.id} />
-            )}
+            {
+                <SendNudgeButton
+                    conversationId={conversationId}
+                    toUser={toUser.id}
+                    isOnline={toUser.online}
+                />
+            }
             <View
                 style={{
                     flex: 1,

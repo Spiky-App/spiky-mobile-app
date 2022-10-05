@@ -33,6 +33,7 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleE
 import { faEraser } from '@fortawesome/free-solid-svg-icons/faEraser';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
+import { faBellConcierge } from '@fortawesome/free-solid-svg-icons';
 export {
     faUsers,
     faChevronLeft,
@@ -69,4 +70,5 @@ export {
     faCircleExclamation,
     faEraser,
     faLock,
+    faBellConcierge,
 };
