@@ -7,8 +7,8 @@ export const socketBaseUrl: string = `${BASE_URL}:${PORT}`;
 // i'm searching for alternatives but for now it hasn't
 // hurt anyone
 export const config: AxiosRequestConfig = {
-    baseURL: `${BASE_URL}:${PORT}/api/`,
-    // baseURL: `https://spiky-services.herokuapp.com/api/`,
+    baseURL: `${BASE_URL}:${PORT}/api`,
+    // baseURL: `https://10.7.14.164/api/`,
     timeout: 10000,
     headers: {},
 };

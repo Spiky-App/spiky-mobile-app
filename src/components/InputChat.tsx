@@ -6,6 +6,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
+import SendNudgeButton from './SendNudgeButton';
 
 export interface FormChat {
     message: string;
@@ -99,6 +100,9 @@ export const InputChat = ({
                 width: '100%',
             }}
         >
+            {toUser.online === true && (
+                <SendNudgeButton conversationId={conversationId} toUser={toUser.id} />
+            )}
             <View
                 style={{
                     flex: 1,

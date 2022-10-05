@@ -8,6 +8,7 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
+    Vibration,
     View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,6 +28,7 @@ import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
 import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
+import NudgeNotice from '../components/NudgeNotice';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -48,6 +50,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { socket } = useContext(SocketContext);
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
+    const [showNudgeNotification, setShowNudgeNotification] = useState(false);
 
     async function loadChatMessages(loadMore?: boolean) {
         setIsLoading(true);
@@ -105,6 +108,18 @@ export const ChatScreen = ({ route }: Props) => {
                 updateChatMessages({ ...conver.chatmessage });
             }
         });
+        socket?.on('sendNudge', (resp: { converId: number }) => {
+            console.log('Nudge received');
+
+            const { converId } = resp;
+            if (converId === conversationId) {
+                Vibration.vibrate();
+                setShowNudgeNotification(true);
+                setTimeout(() => {
+                    setShowNudgeNotification(false);
+                }, 4000);
+            }
+        });
     }, [socket, conversationId]);
 
     useEffect(() => {
@@ -148,12 +163,13 @@ export const ChatScreen = ({ route }: Props) => {
                         }}
                     />
                 </View>
+                {showNudgeNotification && <NudgeNotice />}
                 <FlatList
                     ref={refFlatList}
                     style={stylescomp.wrap}
                     data={chatMessages}
                     renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
-                    keyExtractor={item => item.id + ''}
+                    keyExtractor={item => item.id}
                     showsVerticalScrollIndicator={false}
                     inverted
                     onEndReached={loadMoreChatMsg}
