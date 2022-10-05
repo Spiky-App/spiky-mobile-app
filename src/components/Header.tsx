@@ -80,7 +80,9 @@ export const Header = () => {
                             <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
                             {notificationsNumber + newChatMessagesNumber > 0 && (
                                 <>
-                                    <View style={stylescom.newChats} />
+                                    {newChatMessagesNumber > 0 && (
+                                        <View style={stylescom.newChats} />
+                                    )}
                                     <View style={stylescom.notif}>
                                         <Text style={stylescom.textnotif}>
                                             {notificationsNumber + newChatMessagesNumber}
