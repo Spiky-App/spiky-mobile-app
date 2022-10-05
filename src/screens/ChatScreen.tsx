@@ -42,6 +42,8 @@ export const ChatScreen = ({ route }: Props) => {
     const { top, bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [toUserIsTyping, setToUserIsTyping] = useState(false);
+    const timeoutRef = useRef<null | number>(null);
     const [moreChatMsg, setMoreChatMsg] = useState(true);
     const [chatMessages, setChatMessages] = useState<ChatMessageProp[]>([]);
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
@@ -78,6 +80,13 @@ export const ChatScreen = ({ route }: Props) => {
         navigation.pop();
     }
 
+    function handleStopTyping() {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            setToUserIsTyping(false);
+        }
+    }
+
     useFocusEffect(
         useCallback(() => {
             setConversationId(route.params?.conversationId);
@@ -96,15 +105,17 @@ export const ChatScreen = ({ route }: Props) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessageProp }) => {
-            const { chatmsg } = resp;
-            if (chatmsg.conversationId === conversationId) {
+        socket?.on('newChatMsg', resp => {
+            const { chatmsg, converId } = resp;
+            if (converId === conversationId) {
+                handleStopTyping();
                 updateChatMessages(chatmsg);
             }
         });
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
+                handleStopTyping();
                 updateChatMessages({ ...conver.chatmessage });
             }
         });
@@ -121,6 +132,18 @@ export const ChatScreen = ({ route }: Props) => {
             }
         });
     }, [socket, conversationId]);
+
+    useEffect(() => {
+        socket?.on('isTyping', resp => {
+            const { converId } = resp;
+            if (converId === conversationId) {
+                if (!toUserIsTyping) {
+                    setToUserIsTyping(true);
+                    timeoutRef.current = setTimeout(() => setToUserIsTyping(false), 5000);
+                }
+            }
+        });
+    }, [socket, conversationId, toUserIsTyping]);
 
     useEffect(() => {
         if (conversationId) {
@@ -173,6 +196,7 @@ export const ChatScreen = ({ route }: Props) => {
                     showsVerticalScrollIndicator={false}
                     inverted
                     onEndReached={loadMoreChatMsg}
+                    ListHeaderComponent={toUserIsTyping ? <WrittingBubble /> : <></>}
                     ListFooterComponent={isLoading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                     contentContainerStyle={{
@@ -194,6 +218,12 @@ export const ChatScreen = ({ route }: Props) => {
     );
 };
 
+const WrittingBubble = () => (
+    <View style={stylescomp.writting}>
+        <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
+    </View>
+);
+
 const stylescomp = StyleSheet.create({
     containerHeader: {
         backgroundColor: '#01192E',
@@ -214,5 +244,22 @@ const stylescomp = StyleSheet.create({
     wrap: {
         width: '100%',
         marginBottom: 10,
+    },
+    writting: {
+        ...styles.shadow,
+        height: 30,
+        width: 60,
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        marginVertical: 8,
+    },
+    dots: {
+        fontWeight: '600',
+        color: '#bebebe',
+        fontSize: 35,
+        marginLeft: 20,
+        position: 'absolute',
+        top: -15,
+        left: -5,
     },
 });

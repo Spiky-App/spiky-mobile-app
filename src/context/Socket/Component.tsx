@@ -25,26 +25,31 @@ const mensajes = [
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
     const { children } = props;
     const dispatch = useAppDispatch();
-    const token = useAppSelector((state: RootState) => state.auth.token);
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { activeConversationId } = useAppSelector((state: RootState) => state.chats);
-    const socket = useSocket(socketBaseUrl, {
-        transports: ['websocket'],
-        autoConnect: true,
-        forceNew: true,
-        query: {
-            'x-token': token,
-        },
-    });
+    const { socket, connectSocket, disconnectSocket } = useSocket(socketBaseUrl);
 
     useEffect(() => {
-        if (uid) {
-            socket.io.opts.query = {
-                'x-token': token,
-            };
-            socket.connect();
-        }
+        if (uid) connectSocket();
     }, [uid]);
+
+    useEffect(() => {
+        if (!uid) disconnectSocket();
+    }, [uid, disconnectSocket]);
+
+    useEffect(() => {
+        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
+            const { conver } = resp;
+            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
+        });
+
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId)
+                dispatch(increaseNewChatMessagesNumber());
+        });
+    }, [socket, activeConversationId]);
+
     useEffect(() => {
         /** Socket connected */
         socket?.on('connect', () => {
