@@ -105,11 +105,11 @@ class SpikyService {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
 
-    createReactionMsg(uid: number, messageId: number, reactionType: number) {
+    createReactionMsg(uid: number, messageId: number, reaction: string[0]) {
         return this.instance.post<CreateReactionMsg>(`reacc`, {
             uid,
             id_mensaje: messageId,
-            tipo: reactionType,
+            reaccion: reaction,
         });
     }
 

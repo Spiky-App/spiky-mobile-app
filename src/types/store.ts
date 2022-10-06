@@ -39,10 +39,6 @@ export interface ActiveMessage {
     banned: number;
 }
 
-export interface Reaction {
-    type: number;
-}
-
 export interface Tracking {
     id: number;
 }
@@ -57,16 +53,19 @@ export interface Message {
     id: number;
     message: string;
     date: number;
-    favor: number;
-    neutral: number;
-    against: number;
     user: User;
-    reactionType?: ReactionType;
+    myReaction?: string;
+    reactions: Reaction[];
     messageTrackingId?: number;
     answersNumber: number;
     draft: number;
     sequence: number;
     comments?: Comment[];
+}
+
+export interface Reaction {
+    reaction: string;
+    count: number;
 }
 
 export interface Toast {
