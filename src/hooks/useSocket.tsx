@@ -1,20 +1,28 @@
-import { useEffect, useRef } from 'react';
-import io, { ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
-import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback, useState } from 'react';
+import io, { Socket } from 'socket.io-client';
+import { StorageKeys } from '../types/storage';
 
-export const useSocket = (
-    url: string,
-    options?: Partial<ManagerOptions & SocketOptions> | undefined
-): Socket => {
-    const { current: socket } = useRef(io(url, options));
-    const uid = useAppSelector((state: RootState) => state.user.id);
+export const useSocket = (url: string) => {
+    const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
-    useEffect(() => {
-        if (uid === 0) {
-            socket.close();
-        }
-    }, [uid]);
+    const connectSocket = useCallback(async () => {
+        const token = await AsyncStorage.getItem(StorageKeys.TOKEN);
+        const options = {
+            transports: ['websocket'],
+            autoConnect: true,
+            forceNew: true,
+            query: {
+                'x-token': token,
+            },
+        };
+        const socketTemp = io(url, options).connect();
+        setSocket(socketTemp);
+    }, [url]);
 
-    return socket;
+    const disconnectSocket = useCallback(() => {
+        socket?.disconnect();
+    }, [socket]);
+
+    return { socket, connectSocket, disconnectSocket };
 };

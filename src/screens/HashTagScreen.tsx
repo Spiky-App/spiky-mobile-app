@@ -16,7 +16,7 @@ export const HashTagScreen = ({ route }: Props) => {
             <MessagesFeed
                 params={{ hashtag }}
                 filter={'/hashtag'}
-                title={hashtag}
+                title={'#' + (hashtag.length > 50 ? hashtag.substring(1, 54) + '..' : hashtag)}
                 myideas={false}
                 icon={faHashtag}
             />

@@ -259,9 +259,7 @@ function useSpikyService() {
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
-                    universidad: {
-                        alias: user.university,
-                    },
+                    id_universidad: user.universityId,
                 },
             });
         } catch {
@@ -279,9 +277,7 @@ function useSpikyService() {
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
-                    universidad: {
-                        alias: user.university,
-                    },
+                    id_universidad: user.universityId,
                 },
             });
         } catch (error) {
