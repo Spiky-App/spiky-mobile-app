@@ -42,7 +42,7 @@ export interface Message {
     id_usuario: number;
     mensaje: string;
     num_respuestas?: number;
-    reacciones: Reaction[];
+    reacciones: ReactionCount[];
     mi_reaccion?: string;
     trackings?: [{ id_tracking: number }];
     usuario: User;
@@ -56,7 +56,7 @@ interface User {
     online?: boolean;
 }
 
-interface Reaction {
+interface ReactionCount {
     reaccion: string;
     count: number;
 }
@@ -249,4 +249,15 @@ export interface CreateChatMessageSeen {
         chatmsg_seen: Seen;
         userto: number;
     };
+}
+
+export interface GetIdeaReactions {
+    ok: boolean;
+    reacciones: Reaction[];
+}
+
+export interface Reaction {
+    id_reaccion: number;
+    reaccion: string;
+    usuario: User;
 }

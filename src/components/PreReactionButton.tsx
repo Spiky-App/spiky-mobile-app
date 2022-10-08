@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { styles } from '../themes/appTheme';
 import IconGray from './svg/IconGray';
-import { faPlus } from '../constants/icons/FontAwesome';
+import { faPlus, faFaceSmile } from '../constants/icons/FontAwesome';
 import { emojis1, emojis2 } from '../constants/emojis/emojis';
 import useSpikyService from '../hooks/useSpikyService';
 
@@ -104,25 +104,9 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
 
             <Modal animationType="fade" visible={modalReactions} transparent={true}>
                 <TouchableWithoutFeedback onPress={handleCloseModal}>
-                    <View
-                        style={{
-                            flex: 1,
-                            backgroundColor: 'transparent',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            zIndex: 1,
-                        }}
-                    >
+                    <View style={stylescomp.wrapModal}>
                         <TouchableWithoutFeedback>
-                            <View
-                                style={{
-                                    top: y - 401,
-                                    left: x - 252,
-                                    width: 200,
-                                    height: 42,
-                                    alignItems: 'flex-end',
-                                }}
-                            >
+                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 160 }}>
                                 <Animated.View
                                     style={{
                                         ...stylescomp.containerbig,
@@ -145,7 +129,23 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
                                         />
                                         <EmojiReaction handleReaction={handleReaction} />
                                         <EmojiReaction handleReaction={handleReaction} />
-                                        <EmojiReaction handleReaction={handleReaction} />
+                                        {/* <EmojiReaction handleReaction={handleReaction} /> */}
+                                        <Pressable style={stylescomp.moreReactions}>
+                                            <FontAwesomeIcon
+                                                icon={faFaceSmile}
+                                                color={'white'}
+                                                size={17}
+                                            />
+                                            <View
+                                                style={{ position: 'absolute', top: 0, right: 1 }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faPlus}
+                                                    color={'white'}
+                                                    size={10}
+                                                />
+                                            </View>
+                                        </Pressable>
                                     </Animated.View>
                                 </Animated.View>
                             </View>
@@ -189,6 +189,19 @@ const stylescomp = StyleSheet.create({
         backgroundColor: '#D4D4D4',
         padding: 7,
     },
+    wrapModal: {
+        flex: 1,
+        backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    containerModal: {
+        width: 200,
+        height: 42,
+        alignItems: 'flex-end',
+        position: 'absolute',
+    },
     containerbig: {
         ...styles.center,
         ...styles.shadow,
@@ -205,5 +218,10 @@ const stylescomp = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    moreReactions: {
+        ...styles.center,
+        paddingVertical: 2,
+        paddingRight: 8,
     },
 });

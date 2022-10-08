@@ -6,7 +6,7 @@ import { useAnimation } from '../../hooks/useAnimation';
 const IconLogoAnimated = (props: SvgProps) => {
     let AnimatedRect = Animated.createAnimatedComponent(Rect);
     let AnimatedPath = Animated.createAnimatedComponent(Path);
-    const { opacity, fadeInFadeOutLoop } = useAnimation();
+    const { opacity, fadeInFadeOutLoop } = useAnimation({});
 
     React.useEffect(() => {
         fadeInFadeOutLoop(350, () => {}, 500);

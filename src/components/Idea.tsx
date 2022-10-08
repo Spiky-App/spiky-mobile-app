@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { faLightbulb, faMessage, faPen } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
-import { Message } from '../types/store';
+import { Message, User } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
@@ -20,6 +19,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import UniversityTag from './common/UniversityTag';
 import ReactionsContainer from './common/ReactionsContainer';
 import { PreReactionButton } from './PreReactionButton';
+import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 
 interface Props {
     idea: Message;
@@ -32,12 +32,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const { deleteIdea } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
-    const [ideaOptions, setIdeaOptions] = useState(false);
-    const { opacity, fadeIn } = useAnimation();
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
+    const { opacity, fadeIn } = useAnimation({});
     const {
         id,
         message,
@@ -89,21 +84,15 @@ export const Idea = ({ idea, filter }: Props) => {
         );
     };
 
-    const handleClickUser = useCallback(() => {
-        if (user.nickname === nickname) {
+    const handleClickUser = (goToUser: User) => {
+        if (goToUser.nickname === nickname) {
             changeScreen('MyIdeasScreen');
         } else {
             changeScreen('ProfileScreen', {
-                alias: user.nickname,
+                alias: goToUser.nickname,
             });
         }
-    }, [user]);
-
-    useEffect(() => {
-        if (position.top !== 0) {
-            setIdeaOptions(value => !value);
-        }
-    }, [position]);
+    };
 
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
@@ -113,27 +102,31 @@ export const Idea = ({ idea, filter }: Props) => {
         <Animated.View style={{ ...stylescom.wrap, opacity }}>
             <View style={stylescom.subwrap}>
                 {isOwner && (
-                    <View style={stylescom.corner}>
-                        <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                            <FontAwesomeIcon
-                                icon={isDraft ? faPen : faLightbulb}
-                                color="white"
-                                size={13}
-                            />
+                    <View style={stylescom.corner_container}>
+                        <View style={stylescom.corner}>
+                            <View style={{ transform: [{ rotate: '-45deg' }] }}>
+                                <FontAwesomeIcon
+                                    icon={isDraft ? faPen : faLightbulb}
+                                    color="white"
+                                    size={13}
+                                />
+                            </View>
                         </View>
                     </View>
                 )}
 
                 {messageTrackingId && (
-                    <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
-                        <View>
-                            <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                    <View style={stylescom.corner_container}>
+                        <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
+                            <View>
+                                <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                            </View>
                         </View>
                     </View>
                 )}
 
                 <View style={styles.flex}>
-                    <Pressable onPress={handleClickUser}>
+                    <Pressable onPress={() => handleClickUser(user)}>
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
                             @{user.nickname}
                         </Text>
@@ -168,16 +161,18 @@ export const Idea = ({ idea, filter }: Props) => {
                                 <View style={stylescom.container}>
                                     {reactions.length > 0 && (
                                         <ReactionsContainer
-                                            reactions={reactions}
+                                            reactionCount={reactions}
                                             myReaction={myReaction}
+                                            messageId={id}
+                                            handleClickUser={handleClickUser}
                                         />
                                     )}
 
                                     <Pressable style={stylescom.reaction} onPress={handleOpenIdea}>
                                         <FontAwesomeIcon
                                             icon={faMessage}
-                                            color={'#bebebe'}
-                                            size={12}
+                                            color={'#D4D4D4'}
+                                            size={14}
                                         />
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {answersNumber === 0 ? '' : answersNumber}
@@ -213,35 +208,19 @@ export const Idea = ({ idea, filter }: Props) => {
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {fecha}
                                         </Text>
-                                        <Pressable
-                                            onPress={event => {
-                                                setPosition({
-                                                    top: event.nativeEvent.pageY,
-                                                    left: event.nativeEvent.pageX,
-                                                });
+                                        <PreModalIdeaOptions
+                                            myIdea={isOwner}
+                                            message={{
+                                                messageId: id,
+                                                message,
+                                                user,
+                                                messageTrackingId,
+                                                date,
                                             }}
-                                        >
-                                            <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                                ...
-                                            </Text>
-                                        </Pressable>
+                                            filter={filter}
+                                        />
                                     </>
                                 )}
-
-                                <ModalIdeaOptions
-                                    setIdeaOptions={setIdeaOptions}
-                                    ideaOptions={ideaOptions}
-                                    position={position}
-                                    myIdea={isOwner}
-                                    message={{
-                                        messageId: id,
-                                        message,
-                                        user,
-                                        messageTrackingId,
-                                        date,
-                                    }}
-                                    filter={filter}
-                                />
                             </View>
                         </>
                     )}
@@ -271,7 +250,6 @@ const stylescom = StyleSheet.create({
         paddingBottom: 8,
         paddingHorizontal: 25,
         borderRadius: 8,
-        // overflow: 'hidden',
     },
     container: {
         flexDirection: 'row',
@@ -280,6 +258,7 @@ const stylescom = StyleSheet.create({
         justifyContent: 'center',
     },
     user: {
+        ...styles.textbold,
         fontWeight: '600',
         fontSize: 13,
     },
@@ -334,12 +313,6 @@ const stylescom = StyleSheet.create({
         color: '#01192E',
         marginLeft: 1,
     },
-    dots: {
-        fontWeight: '600',
-        color: '#bebebe',
-        fontSize: 22,
-        marginLeft: 20,
-    },
     corner: {
         position: 'absolute',
         top: -4,
@@ -349,5 +322,13 @@ const stylescom = StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 4,
         paddingHorizontal: 30,
+    },
+    corner_container: {
+        borderRadius: 8,
+        position: 'absolute',
+        height: 40,
+        left: 0,
+        right: 0,
+        overflow: 'hidden',
     },
 });

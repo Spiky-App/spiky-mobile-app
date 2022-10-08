@@ -25,6 +25,7 @@ import {
     GetChatMessages,
     CreateChatMessage,
     CreateChatMessageSeen,
+    GetIdeaReactions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -195,6 +196,10 @@ class SpikyService {
         return this.instance.post<CreateChatMessageSeen>(`conver/seen`, {
             id_chatmensaje: chatMessageId,
         });
+    }
+
+    getIdeaReactions(messageId: number) {
+        return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
     }
 }
 

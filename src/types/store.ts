@@ -55,7 +55,7 @@ export interface Message {
     date: number;
     user: User;
     myReaction?: string;
-    reactions: Reaction[];
+    reactions: ReactionCount[];
     messageTrackingId?: number;
     answersNumber: number;
     draft: number;
@@ -63,7 +63,7 @@ export interface Message {
     comments?: Comment[];
 }
 
-export interface Reaction {
+export interface ReactionCount {
     reaction: string;
     count: number;
 }
@@ -137,5 +137,11 @@ export interface Seen {
 interface replyMessage {
     id: number;
     message: string;
+    user: User;
+}
+
+export interface Reaction {
+    id: number;
+    reaction: string;
     user: User;
 }

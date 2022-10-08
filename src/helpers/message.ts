@@ -1,5 +1,5 @@
 import { Message as Mensaje } from '../types/services/spiky';
-import { Comment, Message, Reaction } from '../types/store';
+import { Comment, Message, ReactionCount } from '../types/store';
 import { generateCommentFromComentario } from './comment';
 
 function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Message {
@@ -7,7 +7,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         (tracking, index) => index === 0
     )?.id_tracking;
 
-    const reactionsRetrived: Reaction[] = mensaje.reacciones.map(reaction => ({
+    const reactionsRetrived: ReactionCount[] = mensaje.reacciones.map(reaction => ({
         reaction: reaction.reaccion,
         count: reaction.count,
     }));

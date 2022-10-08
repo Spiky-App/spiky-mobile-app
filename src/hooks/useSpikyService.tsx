@@ -24,6 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
 import SocketContext from '../context/Socket/Context';
+import { generateReactionFromReaccion } from '../helpers/reaction';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -261,6 +262,7 @@ function useSpikyService() {
                     alias: user.nickname,
                     id_universidad: user.universityId,
                 },
+                reacciones: [],
             });
         } catch {
             dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
@@ -279,6 +281,7 @@ function useSpikyService() {
                     alias: user.nickname,
                     id_universidad: user.universityId,
                 },
+                reacciones: [],
             });
         } catch (error) {
             console.log(error);
@@ -415,6 +418,20 @@ function useSpikyService() {
         }
     };
 
+    const getIdeaReactiones = async (messageId: number) => {
+        try {
+            const { data } = await service.getIdeaReactions(messageId);
+            const { reacciones } = data;
+            return reacciones.map(reaccion => {
+                return generateReactionFromReaccion(reaccion);
+            });
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error cargando reacciones', type: StatusType.WARNING }));
+            return [];
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -438,6 +455,7 @@ function useSpikyService() {
         loadUserInfo,
         updatePassword,
         getIdeas,
+        getIdeaReactiones,
     };
 }
 

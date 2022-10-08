@@ -1,64 +1,106 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Reaction } from '../../types/store';
+import { ReactionCount, User } from '../../types/store';
+import { ModalShowReactions } from '../ModalShowReactions';
 
 interface Props {
-    reactions: Reaction[];
+    reactionCount: ReactionCount[];
     myReaction?: string;
+    messageId: number;
+    handleClickUser: (goToUser: User) => void;
 }
 
-function ReactionsContainer({ reactions, myReaction }: Props) {
+function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props) {
+    const [modalReactions, setModalReactions] = useState(false);
+
+    function countReactions() {
+        let countOtherReact: number = 0;
+        reactionCount.forEach((reaction, index) => {
+            if (index > 3) {
+                countOtherReact = reaction.count + countOtherReact;
+            }
+        });
+        return countOtherReact;
+    }
+
     return (
-        <View style={{ marginRight: 10, flexDirection: 'row', ...styles.center }}>
-            {reactions.map(
-                (reaction, index) =>
-                    index < 5 && (
-                        <View
-                            style={{
-                                ...stylescomp.container,
-                                backgroundColor:
-                                    myReaction === reaction.reaction ? '#D4D4D4' : 'white',
-                            }}
-                            key={reaction.reaction}
-                        >
-                            <Text style={{ fontSize: 11 }}>{reaction.reaction}</Text>
-                            <Text
+        <>
+            <Pressable style={stylescomp.wrap} onPress={() => setModalReactions(true)}>
+                {reactionCount.map(
+                    (reaction, index) =>
+                        index < 3 && (
+                            <View
                                 style={{
-                                    ...stylescomp.number,
-                                    color: myReaction === reaction.reaction ? 'white' : '#bebebe',
+                                    ...stylescomp.container,
                                 }}
+                                key={reaction.reaction}
                             >
-                                {reaction.count}
-                            </Text>
-                        </View>
-                    )
-            )}
-            {reactions.length >= 5 && (
-                <Pressable style={{ paddingHorizontal: 5 }} onPress={() => {}}>
-                    <Text style={{ ...styles.text, ...styles.link }}>Ver más</Text>
-                </Pressable>
-            )}
-        </View>
+                                <Text style={{ fontSize: 11 }}>{reaction.reaction}</Text>
+                                <Text
+                                    style={{
+                                        ...stylescomp.number,
+                                    }}
+                                >
+                                    {reaction.count}
+                                </Text>
+                            </View>
+                        )
+                )}
+                {reactionCount.length >= 5 && (
+                    <View style={stylescomp.moreReaction}>
+                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
+                            {`${countReactions()}`}
+                        </Text>
+                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
+                            Más
+                        </Text>
+                    </View>
+                )}
+            </Pressable>
+            <ModalShowReactions
+                setModalReactions={setModalReactions}
+                modalReactions={modalReactions}
+                messageId={messageId}
+                reactionCount={reactionCount}
+                handleClickUser={handleClickUser}
+            />
+        </>
     );
 }
 
 export default ReactionsContainer;
 
 const stylescomp = StyleSheet.create({
+    wrap: {
+        marginRight: 10,
+        flexDirection: 'row',
+        ...styles.center,
+        borderRadius: 5,
+    },
     container: {
         flexDirection: 'row',
-        borderRadius: 4,
-        paddingHorizontal: 4,
+        borderRadius: 10,
+        paddingHorizontal: 1,
         paddingVertical: 3,
     },
     number: {
         ...styles.textbold,
-        fontSize: 12,
-        color: '#bebebe',
+        fontSize: 11,
+        color: '#D4D4D4',
         marginLeft: 2,
     },
     text: {
         ...styles.textbold,
+        fontSize: 11,
+        color: 'white',
+    },
+    moreReaction: {
+        ...styles.center,
+        paddingHorizontal: 2,
+        backgroundColor: '#D4D4D4',
+        paddingVertical: 3,
+        borderRadius: 4,
+        flexDirection: 'row',
     },
 });
