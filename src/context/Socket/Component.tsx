@@ -41,25 +41,30 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     useEffect(() => {
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
             const { conver } = resp;
-            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
+            if (activeConversationId !== conver.id) {
+                dispatch(increaseNewChatMessagesNumber());
+            }
         });
 
         socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
             const { chatmsg } = resp;
-            if (activeConversationId !== chatmsg.conversationId)
+            if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
+            }
         });
         socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
             const { nickname, converId } = resp;
             // TODO: The notification is shown even if such chat is open
             if (activeConversationId !== converId) {
                 Vibration.vibrate();
-                dispatch(
+                console.log(nickname, converId);
+
+                /* dispatch(
                     addToast({
                         message: 'Zumbido de ' + nickname,
                         type: StatusType.NUDGE,
                     })
-                );
+                ); */
             }
         });
     }, [socket, activeConversationId]);

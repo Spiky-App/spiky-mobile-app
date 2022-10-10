@@ -7,10 +7,15 @@ import { useAppSelector } from '../store/hooks';
 
 const styles = StyleSheet.create({
     iconContainer: {
-        height: 50,
-        width: 70,
+        height: 26,
+        width: 36,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#E6E6E6',
+        borderRadius: 3,
+        paddingHorizontal: 2,
+        paddingVertical: 2,
+        marginHorizontal: 6,
     },
 });
 interface Props {
@@ -56,7 +61,7 @@ const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     return (
         <TouchableOpacity onPressIn={onPress} disabled={!isOnline}>
             <Animated.View style={[styles.iconContainer, animatedStyle]}>
-                <Svg height="90%" width="90%" viewBox="0 0 250 200" opacity={isOnline ? 1 : 0.3}>
+                <Svg height="80%" width="80%" viewBox="0 0 250 200" opacity={isOnline ? 1 : 0.3}>
                     <G data-name="Grupo 293" transform="rotate(-22 -260.916 2657.335)">
                         <Path
                             data-name="Trazado 307"

@@ -43,6 +43,7 @@ export const ConnectionsScreen = () => {
 
     function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
         if (newMsg) {
+            console.log(id);
             dispatch(openNewMsgConversation(id));
         }
         navigation.navigate('ChatScreen', {
