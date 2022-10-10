@@ -20,14 +20,13 @@ function Toast({ children }: Props) {
         <>
             {children}
             <View style={styles.stack}>
-                {toastQueue.map(toast => (
+                {toastQueue.map((toast, i) => (
                     <TouchableOpacity
-                        key={toast.message}
+                        key={i}
                         onPress={() => {
                             if (toast.type === StatusType.NOTIFICATION) {
                                 setModalNotif(true);
                             } else if (toast.type === StatusType.NUDGE) {
-                                // TODO: Go directly to the conversation
                                 navigation.navigate('ConnectionsScreen');
                             }
                         }}
