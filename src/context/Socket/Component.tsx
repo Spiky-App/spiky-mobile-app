@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useEffect } from 'react';
-import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
