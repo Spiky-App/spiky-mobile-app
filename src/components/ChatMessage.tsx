@@ -18,7 +18,7 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
 
     return (
         <View style={owner ? stylescomp.containerMessageRight : stylescomp.containerMessageLeft}>
-            <View style={{ minWidth: 200 }}>
+            <View>
                 {msg.replyMessage && (
                     <View style={stylescomp.containerReplyMsg}>
                         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
@@ -39,7 +39,6 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                     style={{
                         ...stylescomp.message,
                         justifyContent: owner ? 'flex-end' : 'flex-start',
-                        // flexDirection: msg.message.length > 15 ? 'column' : 'row',
                         flexWrap: msg.message.length > 20 ? 'wrap' : 'nowrap',
                     }}
                 >

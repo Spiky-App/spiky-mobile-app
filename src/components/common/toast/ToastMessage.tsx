@@ -47,6 +47,8 @@ function ToastMessage({ message, status }: Props) {
                 return '#FC702A';
             case StatusType.NOTIFICATION:
                 return '#FC702A';
+            case StatusType.NUDGE:
+                return '#FC702A';
             default:
                 return '#01192E';
         }

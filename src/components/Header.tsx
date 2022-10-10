@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import {
@@ -9,7 +9,6 @@ import {
     SafeAreaView,
     TouchableOpacity,
     useColorScheme,
-    Vibration,
 } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
@@ -18,8 +17,6 @@ import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
-import IconLogoAnimated from './svg/IconLogoAnimated';
-import SocketContext from '../context/Socket/Context';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -32,25 +29,9 @@ export const Header = () => {
     });
     const colorScheme = useColorScheme();
     const [isDarkScheme, setIsDarkAppearance] = useState(false);
-    const { activeConversationId } = useAppSelector((state: RootState) => state.chats);
-    const { socket } = useContext(SocketContext);
-    const [animateIcon, setAnimateIcon] = useState(false);
     useEffect(() => {
         setIsDarkAppearance(colorScheme === 'dark');
     }, [colorScheme]);
-
-    useEffect(() => {
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId } = resp;
-            Vibration.vibrate([1000, 2000, 3000]);
-            if (activeConversationId !== converId) {
-                setAnimateIcon(true);
-                setTimeout(() => {
-                    setAnimateIcon(false);
-                }, 7000);
-            }
-        });
-    }, [socket, activeConversationId]);
 
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
@@ -119,18 +100,6 @@ export const Header = () => {
                             <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
                                 <LogoWhiteSvg />
                             </TouchableOpacity>
-                        </View>
-                        <View>
-                            {animateIcon && (
-                                <IconLogoAnimated
-                                    white={true}
-                                    props={{
-                                        width: 60,
-                                        height: '100%',
-                                        viewBox: '40 0 200 200',
-                                    }}
-                                />
-                            )}
                         </View>
                     </View>
                     <TouchableOpacity

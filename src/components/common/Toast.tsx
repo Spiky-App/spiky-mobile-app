@@ -49,9 +49,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         position: 'absolute',
-        bottom: 0,
+        justifyContent: 'center',
+        top: 70,
         width: '100%',
-        paddingHorizontal: 40,
-        paddingBottom: 30,
+        paddingHorizontal: 10,
+        paddingTop: 30,
     },
 });
