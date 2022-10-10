@@ -52,21 +52,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(increaseNewChatMessagesNumber());
             }
         });
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { nickname, converId } = resp;
-            // TODO: The notification is shown even if such chat is open
-            if (activeConversationId !== converId) {
-                Vibration.vibrate();
-                console.log(nickname, converId);
-
-                /* dispatch(
-                    addToast({
-                        message: 'Zumbido de ' + nickname,
-                        type: StatusType.NUDGE,
-                    })
-                ); */
-            }
-        });
     }, [socket, activeConversationId]);
 
     useEffect(() => {
