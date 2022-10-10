@@ -42,8 +42,10 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter }: Props) => {
     return (
         <>
             <Pressable onPress={handleOpendModal}>
-                <View ref={reactContainerRef}>
-                    <Text style={{ ...styles.textbold, ...stylescom.dots }}>...</Text>
+                <View>
+                    <Text ref={reactContainerRef} style={{ ...styles.textbold, ...stylescom.dots }}>
+                        ...
+                    </Text>
                 </View>
             </Pressable>
             <ModalIdeaOptions

@@ -14,6 +14,7 @@ import IconGray from './svg/IconGray';
 import { faPlus, faFaceSmile } from '../constants/icons/FontAwesome';
 import { emojis1, emojis2 } from '../constants/emojis/emojis';
 import useSpikyService from '../hooks/useSpikyService';
+import EmojisKeyboard from './EmojisKeyboard';
 
 interface Positions {
     x: number;
@@ -34,6 +35,7 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
     const animatedWidth = width.interpolate({ inputRange, outputRange });
     const reactContainerRef = useRef<View>(null);
     const [modalReactions, setModalReactions] = useState(false);
+    const [emojiKerboard, setEmojiKerboard] = useState(false);
     const { createReactionMsg } = useSpikyService();
     const [position, setPosition] = useState<Positions>({ x: 0, y: 0 });
     const { x, y } = position;
@@ -129,8 +131,10 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
                                         />
                                         <EmojiReaction handleReaction={handleReaction} />
                                         <EmojiReaction handleReaction={handleReaction} />
-                                        {/* <EmojiReaction handleReaction={handleReaction} /> */}
-                                        <Pressable style={stylescomp.moreReactions}>
+                                        <Pressable
+                                            style={stylescomp.moreReactions}
+                                            onPress={() => setEmojiKerboard(true)}
+                                        >
                                             <FontAwesomeIcon
                                                 icon={faFaceSmile}
                                                 color={'white'}
@@ -150,6 +154,11 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
                                 </Animated.View>
                             </View>
                         </TouchableWithoutFeedback>
+                        <EmojisKeyboard
+                            isOpend={emojiKerboard}
+                            setEmojiKerboard={setEmojiKerboard}
+                            afterSelection={handleReaction}
+                        />
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
@@ -163,14 +172,17 @@ interface EmojiReactionProps {
     handleReaction: (emoji: string) => void;
 }
 const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps) => {
-    let emoji: string;
-    if (fixedEmoji) {
-        emoji = fixedEmoji;
-    } else if (type === 1) {
-        emoji = emojis1[Math.floor(Math.random() * emojis1.length)];
-    } else {
-        emoji = emojis2[Math.floor(Math.random() * emojis2.length)];
-    }
+    const [emoji, setEmoji] = useState('');
+
+    useEffect(() => {
+        if (fixedEmoji) {
+            setEmoji(fixedEmoji);
+        } else if (type === 1) {
+            setEmoji(emojis1[Math.floor(Math.random() * emojis1.length)]);
+        } else {
+            setEmoji(emojis2[Math.floor(Math.random() * emojis2.length)]);
+        }
+    }, []);
 
     return (
         <Pressable style={{ padding: 2 }} onPress={() => handleReaction(emoji)}>

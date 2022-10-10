@@ -73,11 +73,11 @@ export const ModalShowReactions = ({
     }, [modalReactions]);
 
     useEffect(() => {
-        fadeOut(300, () => {
+        fadeOut(200, () => {
             setFilteredReactions(
                 selection !== 'Todos' ? reactions.filter(r => r.reaction === selection) : reactions
             );
-            fadeIn(300);
+            fadeIn(200);
         });
     }, [selection]);
 
@@ -90,7 +90,6 @@ export const ModalShowReactions = ({
                             style={{
                                 ...stylescom.container,
                                 transform: [{ translateY: position }],
-                                bottom: 0,
                             }}
                         >
                             <>
@@ -215,10 +214,11 @@ const stylescom = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 25,
         position: 'absolute',
+        bottom: 0,
     },
     containerCount: {
         marginTop: 2,
-        paddingTop: 8,
+        paddingTop: 5,
         borderBottomColor: '#d4d4d4b7',
         borderBottomWidth: 1,
         alignItems: 'center',
