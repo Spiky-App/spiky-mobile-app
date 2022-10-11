@@ -24,9 +24,17 @@ interface MessagesFeedProp {
     title: string;
     myideas: boolean;
     icon: IconDefinition;
+    emptyTitle: string;
 }
 
-const MessagesFeed = ({ params, filter, title, myideas = false, icon }: MessagesFeedProp) => {
+const MessagesFeed = ({
+    params,
+    filter,
+    title,
+    myideas = false,
+    icon,
+    emptyTitle,
+}: MessagesFeedProp) => {
     const dispatch = useDispatch();
     const { messages } = useAppSelector((state: RootState) => state.messages);
     const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
@@ -70,7 +78,7 @@ const MessagesFeed = ({ params, filter, title, myideas = false, icon }: Messages
             ) : loading ? (
                 <LoadingAnimated />
             ) : (
-                <EmptyState message="Todos buscamos algo, espero que lo encuentres." />
+                <EmptyState message={emptyTitle} />
             )}
         </>
     );

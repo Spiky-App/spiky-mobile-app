@@ -98,28 +98,10 @@ export const InputChat = ({
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
     }, [form]);
     return (
-        <View
-            style={{
-                backgroundColor: '#E6E6E6',
-                bottom: 6,
-                left: 0,
-                right: 0,
-                paddingHorizontal: 10,
-                paddingVertical: 13,
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                borderRadius: 8,
-                width: '100%',
-            }}
-        >
+        <View style={stylesInputChat.container}>
             <View
                 style={{
-                    flex: 1,
-                    backgroundColor: 'white',
-                    paddingHorizontal: 8,
-                    justifyContent: 'space-between',
-                    borderRadius: 5,
+                    ...stylesInputChat.inputWrap,
                     ...(counter < 0 && stylesInputChat.borderTextbox),
                 }}
             >
@@ -135,19 +117,10 @@ export const InputChat = ({
                     onChangeText={text => onChange({ message: text })}
                 />
             </View>
-            <View
-                style={{
-                    paddingLeft: 10,
-                }}
-            >
+            <View style={{ paddingLeft: 10 }}>
                 <ButtonIcon
                     icon={faLocationArrow}
-                    style={{
-                        paddingHorizontal: 10,
-                        borderRadius: 100,
-                        height: 36,
-                        width: 36,
-                    }}
+                    style={stylesInputChat.buttonIcon}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     disabled={isDisabled || invalid()}
                     onPress={onPress}
@@ -155,12 +128,8 @@ export const InputChat = ({
                 {counter <= 40 && (
                     <Text
                         style={{
-                            fontSize: 14,
-                            fontWeight: '300',
+                            ...stylesInputChat.counterText,
                             color: counter < 0 ? '#FC702A' : '#9C9C9C',
-                            textAlign: 'center',
-                            margin: 'auto',
-                            bottom: '-50%',
                         }}
                     >
                         {counter}
@@ -172,8 +141,41 @@ export const InputChat = ({
 };
 
 const stylesInputChat = StyleSheet.create({
+    container: {
+        backgroundColor: '#E6E6E6',
+        bottom: 6,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 10,
+        paddingVertical: 13,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        borderRadius: 8,
+        width: '100%',
+    },
     borderTextbox: {
         borderColor: '#FC702A',
         borderWidth: 0.2,
+    },
+    buttonIcon: {
+        paddingHorizontal: 10,
+        borderRadius: 100,
+        height: 36,
+        width: 36,
+    },
+    inputWrap: {
+        flex: 1,
+        backgroundColor: 'white',
+        paddingHorizontal: 8,
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    counterText: {
+        fontSize: 14,
+        fontWeight: '300',
+        textAlign: 'center',
+        margin: 'auto',
+        bottom: '-50%',
     },
 });

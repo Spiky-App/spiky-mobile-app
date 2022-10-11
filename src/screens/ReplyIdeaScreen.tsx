@@ -176,8 +176,6 @@ const stylecom = StyleSheet.create({
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
-        position: 'relative',
-        // ...styles.shadow,
     },
     wrap: {
         ...styles.shadow,

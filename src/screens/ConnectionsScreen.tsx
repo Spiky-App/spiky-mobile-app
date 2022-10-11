@@ -177,6 +177,7 @@ const stylescomp = StyleSheet.create({
     converWrap: {
         flexDirection: 'row',
         marginBottom: 20,
+        alignItems: 'center',
     },
     converContainer: {
         ...styles.shadow,
@@ -192,7 +193,7 @@ const stylescomp = StyleSheet.create({
         marginRight: 8,
         borderRadius: 3,
         width: 12,
-        height: 70,
+        height: 75,
     },
     date: {
         ...styles.textGray,
