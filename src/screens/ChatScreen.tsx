@@ -27,6 +27,7 @@ import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
 import {
     openNewMsgConversation,
+    resetActiveConversationId,
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
@@ -94,6 +95,7 @@ export const ChatScreen = ({ route }: Props) => {
             setConversationId(route.params?.conversationId);
             return () => {
                 setConversationId(0);
+                dispatch(resetActiveConversationId());
             };
         }, [route.params?.conversationId])
     );

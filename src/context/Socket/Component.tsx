@@ -3,6 +3,7 @@ import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
+import { updateLastChatMsgConversation } from '../../store/feature/chats/chatsSlice';
 import { addToast } from '../../store/feature/toast/toastSlice';
 import {
     increaseNewChatMessagesNumber,
@@ -50,6 +51,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             const { chatmsg } = resp;
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
             }
         });
         socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
@@ -113,18 +115,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
         SendHandshake();
     }, [socket]);
-    useEffect(() => {
-        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
-            const { conver } = resp;
-            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
-        });
-
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
-            const { chatmsg } = resp;
-            if (activeConversationId !== chatmsg.conversationId)
-                dispatch(increaseNewChatMessagesNumber());
-        });
-    }, [socket, activeConversationId]);
 
     const SendHandshake = async () => {
         console.info('Sending handshake to server ...');

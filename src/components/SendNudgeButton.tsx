@@ -63,15 +63,15 @@ const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     };
 
     return (
-        <Animated.View style={[styles.iconContainer, animatedStyle]}>
-            <TouchableOpacity onPress={onPress} disabled={!isOnline}>
+        <TouchableOpacity onPress={onPress} disabled={!isOnline}>
+            <Animated.View style={[styles.iconContainer, animatedStyle]}>
                 <FontAwesomeIcon
                     icon={faBellConcierge}
                     color={isOnline ? '#E6E6E6' : '#01192E'}
                     size={18}
                 />
-            </TouchableOpacity>
-        </Animated.View>
+            </Animated.View>
+        </TouchableOpacity>
     );
 };
 

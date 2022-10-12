@@ -49,9 +49,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         position: 'absolute',
         justifyContent: 'center',
-        top: 70,
+        top: 100,
         width: '100%',
         paddingHorizontal: 10,
-        paddingTop: 30,
     },
 });
