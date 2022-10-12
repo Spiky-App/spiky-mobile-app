@@ -13,6 +13,7 @@ export const MyIdeasScreen = () => {
                 title={'Mis ideas'}
                 myideas={true}
                 icon={faLightbulb}
+                emptyTitle={'¿Ya sabes que decir?'}
             />
             <FloatButton />
         </BackgroundPaper>

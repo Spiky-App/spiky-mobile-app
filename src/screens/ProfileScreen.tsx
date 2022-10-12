@@ -19,6 +19,7 @@ export const ProfileScreen = ({ route }: Props) => {
                 title={'@' + alias}
                 myideas={false}
                 icon={faUser}
+                emptyTitle={'Todos tenemos algo que decir.'}
             />
             <FloatButton />
         </BackgroundPaper>

@@ -13,6 +13,7 @@ export const TrackingScreen = () => {
                 title={'Siguiendo'}
                 myideas={false}
                 icon={faThumbtack}
+                emptyTitle={'Haz tracking en las ideas que revolucionan.'}
             />
             <FloatButton />
         </BackgroundPaper>

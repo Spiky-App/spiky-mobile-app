@@ -9,7 +9,7 @@ import { faHashtag } from '../constants/icons/FontAwesome';
 type Props = DrawerScreenProps<DrawerParamList, 'HashTagScreen'>;
 
 export const HashTagScreen = ({ route }: Props) => {
-    const hashtag = route.params?.hashtag;
+    const hashtag = route.params ? route.params.hashtag : '';
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
@@ -19,6 +19,7 @@ export const HashTagScreen = ({ route }: Props) => {
                 title={'#' + (hashtag.length > 50 ? hashtag.substring(1, 54) + '..' : hashtag)}
                 myideas={false}
                 icon={faHashtag}
+                emptyTitle={'Se el primero en hablar sobre esto.'}
             />
             <FloatButton />
         </BackgroundPaper>

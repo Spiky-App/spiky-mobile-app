@@ -13,6 +13,7 @@ export const CommunityScreen = () => {
                 title={'Comunidad'}
                 myideas={false}
                 icon={faUsers}
+                emptyTitle={'Cuestión de tiempo de que alguien hable.'}
             />
             <FloatButton />
         </BackgroundPaper>

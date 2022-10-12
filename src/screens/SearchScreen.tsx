@@ -52,6 +52,7 @@ export const SearchScreen = () => {
                         title={'Explorando'}
                         myideas={false}
                         icon={faMagnifyingGlass}
+                        emptyTitle={'Todos buscamos algo, esperemos que lo encuentres.'}
                     />
                     <FloatButton />
                 </>
