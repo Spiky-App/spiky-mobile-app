@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { RootState } from '../../store';
@@ -13,16 +14,19 @@ interface Props {
 function Toast({ children }: Props) {
     const toastQueue = useAppSelector((state: RootState) => state.toast.queue);
     const [modalNotif, setModalNotif] = useState(false);
+    const navigation = useNavigation<any>();
     return (
         <>
             {children}
             <View style={styles.stack}>
-                {toastQueue.map(toast => (
+                {toastQueue.map((toast, i) => (
                     <TouchableOpacity
-                        key={toast.message}
+                        key={i}
                         onPress={() => {
                             if (toast.type === StatusType.NOTIFICATION) {
                                 setModalNotif(true);
+                            } else if (toast.type === StatusType.NUDGE) {
+                                navigation.navigate('ConnectionsScreen');
                             }
                         }}
                     >
@@ -43,9 +47,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         position: 'absolute',
-        bottom: 0,
+        justifyContent: 'center',
+        top: 100,
         width: '100%',
-        paddingHorizontal: 40,
-        paddingBottom: 30,
+        paddingHorizontal: 10,
     },
 });

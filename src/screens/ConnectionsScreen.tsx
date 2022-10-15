@@ -20,7 +20,7 @@ import {
 } from '../store/feature/chats/chatsSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { Conversation, User, ChatMessage } from '../types/store';
+import { Conversation, User } from '../types/store';
 import { faCircleNodes } from '../constants/icons/FontAwesome';
 
 export const ConnectionsScreen = () => {
@@ -84,14 +84,6 @@ export const ConnectionsScreen = () => {
             loadNewConversations(newConver, conver);
         });
     }, [socket]);
-
-    useEffect(() => {
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
-            const { chatmsg: chatMsg } = resp;
-            if (activeConversationId !== chatMsg.conversationId)
-                dispatch(updateLastChatMsgConversation({ chatMsg, newMsg: true }));
-        });
-    }, [socket, activeConversationId]);
 
     useEffect(() => {
         loadConversations();

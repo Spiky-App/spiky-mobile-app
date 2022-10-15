@@ -26,9 +26,14 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
-import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
+import {
+    openNewMsgConversation,
+    resetActiveConversationId,
+    updateLastChatMsgConversation,
+} from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
 import { useAnimation } from '../hooks/useAnimation';
+import SendNudgeButton from '../components/SendNudgeButton';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -66,6 +71,7 @@ export const ChatScreen = ({ route }: Props) => {
         if (newChatMessages.length === 20) setMoreChatMsg(true);
         setChatMessages([...chatMessages, ...newChatMessages]);
         setIsLoading(false);
+        dispatch(openNewMsgConversation(conversationId));
     }
 
     function loadMoreChatMsg() {
@@ -73,7 +79,7 @@ export const ChatScreen = ({ route }: Props) => {
     }
 
     function updateChatMessages(chatMessage: ChatMessageProp) {
-        if (chatMessages) {
+        if (chatMessage) {
             setChatMessages(v => [chatMessage, ...v]);
             dispatch(updateLastChatMsgConversation({ chatMsg: chatMessage, newMsg: false }));
             if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
@@ -96,6 +102,7 @@ export const ChatScreen = ({ route }: Props) => {
             setConversationId(route.params?.conversationId);
             return () => {
                 setConversationId(0);
+                dispatch(resetActiveConversationId());
             };
         }, [route.params?.conversationId])
     );
@@ -110,6 +117,7 @@ export const ChatScreen = ({ route }: Props) => {
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
         socket?.on('newChatMsg', resp => {
+            setToUserIsTyping(false);
             const { chatmsg } = resp;
             if (chatmsg.conversationId === conversationId) {
                 handleStopTyping();
@@ -181,6 +189,11 @@ export const ChatScreen = ({ route }: Props) => {
                             ...stylescomp.online,
                             backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
                         }}
+                    />
+                    <SendNudgeButton
+                        conversationId={conversationId}
+                        toUser={toUser.id}
+                        isOnline={toUser.online}
                     />
                 </View>
                 <View
@@ -260,6 +273,7 @@ const stylescomp = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         width: '100%',
+        justifyContent: 'space-between',
     },
     online: {
         width: 10,

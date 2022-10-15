@@ -1,7 +1,9 @@
 import React, { PropsWithChildren, useEffect } from 'react';
+import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
 import { RootState } from '../../store';
+import { updateLastChatMsgConversation } from '../../store/feature/chats/chatsSlice';
 import { addToast } from '../../store/feature/toast/toastSlice';
 import {
     increaseNewChatMessagesNumber,
@@ -9,7 +11,7 @@ import {
 } from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
-import { ChatMessage, Conversation } from '../../types/store';
+import { Conversation, ChatMessage } from '../../types/store';
 import { SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
@@ -40,14 +42,30 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     useEffect(() => {
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
             const { conver } = resp;
-            if (activeConversationId !== conver.id) dispatch(increaseNewChatMessagesNumber());
+            if (activeConversationId !== conver.id) {
+                dispatch(increaseNewChatMessagesNumber());
+            }
         });
 
         socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
             const { chatmsg } = resp;
             console.log('newChatMsg menu', activeConversationId, chatmsg.conversationId);
-            if (activeConversationId !== chatmsg.conversationId)
+            if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+            }
+        });
+        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
+            const { converId } = resp;
+            Vibration.vibrate();
+            if (activeConversationId !== converId) {
+                dispatch(
+                    addToast({
+                        message: '@' + resp.nickname + ' te ha enviado un zumbido',
+                        type: StatusType.NUDGE,
+                    })
+                );
+            }
         });
     }, [socket, activeConversationId]);
 

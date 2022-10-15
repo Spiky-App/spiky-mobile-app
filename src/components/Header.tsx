@@ -44,6 +44,7 @@ export const Header = () => {
                     style={{
                         ...stylescom.container,
                         marginTop: top > 0 ? 0 : 15,
+                        justifyContent: 'space-between',
                     }}
                     onLayout={({ nativeEvent }) => {
                         setPosition({
@@ -52,35 +53,35 @@ export const Header = () => {
                         });
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() => navigation.openDrawer()}
-                        style={{ justifyContent: 'center', alignItems: 'center' }}
-                    >
-                        <View style={{ ...stylescom.flexConte, marginLeft: 20 }}>
-                            <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
-                            {notificationsNumber + newChatMessagesNumber > 0 && (
-                                <>
-                                    {newChatMessagesNumber > 0 && (
-                                        <View style={stylescom.newChats} />
-                                    )}
-                                    <View style={stylescom.notif}>
-                                        <Text style={stylescom.textnotif}>
-                                            {notificationsNumber + newChatMessagesNumber}
-                                        </Text>
-                                    </View>
-                                </>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-
-                    <View style={{ width: 75, marginLeft: 15 }}>
-                        <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
-                            <LogoWhiteSvg />
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                            <View
+                                style={{
+                                    ...stylescom.flexConte,
+                                    marginLeft: 20,
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
+                                {notificationsNumber + newChatMessagesNumber > 0 && (
+                                    <>
+                                        {newChatMessagesNumber > 0 && (
+                                            <View style={stylescom.newChats} />
+                                        )}
+                                        <View style={stylescom.notif}>
+                                            <Text style={stylescom.textnotif}>
+                                                {notificationsNumber + newChatMessagesNumber}
+                                            </Text>
+                                        </View>
+                                    </>
+                                )}
+                            </View>
                         </TouchableOpacity>
+                        <View style={{ marginLeft: 10, width: 75, justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
+                                <LogoWhiteSvg />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
-                    <View style={{ flex: 1 }} />
-
                     <TouchableOpacity
                         style={{ ...stylescom.flexConte, marginRight: 20 }}
                         onPress={() => setProfileOption(true)}

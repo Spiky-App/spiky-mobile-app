@@ -4,7 +4,12 @@ import { Animated, StyleSheet, Text, View, TouchableOpacity } from 'react-native
 import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { StatusType } from '../../../types/common';
-import { faTriangleExclamation, faXmark, faBell } from '../../../constants/icons/FontAwesome';
+import {
+    faTriangleExclamation,
+    faXmark,
+    faBell,
+    faBellConcierge,
+} from '../../../constants/icons/FontAwesome';
 import { styles } from '../../../themes/appTheme';
 
 interface Props {
@@ -41,6 +46,8 @@ function ToastMessage({ message, status }: Props) {
                 return '#FC702A';
             case StatusType.NOTIFICATION:
                 return '#FC702A';
+            case StatusType.NUDGE:
+                return '#FC702A';
             default:
                 return '#01192E';
         }
@@ -51,6 +58,8 @@ function ToastMessage({ message, status }: Props) {
                 return faTriangleExclamation;
             case StatusType.NOTIFICATION:
                 return faBell;
+            case StatusType.NUDGE:
+                return faBellConcierge;
             default:
                 return faTriangleExclamation;
         }
