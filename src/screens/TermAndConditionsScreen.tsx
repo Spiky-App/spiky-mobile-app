@@ -53,7 +53,7 @@ export const TermAndConditionsScreen = () => {
     const [info, setInfo] = useState(termsAndConditions);
     const [title, setTitle] = useState(['Términos y ', 'condiciones']);
     const [alternateTitle, setAlternateTitle] = useState(['Aviso de ', 'privacidad']);
-    const { opacity, fadeIn, fadeOut } = useAnimation();
+    const { opacity, fadeIn, fadeOut } = useAnimation({});
 
     useEffect(() => {
         fadeOut(400, () => {

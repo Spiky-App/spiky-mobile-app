@@ -8,31 +8,20 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    TouchableHighlight,
     TouchableOpacity,
     View,
 } from 'react-native';
 import { Comment } from '../components/Comment';
-import {
-    faCheck,
-    faChevronLeft,
-    faLightbulb,
-    faMessage,
-    faMinus,
-    faThumbtack,
-    faXmark,
-} from '../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faMessage, faThumbtack } from '../constants/icons/FontAwesome';
 import { getTime } from '../helpers/getTime';
 import { styles } from '../themes/appTheme';
 
 import { FormComment, InputComment } from '../components/InputComment';
-import { ModalIdeaOptions } from '../components/ModalIdeaOptions';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { setMessages } from '../store/feature/messages/messagesSlice';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Comment as CommentState, Message, ReactionType } from '../types/store';
+import { Comment as CommentState, Message } from '../types/store';
 import MsgTransform from '../components/MsgTransform';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
@@ -40,12 +29,14 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
 import UniversityTag from '../components/common/UniversityTag';
 import useSpikyService from '../hooks/useSpikyService';
+import { PreReactionButton } from '../components/PreReactionButton';
+import ReactionsContainer from '../components/common/ReactionsContainer';
+import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
 };
 
-const reactioTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
 const initialMessage = {
     id: 0,
     message: '',
@@ -61,14 +52,13 @@ const initialMessage = {
     answersNumber: 0,
     draft: 0,
     sequence: 1,
+    reactions: [],
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 
 export const OpenedIdeaScreen = ({ route }: Props) => {
-    const messages = useAppSelector((state: RootState) => state.messages.messages);
     const uid = useAppSelector((state: RootState) => state.user.id);
-    const dispatch = useAppDispatch();
     const messageId = route.params?.messageId;
     const filter = route.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
@@ -76,35 +66,13 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
     const [message, setMessage] = useState<Message>(initialMessage);
     const [answersNumber, setAnswersNumber] = useState<number>(message.answersNumber);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
-    const [ideaOptions, setIdeaOptions] = useState(false);
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
     const navigation = useNavigation<any>();
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
     const [comments, setComments] = useState<CommentState[]>();
     const date = getTime(message.date.toString());
     const isOwner = message.user.id === uid;
-    const { createReactionMsg, getIdeaWithComments } = useSpikyService();
-
-    const handleReaction = (reactionTypeAux: number) => {
-        createReactionMsg(uid, message.id, reactionTypeAux);
-
-        const messagesUpdated = messages.map(msg => {
-            if (msg.id === message?.id) {
-                return {
-                    ...msg,
-                    [reactioTypes[reactionTypeAux]]: msg[reactioTypes[reactionTypeAux]] + 1,
-                    reactionType: reactionTypeAux,
-                };
-            } else {
-                return msg;
-            }
-        });
-        dispatch(setMessages(messagesUpdated));
-    };
+    const { getIdeaWithComments } = useSpikyService();
 
     const handleOpenIdea = async () => {
         const messageRetrived = await getIdeaWithComments(messageId);
@@ -121,12 +89,6 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
             setAnswersNumber(comments.length + 1);
         }
     };
-
-    useEffect(() => {
-        if (position.top !== 0) {
-            setIdeaOptions(value => !value);
-        }
-    }, [position]);
 
     useEffect(() => {
         if (messageId) {
@@ -152,13 +114,15 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                         <View style={stylescom.wrap}>
                             <View style={stylescom.subwrap}>
                                 {isOwner && (
-                                    <View style={stylescom.corner}>
-                                        <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                                            <FontAwesomeIcon
-                                                icon={faLightbulb}
-                                                color="white"
-                                                size={13}
-                                            />
+                                    <View style={stylescom.corner_container}>
+                                        <View style={stylescom.corner}>
+                                            <View style={{ transform: [{ rotate: '-45deg' }] }}>
+                                                <FontAwesomeIcon
+                                                    icon={faLightbulb}
+                                                    color="white"
+                                                    size={13}
+                                                />
+                                            </View>
                                         </View>
                                     </View>
                                 )}
@@ -213,91 +177,32 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    {!message.reactionType && !isOwner ? (
-                                        <View
-                                            style={{
-                                                ...stylescom.container,
-                                                ...stylescom.containerReact,
-                                            }}
-                                        >
-                                            <TouchableHighlight
-                                                style={stylescom.reactButton}
-                                                underlayColor="#01192E"
-                                                onPress={() => handleReaction(2)}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faXmark}
-                                                    color="white"
-                                                    size={18}
-                                                />
-                                            </TouchableHighlight>
-
-                                            <TouchableHighlight
-                                                style={stylescom.reactButton}
-                                                underlayColor="#01192E"
-                                                onPress={() => handleReaction(1)}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faCheck}
-                                                    color="white"
-                                                    size={18}
-                                                />
-                                            </TouchableHighlight>
-
-                                            <TouchableHighlight
-                                                style={stylescom.reactButton}
-                                                underlayColor="#01192E"
-                                                onPress={() => handleReaction(0)}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faMinus}
-                                                    color="white"
-                                                    size={18}
-                                                />
-                                            </TouchableHighlight>
-                                        </View>
+                                    {!message.myReaction && !isOwner ? (
+                                        <>
+                                            <View style={{ flex: 1, height: 15 }} />
+                                            <PreReactionButton
+                                                messageId={message.id}
+                                                bottom={-15}
+                                                right={-25}
+                                                left={-25}
+                                            />
+                                        </>
                                     ) : (
                                         <>
                                             <View style={stylescom.container}>
-                                                <View style={stylescom.reaction}>
-                                                    <FontAwesomeIcon
-                                                        icon={faXmark}
-                                                        color={
-                                                            message.reactionType ===
-                                                            ReactionType.AGAINST
-                                                                ? '#6A000E'
-                                                                : '#bebebe'
-                                                        }
-                                                        size={12}
+                                                {message.reactions.length > 0 && (
+                                                    <ReactionsContainer
+                                                        reactionCount={message.reactions}
+                                                        myReaction={message.myReaction}
+                                                        messageId={message.id}
                                                     />
-                                                    <Text style={styles.numberGray}>
-                                                        {message.against === 0
-                                                            ? ' '
-                                                            : message.against}
-                                                    </Text>
-                                                </View>
-
-                                                <View style={stylescom.reaction}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        color={
-                                                            message.reactionType ===
-                                                            ReactionType.FAVOR
-                                                                ? '#0B5F00'
-                                                                : '#bebebe'
-                                                        }
-                                                        size={12}
-                                                    />
-                                                    <Text style={styles.numberGray}>
-                                                        {message.favor === 0 ? ' ' : message.favor}
-                                                    </Text>
-                                                </View>
+                                                )}
 
                                                 <View style={stylescom.reaction}>
                                                     <FontAwesomeIcon
                                                         icon={faMessage}
-                                                        color={'#bebebe'}
-                                                        size={12}
+                                                        color={'#D4D4D4'}
+                                                        size={14}
                                                     />
                                                     <Text style={styles.numberGray}>
                                                         {answersNumber === 0 ? ' ' : answersNumber}
@@ -312,38 +217,17 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                                     {date}
                                                 </Text>
 
-                                                <TouchableOpacity
-                                                    onPress={event => {
-                                                        setPosition({
-                                                            top: event.nativeEvent.pageY,
-                                                            left: event.nativeEvent.pageX,
-                                                        });
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            ...styles.textbold,
-                                                            ...stylescom.dots,
-                                                        }}
-                                                    >
-                                                        ...
-                                                    </Text>
-                                                </TouchableOpacity>
-
-                                                <ModalIdeaOptions
-                                                    setIdeaOptions={setIdeaOptions}
-                                                    ideaOptions={ideaOptions}
-                                                    position={position}
+                                                <PreModalIdeaOptions
                                                     myIdea={isOwner}
                                                     message={{
-                                                        messageId,
+                                                        messageId: message.id,
                                                         message: message.message,
                                                         user: message.user,
                                                         messageTrackingId,
                                                         date: message.date,
                                                     }}
-                                                    setMessageTrackingId={setMessageTrackingId}
                                                     filter={filter}
+                                                    setMessageTrackingId={setMessageTrackingId}
                                                 />
                                             </View>
                                         </>
@@ -352,7 +236,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                             </View>
                         </View>
 
-                        {message.reactionType !== undefined || isOwner ? (
+                        {message.myReaction !== undefined || isOwner ? (
                             <>
                                 <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
                                     <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
@@ -447,7 +331,6 @@ const stylescom = StyleSheet.create({
         paddingBottom: 8,
         paddingHorizontal: 25,
         borderRadius: 8,
-        overflow: 'hidden',
     },
     msg: {
         fontSize: 13,
@@ -495,6 +378,14 @@ const stylescom = StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 4,
         paddingHorizontal: 30,
+    },
+    corner_container: {
+        borderRadius: 8,
+        position: 'absolute',
+        height: 40,
+        left: 0,
+        right: 0,
+        overflow: 'hidden',
     },
     commentWrap: {
         flex: 1,

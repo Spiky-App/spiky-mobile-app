@@ -15,7 +15,7 @@ const regularExpressionLowerCases = /^(?=.*[a-z])/;
 const regularExpressionUpperCases = /^(?=.*[A-Z])/;
 
 export const PasswordValidationMsg = ({ password, setPasswordValid }: Props) => {
-    const { opacity, fadeIn } = useAnimation();
+    const { opacity, fadeIn } = useAnimation({});
     const [contraints, setConstraints] = useState({
         longer: false,
         uppercase: false,

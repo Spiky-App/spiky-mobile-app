@@ -36,16 +36,14 @@ export interface GetMessagesResponse {
 
 export interface Message {
     banned?: number;
-    contra: number;
     draft: number;
-    favor: number;
     fecha: string | number;
     id_mensaje: number;
     id_usuario: number;
     mensaje: string;
-    neutro: number;
     num_respuestas?: number;
-    reacciones?: [{ tipo: number }];
+    reacciones: ReactionCount[];
+    mi_reaccion?: string;
     trackings?: [{ id_tracking: number }];
     usuario: User;
     respuestas?: Comment[];
@@ -56,6 +54,11 @@ interface User {
     id_universidad: number;
     id_usuario?: number;
     online?: boolean;
+}
+
+interface ReactionCount {
+    reaccion: string;
+    count: number;
 }
 
 export interface CreateMessageResponse {
@@ -200,21 +203,9 @@ export interface GetConversations {
 
 export interface Conversation {
     id_conversacion: number;
-    'usuario1.id_usuario': number;
-    'usuario1.alias': string;
-    'usuario1.online': boolean;
-    'usuario1.id_universidad': number;
-    'usuario2.id_usuario': number;
-    'usuario2.alias': string;
-    'usuario2.online': boolean;
-    'usuario2.id_universidad': number;
-    'chatmensajes.id_chatmensaje': number;
-    'chatmensajes.id_usuario': number;
-    'chatmensajes.chatmensaje': string;
-    'chatmensajes.fecha': string;
-    'chatmensajes.mensaje'?: ReplyMessage;
-    'chatmensajes.seens.id_usuario': number;
-    'chatmensajes.seens.fecha': string;
+    usuario1: User;
+    usuario2: User;
+    chatmensajes: ChatMessage;
 }
 
 export interface GetChatMessages {
@@ -229,9 +220,8 @@ export interface ChatMessage {
     id_usuario: number;
     chatmensaje: string;
     fecha: string;
-    id_mensaje?: number | null;
     mensaje?: ReplyMessage;
-    seens?: Seen[];
+    seens: Seen[];
 }
 
 export interface Seen {
@@ -259,4 +249,15 @@ export interface CreateChatMessageSeen {
         chatmsg_seen: Seen;
         userto: number;
     };
+}
+
+export interface GetIdeaReactions {
+    ok: boolean;
+    reacciones: Reaction[];
+}
+
+export interface Reaction {
+    id_reaccion: number;
+    reaccion: string;
+    usuario: User;
 }
