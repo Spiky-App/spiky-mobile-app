@@ -9,51 +9,35 @@ function generateConversationFromConversacion(
     conversacion: Conversacion,
     uid: number
 ): Conversation {
-    let newMsg = conversacion['chatmensajes.seens.id_usuario'];
     const chatsMsgRetrived: ChatMessage = generateChatMsgFromChatMensaje(
-        {
-            id_conversacion: conversacion.id_conversacion,
-            id_chatmensaje: conversacion['chatmensajes.id_chatmensaje'],
-            id_usuario: conversacion['chatmensajes.id_usuario'],
-            chatmensaje: conversacion['chatmensajes.chatmensaje'],
-            fecha: conversacion['chatmensajes.fecha'],
-            mensaje: conversacion['chatmensajes.mensaje'],
-            seens: newMsg
-                ? [
-                      {
-                          id_usuario: conversacion['chatmensajes.seens.id_usuario'],
-                          fecha: conversacion['chatmensajes.seens.fecha'],
-                      },
-                  ]
-                : [],
-        },
+        conversacion.chatmensajes,
         uid
     );
 
     return {
         id: conversacion.id_conversacion,
         user_1: {
-            id: conversacion['usuario1.id_usuario'],
-            nickname: conversacion['usuario1.alias'],
-            universityId: conversacion['usuario1.id_universidad'],
-            online: conversacion['usuario1.online'],
+            id: conversacion.usuario1.id_usuario,
+            nickname: conversacion.usuario1.alias,
+            universityId: conversacion.usuario1.id_universidad,
+            online: conversacion.usuario1.online,
         },
         user_2: {
-            id: conversacion['usuario2.id_usuario'],
-            nickname: conversacion['usuario2.alias'],
-            universityId: conversacion['usuario2.id_universidad'],
-            online: conversacion['usuario2.online'],
+            id: conversacion.usuario2.id_usuario,
+            nickname: conversacion.usuario2.alias,
+            universityId: conversacion.usuario2.id_universidad,
+            online: conversacion.usuario2.online,
         },
         chatmessage: chatsMsgRetrived,
     };
 }
 
 function generateChatMsgFromChatMensaje(chatmensaje: ChatMensaje, uid: number): ChatMessage {
-    const seensRetrived: Seen[] | undefined = chatmensaje.seens?.map(seen => {
+    const seensRetrived: Seen[] = chatmensaje.seens.map(seen => {
         return generateSeensFromVistos(seen);
     });
     const newRetrived =
-        !chatmensaje.seens?.find(seen => seen.id_usuario === uid) && chatmensaje.id_usuario !== uid
+        !chatmensaje.seens.find(seen => seen.id_usuario === uid) && chatmensaje.id_usuario !== uid
             ? true
             : false;
 

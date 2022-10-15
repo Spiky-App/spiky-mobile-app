@@ -171,7 +171,7 @@ export const CheckEmailScreen = () => {
 };
 
 const LogoFadeIn = () => {
-    const { opacity, fadeIn } = useAnimation();
+    const { opacity, fadeIn } = useAnimation({});
 
     useEffect(() => {
         fadeIn(800, () => {}, 1000);

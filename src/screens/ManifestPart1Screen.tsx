@@ -17,7 +17,7 @@ const manfiesto = [
 ];
 
 export const ManifestPart1Screen = () => {
-    const { opacity, position, fadeIn, scale, fadeOut, movingPositionAndScale } = useAnimation();
+    const { opacity, position, fadeIn, scale, fadeOut, movingPositionAndScale } = useAnimation({});
     const [state, setState] = useState(0);
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);

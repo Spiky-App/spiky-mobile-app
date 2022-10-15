@@ -26,6 +26,7 @@ import {
     CreateChatMessage,
     CreateChatMessageSeen,
     GetEmailVerification,
+    GetIdeaReactions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -106,11 +107,11 @@ class SpikyService {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
 
-    createReactionMsg(uid: number, messageId: number, reactionType: number) {
+    createReactionMsg(uid: number, messageId: number, reaction: string[0]) {
         return this.instance.post<CreateReactionMsg>(`reacc`, {
             uid,
             id_mensaje: messageId,
-            tipo: reactionType,
+            reaccion: reaction,
         });
     }
 
@@ -200,6 +201,10 @@ class SpikyService {
 
     getEmailVerification(email: string) {
         return this.instance.get<GetEmailVerification>(`verif/${email}`);
+    }
+
+    getIdeaReactions(messageId: number) {
+        return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
     }
 }
 

@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const LoadingAnimated = ({ scale: customScale = 1 }: Props) => {
-    const { opacity, fadeIn } = useAnimation();
+    const { opacity, fadeIn } = useAnimation({});
 
     useEffect(() => {
         fadeIn(1200);
@@ -36,7 +36,7 @@ interface DotProps {
 }
 
 const Dot = ({ delay }: DotProps) => {
-    const { position, movingPositionAndBackLoop } = useAnimation();
+    const { position, movingPositionAndBackLoop } = useAnimation({});
     const timeoutRef = useRef(0);
 
     useEffect(() => {
