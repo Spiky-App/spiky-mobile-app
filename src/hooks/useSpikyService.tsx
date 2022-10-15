@@ -380,6 +380,24 @@ function useSpikyService() {
         }
     };
 
+    const getEmailVerification = async (email: string) => {
+        try {
+            const response = await service.getEmailVerification(email);
+            const { data } = response;
+            const { msg } = data;
+            return msg;
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({
+                    message: 'Correo invalido, ingrese otro correo  ',
+                    type: StatusType.WARNING,
+                })
+            );
+            return null;
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -403,6 +421,7 @@ function useSpikyService() {
         loadUserInfo,
         updatePassword,
         getIdeas,
+        getEmailVerification,
     };
 }
 

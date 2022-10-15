@@ -25,6 +25,7 @@ import {
     GetChatMessages,
     CreateChatMessage,
     CreateChatMessageSeen,
+    GetEmailVerification,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -195,6 +196,10 @@ class SpikyService {
         return this.instance.post<CreateChatMessageSeen>(`conver/seen`, {
             id_chatmensaje: chatMessageId,
         });
+    }
+
+    getEmailVerification(email: string) {
+        return this.instance.get<GetEmailVerification>(`verif/${email}`);
     }
 }
 

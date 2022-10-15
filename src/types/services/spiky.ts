@@ -260,3 +260,8 @@ export interface CreateChatMessageSeen {
         userto: number;
     };
 }
+
+export interface GetEmailVerification {
+    ok: boolean;
+    msg: string;
+}
