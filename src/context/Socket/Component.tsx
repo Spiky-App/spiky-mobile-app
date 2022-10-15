@@ -45,10 +45,15 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
         socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
             const { chatmsg } = resp;
+            console.log('newChatMsg menu', activeConversationId, chatmsg.conversationId);
             if (activeConversationId !== chatmsg.conversationId)
                 dispatch(increaseNewChatMessagesNumber());
         });
     }, [socket, activeConversationId]);
+
+    useEffect(() => {
+        console.log('change activeConversationId', activeConversationId);
+    }, [activeConversationId]);
 
     useEffect(() => {
         /** Socket connected */

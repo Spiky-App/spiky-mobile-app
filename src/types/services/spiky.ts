@@ -159,9 +159,6 @@ export interface GetUserInfo {
 export interface UsuariorData {
     correo: string;
     universidad: string;
-    n_mensajes: number;
-    n_favor: number;
-    n_contra: number;
 }
 
 export interface UpdatePassword {

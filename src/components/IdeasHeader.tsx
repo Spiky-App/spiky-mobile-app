@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Text, View, TouchableHighlight, StyleSheet, Animated } from 'react-native';
+import {
+    Text,
+    View,
+    TouchableHighlight,
+    TouchableOpacity,
+    StyleSheet,
+    Animated,
+} from 'react-native';
 import { faFilter } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { ModalFilters } from './ModalFilters';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAnimation } from '../hooks/useAnimation';
 import { setDraft } from '../store/feature/messages/messagesSlice';
 import { useDispatch } from 'react-redux';
@@ -35,7 +41,7 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
                 opacity,
             }}
         >
-            <Text style={{ ...styles.text, ...styles.h3 }}>
+            <Text style={{ ...styles.text, ...styles.h3, flexDirection: 'row' }}>
                 <View style={{ marginRight: 4 }}>
                     <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
                 </View>
@@ -64,6 +70,8 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
+                            flexGrow: 1,
+                            marginLeft: 15,
                         }}
                     >
                         <TouchableOpacity
@@ -100,7 +108,7 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
 const stylecom = StyleSheet.create({
     filterWrap: {
         marginTop: 15,
-        marginBottom: 10,
+        marginBottom: 6,
         width: '90%',
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -130,7 +138,8 @@ const stylecom = StyleSheet.create({
     buttonDraft: {
         ...styles.center,
         backgroundColor: '#01192E',
-        paddingHorizontal: 8,
+        paddingHorizontal: 4,
+        paddingVertical: 5,
         flex: 1,
         borderRadius: 5,
     },

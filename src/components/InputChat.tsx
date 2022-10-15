@@ -83,7 +83,7 @@ export const InputChat = ({
         if (messageLength <= MAX_LENGHT && messageLength > 0) {
             if (isDisabled) setDisabled(false);
         } else setDisabled(true);
-        if (!isTyping || toUser.online) {
+        if (!isTyping && toUser.online) {
             setIsTyping(true);
             socket?.emit('isTyping', {
                 converId: conversationId,
@@ -129,7 +129,7 @@ export const InputChat = ({
                     <Text
                         style={{
                             ...stylesInputChat.counterText,
-                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                            color: counter < 0 ? '#9b0000' : '#9C9C9C',
                         }}
                     >
                         {counter}
@@ -155,8 +155,8 @@ const stylesInputChat = StyleSheet.create({
         width: '100%',
     },
     borderTextbox: {
-        borderColor: '#FC702A',
-        borderWidth: 0.2,
+        borderColor: '#9b0000',
+        borderWidth: 1.5,
     },
     buttonIcon: {
         paddingHorizontal: 10,
@@ -172,8 +172,8 @@ const stylesInputChat = StyleSheet.create({
         borderRadius: 5,
     },
     counterText: {
+        ...styles.text,
         fontSize: 14,
-        fontWeight: '300',
         textAlign: 'center',
         margin: 'auto',
         bottom: '-50%',

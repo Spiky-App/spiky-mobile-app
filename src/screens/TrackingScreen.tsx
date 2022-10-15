@@ -6,7 +6,7 @@ import { faThumbtack } from '../constants/icons/FontAwesome';
 
 export const TrackingScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <MessagesFeed
                 params={{}}
                 filter={'/tracking'}

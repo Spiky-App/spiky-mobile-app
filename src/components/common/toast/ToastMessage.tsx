@@ -1,12 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { removeToast } from '../../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { StatusType } from '../../../types/common';
 import { faTriangleExclamation, faXmark, faBell } from '../../../constants/icons/FontAwesome';
 import { styles } from '../../../themes/appTheme';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
     message: string;

@@ -43,6 +43,7 @@ export const ConnectionsScreen = () => {
 
     function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
         if (newMsg) {
+            console.log('onOpenConversation', id);
             dispatch(openNewMsgConversation(id));
         }
         navigation.navigate('ChatScreen', {
@@ -103,7 +104,7 @@ export const ConnectionsScreen = () => {
     );
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
             {conversations?.length !== 0 ? (
                 <FlatList

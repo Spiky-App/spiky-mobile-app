@@ -52,7 +52,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const handleDelete = () => {
         deleteIdea(id);
 
-        const messagesUpdated = messages.filter(msg => msg.id !== id);
+        const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
     };

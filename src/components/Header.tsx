@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import {
-    View,
-    Text,
-    StyleSheet,
-    ImageBackground,
-    SafeAreaView,
-    TouchableOpacity,
-    useColorScheme,
-} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,11 +19,6 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
-    const colorScheme = useColorScheme();
-    const [isDarkScheme, setIsDarkAppearance] = useState(false);
-    useEffect(() => {
-        setIsDarkAppearance(colorScheme === 'dark');
-    }, [colorScheme]);
 
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
@@ -50,15 +37,8 @@ export const Header = () => {
     };
 
     return (
-        <ImageBackground
-            source={require('../constants/images/background-paper.png')}
-            resizeMode="cover"
-            imageStyle={
-                isDarkScheme && {
-                    tintColor: '#01192E',
-                }
-            }
-        >
+        <View style={{ backgroundColor: '#01192E' }}>
+            <StatusBar barStyle="light-content" translucent={false} />
             <SafeAreaView>
                 <View
                     style={{
@@ -116,7 +96,7 @@ export const Header = () => {
                     />
                 </View>
             </SafeAreaView>
-        </ImageBackground>
+        </View>
     );
 };
 

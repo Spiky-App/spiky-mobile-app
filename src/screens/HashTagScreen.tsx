@@ -12,11 +12,11 @@ export const HashTagScreen = ({ route }: Props) => {
     const hashtag = route.params ? route.params.hashtag : '';
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <MessagesFeed
                 params={{ hashtag }}
                 filter={'/hashtag'}
-                title={'#' + (hashtag.length > 50 ? hashtag.substring(1, 54) + '..' : hashtag)}
+                title={hashtag.length > 50 ? hashtag.substring(1, 54) + '..' : hashtag}
                 myideas={false}
                 icon={faHashtag}
                 emptyTitle={'Se el primero en hablar sobre esto.'}

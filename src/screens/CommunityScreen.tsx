@@ -6,7 +6,7 @@ import { faUsers } from '../constants/icons/FontAwesome';
 
 export const CommunityScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <MessagesFeed
                 params={{}}
                 filter={''}
