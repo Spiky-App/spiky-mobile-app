@@ -3,7 +3,11 @@ import { Animated, View } from 'react-native';
 import Svg, { SvgProps, G, Path, Rect, Circle } from 'react-native-svg';
 import { useAnimation } from '../../hooks/useAnimation';
 
-const IconLogoAnimated = (props: SvgProps) => {
+interface Props {
+    props?: SvgProps;
+    white?: boolean;
+}
+const IconLogoAnimated = ({ props, white }: Props) => {
     let AnimatedRect = Animated.createAnimatedComponent(Rect);
     let AnimatedPath = Animated.createAnimatedComponent(Path);
     const { opacity, fadeInFadeOutLoop } = useAnimation({});
@@ -28,7 +32,7 @@ const IconLogoAnimated = (props: SvgProps) => {
                     <Path
                         data-name="Trazado 307"
                         d="M960.488 474.859a4 4 0 0 1-2.944-6.613l100.098-115.937a4 4 0 0 1 6.68.988l53.038 119.126a4 4 0 0 1-3.735 5.625Z"
-                        fill="#01192e"
+                        fill={white ? 'white' : '#01192e'}
                     />
                     <AnimatedRect
                         data-name="Rect\xE1ngulo 370"
@@ -43,7 +47,7 @@ const IconLogoAnimated = (props: SvgProps) => {
                         data-name="Elipse 59"
                         transform="translate(988.084 447.584)"
                         fill="none"
-                        stroke="#01192e"
+                        stroke={white ? 'white' : '#01192e'}
                         strokeWidth={16}
                     >
                         <Circle cx={30} cy={30} r={30} stroke="none" />

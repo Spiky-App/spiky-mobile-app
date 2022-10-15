@@ -39,7 +39,6 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                     style={{
                         ...stylescomp.message,
                         justifyContent: owner ? 'flex-end' : 'flex-start',
-                        // flexDirection: msg.message.length > 15 ? 'column' : 'row',
                         flexWrap: msg.message.length > 20 ? 'wrap' : 'nowrap',
                     }}
                 >
@@ -83,10 +82,13 @@ const stylescomp = StyleSheet.create({
         textAlign: 'right',
         paddingLeft: 5,
         marginTop: 2,
+        left: 0,
+        width: '100%',
     },
     containerReplyMsg: {
         backgroundColor: '#e8e6e6',
-        borderRadius: 5,
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 5,
         maxWidth: 280,

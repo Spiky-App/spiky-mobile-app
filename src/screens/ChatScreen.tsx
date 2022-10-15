@@ -25,8 +25,13 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
 import { ChatMessage } from '../components/ChatMessage';
-import { updateLastChatMsgConversation } from '../store/feature/chats/chatsSlice';
+import {
+    openNewMsgConversation,
+    resetActiveConversationId,
+    updateLastChatMsgConversation,
+} from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
+import SendNudgeButton from '../components/SendNudgeButton';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -59,6 +64,7 @@ export const ChatScreen = ({ route }: Props) => {
         if (newChatMessages.length === 20) setMoreChatMsg(true);
         setChatMessages([...chatMessages, ...newChatMessages]);
         setIsLoading(false);
+        dispatch(openNewMsgConversation(conversationId));
     }
 
     function loadMoreChatMsg() {
@@ -66,7 +72,7 @@ export const ChatScreen = ({ route }: Props) => {
     }
 
     function updateChatMessages(chatMessage: ChatMessageProp) {
-        if (chatMessages) {
+        if (chatMessage) {
             setChatMessages(v => [chatMessage, ...v]);
             dispatch(updateLastChatMsgConversation({ chatMsg: chatMessage, newMsg: false }));
             if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
@@ -89,6 +95,7 @@ export const ChatScreen = ({ route }: Props) => {
             setConversationId(route.params?.conversationId);
             return () => {
                 setConversationId(0);
+                dispatch(resetActiveConversationId());
             };
         }, [route.params?.conversationId])
     );
@@ -103,8 +110,9 @@ export const ChatScreen = ({ route }: Props) => {
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
         socket?.on('newChatMsg', resp => {
-            const { chatmsg, converId } = resp;
-            if (converId === conversationId) {
+            setToUserIsTyping(false);
+            const { chatmsg } = resp;
+            if (chatmsg.conversationId === conversationId) {
                 handleStopTyping();
                 updateChatMessages(chatmsg);
             }
@@ -150,25 +158,35 @@ export const ChatScreen = ({ route }: Props) => {
                 }}
             >
                 <View style={stylescomp.containerHeader}>
-                    <TouchableOpacity
-                        style={{
-                            ...styles.center,
-                            marginRight: 5,
-                            marginLeft: 10,
-                        }}
-                        onPress={handleGoBack}
-                    >
-                        <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
-                    </TouchableOpacity>
-                    <Text style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}>
-                        {'@' + toUser.nickname}
-                    </Text>
-                    <UniversityTag id={toUser.universityId} fontSize={23} />
-                    <View
-                        style={{
-                            ...stylescomp.online,
-                            backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
-                        }}
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            style={{
+                                ...styles.center,
+                                marginRight: 5,
+                                marginLeft: 10,
+                            }}
+                            onPress={handleGoBack}
+                        >
+                            <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
+                        </TouchableOpacity>
+
+                        <Text
+                            style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}
+                        >
+                            {'@' + toUser.nickname}
+                        </Text>
+                        <UniversityTag id={toUser.universityId} fontSize={23} />
+                        <View
+                            style={{
+                                ...stylescomp.online,
+                                backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
+                            }}
+                        />
+                    </View>
+                    <SendNudgeButton
+                        conversationId={conversationId}
+                        toUser={toUser.id}
+                        isOnline={toUser.online}
                     />
                 </View>
                 <FlatList
@@ -176,7 +194,7 @@ export const ChatScreen = ({ route }: Props) => {
                     style={stylescomp.wrap}
                     data={chatMessages}
                     renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
-                    keyExtractor={item => item.id + ''}
+                    keyExtractor={item => item.id}
                     showsVerticalScrollIndicator={false}
                     inverted
                     onEndReached={loadMoreChatMsg}
@@ -216,6 +234,7 @@ const stylescomp = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         width: '100%',
+        justifyContent: 'space-between',
     },
     online: {
         width: 10,

@@ -34,6 +34,7 @@ import { faEraser } from '@fortawesome/free-solid-svg-icons/faEraser';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons/faFaceSmile';
+import { faBellConcierge } from '@fortawesome/free-solid-svg-icons';
 
 export {
     faUsers,
@@ -72,4 +73,5 @@ export {
     faEraser,
     faLock,
     faFaceSmile,
+    faBellConcierge,
 };

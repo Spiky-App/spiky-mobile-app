@@ -106,7 +106,7 @@ export const InputChat = ({
                 right: 0,
                 paddingHorizontal: 10,
                 paddingVertical: 13,
-                justifyContent: 'space-between',
+                justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 borderRadius: 8,
