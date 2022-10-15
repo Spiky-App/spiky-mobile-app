@@ -1,20 +1,12 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Animated, Pressable, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import {
-    faCheck,
-    faLightbulb,
-    faMessage,
-    faMinus,
-    faXmark,
-    faPen,
-} from '../constants/icons/FontAwesome';
+import { faLightbulb, faMessage, faPen } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
-import { Message, ReactionType } from '../types/store';
+import { Message, User } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
@@ -23,69 +15,40 @@ import { setMessages } from '../store/feature/messages/messagesSlice';
 import { MessageRequestData } from '../services/models/spikyService';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
-import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
 import UniversityTag from './common/UniversityTag';
+import ReactionsContainer from './common/ReactionsContainer';
+import { PreReactionButton } from './PreReactionButton';
+import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 
 interface Props {
     idea: Message;
     filter: string;
 }
 
-const reactionTypes: ['neutral', 'favor', 'against'] = ['neutral', 'favor', 'against'];
-
 export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const { createReactionMsg, deleteIdea } = useSpikyService();
+    const { deleteIdea } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
-    const [ideaOptions, setIdeaOptions] = useState(false);
-    const { opacity, fadeIn } = useAnimation();
-    const { socket } = useContext(SocketContext);
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
+    const { opacity, fadeIn } = useAnimation({});
     const {
         id,
         message,
         date,
         user,
-        against,
         answersNumber,
         messageTrackingId,
-        reactionType,
+        myReaction,
+        reactions,
         sequence,
-        favor,
         draft,
     } = idea;
     const isOwner = user.id === uid;
     const isDraft = draft === 1;
     const fecha = getTime(date.toString());
 
-    const handleReaction = (reactionTypeAux: number) => {
-        createReactionMsg(uid, id, reactionTypeAux);
-
-        const messagesUpdated = messages.map(msg => {
-            if (msg.id === id) {
-                socket?.emit('notify', {
-                    id_usuario1: msg.user.id,
-                    id_usuario2: uid,
-                    id_mensaje: msg.id,
-                    tipo: 1,
-                });
-                return {
-                    ...msg,
-                    [reactionTypes[reactionTypeAux]]: msg[reactionTypes[reactionTypeAux]] + 1,
-                    reactionType: reactionTypeAux,
-                };
-            } else {
-                return msg;
-            }
-        });
-        dispatch(setMessages(messagesUpdated));
-    };
     const handleDelete = () => {
         deleteIdea(id);
 
@@ -121,21 +84,15 @@ export const Idea = ({ idea, filter }: Props) => {
         );
     };
 
-    const handleClickUser = useCallback(() => {
-        if (user.nickname === nickname) {
+    const handleClickUser = (goToUser: User) => {
+        if (goToUser.nickname === nickname) {
             changeScreen('MyIdeasScreen');
         } else {
             changeScreen('ProfileScreen', {
-                alias: user.nickname,
+                alias: goToUser.nickname,
             });
         }
-    }, [user]);
-
-    useEffect(() => {
-        if (position.top !== 0) {
-            setIdeaOptions(value => !value);
-        }
-    }, [position]);
+    };
 
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
@@ -145,27 +102,31 @@ export const Idea = ({ idea, filter }: Props) => {
         <Animated.View style={{ ...stylescom.wrap, opacity }}>
             <View style={stylescom.subwrap}>
                 {isOwner && (
-                    <View style={stylescom.corner}>
-                        <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                            <FontAwesomeIcon
-                                icon={isDraft ? faPen : faLightbulb}
-                                color="white"
-                                size={13}
-                            />
+                    <View style={stylescom.corner_container}>
+                        <View style={stylescom.corner}>
+                            <View style={{ transform: [{ rotate: '-45deg' }] }}>
+                                <FontAwesomeIcon
+                                    icon={isDraft ? faPen : faLightbulb}
+                                    color="white"
+                                    size={13}
+                                />
+                            </View>
                         </View>
                     </View>
                 )}
 
                 {messageTrackingId && (
-                    <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
-                        <View>
-                            <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                    <View style={stylescom.corner_container}>
+                        <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
+                            <View>
+                                <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                            </View>
                         </View>
                     </View>
                 )}
 
                 <View style={styles.flex}>
-                    <Pressable onPress={handleClickUser}>
+                    <Pressable onPress={() => handleClickUser(user)}>
                         <Text style={{ ...stylescom.user, ...styles.textbold }}>
                             @{user.nickname}
                         </Text>
@@ -182,34 +143,14 @@ export const Idea = ({ idea, filter }: Props) => {
                         ...stylescom.container,
                         marginTop: 2,
                         justifyContent: 'space-between',
+                        position: 'relative',
                     }}
                 >
-                    {reactionType === undefined && !isOwner ? (
-                        <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => handleReaction(2)}
-                            >
-                                <FontAwesomeIcon icon={faXmark} color="white" size={18} />
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => handleReaction(1)}
-                            >
-                                <FontAwesomeIcon icon={faCheck} color="white" size={18} />
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => handleReaction(0)}
-                            >
-                                <FontAwesomeIcon icon={faMinus} color="white" size={18} />
-                            </TouchableHighlight>
-                        </View>
+                    {!myReaction && !isOwner ? (
+                        <>
+                            <View style={{ flex: 1, height: 15 }} />
+                            <PreReactionButton messageId={id} bottom={-15} right={-25} left={-25} />
+                        </>
                     ) : (
                         <>
                             {isDraft ? (
@@ -218,41 +159,20 @@ export const Idea = ({ idea, filter }: Props) => {
                                 </Pressable>
                             ) : (
                                 <View style={stylescom.container}>
-                                    <View style={stylescom.reaction}>
-                                        <FontAwesomeIcon
-                                            icon={faXmark}
-                                            color={
-                                                reactionType === ReactionType.AGAINST
-                                                    ? '#6A000E'
-                                                    : '#bebebe'
-                                            }
-                                            size={12}
+                                    {reactions.length > 0 && (
+                                        <ReactionsContainer
+                                            reactionCount={reactions}
+                                            myReaction={myReaction}
+                                            messageId={id}
+                                            handleClickUser={handleClickUser}
                                         />
-                                        <Text style={{ ...styles.text, ...stylescom.number }}>
-                                            {against === 0 ? '' : against}
-                                        </Text>
-                                    </View>
-
-                                    <View style={stylescom.reaction}>
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                            color={
-                                                reactionType === ReactionType.FAVOR
-                                                    ? '#0B5F00'
-                                                    : '#bebebe'
-                                            }
-                                            size={12}
-                                        />
-                                        <Text style={{ ...styles.text, ...stylescom.number }}>
-                                            {favor === 0 ? '' : favor}
-                                        </Text>
-                                    </View>
+                                    )}
 
                                     <Pressable style={stylescom.reaction} onPress={handleOpenIdea}>
                                         <FontAwesomeIcon
                                             icon={faMessage}
-                                            color={'#bebebe'}
-                                            size={12}
+                                            color={'#D4D4D4'}
+                                            size={14}
                                         />
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {answersNumber === 0 ? '' : answersNumber}
@@ -288,35 +208,19 @@ export const Idea = ({ idea, filter }: Props) => {
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {fecha}
                                         </Text>
-                                        <Pressable
-                                            onPress={event => {
-                                                setPosition({
-                                                    top: event.nativeEvent.pageY,
-                                                    left: event.nativeEvent.pageX,
-                                                });
+                                        <PreModalIdeaOptions
+                                            myIdea={isOwner}
+                                            message={{
+                                                messageId: id,
+                                                message,
+                                                user,
+                                                messageTrackingId,
+                                                date,
                                             }}
-                                        >
-                                            <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                                ...
-                                            </Text>
-                                        </Pressable>
+                                            filter={filter}
+                                        />
                                     </>
                                 )}
-
-                                <ModalIdeaOptions
-                                    setIdeaOptions={setIdeaOptions}
-                                    ideaOptions={ideaOptions}
-                                    position={position}
-                                    myIdea={isOwner}
-                                    message={{
-                                        messageId: id,
-                                        message,
-                                        user,
-                                        messageTrackingId,
-                                        date,
-                                    }}
-                                    filter={filter}
-                                />
                             </View>
                         </>
                     )}
@@ -346,7 +250,6 @@ const stylescom = StyleSheet.create({
         paddingBottom: 8,
         paddingHorizontal: 25,
         borderRadius: 8,
-        overflow: 'hidden',
     },
     container: {
         flexDirection: 'row',
@@ -355,6 +258,7 @@ const stylescom = StyleSheet.create({
         justifyContent: 'center',
     },
     user: {
+        ...styles.textbold,
         fontWeight: '600',
         fontSize: 13,
     },
@@ -365,7 +269,6 @@ const stylescom = StyleSheet.create({
     },
     reaction: {
         flexDirection: 'row',
-        marginRight: 25,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -410,26 +313,6 @@ const stylescom = StyleSheet.create({
         color: '#01192E',
         marginLeft: 1,
     },
-    dots: {
-        fontWeight: '600',
-        color: '#bebebe',
-        fontSize: 22,
-        marginLeft: 20,
-    },
-    reactButton: {
-        backgroundColor: '#D4D4D4',
-        borderRadius: 2,
-        width: '25%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 3,
-    },
-    containerReact: {
-        justifyContent: 'space-around',
-        flex: 1,
-        flexDirection: 'row',
-        marginTop: 8,
-    },
     corner: {
         position: 'absolute',
         top: -4,
@@ -439,5 +322,13 @@ const stylescom = StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 4,
         paddingHorizontal: 30,
+    },
+    corner_container: {
+        borderRadius: 8,
+        position: 'absolute',
+        height: 40,
+        left: 0,
+        right: 0,
+        overflow: 'hidden',
     },
 });

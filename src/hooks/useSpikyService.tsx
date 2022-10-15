@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
@@ -23,6 +23,8 @@ import { decodeToken } from '../utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
+import SocketContext from '../context/Socket/Context';
+import { generateReactionFromReaccion } from '../helpers/reaction';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -30,6 +32,7 @@ function useSpikyService() {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
+    const { socket } = useContext(SocketContext);
     const [service, setService] = useState<SpikyService>(new SpikyService(config));
     const token = useAppSelector((state: RootState) => state.auth.token);
     useEffect(() => {
@@ -259,6 +262,7 @@ function useSpikyService() {
                     alias: user.nickname,
                     id_universidad: user.universityId,
                 },
+                reacciones: [],
             });
         } catch {
             dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
@@ -277,6 +281,7 @@ function useSpikyService() {
                     alias: user.nickname,
                     id_universidad: user.universityId,
                 },
+                reacciones: [],
             });
         } catch (error) {
             console.log(error);
@@ -286,8 +291,41 @@ function useSpikyService() {
         }
         return createdMessage;
     };
-    const createReactionMsg = async (uid: number, messageId: number, reactionType: number) => {
-        service.createReactionMsg(uid, messageId, reactionType);
+    const createReactionMsg = (messageId: number, reaction: string[0]) => {
+        service.createReactionMsg(user.id, messageId, reaction);
+        const messagesUpdated = messages.map(msg => {
+            if (msg.id === messageId) {
+                socket?.emit('notify', {
+                    id_usuario1: msg.user.id,
+                    id_usuario2: user.id,
+                    id_mensaje: msg.id,
+                    tipo: 1,
+                });
+                let isNew = true;
+                let reactions = msg.reactions.map(r => {
+                    if (r.reaction === reaction) {
+                        isNew = false;
+                        return {
+                            reaction: r.reaction,
+                            count: r.count + 1,
+                        };
+                    } else {
+                        return r;
+                    }
+                });
+                if (isNew) {
+                    reactions = [...reactions, { reaction, count: 1 }];
+                }
+                return {
+                    ...msg,
+                    reactions,
+                    myReaction: reaction,
+                };
+            } else {
+                return msg;
+            }
+        });
+        dispatch(setMessages(messagesUpdated));
     };
     const deleteIdea = async (messageId: number) => {
         service.deleteMessage(messageId);
@@ -380,6 +418,20 @@ function useSpikyService() {
         }
     };
 
+    const getIdeaReactiones = async (messageId: number) => {
+        try {
+            const { data } = await service.getIdeaReactions(messageId);
+            const { reacciones } = data;
+            return reacciones.map(reaccion => {
+                return generateReactionFromReaccion(reaccion);
+            });
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error cargando reacciones', type: StatusType.WARNING }));
+            return [];
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -403,6 +455,7 @@ function useSpikyService() {
         loadUserInfo,
         updatePassword,
         getIdeas,
+        getIdeaReactiones,
     };
 }
 

@@ -10,7 +10,7 @@ interface Props {
 const IconLogoAnimated = ({ props, white }: Props) => {
     let AnimatedRect = Animated.createAnimatedComponent(Rect);
     let AnimatedPath = Animated.createAnimatedComponent(Path);
-    const { opacity, fadeInFadeOutLoop } = useAnimation();
+    const { opacity, fadeInFadeOutLoop } = useAnimation({});
 
     React.useEffect(() => {
         fadeInFadeOutLoop(350, () => {}, 500);

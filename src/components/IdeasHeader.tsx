@@ -20,7 +20,7 @@ interface Props {
 export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
-    const { opacity, fadeIn } = useAnimation();
+    const { opacity, fadeIn } = useAnimation({});
     const dispatch = useDispatch();
 
     useEffect(() => {

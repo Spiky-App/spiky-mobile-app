@@ -15,7 +15,7 @@ import { useAnimation } from '../hooks/useAnimation';
 import MessagesFeed from '../components/MessagesFeed';
 
 export const SearchScreen = () => {
-    const { position, movingPosition } = useAnimation();
+    const { position, movingPosition } = useAnimation({});
     const [search, setSearch] = useState('');
 
     useEffect(() => {

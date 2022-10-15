@@ -1,10 +1,16 @@
 import { useRef } from 'react';
 import { Animated } from 'react-native';
 
-export const useAnimation = () => {
-    const opacity = useRef(new Animated.Value(0)).current;
-    const position = useRef(new Animated.Value(0)).current;
-    const scale = useRef(new Animated.Value(1)).current;
+interface Props {
+    init_opacity?: number;
+    init_position?: number;
+    init_scale?: number;
+}
+
+export const useAnimation = ({ init_opacity = 0, init_position = 0, init_scale = 1 }: Props) => {
+    const opacity = useRef(new Animated.Value(init_opacity)).current;
+    const position = useRef(new Animated.Value(init_position)).current;
+    const scale = useRef(new Animated.Value(init_scale)).current;
 
     const fadeIn = (duration: number = 300, callback: () => void = () => {}, delay: number = 0) => {
         Animated.timing(opacity, {

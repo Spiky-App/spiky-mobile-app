@@ -95,7 +95,7 @@ export const ModalIdeaOptions = ({
                     }}
                 >
                     <TouchableWithoutFeedback>
-                        <View style={{ ...stylescomp.container, top: top, left: left - 110 }}>
+                        <View style={{ ...stylescomp.container, top: top + 20, left: left - 115 }}>
                             {!myIdea ? (
                                 <>
                                     <TouchableOpacity
@@ -164,7 +164,7 @@ export const ModalIdeaOptions = ({
 
 const stylescomp = StyleSheet.create({
     container: {
-        backgroundColor: '#ffff',
+        backgroundColor: 'white',
         paddingVertical: 3,
         shadowOffset: {
             width: 0,
@@ -175,11 +175,11 @@ const stylescomp = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'flex-start',
         position: 'absolute',
-        width: 150,
+        minWidth: 160,
     },
     text: {
         ...styles.text,
-        fontSize: 13,
+        fontSize: 15,
         marginLeft: 8,
         paddingVertical: 6,
     },
@@ -187,5 +187,6 @@ const stylescomp = StyleSheet.create({
         ...styles.flex,
         ...styles.center,
         paddingHorizontal: 14,
+        paddingVertical: 5,
     },
 });
