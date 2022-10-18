@@ -14,17 +14,19 @@ import {
     addConversation,
     openNewMsgConversation,
     resetActiveConversationId,
+    setActiveConversationId,
     setConversations,
     setUserStateConversation,
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { Conversation, User } from '../types/store';
+import { ChatMessage, Conversation, User } from '../types/store';
 import { faCircleNodes } from '../constants/icons/FontAwesome';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
+    const [first, setFirst] = useState(true);
     const { conversations, activeConversationId } = useAppSelector(
         (state: RootState) => state.chats
     );
@@ -43,9 +45,9 @@ export const ConnectionsScreen = () => {
 
     function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
         if (newMsg) {
-            console.log('onOpenConversation', id);
             dispatch(openNewMsgConversation(id));
         }
+        dispatch(setActiveConversationId(id));
         navigation.navigate('ChatScreen', {
             conversationId: id,
             toUser,
@@ -84,6 +86,20 @@ export const ConnectionsScreen = () => {
             loadNewConversations(newConver, conver);
         });
     }, [socket]);
+
+    useEffect(() => {
+        if (!first) {
+            socket?.removeListener('newChatMsg');
+        } else {
+            setFirst(false);
+        }
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId) {
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+            }
+        });
+    }, [socket, activeConversationId]);
 
     useEffect(() => {
         loadConversations();

@@ -11,7 +11,7 @@ import {
 } from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
-import { Conversation, ChatMessage } from '../../types/store';
+import { ChatMessage, Conversation } from '../../types/store';
 import { SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
@@ -33,47 +33,14 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
     useEffect(() => {
         if (uid) connectSocket();
-    }, [uid]);
+    }, [uid, connectSocket]);
 
     useEffect(() => {
         if (!uid) disconnectSocket();
     }, [uid, disconnectSocket]);
 
     useEffect(() => {
-        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
-            const { conver } = resp;
-            if (activeConversationId !== conver.id) {
-                dispatch(increaseNewChatMessagesNumber());
-            }
-        });
-
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
-            const { chatmsg } = resp;
-            console.log('newChatMsg menu', activeConversationId, chatmsg.conversationId);
-            if (activeConversationId !== chatmsg.conversationId) {
-                dispatch(increaseNewChatMessagesNumber());
-                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
-            }
-        });
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId } = resp;
-            Vibration.vibrate();
-            if (activeConversationId !== converId) {
-                dispatch(
-                    addToast({
-                        message: '@' + resp.nickname + ' te ha enviado un zumbido',
-                        type: StatusType.NUDGE,
-                    })
-                );
-            }
-        });
-    }, [socket, activeConversationId]);
-
-    useEffect(() => {
-        console.log('change activeConversationId', activeConversationId);
-    }, [activeConversationId]);
-
-    useEffect(() => {
+        socket?.removeAllListeners();
         /** Socket connected */
         socket?.on('connect', () => {
             console.log('connected');
@@ -120,6 +87,39 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
         SendHandshake();
     }, [socket]);
+
+    useEffect(() => {
+        socket?.removeListener('newChatMsgWithReply');
+        socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
+            const { conver } = resp;
+            if (activeConversationId !== conver.id) {
+                dispatch(increaseNewChatMessagesNumber());
+            }
+        });
+
+        socket?.removeListener('newChatMsg');
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId) {
+                dispatch(increaseNewChatMessagesNumber());
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+            }
+        });
+
+        socket?.removeListener('sendNudge');
+        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
+            const { converId } = resp;
+            Vibration.vibrate();
+            if (activeConversationId !== converId) {
+                dispatch(
+                    addToast({
+                        message: '@' + resp.nickname + ' te ha enviado un zumbido',
+                        type: StatusType.NUDGE,
+                    })
+                );
+            }
+        });
+    }, [socket, activeConversationId]);
 
     const SendHandshake = async () => {
         console.info('Sending handshake to server ...');

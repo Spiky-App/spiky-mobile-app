@@ -97,6 +97,7 @@ export const InputChat = ({
         const { message: mensaje } = form;
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
     }, [form]);
+
     return (
         <View style={stylesInputChat.container}>
             <View

@@ -14,7 +14,10 @@ import {
     generateChatMsgFromChatMensaje,
     generateConversationFromConversacion,
 } from '../helpers/conversations';
-import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
+import {
+    increaseNewChatMessagesNumber,
+    updateNewChatMessagesNumber,
+} from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
 import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { removeUser } from '../store/feature/user/userSlice';
@@ -30,6 +33,7 @@ function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const chats = useAppSelector((state: RootState) => state.chats);
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const { socket } = useContext(SocketContext);
@@ -450,6 +454,12 @@ function useSpikyService() {
         }
     };
 
+    const setNewChatMessagesNumber = (conversationId: number) => {
+        if (chats.activeConversationId !== conversationId) {
+            dispatch(increaseNewChatMessagesNumber());
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -475,6 +485,7 @@ function useSpikyService() {
         getIdeas,
         getEmailVerification,
         getIdeaReactiones,
+        setNewChatMessagesNumber,
     };
 }
 

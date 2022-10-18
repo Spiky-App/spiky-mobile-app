@@ -49,12 +49,10 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 )}
                 {reactionCount.length >= 5 && (
                     <View style={stylescomp.moreReaction}>
-                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
-                            {`${countReactions()}`}
+                        <Text style={{ ...stylescomp.number, fontSize: 10 }}>
+                            {`${countReactions()} `}
                         </Text>
-                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
-                            Más
-                        </Text>
+                        <Text style={{ ...stylescomp.text, fontSize: 10 }}> Más </Text>
                     </View>
                 )}
             </Pressable>
@@ -80,14 +78,16 @@ const stylescomp = StyleSheet.create({
     },
     container: {
         flexDirection: 'row',
-        borderRadius: 10,
-        paddingHorizontal: 1,
-        paddingVertical: 3,
+        borderRadius: 5,
+        paddingHorizontal: 4,
+        marginRight: 4,
+        paddingVertical: 2,
+        backgroundColor: '#D4D4D4',
     },
     number: {
         ...styles.textbold,
         fontSize: 11,
-        color: '#D4D4D4',
+        color: 'white',
         marginLeft: 2,
     },
     text: {

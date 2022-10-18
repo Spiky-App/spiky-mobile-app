@@ -93,6 +93,7 @@ export const ChatScreen = ({ route }: Props) => {
     function handleStopTyping() {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
             setToUserIsTyping(false);
         }
     }
@@ -102,6 +103,10 @@ export const ChatScreen = ({ route }: Props) => {
             setConversationId(route.params?.conversationId);
             return () => {
                 setConversationId(0);
+                socket?.removeListener('userOnline');
+                socket?.removeListener('userOffline');
+                socket?.removeListener('newChatMsg');
+                socket?.removeListener('newChatMsg');
                 dispatch(resetActiveConversationId());
             };
         }, [route.params?.conversationId])
@@ -112,10 +117,12 @@ export const ChatScreen = ({ route }: Props) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: true });
         });
+
         socket?.on('userOffline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
+
         socket?.on('newChatMsg', resp => {
             setToUserIsTyping(false);
             const { chatmsg } = resp;
@@ -124,6 +131,7 @@ export const ChatScreen = ({ route }: Props) => {
                 updateChatMessages(chatmsg);
             }
         });
+
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
@@ -134,15 +142,16 @@ export const ChatScreen = ({ route }: Props) => {
     }, [socket, conversationId]);
 
     useEffect(() => {
+        socket?.removeListener('isTyping');
         socket?.on('isTyping', resp => {
             const { converId } = resp;
             if (converId === conversationId) {
-                if (!toUserIsTyping && timeoutRef.current) {
+                if (!toUserIsTyping && !timeoutRef.current) {
                     setToUserIsTyping(true);
-                    timeoutRef.current = setTimeout(
-                        () => fadeOut_Typing(200, () => setToUserIsTyping(false)),
-                        3000
-                    );
+                    timeoutRef.current = setTimeout(() => {
+                        fadeOut_Typing(200, () => setToUserIsTyping(false));
+                        timeoutRef.current = null;
+                    }, 4000);
                 }
             }
         });
@@ -165,31 +174,31 @@ export const ChatScreen = ({ route }: Props) => {
                     flex: 1,
                 }}
             >
-                <View
-                    style={{
-                        ...stylescomp.containerHeader,
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{
-                            ...styles.center,
-                            marginRight: 10,
-                            marginLeft: 20,
-                        }}
-                        onPress={handleGoBack}
-                    >
-                        <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
-                    </TouchableOpacity>
-                    <Text style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}>
-                        {'@' + toUser.nickname}
-                    </Text>
-                    <UniversityTag id={toUser.universityId} fontSize={23} />
-                    <View
-                        style={{
-                            ...stylescomp.online,
-                            backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
-                        }}
-                    />
+                <View style={stylescomp.containerHeader}>
+                    <View style={{ ...styles.center, flexDirection: 'row' }}>
+                        <TouchableOpacity
+                            style={{
+                                ...styles.center,
+                                marginRight: 10,
+                                marginLeft: 20,
+                            }}
+                            onPress={handleGoBack}
+                        >
+                            <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
+                        </TouchableOpacity>
+                        <Text
+                            style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}
+                        >
+                            {'@' + toUser.nickname}
+                        </Text>
+                        <UniversityTag id={toUser.universityId} fontSize={23} />
+                        <View
+                            style={{
+                                ...stylescomp.online,
+                                backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
+                            }}
+                        />
+                    </View>
                     <SendNudgeButton
                         conversationId={conversationId}
                         toUser={toUser.id}

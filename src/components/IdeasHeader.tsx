@@ -41,13 +41,15 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
                 opacity,
             }}
         >
-            <Text style={{ ...styles.text, ...styles.h3, flexDirection: 'row' }}>
-                <View style={{ marginRight: 4 }}>
-                    <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
-                </View>
-                {title}
-                <Text style={styles.orange}>.</Text>
-            </Text>
+            <View style={{ alignItems: 'center' }}>
+                <Text style={{ ...styles.text, ...styles.h3, flexDirection: 'row' }}>
+                    <Text style={{ paddingRight: 50 }}>
+                        <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
+                    </Text>
+                    {` ${title}`}
+                    <Text style={styles.orange}>.</Text>
+                </Text>
+            </View>
 
             {!connections &&
                 (!myideas ? (
@@ -70,7 +72,7 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
-                            flexGrow: 1,
+                            // flexGrow: 1,
                             marginLeft: 15,
                         }}
                     >
@@ -107,12 +109,13 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
 
 const stylecom = StyleSheet.create({
     filterWrap: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
         marginTop: 15,
         marginBottom: 6,
         width: '90%',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
     },
     filterContainer: {
         backgroundColor: '#D4D4D4',
@@ -138,9 +141,8 @@ const stylecom = StyleSheet.create({
     buttonDraft: {
         ...styles.center,
         backgroundColor: '#01192E',
-        paddingHorizontal: 4,
+        paddingHorizontal: 8,
         paddingVertical: 5,
-        flex: 1,
         borderRadius: 5,
     },
 });
