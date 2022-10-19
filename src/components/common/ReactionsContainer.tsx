@@ -30,12 +30,7 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 {reactionCount.map(
                     (reaction, index) =>
                         index < 3 && (
-                            <View
-                                style={{
-                                    ...stylescomp.container,
-                                }}
-                                key={reaction.reaction}
-                            >
+                            <View style={stylescomp.container} key={reaction.reaction}>
                                 <Text style={{ fontSize: 11 }}>{reaction.reaction}</Text>
                                 <Text
                                     style={{
@@ -79,21 +74,22 @@ const stylescomp = StyleSheet.create({
     container: {
         flexDirection: 'row',
         borderRadius: 5,
-        paddingHorizontal: 4,
+        paddingHorizontal: 5,
         marginRight: 4,
         paddingVertical: 2,
         backgroundColor: '#D4D4D4',
     },
     number: {
-        ...styles.textbold,
+        ...styles.text,
         fontSize: 11,
-        color: 'white',
+        // color: 'white',
+        color: '#01192e5a',
         marginLeft: 2,
     },
     text: {
-        ...styles.textbold,
+        ...styles.text,
         fontSize: 11,
-        color: 'white',
+        color: '#01192e5a',
     },
     moreReaction: {
         ...styles.center,

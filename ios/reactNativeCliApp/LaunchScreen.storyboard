@@ -29,15 +29,15 @@
                                     <constraint firstAttribute="height" constant="66" id="fnZ-uo-Vdj"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Es tiempo de hablar" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="08V-ti-gOS">
-                                <rect key="frame" x="51" y="628" width="249" height="30"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Es tiempo de hablar" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="08V-ti-gOS">
+                                <rect key="frame" x="63" y="626" width="249" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="2S3-nG-50x"/>
                                     <constraint firstAttribute="width" constant="249" id="QSO-XT-WrK"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="249" id="QYu-NJ-eGE"/>
                                     <constraint firstAttribute="height" constant="30" id="l41-wt-MtI"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="22"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="18"/>
                                 <color key="textColor" red="0.026239631699999998" green="0.092584319410000004" blue="0.17255809899999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -50,7 +50,7 @@
                             <constraint firstItem="08V-ti-gOS" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="63" id="8Ia-jZ-ka2"/>
                             <constraint firstItem="6Dr-nu-bdQ" firstAttribute="centerX" secondItem="GJd-Yh-RWb" secondAttribute="centerX" id="BDo-li-20Y"/>
                             <constraint firstItem="6Dr-nu-bdQ" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="PP8-kG-OfS"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="08V-ti-gOS" secondAttribute="bottom" constant="9" id="nrt-Xd-FSR"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="08V-ti-gOS" secondAttribute="bottom" constant="11" id="nrt-Xd-FSR"/>
                             <constraint firstItem="GJd-Yh-RWb" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" constant="229" id="q7n-Fw-LCb"/>
                         </constraints>
                     </view>
