@@ -29,7 +29,7 @@ function TextInputCustom(props: Props) {
     const textStyle = getTextStyle();
     const textInputContainerSyle = getTextInputContainerStyle();
     return (
-        <View>
+        <View style={{ marginBottom: 15 }}>
             <View style={{ ...StylesComponent.textInputContainer, ...textInputContainerSyle }}>
                 <TextInput
                     {...props}
@@ -43,7 +43,14 @@ function TextInputCustom(props: Props) {
                 )}
             </View>
             {helperMessage && (
-                <Text style={{ ...StylesComponent.text, ...textStyle }}>
+                <Text
+                    style={{
+                        ...StylesComponent.text,
+                        ...textStyle,
+                        position: 'absolute',
+                        bottom: -20,
+                    }}
+                >
                     {helperMessage.message}
                 </Text>
             )}

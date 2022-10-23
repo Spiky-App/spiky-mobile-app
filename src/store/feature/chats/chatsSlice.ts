@@ -19,6 +19,9 @@ export const chatsSlice = createSlice({
         setConversations: (state: ChatsState, action: PayloadAction<Conversation[]>) => {
             state.conversations = action.payload;
         },
+        setActiveConversationId: (state: ChatsState, action: PayloadAction<number>) => {
+            state.activeConversationId = action.payload;
+        },
         openNewMsgConversation: (state: ChatsState, action: PayloadAction<number>) => {
             state.conversations = state.conversations.map(conver => {
                 if (conver.id === action.payload) {
@@ -31,7 +34,6 @@ export const chatsSlice = createSlice({
                     return conver;
                 }
             });
-            state.activeConversationId = action.payload;
         },
         setUserStateConversation: (
             state: ChatsState,
@@ -82,6 +84,7 @@ export const {
     setUserStateConversation,
     updateLastChatMsgConversation,
     resetActiveConversationId,
+    setActiveConversationId,
 } = chatsSlice.actions;
 
 export const selectChats = (state: RootState) => state.chats;

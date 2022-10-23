@@ -103,7 +103,7 @@ const stylescom = StyleSheet.create({
     },
     textModal: {
         color: '#ffff',
-        fontSize: 14,
+        fontSize: 15,
         marginLeft: 10,
     },
 });

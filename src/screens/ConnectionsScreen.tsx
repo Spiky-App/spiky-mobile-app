@@ -14,17 +14,19 @@ import {
     addConversation,
     openNewMsgConversation,
     resetActiveConversationId,
+    setActiveConversationId,
     setConversations,
     setUserStateConversation,
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { Conversation, User } from '../types/store';
+import { ChatMessage, Conversation, User } from '../types/store';
 import { faCircleNodes } from '../constants/icons/FontAwesome';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
+    const [first, setFirst] = useState(true);
     const { conversations, activeConversationId } = useAppSelector(
         (state: RootState) => state.chats
     );
@@ -45,6 +47,7 @@ export const ConnectionsScreen = () => {
         if (newMsg) {
             dispatch(openNewMsgConversation(id));
         }
+        dispatch(setActiveConversationId(id));
         navigation.navigate('ChatScreen', {
             conversationId: id,
             toUser,
@@ -85,6 +88,20 @@ export const ConnectionsScreen = () => {
     }, [socket]);
 
     useEffect(() => {
+        if (!first) {
+            socket?.removeListener('newChatMsg');
+        } else {
+            setFirst(false);
+        }
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
+            const { chatmsg } = resp;
+            if (activeConversationId !== chatmsg.conversationId) {
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+            }
+        });
+    }, [socket, activeConversationId]);
+
+    useEffect(() => {
         loadConversations();
     }, []);
 
@@ -95,7 +112,7 @@ export const ConnectionsScreen = () => {
     );
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
             {conversations?.length !== 0 ? (
                 <FlatList
@@ -169,6 +186,7 @@ const stylescomp = StyleSheet.create({
     converWrap: {
         flexDirection: 'row',
         marginBottom: 20,
+        alignItems: 'center',
     },
     converContainer: {
         ...styles.shadow,
@@ -184,7 +202,7 @@ const stylescomp = StyleSheet.create({
         marginRight: 8,
         borderRadius: 3,
         width: 12,
-        height: 70,
+        height: 75,
     },
     date: {
         ...styles.textGray,

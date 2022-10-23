@@ -103,7 +103,7 @@ const ContainerInfo = ({ sections }: PropsInfo) => {
                                 key={paragraph}
                                 style={{
                                     ...styles.text,
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     textAlign: 'justify',
                                     marginBottom: 10,
                                 }}
@@ -123,9 +123,9 @@ const stylescom = StyleSheet.create({
         ...styles.shadow,
         marginTop: 10,
         marginBottom: 20,
-        marginHorizontal: 10,
+        marginHorizontal: 20,
         padding: 20,
         backgroundColor: '#ffff',
-        maxHeight: '75%',
+        maxHeight: '80%',
     },
 });

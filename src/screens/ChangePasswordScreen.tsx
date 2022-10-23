@@ -75,7 +75,7 @@ export const ChangePasswordScreen = () => {
     }, [currentPassword, newPassword, confirmPassword]);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <View style={{ ...styles.center, marginTop: 30 }}>
                 <TouchableOpacity
                     style={{ ...styles.center, position: 'absolute', left: -40, top: 0, bottom: 0 }}
@@ -98,6 +98,7 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Contraseña actual"
+                        placeholderTextColor="#707070"
                         secureTextEntry={passVisible1}
                         autoCorrect={false}
                         keyboardType="email-address"
@@ -120,6 +121,7 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Nueva contraseña"
+                        placeholderTextColor="#707070"
                         secureTextEntry={passVisible2}
                         autoCorrect={false}
                         keyboardType="email-address"
@@ -151,6 +153,7 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Confirmar contraseña"
+                        placeholderTextColor="#707070"
                         autoCorrect={false}
                         keyboardType="email-address"
                         style={styles.textinput}

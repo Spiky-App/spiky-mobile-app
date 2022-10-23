@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { faLightbulb, faCheck, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAppSelector } from '../store/hooks';
@@ -14,18 +12,12 @@ import useSpikyService from '../hooks/useSpikyService';
 interface UserData {
     email: string;
     university: string;
-    messagesNumber: number;
-    favorNumber: number;
-    againstNumber: number;
 }
 
 function generateDataFromData(data: UsuariorData): UserData {
     return {
         email: data.correo,
         university: data.universidad,
-        messagesNumber: data.n_mensajes,
-        favorNumber: data.n_favor,
-        againstNumber: data.n_contra,
     };
 }
 
@@ -37,9 +29,6 @@ export const ConfigurationScreen = () => {
     const [data, setData] = useState<UserData>({
         email: '',
         university: '',
-        messagesNumber: 0,
-        favorNumber: 0,
-        againstNumber: 0,
     });
 
     const loadData = async () => {
@@ -53,7 +42,7 @@ export const ConfigurationScreen = () => {
     });
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             {!loading ? (
                 <>
                     <Text style={{ ...styles.text, ...styles.h3, marginTop: 30 }}>
@@ -80,35 +69,6 @@ export const ConfigurationScreen = () => {
                             <Text style={{ ...styles.text, ...styles.h5 }}>Institución:</Text>
                             <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
                                 <Text style={{ ...styles.text }}>{data.university}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={{ ...styles.flex, justifyContent: 'space-evenly', width: '80%' }}>
-                        <View style={styles.center}>
-                            <FontAwesomeIcon icon={faLightbulb} color="#01192E" size={28} />
-                            <View style={{ ...styles.shadow, ...stylescom.padd }}>
-                                <Text style={{ ...styles.text, fontSize: 26, fontWeight: '300' }}>
-                                    {data.messagesNumber}
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.center}>
-                            <FontAwesomeIcon icon={faCheck} color="#01192E" size={28} />
-                            <View style={{ ...styles.shadow, ...stylescom.padd }}>
-                                <Text style={{ ...styles.text, fontSize: 26, fontWeight: '300' }}>
-                                    {data.favorNumber}
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.center}>
-                            <FontAwesomeIcon icon={faXmark} color="#01192E" size={28} />
-                            <View style={{ ...styles.shadow, ...stylescom.padd }}>
-                                <Text style={{ ...styles.text, fontSize: 26, fontWeight: '300' }}>
-                                    {data.againstNumber}
-                                </Text>
                             </View>
                         </View>
                     </View>

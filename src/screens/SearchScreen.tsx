@@ -23,7 +23,7 @@ export const SearchScreen = () => {
     }, []);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <>
                     <Animated.View
@@ -52,6 +52,7 @@ export const SearchScreen = () => {
                         title={'Explorando'}
                         myideas={false}
                         icon={faMagnifyingGlass}
+                        emptyTitle={'Todos buscamos algo, esperemos que lo encuentres.'}
                     />
                     <FloatButton />
                 </>

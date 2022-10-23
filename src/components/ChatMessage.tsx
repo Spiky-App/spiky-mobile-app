@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
+import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 import { ChatMessage as ChatMessageProp } from '../types/store';
 import UniversityTag from './common/UniversityTag';
@@ -12,12 +13,22 @@ interface MessageProp {
 }
 
 export const ChatMessage = ({ msg, uid }: MessageProp) => {
+    const { opacity, fadeIn } = useAnimation({ init_opacity: 0 });
     const owner = msg.userId === uid;
     const time = getTime(msg.date.toString());
     const replyMessage = transformMsg(msg.replyMessage?.message || '');
 
+    useEffect(() => {
+        fadeIn(300);
+    }, []);
+
     return (
-        <View style={owner ? stylescomp.containerMessageRight : stylescomp.containerMessageLeft}>
+        <Animated.View
+            style={[
+                owner ? stylescomp.containerMessageRight : stylescomp.containerMessageLeft,
+                { opacity },
+            ]}
+        >
             <View>
                 {msg.replyMessage && (
                     <View style={stylescomp.containerReplyMsg}>
@@ -25,7 +36,6 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                             <Text style={{ ...styles.textbold, fontSize: 12 }}>
                                 @{msg.replyMessage.user.nickname}
                             </Text>
-                            <Text style={{ ...styles.text, fontSize: 12 }}> de </Text>
                             <UniversityTag id={msg.replyMessage.user.universityId} fontSize={12} />
                         </View>
                         <Text style={{ ...styles.text, fontSize: 12 }}>
@@ -50,7 +60,7 @@ export const ChatMessage = ({ msg, uid }: MessageProp) => {
                     </View>
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 

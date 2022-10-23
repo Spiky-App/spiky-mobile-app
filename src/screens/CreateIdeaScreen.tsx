@@ -3,7 +3,6 @@ import {
     StyleSheet,
     Text,
     View,
-    SafeAreaView,
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
@@ -25,6 +24,7 @@ import { renderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 import useSpikyService from '../hooks/useSpikyService';
+import { BackgroundPaper } from '../components/BackgroundPaper';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
@@ -115,109 +115,124 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const messageLenght = form.message.length;
 
     return (
-        <SafeAreaView style={stylecom.container}>
-            <KeyboardAvoidingView behavior="height" style={stylecom.container}>
-                <View style={{ height: '40%' }}>
-                    <MentionInput
-                        placeholder="Perpetua tu idea.."
-                        placeholderTextColor="#707070"
-                        style={{ ...styles.textinput, fontSize: 16 }}
-                        multiline={true}
-                        autoFocus
-                        value={form.message}
-                        onChange={value => onChange({ message: value })}
-                        partTypes={[
-                            {
-                                trigger: '@',
-                                renderSuggestions: props =>
-                                    renderSuggetions({ ...props, isMention: true }),
-                                textStyle: { ...styles.h5, color: '#5c71ad' },
-                                allowedSpacesCount: 0,
-                                isInsertSpaceAfterMention: true,
-                                isBottomMentionSuggestionsRender: true,
-                                getPlainString: ({ name }: MentionData) => name,
-                            },
-                            {
-                                trigger: '#',
-                                renderSuggestions: props =>
-                                    renderSuggetions({ ...props, isMention: false }),
-                                textStyle: { ...styles.h5, color: '#5c71ad' },
-                                allowedSpacesCount: 0,
-                                isInsertSpaceAfterMention: true,
-                                isBottomMentionSuggestionsRender: true,
-                                getPlainString: ({ name }: MentionData) => name,
-                            },
-                        ]}
-                    />
-                </View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        position: 'absolute',
-                        bottom: Platform.OS === 'ios' ? 70 : 50,
-                    }}
-                >
-                    <TouchableOpacity onPress={() => nav.goBack()} disabled={isLoading}>
-                        <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                    </TouchableOpacity>
-                    <View style={stylecom.WrapperMaxCounterNIdea}>
-                        <View style={stylecom.ConteMaxCounterNIdea}>
-                            <View style={stylecom.MaxCounterNIdea}></View>
-                            {counter <= 40 && (
-                                <Text
-                                    style={
-                                        counter < 0
-                                            ? stylecom.MaxCounterTextNIdeaRed
-                                            : stylecom.MaxCounterTextNIdea
-                                    }
-                                >
-                                    {counter}
-                                </Text>
-                            )}
-                            <View
-                                style={[
-                                    counter < 0
-                                        ? stylecom.MaxCounterNIdeaColorRed
-                                        : stylecom.MaxCounterNIdeaColor,
-                                    {
-                                        width:
-                                            getPercentage(
-                                                messageLenght < IDEA_MAX_LENGHT
-                                                    ? messageLenght
-                                                    : IDEA_MAX_LENGHT,
-                                                IDEA_MAX_LENGHT
-                                            ) + '%',
-                                    },
-                                ]}
-                            />
-                        </View>
+        <BackgroundPaper style={stylecom.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={stylecom.container}
+            >
+                <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                    <View style={stylecom.wrap}>
+                        <MentionInput
+                            placeholder="Perpetua tu idea.."
+                            placeholderTextColor="#707070"
+                            style={{ ...styles.textinput, fontSize: 16 }}
+                            multiline={true}
+                            autoFocus
+                            value={form.message}
+                            onChange={value => onChange({ message: value })}
+                            partTypes={[
+                                {
+                                    trigger: '@',
+                                    renderSuggestions: props =>
+                                        renderSuggetions({ ...props, isMention: true }),
+                                    textStyle: { ...styles.h5, color: '#5c71ad' },
+                                    allowedSpacesCount: 0,
+                                    isInsertSpaceAfterMention: true,
+                                    isBottomMentionSuggestionsRender: true,
+                                    getPlainString: ({ name }: MentionData) => name,
+                                },
+                                {
+                                    trigger: '#',
+                                    renderSuggestions: props =>
+                                        renderSuggetions({ ...props, isMention: false }),
+                                    textStyle: { ...styles.h5, color: '#5c71ad' },
+                                    allowedSpacesCount: 0,
+                                    isInsertSpaceAfterMention: true,
+                                    isBottomMentionSuggestionsRender: true,
+                                    getPlainString: ({ name }: MentionData) => name,
+                                },
+                            ]}
+                        />
                     </View>
-                    <ButtonIcon
-                        disabled={isLoading || invalid()}
-                        icon={faPenToSquare}
-                        onPress={onPressPenToSquare}
-                    />
-                    <ButtonIcon
-                        disabled={isLoading || invalid()}
-                        icon={faLocationArrow}
-                        onPress={onPressLocationArrow}
-                        iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                    />
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '90%',
+                            position: 'absolute',
+                            bottom: 20,
+                        }}
+                    >
+                        <TouchableOpacity onPress={() => nav.goBack()} disabled={isLoading}>
+                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
+                        </TouchableOpacity>
+                        <View style={stylecom.WrapperMaxCounterNIdea}>
+                            <View style={stylecom.ConteMaxCounterNIdea}>
+                                <View style={stylecom.MaxCounterNIdea}></View>
+                                {counter <= 40 && (
+                                    <Text
+                                        style={
+                                            counter < 0
+                                                ? stylecom.MaxCounterTextNIdeaRed
+                                                : stylecom.MaxCounterTextNIdea
+                                        }
+                                    >
+                                        {counter}
+                                    </Text>
+                                )}
+                                <View
+                                    style={[
+                                        counter < 0
+                                            ? stylecom.MaxCounterNIdeaColorRed
+                                            : stylecom.MaxCounterNIdeaColor,
+                                        {
+                                            width:
+                                                getPercentage(
+                                                    messageLenght < IDEA_MAX_LENGHT
+                                                        ? messageLenght
+                                                        : IDEA_MAX_LENGHT,
+                                                    IDEA_MAX_LENGHT
+                                                ) + '%',
+                                        },
+                                    ]}
+                                />
+                            </View>
+                        </View>
+                        <ButtonIcon
+                            disabled={isLoading || invalid()}
+                            icon={faPenToSquare}
+                            onPress={onPressPenToSquare}
+                        />
+                        <ButtonIcon
+                            disabled={isLoading || invalid()}
+                            icon={faLocationArrow}
+                            onPress={onPressLocationArrow}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                        />
+                    </View>
                 </View>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </BackgroundPaper>
     );
 };
 
 const stylecom = StyleSheet.create({
     container: {
+        width: '95%',
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
+    },
+    wrap: {
+        ...styles.shadow,
+        flex: 1,
+        borderRadius: 10,
+        width: '100%',
+        backgroundColor: 'white',
+        paddingHorizontal: 25,
+        paddingTop: 30,
     },
     circleButton: {
         justifyContent: 'center',

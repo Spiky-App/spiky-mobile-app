@@ -159,9 +159,6 @@ export interface GetUserInfo {
 export interface UsuariorData {
     correo: string;
     universidad: string;
-    n_mensajes: number;
-    n_favor: number;
-    n_contra: number;
 }
 
 export interface UpdatePassword {
@@ -249,6 +246,11 @@ export interface CreateChatMessageSeen {
         chatmsg_seen: Seen;
         userto: number;
     };
+}
+
+export interface GetEmailVerification {
+    ok: boolean;
+    msg: string;
 }
 
 export interface GetIdeaReactions {

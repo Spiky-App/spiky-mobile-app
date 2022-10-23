@@ -14,7 +14,10 @@ import {
     generateChatMsgFromChatMensaje,
     generateConversationFromConversacion,
 } from '../helpers/conversations';
-import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
+import {
+    increaseNewChatMessagesNumber,
+    updateNewChatMessagesNumber,
+} from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
 import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { removeUser } from '../store/feature/user/userSlice';
@@ -30,6 +33,7 @@ function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const chats = useAppSelector((state: RootState) => state.chats);
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const { socket } = useContext(SocketContext);
@@ -418,6 +422,24 @@ function useSpikyService() {
         }
     };
 
+    const getEmailVerification = async (email: string) => {
+        try {
+            const response = await service.getEmailVerification(email);
+            const { data } = response;
+            const { msg } = data;
+            return msg;
+        } catch (error) {
+            console.log(error);
+            dispatch(
+                addToast({
+                    message: 'Correo invalido, ingrese otro correo  ',
+                    type: StatusType.WARNING,
+                })
+            );
+            return null;
+        }
+    };
+
     const getIdeaReactiones = async (messageId: number) => {
         try {
             const { data } = await service.getIdeaReactions(messageId);
@@ -429,6 +451,12 @@ function useSpikyService() {
             console.log(error);
             dispatch(addToast({ message: 'Error cargando reacciones', type: StatusType.WARNING }));
             return [];
+        }
+    };
+
+    const setNewChatMessagesNumber = (conversationId: number) => {
+        if (chats.activeConversationId !== conversationId) {
+            dispatch(increaseNewChatMessagesNumber());
         }
     };
 
@@ -455,7 +483,9 @@ function useSpikyService() {
         loadUserInfo,
         updatePassword,
         getIdeas,
+        getEmailVerification,
         getIdeaReactiones,
+        setNewChatMessagesNumber,
     };
 }
 

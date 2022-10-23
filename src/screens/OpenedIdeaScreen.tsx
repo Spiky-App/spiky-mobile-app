@@ -21,17 +21,18 @@ import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Comment as CommentState, Message } from '../types/store';
+import { Comment as CommentState, Message, User } from '../types/store';
 import MsgTransform from '../components/MsgTransform';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import UniversityTag from '../components/common/UniversityTag';
 import useSpikyService from '../hooks/useSpikyService';
 import { PreReactionButton } from '../components/PreReactionButton';
 import ReactionsContainer from '../components/common/ReactionsContainer';
 import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
+import { MessageRequestData } from '../services/models/spikyService';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -57,10 +58,10 @@ const initialMessage = {
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 
-export const OpenedIdeaScreen = ({ route }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
-    const messageId = route.params?.messageId;
-    const filter = route.params?.filter;
+export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
+    const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
+    const messageId = routeSC.params?.messageId;
+    const filter = routeSC.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<Message>(initialMessage);
@@ -87,6 +88,36 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
         if (comments) {
             setComments([comment, ...comments]);
             setAnswersNumber(comments.length + 1);
+        }
+    };
+
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
+
+    const handleClickUser = (goToUser: User) => {
+        if (goToUser.nickname === nickname) {
+            changeScreen('MyIdeasScreen');
+        } else {
+            changeScreen('ProfileScreen', {
+                alias: goToUser.nickname,
+            });
         }
     };
 
@@ -195,6 +226,7 @@ export const OpenedIdeaScreen = ({ route }: Props) => {
                                                         reactionCount={message.reactions}
                                                         myReaction={message.myReaction}
                                                         messageId={message.id}
+                                                        handleClickUser={handleClickUser}
                                                     />
                                                 )}
 

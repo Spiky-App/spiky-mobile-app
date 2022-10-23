@@ -143,7 +143,7 @@ export const LoginScreen = () => {
                     </TouchableHighlight>
                     <TouchableOpacity
                         style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('CheckEmailScreen')}
+                        onPress={() => navigation.navigate('ManifestPart1Screen')}
                     >
                         <Text style={styles.linkPad}>Solicitar cuenta</Text>
                     </TouchableOpacity>
