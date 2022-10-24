@@ -41,7 +41,7 @@ export const SearchScreen = () => {
                             style={styles.textinput}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
+                        <TouchableOpacity style={styles.iconinput}>
                             <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </Animated.View>

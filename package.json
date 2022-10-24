@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "pretty": "prettier --write \"./**/*.tsx\"",
     "precommit": "npm run pretty && npm run lint:fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",

@@ -7,7 +7,7 @@ import { getTime } from '../helpers/getTime';
 import { ModalReactComment } from './ModalReactComment';
 import { faCheck } from '../constants/icons/FontAwesome';
 import IconGray from './svg/IconGray';
-import { Comment as CommentProps, ReactionType } from '../types/store';
+import { Comment as CommentProps, ReactionType, User } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
@@ -19,9 +19,16 @@ interface Props {
     formComment: FormComment;
     onChangeComment: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
+    handleClickUser: (goToUser: User) => void;
 }
 
-export const Comment = ({ comment, formComment, onChangeComment, refInputComment }: Props) => {
+export const Comment = ({
+    comment,
+    formComment,
+    onChangeComment,
+    refInputComment,
+    handleClickUser,
+}: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const [reactComment, setReactComment] = useState({
         against: comment.against,
@@ -53,7 +60,7 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
     return (
         <View style={stylescom.wrap}>
             <View style={{ ...styles.flex, marginTop: 4 }}>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => handleClickUser(comment.user)}>
                     <Text style={{ ...styles.user, ...styles.textbold }}>
                         @{comment.user.nickname}
                     </Text>
@@ -94,6 +101,7 @@ export const Comment = ({ comment, formComment, onChangeComment, refInputComment
                 <MsgTransform
                     textStyle={{ ...styles.text, ...styles.msg }}
                     text={comment.comment}
+                    handleClickUser={handleClickUser}
                 />
             </View>
 

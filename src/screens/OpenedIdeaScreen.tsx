@@ -92,6 +92,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     };
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
+        navigation.pop();
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);
@@ -183,7 +184,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             size={15}
                                         />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {}}>
+                                    <TouchableOpacity onPress={() => handleClickUser(message.user)}>
                                         <Text style={{ ...styles.user, fontSize: 14 }}>
                                             @{message.user.nickname}
                                         </Text>
@@ -199,6 +200,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             fontSize: 14,
                                         }}
                                         text={message.message}
+                                        handleClickUser={handleClickUser}
                                     />
                                 </View>
 
@@ -289,6 +291,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     formComment={form}
                                                     onChangeComment={onChange}
                                                     refInputComment={refInputComment}
+                                                    handleClickUser={handleClickUser}
                                                 />
                                             )}
                                             keyExtractor={item => item.id + ''}

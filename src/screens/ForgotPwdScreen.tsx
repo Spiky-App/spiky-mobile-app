@@ -45,7 +45,6 @@ export const ForgotPwdScreen = () => {
 
                     <TouchableHighlight
                         underlayColor="#01192ebe"
-                        onPress={() => {}}
                         style={{ ...styles.button, paddingHorizontal: 30 }}
                     >
                         <Text style={{ ...styles.text, ...styles.textb }}>Cambiar contraseña</Text>
