@@ -263,3 +263,19 @@ export interface Reaction {
     reaccion: string;
     usuario: User;
 }
+
+export interface GetTermsAndConditions {
+    ok: number;
+    lists: TermsAndConditions;
+}
+
+export interface TermsAndConditions {
+    termsAndConditions: {
+        title: string;
+        paragraphs: string[];
+    }[];
+    noticeOfPrivacy: {
+        title: string;
+        paragraphs: string[];
+    }[];
+}

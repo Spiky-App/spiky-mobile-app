@@ -27,6 +27,7 @@ import {
     CreateChatMessageSeen,
     GetEmailVerification,
     GetIdeaReactions,
+    GetTermsAndConditions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -205,6 +206,10 @@ class SpikyService {
 
     getIdeaReactions(messageId: number) {
         return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    }
+
+    getTermsAndConditions() {
+        return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 }
 
