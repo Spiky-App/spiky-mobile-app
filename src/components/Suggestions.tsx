@@ -22,10 +22,10 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     const InputStyles: StyleProp<ViewStyle> = inputHeight
         ? {
               ...stylecom.containermention,
-              width: Dimensions.get('window').width - 40,
+              width: Dimensions.get('window').width - 20,
               position: 'absolute',
-              left: -10,
-              bottom: inputHeight - 30,
+              left: -17,
+              bottom: inputHeight - 22,
           }
         : stylecom.containermention;
 
