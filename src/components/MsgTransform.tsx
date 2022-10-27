@@ -35,16 +35,6 @@ const MsgTransform = ({ text, textStyle, handleClickUser }: Props) => {
         );
     };
 
-    // const handleClickUser = (alias: string) => {
-    //     if (nickname === alias.replace('@', '')) {
-    //         changeScreen('MyIdeasScreen');
-    //     } else {
-    //         changeScreen('ProfileScreen', {
-    //             alias: alias.replace('@', ''),
-    //         });
-    //     }
-    // };
-
     useEffect(() => {
         if (text !== '') {
             const regexp_all = /(@\[@\w*\]\(\d*\))|(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
