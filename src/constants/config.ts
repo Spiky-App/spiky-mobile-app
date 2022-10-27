@@ -7,6 +7,9 @@ export const socketBaseUrl: string = `${BASE_URL}:${PORT}`;
 // hurt anyone
 export const config: AxiosRequestConfig = {
     baseURL: `${BASE_URL}:${PORT}/api`,
+
     timeout: 10000,
     headers: {},
 };
+
+console.log(BASE_URL, PORT);

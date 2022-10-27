@@ -29,6 +29,8 @@ import { MessageRequestData } from '../services/models/spikyService';
 import SocketContext from '../context/Socket/Context';
 import { generateReactionFromReaccion } from '../helpers/reaction';
 
+// This is the general hook that contains the backend calls -> SpikyService.ts define the string route
+
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const user = useAppSelector((state: RootState) => state.user);

@@ -19,6 +19,7 @@ export const store = configureStore({
     },
 });
 
+// RootState will have the state application tree: the father keys are defined above
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;

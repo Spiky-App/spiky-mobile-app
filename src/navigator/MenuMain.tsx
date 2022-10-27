@@ -26,6 +26,8 @@ import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { menuInfo } from '../constants/navigator';
 import { ConnectionsScreen } from '../screens/ConnectionsScreen';
+import { CirculosScreen } from '../screens/CirculosScreen';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
@@ -40,6 +42,7 @@ export type DrawerParamList = {
     ChangePasswordScreen: undefined;
     HashTagScreen: { hashtag: string };
     ConnectionsScreen: undefined;
+    CirculosScreen: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -75,6 +78,7 @@ export const MenuMain = () => {
             <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
             <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
             <Drawer.Screen name="HashTagScreen" component={HashTagScreen} />
+            <Drawer.Screen name="CirculosScreen" component={CirculosScreen} />
         </Drawer.Navigator>
     );
 };
@@ -206,6 +210,22 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                         }}
                     >
                         Crear idea
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={stylescom.buttonmenu}
+                    onPress={() => {
+                        navigation.closeDrawer();
+                        navigation.navigate('CirculosScreen');
+                    }}
+                >
+                    <FontAwesomeIcon icon={faCircleNotch} size={20} color="#01192E" />
+                    <Text
+                        style={{
+                            ...stylescom.textmenu,
+                        }}
+                    >
+                        Circulos
                     </Text>
                 </TouchableOpacity>
 
