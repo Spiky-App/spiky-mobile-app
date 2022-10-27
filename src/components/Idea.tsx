@@ -135,7 +135,11 @@ export const Idea = ({ idea, filter }: Props) => {
                 </View>
 
                 <View style={{ marginTop: 6 }}>
-                    <MsgTransform textStyle={{ ...styles.text, ...stylescom.msg }} text={message} />
+                    <MsgTransform
+                        textStyle={{ ...styles.text, ...stylescom.msg }}
+                        text={message}
+                        handleClickUser={handleClickUser}
+                    />
                 </View>
 
                 <View
