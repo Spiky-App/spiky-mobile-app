@@ -160,15 +160,20 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
 
                                 {messageTrackingId && (
-                                    <View
-                                        style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}
-                                    >
-                                        <View>
-                                            <FontAwesomeIcon
-                                                icon={faThumbtack}
-                                                color="white"
-                                                size={13}
-                                            />
+                                    <View style={stylescom.corner_container}>
+                                        <View
+                                            style={{
+                                                ...stylescom.corner,
+                                                backgroundColor: '#FC702A',
+                                            }}
+                                        >
+                                            <View>
+                                                <FontAwesomeIcon
+                                                    icon={faThumbtack}
+                                                    color="white"
+                                                    size={13}
+                                                />
+                                            </View>
                                         </View>
                                     </View>
                                 )}
