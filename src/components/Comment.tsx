@@ -20,6 +20,7 @@ interface Props {
     onChangeComment: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
     handleClickUser: (goToUser: User) => void;
+    handleClickHashtag: (hashtag_text: string) => void;
 }
 
 export const Comment = ({
@@ -28,6 +29,7 @@ export const Comment = ({
     onChangeComment,
     refInputComment,
     handleClickUser,
+    handleClickHashtag,
 }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const [reactComment, setReactComment] = useState({
@@ -102,6 +104,7 @@ export const Comment = ({
                     textStyle={{ ...styles.text, ...styles.msg }}
                     text={comment.comment}
                     handleClickUser={handleClickUser}
+                    handleClickHashtag={handleClickHashtag}
                 />
             </View>
 

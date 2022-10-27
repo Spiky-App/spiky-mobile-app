@@ -1,39 +1,17 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
 import { styles } from '../themes/appTheme';
-import { MessageRequestData } from '../services/models/spikyService';
 import { User } from '../types/store';
 
 interface Props {
     text: string;
     textStyle: {};
     handleClickUser: (goToUser: User) => void;
+    handleClickHashtag: (hashtag_text: string) => void;
 }
 
-const MsgTransform = ({ text, textStyle, handleClickUser }: Props) => {
+const MsgTransform = ({ text, textStyle, handleClickUser, handleClickHashtag }: Props) => {
     const [content, setContent] = useState<Element>(<Text></Text>);
-    const navigation = useNavigation<any>();
-
-    const changeScreen = (screen: string, params?: MessageRequestData) => {
-        const targetRoute = navigation
-            .getState()
-            .routes.find((route: { name: string }) => route.name === screen);
-        navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [
-                    {
-                        name: screen,
-                        params: {
-                            ...targetRoute?.params,
-                            ...params,
-                        },
-                    },
-                ],
-            })
-        );
-    };
 
     useEffect(() => {
         if (text !== '') {
@@ -75,11 +53,7 @@ const MsgTransform = ({ text, textStyle, handleClickUser }: Props) => {
                             <TouchableWithoutFeedback
                                 key={index}
                                 style={{ ...textStyle, backgroundColor: 'red' }}
-                                onPress={() =>
-                                    changeScreen('HashTagScreen', {
-                                        hashtag: hashtag_text,
-                                    })
-                                }
+                                onPress={() => handleClickHashtag(hashtag_text)}
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>
                                     <Text style={{ ...textStyle, ...styles.h5, ...styles.orange }}>
