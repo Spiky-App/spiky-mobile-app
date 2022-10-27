@@ -38,32 +38,34 @@ export const TermAndConditionsScreen = () => {
                 fadeIn(400, () => {}, 300);
             });
         }
-    }, [terms]);
+    }, [terms, info]);
 
     return (
         <BackgroundPaper>
             <ArrowBack />
-            <Animated.View style={{ ...styles.center, marginVertical: 40, opacity }}>
-                <BigTitle texts={title} />
+            <View style={{ ...styles.center, marginTop: 40 }}>
                 {isLoading ? (
                     <View style={{ ...styles.center, flex: 1 }}>
                         <LoadingAnimated />
                     </View>
                 ) : (
-                    <ContainerInfo
-                        sections={terms ? info?.termsAndConditions : info?.noticeOfPrivacy}
-                    />
+                    <Animated.View style={{ ...styles.center, marginBottom: 40, opacity }}>
+                        <BigTitle texts={title} />
+                        <ContainerInfo
+                            sections={terms ? info?.termsAndConditions : info?.noticeOfPrivacy}
+                        />
+                        <TouchableOpacity
+                            style={{ ...styles.center, flexDirection: 'row', paddingBottom: 10 }}
+                            onPress={() => setTerms(!terms)}
+                        >
+                            <Text style={{ ...styles.text, ...styles.link, fontSize: 16 }}>
+                                {alternateTitle}
+                            </Text>
+                            <FontAwesomeIcon icon={faChevronRight} color="#5c71ad" size={16} />
+                        </TouchableOpacity>
+                    </Animated.View>
                 )}
-                <TouchableOpacity
-                    style={{ ...styles.center, flexDirection: 'row', paddingBottom: 10 }}
-                    onPress={() => setTerms(!terms)}
-                >
-                    <Text style={{ ...styles.text, ...styles.link, fontSize: 16 }}>
-                        {alternateTitle}
-                    </Text>
-                    <FontAwesomeIcon icon={faChevronRight} color="#5c71ad" size={16} />
-                </TouchableOpacity>
-            </Animated.View>
+            </View>
         </BackgroundPaper>
     );
 };
