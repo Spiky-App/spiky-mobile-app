@@ -18,7 +18,6 @@ import { FormState } from '../types/forgotPass';
 import SpikyService from '../services/SpikyService';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-//import { ForgotPasswordResponse } from '../types/services/spiky';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
