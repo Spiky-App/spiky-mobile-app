@@ -1,5 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { LoginResponse, MessagesResponse, UniversityResponse } from '../types/services/spiky';
+import {
+    LoginResponse,
+    MessagesResponse,
+    UniversityResponse,
+    ForgotPasswordResponse,
+} from '../types/services/spiky';
 import { MessageRequestData } from './models/spikyService';
 
 interface Headers {
@@ -18,6 +23,11 @@ class SpikyService {
             contrasena: password,
             correo: email,
         });
+    }
+
+    forgotPassword(email: string) {
+        // const resp = await fetchSinToken('auth/forgot-password?correo=' + correo);
+        return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
     getUniversities() {

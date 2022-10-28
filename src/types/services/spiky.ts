@@ -7,6 +7,11 @@ export interface LoginResponse {
     token: string;
 }
 
+export interface ForgotPasswordResponse {
+    ok: boolean;
+    msg: string;
+}
+
 export interface UniversityResponse {
     ok: boolean;
     universidades: University[];
