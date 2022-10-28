@@ -103,7 +103,7 @@ export const ConnectionsScreen = () => {
 
     useEffect(() => {
         loadConversations();
-    }, []);
+    }, [socket]);
 
     useFocusEffect(
         useCallback(() => {

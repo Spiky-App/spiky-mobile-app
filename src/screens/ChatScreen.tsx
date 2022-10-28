@@ -161,7 +161,7 @@ export const ChatScreen = ({ route }: Props) => {
         if (conversationId) {
             loadChatMessages();
         }
-    }, [conversationId]);
+    }, [conversationId, socket]);
 
     return (
         <BackgroundPaper topDark>
