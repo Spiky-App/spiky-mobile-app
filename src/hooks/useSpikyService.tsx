@@ -16,6 +16,7 @@ import {
 } from '../helpers/conversations';
 import {
     increaseNewChatMessagesNumber,
+    setNotificationsAndNewChatMessagesNumber,
     updateNewChatMessagesNumber,
 } from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
@@ -460,6 +461,22 @@ function useSpikyService() {
         }
     };
 
+    const getPendingNotifications = async () => {
+        try {
+            const { data } = await service.getPendingNotifications();
+            const { pendingNotifications } = data;
+            const { newChatMessagesNumber, notificationsNumber } = pendingNotifications;
+            dispatch(
+                setNotificationsAndNewChatMessagesNumber({
+                    newChatMessagesNumber,
+                    notificationsNumber,
+                })
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -486,6 +503,7 @@ function useSpikyService() {
         getEmailVerification,
         getIdeaReactiones,
         setNewChatMessagesNumber,
+        getPendingNotifications,
     };
 }
 

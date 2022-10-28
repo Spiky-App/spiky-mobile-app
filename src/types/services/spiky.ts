@@ -263,3 +263,11 @@ export interface Reaction {
     reaccion: string;
     usuario: User;
 }
+
+export interface GetPendingNotifications {
+    ok: boolean;
+    pendingNotifications: {
+        newChatMessagesNumber: number;
+        notificationsNumber: number;
+    };
+}
