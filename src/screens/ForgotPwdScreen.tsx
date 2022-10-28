@@ -21,6 +21,7 @@ import { RootState } from '../store';
 //import { ForgotPasswordResponse } from '../types/services/spiky';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 
 export const ForgotPwdScreen = () => {
     const [isLoading, setLoading] = useState(false);
@@ -30,11 +31,12 @@ export const ForgotPwdScreen = () => {
     const [underlyingValue, setUnderlyingValue] = useState(
         'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
     );
-
+    const [isNextMsg, setNextMsg] = useState(false);
+    const [defaultEmailValue, setDefaultEmailValue] = useState('');
     const { form, onChange } = useForm<FormState>({
         email: '',
     });
-    async function sendReestablishEmail() {
+    async function sendReestablishPasswordEmail() {
         setLoading(true);
         if (validateForm(form)) {
             const { email } = form;
@@ -43,6 +45,8 @@ export const ForgotPwdScreen = () => {
                 const { data } = response;
                 // this is were the response message is displayed
                 setUnderlyingValue(data.msg);
+                setNextMsg(true);
+                setDefaultEmailValue(email);
             } catch (err) {
                 console.log(err);
                 dispatch(
@@ -51,6 +55,13 @@ export const ForgotPwdScreen = () => {
             }
         } else {
         }
+        setLoading(false);
+    }
+    function handleReestablishEmail() {
+        setUnderlyingValue(
+            'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
+        );
+        setNextMsg(false);
         setLoading(false);
     }
 
@@ -69,34 +80,61 @@ export const ForgotPwdScreen = () => {
                             keyboardType="email-address"
                             style={styles.textinput}
                             onChangeText={value => onChange({ email: value })}
+                            defaultValue={defaultEmailValue}
                         />
                     </View>
 
                     <Text style={{ ...styles.textGrayPad, marginBottom: 25 }}>
                         {underlyingValue}
                     </Text>
-
-                    <TouchableHighlight
-                        underlayColor="#01192ebe"
-                        onPress={sendReestablishEmail}
-                        style={{ ...styles.button, paddingHorizontal: 30 }}
-                        disabled={isLoading}
-                    >
-                        <Text
-                            style={{
-                                ...styles.text,
-                                ...styles.textb,
-                                ...(isLoading && { color: '#707070' }),
-                            }}
-                        >
-                            {!isLoading ? 'Cambiar Constraseña' : 'Cargando...'}
-                        </Text>
-                    </TouchableHighlight>
+                    {!isLoading ? (
+                        !isNextMsg ? (
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={sendReestablishPasswordEmail}
+                                style={{ ...styles.button, paddingHorizontal: 30 }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Cambiar Contraseña
+                                </Text>
+                            </TouchableHighlight>
+                        ) : (
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={handleReestablishEmail}
+                                style={{ ...styles.button, paddingHorizontal: 30 }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Cambiar Correo
+                                </Text>
+                            </TouchableHighlight>
+                        )
+                    ) : (
+                        <View>
+                            <Text style={{ ...styles.textGray }}>Enviando Correo...</Text>
+                            <LoadingAnimated />
+                        </View>
+                    )}
                 </View>
             </TouchableWithoutFeedback>
         </BackgroundPaper>
     );
 };
+
+// TODO: after 1st click on Cambiar Contraseña, change button to Cambiar correo
+// ref: https://github.com/RaulLlamas/spiky-front-end/blob/main/src/components/ForgotPass/index.js
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylescom = StyleSheet.create({

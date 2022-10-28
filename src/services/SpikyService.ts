@@ -26,7 +26,6 @@ class SpikyService {
     }
 
     forgotPassword(email: string) {
-        // const resp = await fetchSinToken('auth/forgot-password?correo=' + correo);
         return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
