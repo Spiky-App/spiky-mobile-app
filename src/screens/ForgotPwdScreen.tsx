@@ -133,9 +133,6 @@ export const ForgotPwdScreen = () => {
     );
 };
 
-// TODO: after 1st click on Cambiar Contraseña, change button to Cambiar correo
-// ref: https://github.com/RaulLlamas/spiky-front-end/blob/main/src/components/ForgotPass/index.js
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylescom = StyleSheet.create({
     container: {
