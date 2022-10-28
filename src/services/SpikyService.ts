@@ -28,6 +28,7 @@ import {
     GetEmailVerification,
     GetIdeaReactions,
     GetTermsAndConditions,
+    ForgotPasswordResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -41,6 +42,11 @@ class SpikyService {
             contrasena: password,
             correo: email,
         });
+    }
+
+    forgotPassword(email: string) {
+        // const resp = await fetchSinToken('auth/forgot-password?correo=' + correo);
+        return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
     getUniversities() {
