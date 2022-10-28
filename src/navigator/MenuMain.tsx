@@ -6,23 +6,12 @@ import {
     DrawerContentScrollView,
     useDrawerStatus,
 } from '@react-navigation/drawer';
-import { useWindowDimensions, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import {
-    faBell,
-    faLightbulb,
-    faPlus,
-    faThumbtack,
-    faUsers,
-    faMagnifyingGlass,
-    // faCircleNodes,
-    faHashtag,
-    faUser,
-} from '../constants/icons/FontAwesome';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { faBell, faPlus } from '../constants/icons/FontAwesome';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { MyIdeasScreen } from '../screens/MyIdeasScreen';
 import { TrackingScreen } from '../screens/TrackingScreen';
 import { SearchScreen } from '../screens/SearchScreen';
-import { ConnectionScreen } from '../screens/ConnectionScreen';
 import { Header } from '../components/Header';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { ModalNotification } from '../components/ModalNotification';
@@ -32,74 +21,43 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
+// import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
+import { menuInfo } from '../constants/navigator';
+import { ConnectionsScreen } from '../screens/ConnectionsScreen';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
-    MyIdeasScreen: undefined;
+    MyIdeasScreen?: {
+        draft?: boolean;
+    };
     TrackingScreen: undefined;
     SearchScreen: undefined;
     ConnectionScreen: undefined;
-    // ProfileScreen: { alias: '' } | undefined;
     ProfileScreen: { alias: string };
     ConfigurationScreen: undefined;
     ChangePasswordScreen: undefined;
-    HashTagScreen: { hashtag: '' } | undefined;
+    HashTagScreen: { hashtag: string };
+    ConnectionsScreen: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
-const menuInfo = [
-    {
-        name: 'Comunidad',
-        screen: 'CommunityScreen',
-        icon: faUsers,
-    },
-    {
-        name: 'Mis ideas',
-        screen: 'MyIdeasScreen',
-        icon: faLightbulb,
-    },
-    {
-        name: 'Tracking',
-        screen: 'TrackingScreen',
-        icon: faThumbtack,
-    },
-    {
-        name: 'Buscar',
-        screen: 'SearchScreen',
-        icon: faMagnifyingGlass,
-    },
-    // {
-    //     name: 'Conexiones',
-    //     screen: 'ConnectionScreen',
-    //     icon: faCircleNodes,
-    // },
-    {
-        name: 'Hashtag',
-        screen: 'HashTagScreen',
-        icon: faHashtag,
-    },
-    {
-        name: 'Perfil',
-        screen: 'ProfileScreen',
-        icon: faUser,
-    },
-];
-
 export const MenuMain = () => {
-    const { width } = useWindowDimensions();
     return (
         <Drawer.Navigator
             screenOptions={{
-                drawerType: width >= 768 ? 'permanent' : 'front', // Menú modo horizontal
+                drawerType: 'front', // Menú modo horizontal
                 headerShown: true,
                 header: () => {
                     return <Header />;
                 },
-                drawerStyle: { backgroundColor: '#F8F8F8', width: '60%' },
-                overlayColor: '#6363635c',
+                drawerStyle: {
+                    backgroundColor: '#F8F8F8',
+                    width: '60%',
+                },
+                /* overlayColor: '#6363635c', */
             }}
             useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
@@ -108,7 +66,7 @@ export const MenuMain = () => {
             <Drawer.Screen name="MyIdeasScreen" component={MyIdeasScreen} />
             <Drawer.Screen name="TrackingScreen" component={TrackingScreen} />
             <Drawer.Screen name="SearchScreen" component={SearchScreen} />
-            <Drawer.Screen name="ConnectionScreen" component={ConnectionScreen} />
+            <Drawer.Screen name="ConnectionsScreen" component={ConnectionsScreen} />
             <Drawer.Screen
                 name="ProfileScreen"
                 component={ProfileScreen}
@@ -125,7 +83,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
     const [screenActive, setScreenActive] = useState('');
     const isDrawerOpen = useDrawerStatus() === 'open';
-    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
+    const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
+        (state: RootState) => state.user
+    );
 
     const changeScreen = (screen: string) => {
         const targetRoute = navigation.getState().routes.find(route => route.name === screen);
@@ -148,8 +108,13 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     }, [isDrawerOpen]);
 
     return (
-        <DrawerContentScrollView>
-            <View style={{ flex: 1, justifyContent: 'center', marginHorizontal: 40 }}>
+        <DrawerContentScrollView
+            contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+            style={{
+                flexDirection: 'row',
+            }}
+        >
+            <View style={{ flex: 1, width: 165 }}>
                 <View style={{ width: 125, marginTop: 20 }}>
                     <LogoAndIconSvg />
                 </View>
@@ -186,6 +151,14 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                                     >
                                         {item.name}
                                     </Text>
+                                    {newChatMessagesNumber > 0 &&
+                                        item.screen === 'ConnectionsScreen' && (
+                                            <View style={stylescom.notif}>
+                                                <Text style={stylescom.textnotif}>
+                                                    {newChatMessagesNumber}
+                                                </Text>
+                                            </View>
+                                        )}
                                 </TouchableOpacity>
                             </View>
                         );
@@ -203,9 +176,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                 >
                     <FontAwesomeIcon icon={faBell} size={16} color="#01192E" />
                     <Text style={stylescom.textmenu}>Notificaciones</Text>
-                    {n_notificaciones > 0 && (
+                    {notificationsNumber > 0 && (
                         <View style={stylescom.notif}>
-                            <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
+                            <Text style={stylescom.textnotif}>{notificationsNumber}</Text>
                         </View>
                     )}
                 </TouchableOpacity>
@@ -234,6 +207,24 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
                     >
                         Crear idea
                     </Text>
+                </TouchableOpacity>
+
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity
+                    style={{
+                        position: 'absolute',
+                        bottom: 65,
+                        right: 0,
+                        left: 0,
+                    }}
+                    onPress={() => navigation.navigate('TermAndConditionsScreen')}
+                >
+                    <View style={{ ...styles.center }}>
+                        <Text style={{ ...styles.text, ...styles.link }}>
+                            Términos y condiciones.
+                        </Text>
+                        <Text style={{ ...styles.text, ...styles.link }}>Aviso de privacidad.</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         </DrawerContentScrollView>

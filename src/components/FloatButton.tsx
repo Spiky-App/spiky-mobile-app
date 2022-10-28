@@ -9,11 +9,11 @@ export const FloatButton = () => {
 
     return (
         <TouchableHighlight
-            underlayColor="#01192ebe"
+            underlayColor="#FC702Abe"
             onPress={() => navigation.navigate('CreateIdeaScreen')}
             style={stylescom.button}
         >
-            <FontAwesomeIcon icon={faPlus} color="" size={40} />
+            <FontAwesomeIcon icon={faPlus} color="#F8F8F8" size={40} />
         </TouchableHighlight>
     );
 };
@@ -23,15 +23,18 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        height: 75,
-        width: 75,
+        height: 65,
+        width: 65,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F8F8F8',
+        backgroundColor: '#01192E',
         marginHorizontal: 20,
         marginVertical: 25,
-        borderWidth: 2,
-        borderColor: '#01192E',
+        borderWidth: 0,
         borderRadius: 100,
+        shadowColor: 'black',
+        shadowOffset: { width: 1, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
     },
 });

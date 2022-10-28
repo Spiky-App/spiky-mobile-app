@@ -50,7 +50,8 @@ export const LoginScreen = () => {
             try {
                 const response = await spikyService.login(email, password);
                 const { data } = response;
-                const { token, alias, n_notificaciones, universidad, uid } = data;
+                const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                    data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token);
                 dispatch(signIn(token));
                 dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
@@ -58,14 +59,17 @@ export const LoginScreen = () => {
                     setUser({
                         nickname: alias,
                         notificationsNumber: n_notificaciones,
-                        university: universidad,
+                        newChatMessagesNumber: n_chatmensajes,
+                        universityId: id_universidad,
                         id: uid,
                     })
                 );
                 setFormValid(true);
             } catch (e) {
                 console.log(e);
-                dispatch(addToast({ message: 'Error iniciando sesión', type: StatusType.WARNING }));
+                dispatch(
+                    addToast({ message: e.response.data.msg || '', type: StatusType.WARNING })
+                );
                 setFormValid(false);
             }
         } else {
@@ -85,7 +89,7 @@ export const LoginScreen = () => {
             <ArrowBack />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ marginBottom: 80 }}>
+                    <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
                     </View>
                     <View style={{ marginBottom: 20 }}>
@@ -103,11 +107,12 @@ export const LoginScreen = () => {
                             placeholder="Contraseña"
                             secureTextEntry={passVisible}
                             autoCorrect={false}
-                            style={styles.textinput}
+                            style={{ ...styles.textinput, ...styles.shadow }}
                             onChangeText={value => onChange({ password: value })}
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
                             touchableOpacityProps={{ onPress: () => setPassVisible(!passVisible) }}
+                            onSubmitEditing={login}
                         />
                     </View>
                     <TouchableOpacity
@@ -133,12 +138,12 @@ export const LoginScreen = () => {
                                 ...(isLoading && { color: '#707070' }),
                             }}
                         >
-                            {(!isLoading ? 'Iniciar sesión' : 'Cargando...').toUpperCase()}
+                            {!isLoading ? 'Iniciar sesión' : 'Cargando...'}
                         </Text>
                     </TouchableHighlight>
                     <TouchableOpacity
                         style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('CheckEmailScreen')}
+                        onPress={() => navigation.navigate('ManifestPart1Screen')}
                     >
                         <Text style={styles.linkPad}>Solicitar cuenta</Text>
                     </TouchableOpacity>

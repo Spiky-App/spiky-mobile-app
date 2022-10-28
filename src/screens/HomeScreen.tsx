@@ -45,7 +45,7 @@ export const HomeScreen = () => {
 };
 
 const LogoFadeIn = () => {
-    const { opacity, fadeIn } = useAnimation();
+    const { opacity, fadeIn } = useAnimation({});
 
     useEffect(() => {
         fadeIn(800, () => {}, 1000);
@@ -61,7 +61,7 @@ const LogoFadeIn = () => {
                 alignItems: 'center',
             }}
         >
-            <Animated.View style={{ width: 115, opacity }}>
+            <Animated.View style={{ width: 100, opacity }}>
                 <LogoSvg />
             </Animated.View>
         </View>

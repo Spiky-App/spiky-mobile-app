@@ -8,35 +8,20 @@ import {
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { IdeasHeader } from '../components/IdeasHeader';
 import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { FloatButton } from '../components/FloatButton';
 import { useAnimation } from '../hooks/useAnimation';
-import { useMensajes } from '../hooks/useMensajes';
-import { setFilter } from '../store/feature/messages/messagesSlice';
-import { useAppDispatch } from '../store/hooks';
 import MessagesFeed from '../components/MessagesFeed';
 
 export const SearchScreen = () => {
-    const dispatch = useAppDispatch();
+    const { position, movingPosition } = useAnimation({});
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         movingPosition(-50, 0, 700);
-        dispatch(setFilter('/search'));
     }, []);
 
-    const { position, movingPosition } = useAnimation();
-    const [search, setSearch] = useState('');
-    const { messages, fetchMessages } = useMensajes({ search });
-    useEffect(() => {
-        if (search.length > 0) {
-            fetchMessages();
-        }
-    }, [search]);
-    const submit = () => {
-        fetchMessages();
-    };
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -56,13 +41,19 @@ export const SearchScreen = () => {
                             style={styles.textinput}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => submit()}>
+                        <TouchableOpacity style={styles.iconinput}>
                             <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </Animated.View>
 
-                    <IdeasHeader title="Explorando" />
-                    <MessagesFeed messages={messages} />
+                    <MessagesFeed
+                        params={{ search }}
+                        filter={'/search'}
+                        title={'Explorando'}
+                        myideas={false}
+                        icon={faMagnifyingGlass}
+                        emptyTitle={'Todos buscamos algo, esperemos que lo encuentres.'}
+                    />
                     <FloatButton />
                 </>
             </TouchableWithoutFeedback>

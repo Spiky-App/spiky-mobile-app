@@ -1,10 +1,16 @@
 import { useRef } from 'react';
 import { Animated } from 'react-native';
 
-export const useAnimation = () => {
-    const opacity = useRef(new Animated.Value(0)).current;
-    const position = useRef(new Animated.Value(0)).current;
-    const scale = useRef(new Animated.Value(1)).current;
+interface Props {
+    init_opacity?: number;
+    init_position?: number;
+    init_scale?: number;
+}
+
+export const useAnimation = ({ init_opacity = 0, init_position = 0, init_scale = 1 }: Props) => {
+    const opacity = useRef(new Animated.Value(init_opacity)).current;
+    const position = useRef(new Animated.Value(init_position)).current;
+    const scale = useRef(new Animated.Value(init_scale)).current;
 
     const fadeIn = (duration: number = 300, callback: () => void = () => {}, delay: number = 0) => {
         Animated.timing(opacity, {
@@ -26,6 +32,28 @@ export const useAnimation = () => {
             delay,
             useNativeDriver: true,
         }).start(callback);
+    };
+
+    const fadeInFadeOutLoop = (
+        duration: number = 300,
+        callback: () => void = () => {},
+        delay: number = 0
+    ) => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(delay),
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start(callback);
     };
 
     const movingPositionAndScale = (
@@ -53,25 +81,29 @@ export const useAnimation = () => {
         ]).start(callback);
     };
 
-    const movingPositionAndBack = (
+    const movingPositionAndBackLoop = (
         initPosition: number,
         endPosition: number,
         duration: number = 300,
+        delay: number = 300,
         callback: () => void = () => {}
     ) => {
         position.setValue(initPosition);
-
-        Animated.timing(position, {
-            toValue: endPosition,
-            duration,
-            useNativeDriver: true,
-        }).start(() => {
-            Animated.timing(position, {
-                toValue: 0,
-                duration,
-                useNativeDriver: true,
-            }).start(callback);
-        });
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(position, {
+                    toValue: endPosition,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(position, {
+                    toValue: 0,
+                    duration,
+                    useNativeDriver: true,
+                }),
+                Animated.delay(delay),
+            ])
+        ).start(callback);
     };
 
     const movingPosition = (
@@ -95,8 +127,9 @@ export const useAnimation = () => {
         scale,
         fadeIn,
         fadeOut,
+        fadeInFadeOutLoop,
         movingPositionAndScale,
-        movingPositionAndBack,
+        movingPositionAndBackLoop,
         movingPosition,
     };
 };

@@ -10,7 +10,11 @@ import { RootState } from '../store';
 import { signIn } from '../store/feature/auth/authSlice';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { setUser } from '../store/feature/user/userSlice';
+// Workaround to avoid error of axios [AxiosError: Unsupported protocol undefined:]
+// import { config as dotenvconfig } from '../constants/config';
 import Toast from '../components/common/Toast';
+import { ModalAlert } from '../components/ModalAlert';
+import SocketContextComponent from '../context/Socket/Component';
 
 const Container = () => {
     const dispatch = useAppDispatch();
@@ -25,7 +29,8 @@ const Container = () => {
             try {
                 const response = await spikyService.getAuthRenew(tokenStorage);
                 const { data } = response;
-                const { token, alias, n_notificaciones, universidad, uid } = data;
+                const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                    data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token);
                 dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
                 dispatch(signIn(token));
@@ -33,7 +38,8 @@ const Container = () => {
                     setUser({
                         nickname: alias,
                         notificationsNumber: n_notificaciones,
-                        university: universidad,
+                        newChatMessagesNumber: n_chatmensajes,
+                        universityId: id_universidad,
                         id: uid,
                     })
                 );
@@ -53,11 +59,14 @@ const Container = () => {
     }
 
     return (
-        <NavigationContainer>
-            <Toast>
-                <Navigator />
-            </Toast>
-        </NavigationContainer>
+        <SocketContextComponent>
+            <NavigationContainer>
+                <Toast>
+                    <Navigator />
+                </Toast>
+                <ModalAlert />
+            </NavigationContainer>
+        </SocketContextComponent>
     );
 };
 

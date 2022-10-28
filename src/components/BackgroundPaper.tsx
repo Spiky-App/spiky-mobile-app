@@ -1,16 +1,33 @@
 import React from 'react';
-import { ImageBackground, SafeAreaView, StyleSheet } from 'react-native';
+import {
+    ImageBackground,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    View,
+    StyleProp,
+    ViewStyle,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export const BackgroundPaper = ({ children, style }: any) => {
+interface Props {
+    children: any;
+    style?: StyleProp<ViewStyle>;
+    topDark?: boolean;
+}
+
+export const BackgroundPaper = ({ children, style, topDark }: Props) => {
+    const { top } = useSafeAreaInsets();
+
     return (
         <ImageBackground
             source={require('../constants/images/background-paper.png')}
             resizeMode="cover"
             style={stylescom.imageback}
         >
-            <SafeAreaView
-                style={style ? { ...stylescom.container, ...style } : stylescom.container}
-            >
+            <StatusBar barStyle={topDark ? 'light-content' : 'dark-content'} translucent={false} />
+            {topDark && <View style={{ height: top ? top : 0, ...stylescom.darkSpace }} />}
+            <SafeAreaView style={style ? [stylescom.container, style] : stylescom.container}>
                 {children}
             </SafeAreaView>
         </ImageBackground>
@@ -29,5 +46,11 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+    },
+    darkSpace: {
+        backgroundColor: '#01192E',
+        width: '100%',
+        position: 'absolute',
+        top: 0,
     },
 });

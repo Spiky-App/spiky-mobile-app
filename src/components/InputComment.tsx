@@ -1,79 +1,154 @@
 import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
+import { MentionInput } from 'react-native-controlled-mentions';
+import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
-import { useForm } from '../hooks/useForm';
+import useSpikyService from '../hooks/useSpikyService';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Comment } from '../types/store';
+import ButtonIcon from './common/ButtonIcon';
+import { renderSuggetions } from './Suggestions';
 
-export const InputComment = () => {
-    const [, setCounter] = useState(0);
-    const [buttonState, setButtonState] = useState(true);
-    const { form, onChange } = useForm({
-        respuestaInput: '',
-    });
+export interface FormComment {
+    comment: string;
+}
 
-    const { respuestaInput } = form;
+interface Props {
+    messageId: number;
+    updateComments: (comment: Comment) => void;
+    form: FormComment;
+    onChange: (stateUpdated: Partial<FormComment>) => void;
+    refInputComment: React.RefObject<TextInput>;
+}
+
+const MAX_LENGHT = 180;
+
+const DEFAULT_FORM: FormComment = {
+    comment: '',
+};
+
+export const InputComment = ({
+    messageId,
+    updateComments,
+    form,
+    onChange,
+    refInputComment,
+}: Props) => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { createMessageComment } = useSpikyService();
+    const [counter, setCounter] = useState(0);
+    const [isDisabled, setDisabled] = useState(true);
+    const [inputHeight, setInputHeight] = useState(0);
+    const { comment } = form;
+    async function onPress() {
+        setDisabled(true);
+        const messageComment = await createMessageComment(messageId, uid, comment);
+        if (messageComment) {
+            updateComments(messageComment);
+        }
+        onChange(DEFAULT_FORM);
+        Keyboard.dismiss();
+    }
 
     useEffect(() => {
-        const max_length = 180;
-        setCounter(max_length - respuestaInput.length);
-        // changeCircleBorder('circleAR', max_length, respuestaInput.length);
-        if (respuestaInput.length <= max_length && respuestaInput.length > 0) {
-            if (buttonState) {
-                setButtonState(false);
+        const counterUpdated = MAX_LENGHT - comment.length;
+        setCounter(counterUpdated);
+        if (comment.length <= MAX_LENGHT && comment.length > 0) {
+            if (isDisabled) {
+                setDisabled(false);
             }
         } else {
-            setButtonState(true);
+            setDisabled(true);
         }
-    }, [respuestaInput]);
+    }, [comment]);
 
     return (
         <View
+            onLayout={event => {
+                const { height } = event.nativeEvent.layout;
+                setInputHeight(height);
+            }}
             style={{
                 backgroundColor: '#E6E6E6',
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
+                bottom: 6,
                 paddingHorizontal: 10,
-                paddingVertical: 15,
+                paddingVertical: 13,
                 justifyContent: 'center',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
+                borderRadius: 8,
+                width: '95%',
             }}
         >
             <View
                 style={{
                     flex: 1,
                     backgroundColor: 'white',
-                    paddingHorizontal: 20,
-                    paddingVertical: 10,
-                    borderRadius: 5,
+                    paddingHorizontal: 8,
+                    justifyContent: 'center',
+                    borderRadius: 8,
+                    ...(counter < 0 && stylesInputComment.borderTextbox),
                 }}
             >
-                <TextInput
-                    style={styles.textinput}
-                    placeholder="Contribuye la idea..."
+                <MentionInput
+                    inputRef={refInputComment}
+                    placeholder="Perpetua tu idea.."
+                    placeholderTextColor="#707070"
+                    style={{ ...styles.textinput, fontSize: 16 }}
                     multiline={true}
-                    onChange={value => onChange(value, 'respuestaInput')}
+                    value={comment}
+                    onChange={text => onChange({ comment: text })}
+                    partTypes={[
+                        {
+                            trigger: '@',
+                            renderSuggestions: props =>
+                                renderSuggetions({ ...props, isMention: true, inputHeight }),
+                            textStyle: { ...styles.h5, color: '#5c71ad' },
+                            allowedSpacesCount: 0,
+                            isInsertSpaceAfterMention: true,
+                            getPlainString: ({ name }: MentionData) => name,
+                        },
+                    ]}
                 />
             </View>
-
-            <TouchableOpacity
-                style={{
-                    paddingHorizontal: 10,
-                    justifyContent: 'center',
-                    transform: [{ rotate: '45deg' }],
-                    borderRadius: 100,
-                }}
-                onPress={() => {}}
-            >
-                <FontAwesomeIcon
+            <View style={{ paddingLeft: 8 }}>
+                <ButtonIcon
                     icon={faLocationArrow}
-                    size={16}
-                    color={true ? '#d4d4d4d3' : '#01192E'}
+                    style={{
+                        paddingHorizontal: 10,
+                        justifyContent: 'center',
+                        borderRadius: 100,
+                        height: 36,
+                        width: 36,
+                    }}
+                    iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                    disabled={isDisabled}
+                    onPress={onPress}
                 />
-            </TouchableOpacity>
+                {counter <= 40 && (
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: '300',
+                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                            textAlign: 'center',
+                            margin: 'auto',
+                            bottom: '-50%',
+                        }}
+                    >
+                        {counter}
+                    </Text>
+                )}
+            </View>
         </View>
     );
 };
+
+const stylesInputComment = StyleSheet.create({
+    borderTextbox: {
+        borderColor: '#FC702A',
+        borderWidth: 0.2,
+    },
+});

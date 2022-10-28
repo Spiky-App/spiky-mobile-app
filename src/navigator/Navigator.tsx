@@ -13,9 +13,13 @@ import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import SpikyService from '../services/SpikyService';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { University } from '../types/store';
+import { University, User } from '../types/store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
+import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
+import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
+import { ChatScreen } from '../screens/ChatScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -25,9 +29,20 @@ export type RootStackParamList = {
     ForgotPwdScreen: undefined;
     RegisterScreen: undefined;
     MenuMain: undefined;
-    CreateIdeaScreen: undefined;
-    OpenedIdeaScreen: undefined;
+    CreateIdeaScreen: { draftedIdea?: string; draftID?: number };
+    OpenedIdeaScreen: { messageId: number; filter?: string };
     ManifestPart1Screen: undefined;
+    TermAndConditionsScreen: undefined;
+    ReportIdeaScreen: { messageId: number };
+    ReplyIdeaScreen: {
+        message: {
+            messageId: number;
+            message: string;
+            user: User;
+            date: number;
+        };
+    };
+    ChatScreen: { conversationId: number; toUser: User };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -37,8 +52,6 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
-    // const { messages } = useAppSelector((state: RootState) => state.messages);
-    console.info('render Navigator');
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
@@ -46,23 +59,32 @@ export const Navigator = () => {
             const { universidades } = universitiesData;
             const universitiesResponse: University[] = universidades.map<University>(
                 university => ({
-                    id: university.id_universidad ?? 0,
+                    id: university.id_universidad,
                     shortname: university.alias,
+                    color: university.color,
+                    backgroundColor: university.background_color,
                 })
             );
             dispatch(setUniversities(universitiesResponse));
-        } catch {
+        } catch (e) {
+            console.log(e);
             dispatch(
                 addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
             );
         }
     }
 
+    // I changed this because the token in store.auth can be
+    // defined before config.headers.x-token that is the one
+    // that we actually use here
+    // TODO: centralize in one place where to put the token,
+    // because i think it is saved in axios, in SecureStorage
+    // and in store's auth.token
     useEffect(() => {
-        if (token && !universities) {
+        if (config?.headers?.['x-token'] && !universities) {
             setSessionInfo();
         }
-    }, [token, universities, config]);
+    }, [universities, config]);
 
     return (
         <Stack.Navigator
@@ -87,6 +109,13 @@ export const Navigator = () => {
                     <Stack.Screen name="MenuMain" component={MenuMain} />
                     <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
                     <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
+                    <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
+                    <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
+                    <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                    <Stack.Screen
+                        name="TermAndConditionsScreen"
+                        component={TermAndConditionsScreen}
+                    />
                 </>
             )}
         </Stack.Navigator>

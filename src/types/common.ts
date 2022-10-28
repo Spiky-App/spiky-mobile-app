@@ -10,4 +10,6 @@ export interface HelperMessage {
 export enum StatusType {
     WARNING,
     DEFAULT,
+    NOTIFICATION,
+    NUDGE,
 }

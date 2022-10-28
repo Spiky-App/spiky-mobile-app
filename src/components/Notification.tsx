@@ -1,82 +1,72 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { NotificacionesInterface } from '../data/notificaciones';
 import { getTime } from '../helpers/getTime';
+import { transformMsg } from '../helpers/transformMsg';
+import useSpikyService from '../hooks/useSpikyService';
+import { updateNotificationsNumber } from '../store/feature/user/userSlice';
+import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
+import { Notification as NotificationProps } from '../types/store';
+import UniversityTag from './common/UniversityTag';
 
 interface PropsNotification {
-    item: NotificacionesInterface;
+    notification: NotificationProps;
+    setModalNotif: (value: boolean) => void;
 }
 
 const msg_notif = [
     '',
-    'reacciono a tu idea.',
+    'reaccionó a tu idea.',
     'respondió a tu idea.',
     'respondió en tu tracking.',
     'te mencionó.',
-    'reacciono a tu comentario.',
+    'reaccionó a tu comentario.',
 ];
 
-export const Notification = ({ item }: PropsNotification) => {
-    const timestamp = new Date(item.createdAt);
-    const fecha = getTime(timestamp.getTime() + '');
+export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
+    const { updateNotifications } = useSpikyService();
+    const dispatch = useAppDispatch();
+    const navigation = useNavigation<any>();
+    const timestamp = new Date(notification.createdAt);
+    const date = getTime(timestamp.getTime() + '');
 
-    const ReturnMsg = (msg: string) => {
-        const regexp_all = /(@\[@\w*\]\(\d*\))|(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
-        const regexp_mention = /(@\[@\w*\]\(\d*\))/g;
-        const regexp_hashtag = /(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
-        const mentions = msg.match(regexp_all);
-        const mensaje_split = msg.split(regexp_all);
-        let msg_final;
-        let msg_trasnform: string[] = [];
-        if (mentions) {
-            mensaje_split.forEach(string => {
-                if (string !== undefined) {
-                    if (regexp_mention.test(string)) {
-                        const alias = string.substring(
-                            string.indexOf('[') + 1,
-                            string.indexOf(']')
-                        );
-                        msg_trasnform.push(alias);
-                    } else if (regexp_hashtag.test(string)) {
-                        const hashtag = string.substring(
-                            string.indexOf('[') + 1,
-                            string.indexOf(']')
-                        );
-                        msg_trasnform.push(hashtag);
-                    } else {
-                        msg_trasnform.push(string);
-                    }
-                }
-            });
-            msg_final = msg_trasnform.join('');
-        } else {
-            msg_final = msg;
+    const new_mensaje = transformMsg(notification.message);
+
+    const handleOpenIdea = () => {
+        if (!notification.seen) {
+            updateNotifications([notification.id]);
+            dispatch(updateNotificationsNumber(-1));
         }
-        return msg_final;
+        navigation.navigate('OpenedIdeaScreen', {
+            messageId: notification.messageId,
+        });
+        setModalNotif(false);
     };
-
-    const new_mensaje = ReturnMsg(item.mensaje.mensaje);
 
     return (
         <View>
-            {!item.visto && (
+            {!notification.seen && (
                 <View style={stylescom.wrapnew}>
                     <View style={stylescom.new} />
                 </View>
             )}
 
-            <TouchableOpacity style={{ marginVertical: 10, marginLeft: 18 }} onPress={() => {}}>
+            <TouchableOpacity
+                style={{ marginVertical: 10, marginLeft: 18 }}
+                onPress={handleOpenIdea}
+            >
                 <View style={styles.flex}>
-                    <Text>
-                        <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
-                            {'@' +
-                                item.usuario2.alias +
-                                ' de ' +
-                                item.usuario2.universidad.alias +
-                                ' '}
+                    <Text style={styles.flex}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
+                                {'@' + notification.user.nickname}
+                            </Text>
+                            <UniversityTag id={notification.user.universityId} fontSize={13} />
+                        </View>
+                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                            {msg_notif[notification.type]}
                         </Text>
-                        <Text style={{ ...styles.text, fontSize: 13 }}>{msg_notif[item.tipo]}</Text>
                     </Text>
                 </View>
                 <View style={{ ...styles.flex, marginTop: 3, justifyContent: 'space-between' }}>
@@ -85,9 +75,7 @@ export const Notification = ({ item }: PropsNotification) => {
                             ? new_mensaje.substring(0, 25) + '...'
                             : new_mensaje}
                     </Text>
-                    <Text style={{ ...styles.text, ...styles.textGray, fontSize: 11 }}>
-                        {fecha}
-                    </Text>
+                    <Text style={{ ...styles.text, ...styles.textGray, fontSize: 11 }}>{date}</Text>
                 </View>
             </TouchableOpacity>
         </View>

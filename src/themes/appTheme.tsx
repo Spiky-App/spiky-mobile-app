@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     },
     textb: {
         fontWeight: '300',
-        fontSize: 14,
+        fontSize: 15,
     },
     button: {
         borderWidth: 1,
@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
         borderRadius: 4,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        width: 230,
+        width: 250,
         marginHorizontal: 'auto',
         shadowColor: '#4d4d4d',
         shadowOffset: {
@@ -103,7 +103,7 @@ export const styles = StyleSheet.create({
     link: {
         color: '#5c71ad',
         fontSize: 11,
-        fontWeight: '300',
+        fontFamily: 'Helvetica',
     },
     linkPad: {
         color: '#5c71ad',
@@ -126,19 +126,19 @@ export const styles = StyleSheet.create({
         fontWeight: '300',
     },
     user: {
-        fontWeight: '600',
+        fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
         fontSize: 13,
     },
     msg: {
         fontSize: 13,
-        fontWeight: '300',
-        textAlign: 'justify',
+        textAlign: 'left',
         flexShrink: 1,
         width: '100%',
         marginVertical: 8,
     },
     numberGray: {
-        fontWeight: '300',
+        fontFamily: 'Helvetica',
         fontSize: 12,
         color: '#bebebe',
         marginLeft: 3,
