@@ -72,16 +72,24 @@ export const ForgotPwdScreen = () => {
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <BigTitle texts={['Olvida eso', 'que te detiene']} />
 
-                    <View style={{ ...styles.input, marginBottom: 5, marginTop: 25 }}>
-                        <TextInput
-                            placeholder="Correo universitario"
-                            autoCorrect={false}
-                            keyboardType="email-address"
-                            style={styles.textinput}
-                            onChangeText={value => onChange({ email: value })}
-                            defaultValue={defaultEmailValue}
-                        />
-                    </View>
+                    {!isNextMsg ? (
+                        <View style={{ ...styles.input, marginBottom: 5, marginTop: 25 }}>
+                            <TextInput
+                                placeholder="Correo universitario"
+                                autoCorrect={false}
+                                keyboardType="email-address"
+                                style={styles.textinput}
+                                onChangeText={value => onChange({ email: value })}
+                                autoCapitalize={'none'}
+                                editable={!isLoading}
+                                defaultValue={defaultEmailValue}
+                            />
+                        </View>
+                    ) : (
+                        <View style={{ marginBottom: 10, marginTop: 30 }}>
+                            <Text style={{ ...styles.textbold }}>{defaultEmailValue}</Text>
+                        </View>
+                    )}
 
                     <Text style={{ ...styles.textGrayPad, marginBottom: 25 }}>
                         {underlyingValue}
