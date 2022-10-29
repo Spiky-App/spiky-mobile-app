@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
@@ -29,6 +28,7 @@ import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
 import SocketContext from '../context/Socket/Context';
 import { generateReactionFromReaccion } from '../helpers/reaction';
+import { NavigationProp } from '@react-navigation/native';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -36,7 +36,7 @@ function useSpikyService() {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const chats = useAppSelector((state: RootState) => state.chats);
     const dispatch = useAppDispatch();
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
     const { socket } = useContext(SocketContext);
     const [service, setService] = useState<SpikyService>(new SpikyService(config));
     const token = useAppSelector((state: RootState) => state.auth.token);
@@ -102,7 +102,23 @@ function useSpikyService() {
             stateUpdated: Partial<{
                 reportReason: string;
             }>
-        ) => void
+        ) => void,
+        navigation: NavigationProp<
+            ReactNavigation.RootParamList,
+            never,
+            undefined,
+            Readonly<{
+                key: string;
+                index: number;
+                routeNames: never[];
+                history?: unknown[] | undefined;
+                routes: any;
+                type: string;
+                stale: false;
+            }>,
+            {},
+            {}
+        >
     ) => {
         try {
             const response = await service.createReportIdea(user.id, messageId, reportReason);
@@ -167,7 +183,23 @@ function useSpikyService() {
     const createChatMsgWithReply = async (
         userId: number = 0,
         messageId: number,
-        chatMessage: string
+        chatMessage: string,
+        navigation: NavigationProp<
+            ReactNavigation.RootParamList,
+            never,
+            undefined,
+            Readonly<{
+                key: string;
+                index: number;
+                routeNames: never[];
+                history?: unknown[] | undefined;
+                routes: any;
+                type: string;
+                stale: false;
+            }>,
+            {},
+            {}
+        >
     ) => {
         try {
             const response = await service.createChatMsgWithReply(userId, messageId, chatMessage);

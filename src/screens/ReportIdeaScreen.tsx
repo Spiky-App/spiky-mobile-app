@@ -34,7 +34,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
 
     const handlecreateReportIdea = () => {
         setButtonState(false);
-        createReportIdea(messageId, reportReason, onChange);
+        createReportIdea(messageId, reportReason, onChange, navigation);
     };
 
     useEffect(() => {
