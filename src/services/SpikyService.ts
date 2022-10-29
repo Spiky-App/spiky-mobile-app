@@ -28,6 +28,7 @@ import {
     GetEmailVerification,
     GetIdeaReactions,
     GetPendingNotifications,
+    GetTermsAndConditions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -210,6 +211,10 @@ class SpikyService {
 
     getPendingNotifications() {
         return this.instance.get<GetPendingNotifications>(`auth/pending-notif`);
+    }
+
+    getTermsAndConditions() {
+        return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 }
 

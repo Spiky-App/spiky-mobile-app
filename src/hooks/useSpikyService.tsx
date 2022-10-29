@@ -492,6 +492,13 @@ function useSpikyService() {
         }
     };
 
+    const getTermsAndConditions = async () => {
+        const response = await service.getTermsAndConditions();
+        const { data } = response;
+        const { lists } = data;
+        return lists;
+    };
+
     const getPendingNotifications = async () => {
         try {
             const { data } = await service.getPendingNotifications();
@@ -534,6 +541,7 @@ function useSpikyService() {
         getEmailVerification,
         getIdeaReactiones,
         setNewChatMessagesNumber,
+        getTermsAndConditions,
         getPendingNotifications,
     };
 }

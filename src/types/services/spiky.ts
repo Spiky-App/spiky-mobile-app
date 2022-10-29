@@ -271,3 +271,19 @@ export interface GetPendingNotifications {
         notificationsNumber: number;
     };
 }
+
+export interface GetTermsAndConditions {
+    ok: number;
+    lists: TermsAndConditions;
+}
+
+export interface TermsAndConditions {
+    termsAndConditions: {
+        title: string;
+        paragraphs: string[];
+    }[];
+    noticeOfPrivacy: {
+        title: string;
+        paragraphs: string[];
+    }[];
+}
