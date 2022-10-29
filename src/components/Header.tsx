@@ -58,7 +58,7 @@ export const Header = () => {
                             <View
                                 style={{
                                     ...stylescom.flexConte,
-                                    marginLeft: 20,
+                                    marginHorizontal: 20,
                                 }}
                             >
                                 <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
