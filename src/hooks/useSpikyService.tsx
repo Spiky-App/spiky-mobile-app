@@ -36,7 +36,6 @@ function useSpikyService() {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const chats = useAppSelector((state: RootState) => state.chats);
     const dispatch = useAppDispatch();
-    // const navigation = useNavigation();
     const { socket } = useContext(SocketContext);
     const [service, setService] = useState<SpikyService>(new SpikyService(config));
     const token = useAppSelector((state: RootState) => state.auth.token);

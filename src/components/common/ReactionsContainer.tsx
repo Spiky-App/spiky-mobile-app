@@ -47,7 +47,7 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 {reactionCount.length >= 5 && (
                     <View style={stylescomp.moreReaction}>
                         <Text style={{ ...stylescomp.number, fontSize: 10 }}>
-                            {`${countReactions()}`}
+                            {countReactions()}
                         </Text>
                         <Text style={{ ...stylescomp.text, fontSize: 10 }}> Más</Text>
                     </View>
