@@ -44,7 +44,7 @@ class SpikyService {
         });
     }
 
-    forgotPassword(email: string) {
+    handleForgotPassword(email: string) {
         return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 

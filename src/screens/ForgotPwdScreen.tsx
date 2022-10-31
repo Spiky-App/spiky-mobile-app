@@ -15,18 +15,16 @@ import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 import { validateForm } from '../helpers/forgotPass.helpers';
 import { FormState } from '../types/forgotPass';
-import SpikyService from '../services/SpikyService';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { RootState } from '../store';
+import useSpikyService from '../hooks/useSpikyService';
+import { useAppDispatch } from '../store/hooks';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 
 export const ForgotPwdScreen = () => {
-    const [isLoading, setLoading] = useState(false);
     const dispatch = useAppDispatch();
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const spikyService = new SpikyService(config);
+    const { handleForgotPassword } = useSpikyService();
+    const [isLoading, setLoading] = useState(false);
     const [underlyingValue, setUnderlyingValue] = useState(
         'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
     );
@@ -35,14 +33,13 @@ export const ForgotPwdScreen = () => {
     const { form, onChange } = useForm<FormState>({
         email: '',
     });
+
     async function sendReestablishPasswordEmail() {
         setLoading(true);
         if (validateForm(form)) {
             const { email } = form;
             try {
-                // use hook
-                const response = await spikyService.forgotPassword(email);
-                const { data } = response;
+                const data = await handleForgotPassword(email);
                 // this is were the response message is displayed
                 setUnderlyingValue(data.msg);
                 setNextMsg(true);

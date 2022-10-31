@@ -467,6 +467,12 @@ function useSpikyService() {
         return lists;
     };
 
+    const handleForgotPassword = async (email: string) => {
+        const response = await service.handleForgotPassword(email);
+        const { data } = response;
+        return data;
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -494,6 +500,7 @@ function useSpikyService() {
         getIdeaReactiones,
         setNewChatMessagesNumber,
         getTermsAndConditions,
+        handleForgotPassword,
     };
 }
 
