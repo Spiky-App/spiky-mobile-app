@@ -467,6 +467,18 @@ function useSpikyService() {
         return lists;
     };
 
+    const handleForgotPassword = async (email: string) => {
+        try {
+            const response = await service.handleForgotPassword(email);
+            const { data } = response;
+            const { msg } = data;
+            return msg;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error enviado el correo', type: StatusType.WARNING }));
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -494,6 +506,7 @@ function useSpikyService() {
         getIdeaReactiones,
         setNewChatMessagesNumber,
         getTermsAndConditions,
+        handleForgotPassword,
     };
 }
 
