@@ -1,4 +1,4 @@
-import React, { useState }, { useState } from 'react';
+import React, { useState } from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { ArrowBack } from '../components/ArrowBack';
 import {
@@ -15,25 +15,12 @@ import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 import { validateForm } from '../helpers/forgotPass.helpers';
 import { FormState } from '../types/forgotPass';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import useSpikyService from '../hooks/useSpikyService';
-import { useAppDispatch } from '../store/hooks';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
-import { LoadingAnimated } from '../components/svg/LoadingAnimated';
-import { validateForm } from '../helpers/forgotPass.helpers';
-import { FormState } from '../types/forgotPass';
-import SpikyService from '../services/SpikyService';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { RootState } from '../store';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
-import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 
 export const ForgotPwdScreen = () => {
     const [isLoading, setLoading] = useState(false);
-    const dispatch = useAppDispatch();
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const spikyService = new SpikyService(config);
+    const { handleForgotPassword } = useSpikyService();
     const [underlyingValue, setUnderlyingValue] = useState(
         'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
     );
@@ -42,52 +29,18 @@ export const ForgotPwdScreen = () => {
     const { form, onChange } = useForm<FormState>({
         email: '',
     });
-    async function sendReestablishPasswordEmail() {
-        setLoading(true);
-        if (validateForm(form)) {
-            const { email } = form;
-            try {
-                const response = await spikyService.forgotPassword(email);
-                const { data } = response;
-                // this is were the response message is displayed
-                setUnderlyingValue(data.msg);
-                setNextMsg(true);
-                setDefaultEmailValue(email);
-            } catch (err) {
-                console.log(err);
-                dispatch(
-                    addToast({ message: 'Error enviado el correo', type: StatusType.WARNING })
-                );
-            }
-        } else {
-        }
-        setLoading(false);
-    }
-    function handleReestablishEmail() {
-        setUnderlyingValue(
-            'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
-        );
-        setNextMsg(false);
-        setLoading(false);
-    }
 
     async function sendReestablishPasswordEmail() {
         setLoading(true);
         if (validateForm(form)) {
             const { email } = form;
-            try {
-                const data = await handleForgotPassword(email);
-                // this is were the response message is displayed
-                setUnderlyingValue(data.msg);
+            const msg = await handleForgotPassword(email);
+            // this is were the response message is displayed
+            if (msg) {
+                setUnderlyingValue(msg);
                 setNextMsg(true);
                 setDefaultEmailValue(email);
-            } catch (err) {
-                console.log(err);
-                dispatch(
-                    addToast({ message: 'Error enviado el correo', type: StatusType.WARNING })
-                );
             }
-        } else {
         }
         setLoading(false);
     }

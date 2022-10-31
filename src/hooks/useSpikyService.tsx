@@ -468,9 +468,15 @@ function useSpikyService() {
     };
 
     const handleForgotPassword = async (email: string) => {
-        const response = await service.handleForgotPassword(email);
-        const { data } = response;
-        return data;
+        try {
+            const response = await service.handleForgotPassword(email);
+            const { data } = response;
+            const { msg } = data;
+            return msg;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error enviado el correo', type: StatusType.WARNING }));
+        }
     };
 
     return {
