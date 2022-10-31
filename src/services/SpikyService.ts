@@ -27,6 +27,7 @@ import {
     CreateChatMessageSeen,
     GetEmailVerification,
     GetIdeaReactions,
+    GetTermsAndConditions,
     ForgotPasswordResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
@@ -43,7 +44,7 @@ class SpikyService {
         });
     }
 
-    forgotPassword(email: string) {
+    handleForgotPassword(email: string) {
         return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
@@ -210,6 +211,10 @@ class SpikyService {
 
     getIdeaReactions(messageId: number) {
         return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    }
+
+    getTermsAndConditions() {
+        return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 }
 

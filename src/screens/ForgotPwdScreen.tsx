@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState }, { useState } from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { ArrowBack } from '../components/ArrowBack';
 import {
@@ -13,6 +13,13 @@ import {
 import { BigTitle } from '../components/BigTitle';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
+import { validateForm } from '../helpers/forgotPass.helpers';
+import { FormState } from '../types/forgotPass';
+import useSpikyService from '../hooks/useSpikyService';
+import { useAppDispatch } from '../store/hooks';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { StatusType } from '../types/common';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { validateForm } from '../helpers/forgotPass.helpers';
 import { FormState } from '../types/forgotPass';
 import SpikyService from '../services/SpikyService';
@@ -42,6 +49,34 @@ export const ForgotPwdScreen = () => {
             try {
                 const response = await spikyService.forgotPassword(email);
                 const { data } = response;
+                // this is were the response message is displayed
+                setUnderlyingValue(data.msg);
+                setNextMsg(true);
+                setDefaultEmailValue(email);
+            } catch (err) {
+                console.log(err);
+                dispatch(
+                    addToast({ message: 'Error enviado el correo', type: StatusType.WARNING })
+                );
+            }
+        } else {
+        }
+        setLoading(false);
+    }
+    function handleReestablishEmail() {
+        setUnderlyingValue(
+            'Ingrese correo electrónico y le enviaremos \ninstrucciones para restablecer su contraseña.'
+        );
+        setNextMsg(false);
+        setLoading(false);
+    }
+
+    async function sendReestablishPasswordEmail() {
+        setLoading(true);
+        if (validateForm(form)) {
+            const { email } = form;
+            try {
+                const data = await handleForgotPassword(email);
                 // this is were the response message is displayed
                 setUnderlyingValue(data.msg);
                 setNextMsg(true);

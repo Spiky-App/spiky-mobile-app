@@ -460,6 +460,19 @@ function useSpikyService() {
         }
     };
 
+    const getTermsAndConditions = async () => {
+        const response = await service.getTermsAndConditions();
+        const { data } = response;
+        const { lists } = data;
+        return lists;
+    };
+
+    const handleForgotPassword = async (email: string) => {
+        const response = await service.handleForgotPassword(email);
+        const { data } = response;
+        return data;
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -486,6 +499,8 @@ function useSpikyService() {
         getEmailVerification,
         getIdeaReactiones,
         setNewChatMessagesNumber,
+        getTermsAndConditions,
+        handleForgotPassword,
     };
 }
 
