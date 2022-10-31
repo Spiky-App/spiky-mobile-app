@@ -40,6 +40,7 @@ export const ForgotPwdScreen = () => {
         if (validateForm(form)) {
             const { email } = form;
             try {
+                // use hook
                 const response = await spikyService.forgotPassword(email);
                 const { data } = response;
                 // this is were the response message is displayed
