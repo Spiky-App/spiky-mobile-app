@@ -73,8 +73,6 @@ export const InputComment = ({
             style={{
                 backgroundColor: '#E6E6E6',
                 bottom: 6,
-                left: 0,
-                right: 0,
                 paddingHorizontal: 10,
                 paddingVertical: 13,
                 justifyContent: 'center',

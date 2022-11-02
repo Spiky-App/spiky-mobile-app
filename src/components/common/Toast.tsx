@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { RootState } from '../../store';
 import { useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';

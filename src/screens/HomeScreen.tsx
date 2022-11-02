@@ -61,7 +61,7 @@ const LogoFadeIn = () => {
                 alignItems: 'center',
             }}
         >
-            <Animated.View style={{ width: 115, opacity }}>
+            <Animated.View style={{ width: 100, opacity }}>
                 <LogoSvg />
             </Animated.View>
         </View>

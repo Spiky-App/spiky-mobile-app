@@ -23,7 +23,7 @@ export const SearchScreen = () => {
     }, []);
 
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <>
                     <Animated.View
@@ -41,7 +41,7 @@ export const SearchScreen = () => {
                             style={styles.textinput}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
+                        <TouchableOpacity style={styles.iconinput}>
                             <FontAwesomeIcon icon={faMagnifyingGlass} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </Animated.View>
@@ -52,6 +52,7 @@ export const SearchScreen = () => {
                         title={'Explorando'}
                         myideas={false}
                         icon={faMagnifyingGlass}
+                        emptyTitle={'Todos buscamos algo, esperemos que lo encuentres.'}
                     />
                     <FloatButton />
                 </>

@@ -54,7 +54,7 @@ export const RegisterScreen = () => {
                             style={styles.textinput}
                             onChangeText={value => onChange({ alias: value })}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
+                        <TouchableOpacity style={styles.iconinput}>
                             <FontAwesomeIcon icon={faCircleInfo} size={16} color="#d4d4d4" />
                         </TouchableOpacity>
                     </View>
@@ -101,7 +101,6 @@ export const RegisterScreen = () => {
 
                     <TouchableHighlight
                         underlayColor="#01192ebe"
-                        onPress={() => {}}
                         style={{ ...styles.button, paddingHorizontal: 30 }}
                     >
                         <Text style={{ ...styles.text, ...styles.textb }}>Crear cuenta</Text>

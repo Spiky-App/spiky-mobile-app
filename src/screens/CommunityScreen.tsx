@@ -6,13 +6,14 @@ import { faUsers } from '../constants/icons/FontAwesome';
 
 export const CommunityScreen = () => {
     return (
-        <BackgroundPaper style={{ justifyContent: 'flex-start' }} hasHeader={true}>
+        <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <MessagesFeed
                 params={{}}
                 filter={''}
                 title={'Comunidad'}
                 myideas={false}
                 icon={faUsers}
+                emptyTitle={'Cuestión de tiempo de que alguien hable.'}
             />
             <FloatButton />
         </BackgroundPaper>

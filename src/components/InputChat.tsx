@@ -83,7 +83,7 @@ export const InputChat = ({
         if (messageLength <= MAX_LENGHT && messageLength > 0) {
             if (isDisabled) setDisabled(false);
         } else setDisabled(true);
-        if (!isTyping || toUser.online) {
+        if (!isTyping && toUser.online) {
             setIsTyping(true);
             socket?.emit('isTyping', {
                 converId: conversationId,
@@ -97,29 +97,12 @@ export const InputChat = ({
         const { message: mensaje } = form;
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
     }, [form]);
+
     return (
-        <View
-            style={{
-                backgroundColor: '#E6E6E6',
-                bottom: 6,
-                left: 0,
-                right: 0,
-                paddingHorizontal: 10,
-                paddingVertical: 13,
-                justifyContent: 'center',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                borderRadius: 8,
-                width: '100%',
-            }}
-        >
+        <View style={stylesInputChat.container}>
             <View
                 style={{
-                    flex: 1,
-                    backgroundColor: 'white',
-                    paddingHorizontal: 8,
-                    justifyContent: 'space-between',
-                    borderRadius: 5,
+                    ...stylesInputChat.inputWrap,
                     ...(counter < 0 && stylesInputChat.borderTextbox),
                 }}
             >
@@ -135,19 +118,10 @@ export const InputChat = ({
                     onChangeText={text => onChange({ message: text })}
                 />
             </View>
-            <View
-                style={{
-                    paddingLeft: 10,
-                }}
-            >
+            <View style={{ paddingLeft: 10 }}>
                 <ButtonIcon
                     icon={faLocationArrow}
-                    style={{
-                        paddingHorizontal: 10,
-                        borderRadius: 100,
-                        height: 36,
-                        width: 36,
-                    }}
+                    style={stylesInputChat.buttonIcon}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     disabled={isDisabled || invalid()}
                     onPress={onPress}
@@ -155,12 +129,8 @@ export const InputChat = ({
                 {counter <= 40 && (
                     <Text
                         style={{
-                            fontSize: 14,
-                            fontWeight: '300',
-                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
-                            textAlign: 'center',
-                            margin: 'auto',
-                            bottom: '-50%',
+                            ...stylesInputChat.counterText,
+                            color: counter < 0 ? '#9b0000' : '#9C9C9C',
                         }}
                     >
                         {counter}
@@ -172,8 +142,41 @@ export const InputChat = ({
 };
 
 const stylesInputChat = StyleSheet.create({
+    container: {
+        backgroundColor: '#E6E6E6',
+        bottom: 6,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 10,
+        paddingVertical: 13,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        borderRadius: 8,
+        width: '100%',
+    },
     borderTextbox: {
-        borderColor: '#FC702A',
-        borderWidth: 0.2,
+        borderColor: '#9b0000',
+        borderWidth: 1.5,
+    },
+    buttonIcon: {
+        paddingHorizontal: 10,
+        borderRadius: 100,
+        height: 36,
+        width: 36,
+    },
+    inputWrap: {
+        flex: 1,
+        backgroundColor: 'white',
+        paddingHorizontal: 8,
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    counterText: {
+        ...styles.text,
+        fontSize: 14,
+        textAlign: 'center',
+        margin: 'auto',
+        bottom: '-50%',
     },
 });

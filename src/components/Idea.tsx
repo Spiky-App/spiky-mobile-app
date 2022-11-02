@@ -52,7 +52,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const handleDelete = () => {
         deleteIdea(id);
 
-        const messagesUpdated = messages.filter(msg => msg.id !== id);
+        const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
     };
@@ -135,7 +135,11 @@ export const Idea = ({ idea, filter }: Props) => {
                 </View>
 
                 <View style={{ marginTop: 6 }}>
-                    <MsgTransform textStyle={{ ...styles.text, ...stylescom.msg }} text={message} />
+                    <MsgTransform
+                        textStyle={{ ...styles.text, ...stylescom.msg }}
+                        text={message}
+                        handleClickUser={handleClickUser}
+                    />
                 </View>
 
                 <View

@@ -5,13 +5,13 @@ import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
     Platform,
-    SafeAreaView,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from 'react-native';
+import { BackgroundPaper } from '../components/BackgroundPaper';
 import { faFlag } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
@@ -49,93 +49,109 @@ export const ReportIdeaScreen = ({ route }: Props) => {
     }, [reportReason]);
 
     return (
-        <SafeAreaView style={stylecom.container}>
-            <KeyboardAvoidingView behavior="height" style={stylecom.container}>
-                <View style={{ height: '40%' }}>
-                    <TextInput
-                        placeholder="Motivo del reporte"
-                        placeholderTextColor="#707070"
-                        style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
-                        multiline={true}
-                        onChangeText={value => onChange({ reportReason: value })}
-                        autoFocus
-                    />
-                </View>
+        <BackgroundPaper style={stylecom.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={stylecom.container}
+            >
+                <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                    <View style={stylecom.wrap}>
+                        <TextInput
+                            placeholder="Motivo del reporte"
+                            placeholderTextColor="#707070"
+                            style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
+                            multiline={true}
+                            onChangeText={value => onChange({ reportReason: value })}
+                            autoFocus
+                        />
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '90%',
+                            position: 'absolute',
+                            bottom: 20,
+                        }}
+                    >
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
+                        </TouchableOpacity>
 
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        position: 'absolute',
-                        bottom: Platform.OS === 'ios' ? 70 : 50,
-                    }}
-                >
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                    </TouchableOpacity>
+                        <View style={stylecom.WrapperMaxCounterNIdea}>
+                            <View style={stylecom.ConteMaxCounterNIdea}>
+                                <View style={stylecom.MaxCounterNIdea}></View>
+                                {counter <= 40 && (
+                                    <Text
+                                        style={
+                                            counter < 0
+                                                ? stylecom.MaxCounterTextNIdeaRed
+                                                : stylecom.MaxCounterTextNIdea
+                                        }
+                                    >
+                                        {counter}
+                                    </Text>
+                                )}
+                                <View
+                                    style={{
+                                        ...(counter < 0
+                                            ? stylecom.MaxCounterNIdeaColorRed
+                                            : stylecom.MaxCounterNIdeaColor),
+                                        width:
+                                            ((reportReason.length < 220
+                                                ? reportReason.length
+                                                : 220) /
+                                                220) *
+                                                100 +
+                                            `%`,
+                                    }}
+                                ></View>
+                            </View>
+                        </View>
 
-                    <View style={stylecom.WrapperMaxCounterNIdea}>
-                        <View style={stylecom.ConteMaxCounterNIdea}>
-                            <View style={stylecom.MaxCounterNIdea}></View>
-                            {counter <= 40 && (
-                                <Text
-                                    style={
-                                        counter < 0
-                                            ? stylecom.MaxCounterTextNIdeaRed
-                                            : stylecom.MaxCounterTextNIdea
-                                    }
-                                >
-                                    {counter}
-                                </Text>
-                            )}
+                        <TouchableOpacity
+                            style={{
+                                ...stylecom.circleButton,
+                                borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
+                            }}
+                            onPress={buttonState ? handlecreateReportIdea : () => {}}
+                        >
                             <View
                                 style={{
-                                    ...(counter < 0
-                                        ? stylecom.MaxCounterNIdeaColorRed
-                                        : stylecom.MaxCounterNIdeaColor),
-                                    width:
-                                        ((reportReason.length < 220 ? reportReason.length : 220) /
-                                            220) *
-                                            100 +
-                                        `%`,
+                                    transform: [{ rotate: '45deg' }],
                                 }}
-                            ></View>
-                        </View>
+                            >
+                                <FontAwesomeIcon
+                                    icon={faFlag}
+                                    size={16}
+                                    color={!buttonState ? '#d4d4d4d3' : '#01192E'}
+                                />
+                            </View>
+                        </TouchableOpacity>
                     </View>
-
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.circleButton,
-                            borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
-                        }}
-                        onPress={buttonState ? handlecreateReportIdea : () => {}}
-                    >
-                        <View
-                            style={{
-                                transform: [{ rotate: '45deg' }],
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faFlag}
-                                size={16}
-                                color={!buttonState ? '#d4d4d4d3' : '#01192E'}
-                            />
-                        </View>
-                    </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </BackgroundPaper>
     );
 };
 
 const stylecom = StyleSheet.create({
     container: {
+        width: '95%',
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
+    },
+    wrap: {
+        ...styles.shadow,
+        flex: 1,
+        borderRadius: 10,
+        width: '100%',
+        backgroundColor: 'white',
+        paddingHorizontal: 25,
+        paddingTop: 30,
     },
     circleButton: {
         justifyContent: 'center',

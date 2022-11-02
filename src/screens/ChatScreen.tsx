@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import React, { useEffect, useState, useRef, useContext, useCallback } from 'react';
 import {
+    Animated,
     FlatList,
     KeyboardAvoidingView,
     Platform,
@@ -31,6 +32,7 @@ import {
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
+import { useAnimation } from '../hooks/useAnimation';
 import SendNudgeButton from '../components/SendNudgeButton';
 
 const DEFAULT_FORM: FormChat = {
@@ -42,7 +44,7 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 export const ChatScreen = ({ route }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const dispatch = useAppDispatch();
-    const { top, bottom } = useSafeAreaInsets();
+    const { bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [toUserIsTyping, setToUserIsTyping] = useState(false);
@@ -55,6 +57,11 @@ export const ChatScreen = ({ route }: Props) => {
     const { socket } = useContext(SocketContext);
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
+    const {
+        opacity: opacity_Typing,
+        fadeIn: fadeIn_Typing,
+        fadeOut: fadeOut_Typing,
+    } = useAnimation({ init_opacity: 0 });
 
     async function loadChatMessages(loadMore?: boolean) {
         setIsLoading(true);
@@ -86,6 +93,7 @@ export const ChatScreen = ({ route }: Props) => {
     function handleStopTyping() {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
             setToUserIsTyping(false);
         }
     }
@@ -95,6 +103,10 @@ export const ChatScreen = ({ route }: Props) => {
             setConversationId(route.params?.conversationId);
             return () => {
                 setConversationId(0);
+                socket?.removeListener('userOnline');
+                socket?.removeListener('userOffline');
+                socket?.removeListener('newChatMsg');
+                socket?.removeListener('newChatMsg');
                 dispatch(resetActiveConversationId());
             };
         }, [route.params?.conversationId])
@@ -105,10 +117,12 @@ export const ChatScreen = ({ route }: Props) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: true });
         });
+
         socket?.on('userOffline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
+
         socket?.on('newChatMsg', resp => {
             setToUserIsTyping(false);
             const { chatmsg } = resp;
@@ -117,6 +131,7 @@ export const ChatScreen = ({ route }: Props) => {
                 updateChatMessages(chatmsg);
             }
         });
+
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
@@ -127,12 +142,16 @@ export const ChatScreen = ({ route }: Props) => {
     }, [socket, conversationId]);
 
     useEffect(() => {
+        socket?.removeListener('isTyping');
         socket?.on('isTyping', resp => {
             const { converId } = resp;
             if (converId === conversationId) {
-                if (!toUserIsTyping) {
+                if (!toUserIsTyping && !timeoutRef.current) {
                     setToUserIsTyping(true);
-                    timeoutRef.current = setTimeout(() => setToUserIsTyping(false), 5000);
+                    timeoutRef.current = setTimeout(() => {
+                        fadeOut_Typing(200, () => setToUserIsTyping(false));
+                        timeoutRef.current = null;
+                    }, 4000);
                 }
             }
         });
@@ -145,31 +164,28 @@ export const ChatScreen = ({ route }: Props) => {
     }, [conversationId]);
 
     return (
-        <BackgroundPaper>
+        <BackgroundPaper topDark>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{
                     width: '100%',
                     alignItems: 'center',
-                    paddingHorizontal: 15,
-                    paddingTop: top ? 5 : 15,
                     paddingBottom: bottom ? 0 : 15,
                     flex: 1,
                 }}
             >
                 <View style={stylescomp.containerHeader}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ ...styles.center, flexDirection: 'row' }}>
                         <TouchableOpacity
                             style={{
                                 ...styles.center,
-                                marginRight: 5,
-                                marginLeft: 10,
+                                marginRight: 10,
+                                marginLeft: 20,
                             }}
                             onPress={handleGoBack}
                         >
                             <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                         </TouchableOpacity>
-
                         <Text
                             style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}
                         >
@@ -189,48 +205,80 @@ export const ChatScreen = ({ route }: Props) => {
                         isOnline={toUser.online}
                     />
                 </View>
-                <FlatList
-                    ref={refFlatList}
-                    style={stylescomp.wrap}
-                    data={chatMessages}
-                    renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
-                    keyExtractor={item => item.id}
-                    showsVerticalScrollIndicator={false}
-                    inverted
-                    onEndReached={loadMoreChatMsg}
-                    ListHeaderComponent={toUserIsTyping ? <WrittingBubble /> : <></>}
-                    ListFooterComponent={isLoading ? LoadingAnimated : <></>}
-                    ListFooterComponentStyle={{ marginVertical: 12 }}
-                    contentContainerStyle={{
-                        flexGrow: 1,
-                        justifyContent: 'flex-end',
+                <View
+                    style={{
+                        width: '100%',
+                        alignItems: 'center',
+                        paddingHorizontal: 15,
+                        flex: 1,
                     }}
-                />
-                <InputChat
-                    form={form}
-                    onChange={onChange}
-                    updateChatMessages={updateChatMessages}
-                    conversationId={conversationId}
-                    refFlatList={refFlatList}
-                    toUser={toUser}
-                    HideKeyboardAfterSumbit
-                />
+                >
+                    <FlatList
+                        ref={refFlatList}
+                        style={stylescomp.wrap}
+                        data={chatMessages}
+                        renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
+                        keyExtractor={item => item.id + ''}
+                        showsVerticalScrollIndicator={false}
+                        inverted
+                        onEndReached={loadMoreChatMsg}
+                        ListHeaderComponent={
+                            <TypingBubble
+                                opacity={opacity_Typing}
+                                fadeIn={fadeIn_Typing}
+                                toUserIsTyping={toUserIsTyping}
+                            />
+                        }
+                        ListFooterComponent={isLoading ? LoadingAnimated : <></>}
+                        ListFooterComponentStyle={{ marginVertical: 12 }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            justifyContent: 'flex-end',
+                        }}
+                    />
+                    <InputChat
+                        form={form}
+                        onChange={onChange}
+                        updateChatMessages={updateChatMessages}
+                        conversationId={conversationId}
+                        refFlatList={refFlatList}
+                        toUser={toUser}
+                        HideKeyboardAfterSumbit
+                    />
+                </View>
             </KeyboardAvoidingView>
         </BackgroundPaper>
     );
 };
 
-const WrittingBubble = () => (
-    <View style={stylescomp.writting}>
-        <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
-    </View>
-);
+interface TypingBubbleProps {
+    toUserIsTyping: boolean;
+    opacity: Animated.Value;
+    fadeIn: (duration?: number, callback?: () => void, delay?: number) => void;
+}
+
+const TypingBubble = ({ toUserIsTyping, opacity, fadeIn }: TypingBubbleProps) => {
+    useEffect(() => {
+        if (toUserIsTyping) {
+            fadeIn(300);
+        }
+    }, [toUserIsTyping]);
+
+    if (!toUserIsTyping) {
+        return <></>;
+    }
+
+    return (
+        <Animated.View style={{ ...stylescomp.writting, opacity }}>
+            <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
+        </Animated.View>
+    );
+};
 
 const stylescomp = StyleSheet.create({
     containerHeader: {
         backgroundColor: '#01192E',
         height: 45,
-        borderRadius: 5,
         alignItems: 'center',
         flexDirection: 'row',
         width: '100%',

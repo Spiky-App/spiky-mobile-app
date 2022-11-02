@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { faLocationArrow, faReply } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faReply, faChevronLeft } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
@@ -80,9 +80,21 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
                     <View style={stylecom.wrap}>
                         <View style={stylecom.msgContainer}>
-                            <View style={{ ...stylecom.posAbsolute, top: 10 }}>
+                            <View style={{ ...stylecom.posAbsolute, top: 10, right: 10 }}>
                                 <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
                             </View>
+                            <TouchableOpacity
+                                style={{
+                                    ...styles.center,
+                                    ...stylecom.posAbsolute,
+                                    left: 5,
+                                    top: 0,
+                                    bottom: 0,
+                                }}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <FontAwesomeIcon icon={faChevronLeft} color={'#bebebe'} size={25} />
+                            </TouchableOpacity>
                             <View style={styles.flex}>
                                 <Text style={{ ...styles.user, ...styles.textbold }}>
                                     @{user.nickname}
@@ -94,7 +106,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                                     {transformMsg(message)}
                                 </Text>
                             </View>
-                            <View style={{ ...stylecom.posAbsolute, bottom: 4 }}>
+                            <View style={{ ...stylecom.posAbsolute, bottom: 4, right: 10 }}>
                                 <Text style={{ ...styles.textGray, fontSize: 12 }}>{fecha}</Text>
                             </View>
                         </View>
@@ -176,8 +188,6 @@ const stylecom = StyleSheet.create({
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
-        position: 'relative',
-        // ...styles.shadow,
     },
     wrap: {
         ...styles.shadow,
@@ -189,13 +199,13 @@ const stylecom = StyleSheet.create({
     msgContainer: {
         width: '100%',
         backgroundColor: '#e8e6e6',
-        paddingHorizontal: 25,
+        paddingRight: 20,
+        paddingLeft: 35,
         paddingVertical: 15,
         borderRadius: 4,
     },
     posAbsolute: {
         position: 'absolute',
-        right: 10,
     },
     containerInput: {
         flex: 1,

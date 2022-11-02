@@ -8,6 +8,11 @@ export interface LoginResponse {
     token: string;
 }
 
+export interface ForgotPasswordResponse {
+    ok: boolean;
+    msg: string;
+}
+
 export interface UniversityResponse {
     ok: boolean;
     universidades: University[];
@@ -159,9 +164,6 @@ export interface GetUserInfo {
 export interface UsuariorData {
     correo: string;
     universidad: string;
-    n_mensajes: number;
-    n_favor: number;
-    n_contra: number;
 }
 
 export interface UpdatePassword {
@@ -251,6 +253,11 @@ export interface CreateChatMessageSeen {
     };
 }
 
+export interface GetEmailVerification {
+    ok: boolean;
+    msg: string;
+}
+
 export interface GetIdeaReactions {
     ok: boolean;
     reacciones: Reaction[];
@@ -260,4 +267,20 @@ export interface Reaction {
     id_reaccion: number;
     reaccion: string;
     usuario: User;
+}
+
+export interface GetTermsAndConditions {
+    ok: number;
+    lists: TermsAndConditions;
+}
+
+export interface TermsAndConditions {
+    termsAndConditions: {
+        title: string;
+        paragraphs: string[];
+    }[];
+    noticeOfPrivacy: {
+        title: string;
+        paragraphs: string[];
+    }[];
 }

@@ -67,7 +67,9 @@ export const LoginScreen = () => {
                 setFormValid(true);
             } catch (e) {
                 console.log(e);
-                dispatch(addToast({ message: 'Error iniciando sesión', type: StatusType.WARNING }));
+                dispatch(
+                    addToast({ message: e.response.data.msg || '', type: StatusType.WARNING })
+                );
                 setFormValid(false);
             }
         } else {
@@ -141,7 +143,7 @@ export const LoginScreen = () => {
                     </TouchableHighlight>
                     <TouchableOpacity
                         style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('CheckEmailScreen')}
+                        onPress={() => navigation.navigate('ManifestPart1Screen')}
                     >
                         <Text style={styles.linkPad}>Solicitar cuenta</Text>
                     </TouchableOpacity>

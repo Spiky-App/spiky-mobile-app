@@ -25,7 +25,10 @@ import {
     GetChatMessages,
     CreateChatMessage,
     CreateChatMessageSeen,
+    GetEmailVerification,
     GetIdeaReactions,
+    GetTermsAndConditions,
+    ForgotPasswordResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -39,6 +42,10 @@ class SpikyService {
             contrasena: password,
             correo: email,
         });
+    }
+
+    handleForgotPassword(email: string) {
+        return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
     getUniversities() {
@@ -198,8 +205,16 @@ class SpikyService {
         });
     }
 
+    getEmailVerification(email: string) {
+        return this.instance.get<GetEmailVerification>(`verif/${email}`);
+    }
+
     getIdeaReactions(messageId: number) {
         return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    }
+
+    getTermsAndConditions() {
+        return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 }
 

@@ -30,12 +30,7 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 {reactionCount.map(
                     (reaction, index) =>
                         index < 3 && (
-                            <View
-                                style={{
-                                    ...stylescomp.container,
-                                }}
-                                key={reaction.reaction}
-                            >
+                            <View style={stylescomp.container} key={reaction.reaction}>
                                 <Text style={{ fontSize: 11 }}>{reaction.reaction}</Text>
                                 <Text
                                     style={{
@@ -49,12 +44,10 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 )}
                 {reactionCount.length >= 5 && (
                     <View style={stylescomp.moreReaction}>
-                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
-                            {`${countReactions()}`}
+                        <Text style={{ ...stylescomp.number, fontSize: 10 }}>
+                            {`${countReactions()} `}
                         </Text>
-                        <Text style={{ ...stylescomp.number, color: 'white', fontSize: 10 }}>
-                            Más
-                        </Text>
+                        <Text style={{ ...stylescomp.text, fontSize: 10 }}> Más </Text>
                     </View>
                 )}
             </Pressable>
@@ -80,20 +73,23 @@ const stylescomp = StyleSheet.create({
     },
     container: {
         flexDirection: 'row',
-        borderRadius: 10,
-        paddingHorizontal: 1,
-        paddingVertical: 3,
+        borderRadius: 5,
+        paddingHorizontal: 5,
+        marginRight: 4,
+        paddingVertical: 2,
+        backgroundColor: '#D4D4D4',
     },
     number: {
-        ...styles.textbold,
+        ...styles.text,
         fontSize: 11,
-        color: '#D4D4D4',
+        // color: 'white',
+        color: '#01192e5a',
         marginLeft: 2,
     },
     text: {
-        ...styles.textbold,
+        ...styles.text,
         fontSize: 11,
-        color: 'white',
+        color: '#01192e5a',
     },
     moreReaction: {
         ...styles.center,

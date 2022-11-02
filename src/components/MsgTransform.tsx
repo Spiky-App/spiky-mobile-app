@@ -1,18 +1,17 @@
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableWithoutFeedback } from 'react-native';
-import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { MessageRequestData } from '../services/models/spikyService';
+import { User } from '../types/store';
 
 interface Props {
     text: string;
     textStyle: {};
+    handleClickUser: (goToUser: User) => void;
 }
 
-const MsgTransform = ({ text, textStyle }: Props) => {
-    const nickname = useAppSelector((state: RootState) => state.user.nickname);
+const MsgTransform = ({ text, textStyle, handleClickUser }: Props) => {
     const [content, setContent] = useState<Element>(<Text></Text>);
     const navigation = useNavigation<any>();
 
@@ -36,16 +35,6 @@ const MsgTransform = ({ text, textStyle }: Props) => {
         );
     };
 
-    const handleClickUser = (alias: string) => {
-        if (nickname === alias.replace('@', '')) {
-            changeScreen('MyIdeasScreen');
-        } else {
-            changeScreen('ProfileScreen', {
-                alias: alias.replace('@', ''),
-            });
-        }
-    };
-
     useEffect(() => {
         if (text !== '') {
             const regexp_all = /(@\[@\w*\]\(\d*\))|(#\[#[A-Za-zÀ-ÖØ-öø-ÿ]+\]\(\d*\))/g;
@@ -66,7 +55,12 @@ const MsgTransform = ({ text, textStyle }: Props) => {
                             <TouchableWithoutFeedback
                                 key={index}
                                 style={{ alignItems: 'flex-end' }}
-                                onPress={() => handleClickUser(alias)}
+                                onPress={() =>
+                                    handleClickUser({
+                                        nickname: alias.replace('@', ''),
+                                        universityId: 0,
+                                    })
+                                }
                             >
                                 <Text style={{ ...textStyle, ...styles.h5 }}>{alias}</Text>
                             </TouchableWithoutFeedback>

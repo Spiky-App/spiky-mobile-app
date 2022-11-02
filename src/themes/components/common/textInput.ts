@@ -33,10 +33,12 @@ const StylesComponent = StyleSheet.create({
         fontWeight: '300',
     },
     textInputContainerError: {
-        borderBottomColor: '#FF0000',
+        borderBottomColor: '#9b0000',
     },
     textError: {
-        color: '#FF0000',
+        color: '#9b0000',
+        marginTop: 8,
+        paddingLeft: 8,
     },
 });
 
