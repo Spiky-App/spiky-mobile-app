@@ -9,6 +9,7 @@ import {
     TouchableHighlight,
     Text,
     StyleSheet,
+    Linking,
 } from 'react-native';
 import { BigTitle } from '../components/BigTitle';
 import { useForm } from '../hooks/useForm';
@@ -17,6 +18,9 @@ import { validateForm } from '../helpers/forgotPass.helpers';
 import { FormState } from '../types/forgotPass';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import useSpikyService from '../hooks/useSpikyService';
+// https://reactnative.dev/docs/linking
+// https://blog.jscrambler.com/how-to-handle-deep-linking-in-a-react-native-app/
+// https://stackoverflow.com/questions/28802115/i-am-trying-to-test-android-deep-link-urls-through-adb-to-launch-my-app
 
 export const ForgotPwdScreen = () => {
     const [isLoading, setLoading] = useState(false);
@@ -29,6 +33,19 @@ export const ForgotPwdScreen = () => {
     const { form, onChange } = useForm<FormState>({
         email: '',
     });
+    const [url, setUrl] = useState('');
+    const [processing, setProcessing] = useState(true);
+
+    const getUrlAsync = async () => {
+        const initialUrl = await Linking.getInitialURL();
+        if (initialUrl) {
+            setUrl(initialUrl);
+        } else {
+            setUrl('none');
+        }
+        setProcessing(false);
+        return initialUrl;
+    };
 
     async function sendReestablishPasswordEmail() {
         setLoading(true);
@@ -82,6 +99,7 @@ export const ForgotPwdScreen = () => {
                     <Text style={{ ...styles.textGrayPad, marginBottom: 25 }}>
                         {underlyingValue}
                     </Text>
+                    <Text onPress={getUrlAsync}>{!processing ? url : 'no url'}</Text>
                     {!isLoading ? (
                         !isNextMsg ? (
                             <TouchableHighlight

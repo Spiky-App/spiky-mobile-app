@@ -58,9 +58,21 @@ const Container = () => {
         return <SplashScreen />;
     }
 
+    const linking = {
+        prefixes: ['spikyapp://'],
+        config: {
+            initialRouteName: 'HomeScreen',
+            screens: {
+                HomeScreen: {
+                    path: 'homescreen',
+                },
+            },
+        },
+    };
+
     return (
         <SocketContextComponent>
-            <NavigationContainer>
+            <NavigationContainer linking={linking} fallback={<SplashScreen />}>
                 <Toast>
                     <Navigator />
                 </Toast>
