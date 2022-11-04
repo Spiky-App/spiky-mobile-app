@@ -170,6 +170,10 @@ export interface UpdatePassword {
     ok: boolean;
 }
 
+export interface UpdatePasswordUri {
+    ok: boolean;
+}
+
 export interface CreateMessageCommentResponse {
     ok: boolean;
     respuesta: MessageComment;

@@ -19,6 +19,7 @@ import {
     CreateReportIdea,
     GetUserInfo,
     UpdatePassword,
+    UpdatePasswordUri,
     CreateMessageCommentResponse,
     CreateChatMsgWithReply,
     GetConversations,
@@ -151,6 +152,13 @@ class SpikyService {
     updatePassword(uid: number, currentPassword: string, newPassword: string) {
         return this.instance.put<UpdatePassword>('auth/change-password', {
             uid,
+            actualContrasena: currentPassword,
+            nuevaContrasena: newPassword,
+        });
+    }
+    updatePasswordUri(email: string, currentPassword: string, newPassword: string) {
+        return this.instance.put<UpdatePasswordUri>('auth/change-password-uri', {
+            email,
             actualContrasena: currentPassword,
             nuevaContrasena: newPassword,
         });

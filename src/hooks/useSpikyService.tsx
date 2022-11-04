@@ -397,6 +397,13 @@ function useSpikyService() {
     const updatePassword = async (uid: number, currentPassword: string, newPassword: string) => {
         await service.updatePassword(uid, currentPassword, newPassword);
     };
+    const updatePasswordUri = async (
+        email: string,
+        currentPassword: string,
+        newPassword: string
+    ) => {
+        await service.updatePasswordUri(email, currentPassword, newPassword);
+    };
 
     const getIdeas = async (
         uid: number,
@@ -501,6 +508,7 @@ function useSpikyService() {
         getIdeaWithComments,
         loadUserInfo,
         updatePassword,
+        updatePasswordUri,
         getIdeas,
         getEmailVerification,
         getIdeaReactiones,

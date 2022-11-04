@@ -15,6 +15,7 @@ import { setUser } from '../store/feature/user/userSlice';
 import Toast from '../components/common/Toast';
 import { ModalAlert } from '../components/ModalAlert';
 import SocketContextComponent from '../context/Socket/Component';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 
 const Container = () => {
     const dispatch = useAppDispatch();
@@ -58,6 +59,8 @@ const Container = () => {
         return <SplashScreen />;
     }
 
+    // linking object takes care of deep linking
+    // route.params.correo contains the email that wants to change password
     const linking = {
         prefixes: ['spikyapp://'],
         config: {
@@ -65,6 +68,9 @@ const Container = () => {
             screens: {
                 HomeScreen: {
                     path: 'homescreen',
+                },
+                ChangePasswordScreen: {
+                    path: 'changepassword/:correo',
                 },
             },
         },

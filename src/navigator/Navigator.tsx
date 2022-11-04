@@ -20,6 +20,7 @@ import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
 import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
 import { ChatScreen } from '../screens/ChatScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -27,6 +28,7 @@ export type RootStackParamList = {
     CheckEmail: undefined;
     CheckEmailScreen: undefined;
     ForgotPwdScreen: undefined;
+    ChangePasswordScreen: undefined;
     RegisterScreen: undefined;
     MenuMain: undefined;
     CreateIdeaScreen: { draftedIdea?: string; draftID?: number };
@@ -101,6 +103,7 @@ export const Navigator = () => {
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
                     <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
                     <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
+                    <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
                     <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
                     <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
                 </>
