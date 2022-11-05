@@ -311,6 +311,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     form={form}
                                     onChange={onChange}
                                     refInputComment={refInputComment}
+                                    userId={message.user.id}
                                 />
                             </>
                         ) : (

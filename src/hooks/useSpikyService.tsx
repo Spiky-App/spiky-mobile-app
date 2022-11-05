@@ -60,7 +60,12 @@ function useSpikyService() {
     }, [config]);
 
     const createMessageComment = useCallback(
-        async (messageId: number, uid: number, comment: string): Promise<Comment | undefined> => {
+        async (
+            messageId: number,
+            uid: number,
+            comment: string,
+            userId: number
+        ): Promise<Comment | undefined> => {
             let messageComment: Comment | undefined = undefined;
             try {
                 const { data } = await service.createMessageComment(messageId, uid, comment);
@@ -78,6 +83,12 @@ function useSpikyService() {
                     favor: 0,
                     against: 0,
                 };
+                socket?.emit('notify', {
+                    id_usuario1: userId,
+                    id_usuario2: uid,
+                    id_mensaje: respuesta.id_mensaje,
+                    tipo: 2,
+                });
                 const messagesUpdated = messages.map(msg => {
                     return msg.id === messageId
                         ? { ...msg, answersNumber: msg.answersNumber + 1 }
