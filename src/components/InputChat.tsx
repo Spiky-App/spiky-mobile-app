@@ -58,6 +58,7 @@ export const InputChat = ({
         socket?.emit('newChatMsg', {
             chatmsg: newChatMessages,
             userto: toUser.id,
+            nickname: toUser.nickname,
         });
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);

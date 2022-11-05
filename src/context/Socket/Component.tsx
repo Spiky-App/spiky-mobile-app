@@ -1,7 +1,9 @@
 import React, { PropsWithChildren, useEffect } from 'react';
 import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
+import { ClickNotificationTypes } from '../../constants/notification';
 import { useSocket } from '../../hooks/useSocket';
+import { notificationService } from '../../services/NotificationService';
 import { RootState } from '../../store';
 import { updateLastChatMsgConversation } from '../../store/feature/chats/chatsSlice';
 import { addToast } from '../../store/feature/toast/toastSlice';
@@ -53,11 +55,14 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
         socket?.on('notify', resp => {
             dispatch(updateNotificationsNumber(1));
-            dispatch(
-                addToast({
-                    message: resp.alias + ' ' + mensajes[resp.tipo],
-                    type: StatusType.NOTIFICATION,
-                })
+            notificationService.showNotification(
+                1,
+                'Spiky | Notificación 🔔',
+                '@' + resp.alias + ' ' + mensajes[resp.tipo],
+                {
+                    type: ClickNotificationTypes.GO_TO_IDEA,
+                    ideaId: resp.id_mensaje,
+                }
             );
         });
 
@@ -94,28 +99,49 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             const { conver } = resp;
             if (activeConversationId !== conver.id) {
                 dispatch(increaseNewChatMessagesNumber());
+                notificationService.showNotification(
+                    conver.id,
+                    'Spiky | @' + conver.user_1.nickname + ' respondió una de tus publicaciones.',
+                    conver.chatmessage.message,
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: conver.id,
+                    }
+                );
             }
         });
 
         socket?.removeListener('newChatMsg');
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
-            const { chatmsg } = resp;
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; nickname: string }) => {
+            const { chatmsg, nickname } = resp;
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                notificationService.showNotification(
+                    chatmsg.id,
+                    'Spiky | @' + nickname + ' te ha enviado un mensaje',
+                    chatmsg.message,
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: chatmsg.conversationId,
+                    }
+                );
             }
         });
 
         socket?.removeListener('sendNudge');
         socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId } = resp;
+            const { converId, nickname } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
-                dispatch(
-                    addToast({
-                        message: '@' + resp.nickname + ' te ha enviado un zumbido',
-                        type: StatusType.NUDGE,
-                    })
+                notificationService.showNotification(
+                    converId,
+                    'Spiky | Notificación 🛎️',
+                    '@' + nickname + ' te ha enviado un zumbido',
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: converId,
+                    }
                 );
             }
         });

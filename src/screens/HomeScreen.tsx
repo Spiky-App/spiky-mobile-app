@@ -8,7 +8,6 @@ import { useAnimation } from '../hooks/useAnimation';
 
 export const HomeScreen = () => {
     const navigation = useNavigation<any>();
-
     return (
         <BackgroundPaper>
             <View style={stylecom.container}>
