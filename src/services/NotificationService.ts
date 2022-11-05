@@ -53,12 +53,10 @@ class NotificationService {
 
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
-                // console.log('NOTIFICATION:', notification);
 
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
-                    // console.log(data, ' ---> LOCAL NOTIFICATION');
                     switch (data.type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
                             console.log('go to conversation #', data.conversationId);
