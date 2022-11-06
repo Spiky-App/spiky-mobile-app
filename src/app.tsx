@@ -4,12 +4,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { ClickNotificationTypes } from './constants/notification';
 import Container from './navigator/Container';
-import { notificationService } from './services/NotificationService';
 import { store } from './store';
 
 const App = () => {
     // const [permissions, setPermissions] = useState({});
-    notificationService.configure();
     useEffect(() => {
         const type = 'notification';
         PushNotificationIOS.addEventListener(type, onRemoteNotification);
