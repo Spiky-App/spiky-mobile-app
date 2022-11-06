@@ -39,6 +39,13 @@ class NotificationService {
                 PushNotification.setApplicationIconBadgeNumber(0);
             }
         });
+        PushNotification.createChannel(
+            {
+                channelId: 'fcm_fallback_notification_channel', // (required)
+                channelName: 'Channel', // (required)
+            },
+            created => console.log(`createChannel returned '${created}`)
+        );
 
         PushNotification.getChannels(function (channels) {
             console.log(channels);
@@ -53,7 +60,6 @@ class NotificationService {
 
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
-
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
@@ -150,32 +156,18 @@ class NotificationService {
         /*options = {},
         date: Date */
     ) => {
+        console.log('notification triggered');
         PushNotification.localNotification({
             /* Android Only Properties */
-            channelId: 'your-channel-id', // (required) channelId, if the channel doesn't exist, notification will not trigger.
-            ticker: 'My Notification Ticker', // (optional)
-            showWhen: true, // (optional) default: true
-            autoCancel: true, // (optional) default: true
+            channelId: 'fcm_fallback_notification_channel', // (required) channelId, if the channel doesn't exist, notification will not trigger.
+            // autoCancel: true, // (optional) default: true
             largeIcon: 'ic_launcher',
-            smallIcon: 'ic_notification',
-            bigText: title,
-            subText: message,
-            bigLargeIcon: 'ic_launcher', // (optional) default: undefined
-            color: 'orange',
-            vibrate: true,
+            smallIcon: 'ic_launcher',
             vibration: 300,
-            groupSummary: false, // (optional) set this notification to be the group summary for a group of notifications, default: false
-            ongoing: false, // (optional) set whether this is an "ongoing" notification
+            vibrate: true,
             priority: 'high',
-            visibility: 'private',
-            ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
-            shortcutId: 'shortcut-id', // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
-
-            when: null, // (optional) Add a timestamp (Unix timestamp value in milliseconds) pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
-            usesChronometer: false, // (optional) Show the `when` field as a stopwatch. Instead of presenting `when` as a timestamp, the notification will show an automatically updating display of the minutes and seconds since when. Useful when showing an elapsed time (like an ongoing phone call), default: false.
-            timeoutAfter: null, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
-
-            messageId: 'google:message_id', // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module.
+            importance: 'high',
+            // messageId: 'google:message_id', // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module.
 
             actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
             invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true

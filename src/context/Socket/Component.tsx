@@ -101,8 +101,11 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(increaseNewChatMessagesNumber());
                 notificationService.showNotification(
                     conver.id,
-                    'Spiky | @' + conver.user_1.nickname + ' respondió una de tus publicaciones.',
-                    conver.chatmessage.message,
+                    'Spiky | Réplica de tu idea 💬',
+                    '@' +
+                        conver.user_1.nickname +
+                        ' respondió una de tus publicaciones: ' +
+                        conver.chatmessage.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
@@ -119,8 +122,8 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
                 notificationService.showNotification(
                     chatmsg.id,
-                    'Spiky | @' + nickname + ' te ha enviado un mensaje',
-                    chatmsg.message,
+                    'Spiky | Nuevo mensaje 💬',
+                    '@' + nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: chatmsg.conversationId,
