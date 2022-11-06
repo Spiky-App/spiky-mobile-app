@@ -21,7 +21,7 @@ interface Props {
     form: FormComment;
     onChange: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
-    userId: number | undefined;
+    userId: number;
 }
 
 const MAX_LENGHT = 180;
@@ -36,7 +36,7 @@ export const InputComment = ({
     form,
     onChange,
     refInputComment,
-    userId,
+    userId = 0,
 }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { createMessageComment } = useSpikyService();

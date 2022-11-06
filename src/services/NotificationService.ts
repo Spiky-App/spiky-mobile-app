@@ -53,6 +53,7 @@ class NotificationService {
 
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
+
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;

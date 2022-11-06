@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "220306688387",
+    "project_id": "spiky-fb649",
+    "storage_bucket": "spiky-fb649.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220306688387:android:582fde744d101d70d28eb6",
+        "android_client_info": {
+          "package_name": "com.reactnativecliapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220306688387-9b9ob310hc6bn57r9o010rc2gv7vuk59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdU2dFry-2DZG4LTUCEIRKXPhNbZ-g37o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220306688387-9b9ob310hc6bn57r9o010rc2gv7vuk59.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "220306688387-4v7slbk2oqar0licr7koaqb80itq51kr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.spiky.ios-app-qa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
