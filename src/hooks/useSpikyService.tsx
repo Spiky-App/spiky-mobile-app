@@ -7,7 +7,7 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { ChatMessage, Comment, Conversation, Message } from '../types/store';
-import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
+import { faFlag, faThumbtack, faPaperPlane, faLock } from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { generateMessageFromMensaje } from '../helpers/message';
 import {
@@ -396,6 +396,13 @@ function useSpikyService() {
     };
     const updatePassword = async (uid: number, currentPassword: string, newPassword: string) => {
         await service.updatePassword(uid, currentPassword, newPassword);
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: 'Contraseña restablecida',
+                icon: faLock,
+            })
+        );
     };
     const updatePasswordUri = async (
         email: string,
@@ -403,6 +410,13 @@ function useSpikyService() {
         newPassword: string
     ) => {
         await service.updatePasswordUri(email, currentPassword, newPassword);
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: 'Contraseña restablecida',
+                icon: faLock,
+            })
+        );
     };
 
     const getIdeas = async (
