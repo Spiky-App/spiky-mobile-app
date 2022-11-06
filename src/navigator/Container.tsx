@@ -15,12 +15,30 @@ import { setUser } from '../store/feature/user/userSlice';
 import Toast from '../components/common/Toast';
 import { ModalAlert } from '../components/ModalAlert';
 import SocketContextComponent from '../context/Socket/Component';
+import { AppState } from 'react-native';
+import { setAppState } from '../store/feature/ui/uiSlice';
 
 const Container = () => {
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
     const spikyService = new SpikyService(config);
     const [isLoading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const state = AppState.addEventListener('change', nextAppState => {
+            if (appState === 'inactive' && nextAppState === 'active') {
+                dispatch(setAppState('active'));
+            }
+            if (appState === 'active' && nextAppState.match(/inactive|background/)) {
+                dispatch(setAppState('inactive'));
+            }
+        });
+
+        return () => {
+            state.remove();
+        };
+    }, []);
 
     async function validateToken() {
         setLoading(true);

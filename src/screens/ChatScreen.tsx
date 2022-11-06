@@ -43,6 +43,7 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 
 export const ChatScreen = ({ route }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
     const dispatch = useAppDispatch();
     const { bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
@@ -113,6 +114,10 @@ export const ChatScreen = ({ route }: Props) => {
     );
 
     useEffect(() => {
+        if (appState === 'active') loadChatMessages();
+    }, [appState]);
+
+    useEffect(() => {
         socket?.on('userOnline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: true });
@@ -161,7 +166,7 @@ export const ChatScreen = ({ route }: Props) => {
         if (conversationId) {
             loadChatMessages();
         }
-    }, [conversationId, socket]);
+    }, [conversationId]);
 
     return (
         <BackgroundPaper topDark>

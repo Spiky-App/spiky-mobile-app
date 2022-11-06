@@ -2,7 +2,6 @@ import React, { PropsWithChildren, useEffect } from 'react';
 import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
 import { useSocket } from '../../hooks/useSocket';
-import useSpikyService from '../../hooks/useSpikyService';
 import { RootState } from '../../store';
 import { updateLastChatMsgConversation } from '../../store/feature/chats/chatsSlice';
 import { addToast } from '../../store/feature/toast/toastSlice';
@@ -28,7 +27,6 @@ const mensajes = [
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
     const { children } = props;
     const dispatch = useAppDispatch();
-    const { getPendingNotifications } = useSpikyService();
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { activeConversationId } = useAppSelector((state: RootState) => state.chats);
     const { socket, connectSocket, disconnectSocket } = useSocket(socketBaseUrl);
@@ -46,7 +44,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         /** Socket connected */
         socket?.on('connect', () => {
             console.log('connected');
-            getPendingNotifications();
         });
 
         /** Socket disconnected */
