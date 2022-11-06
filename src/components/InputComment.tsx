@@ -110,6 +110,17 @@ export const InputComment = ({
                             isInsertSpaceAfterMention: true,
                             getPlainString: ({ name }: MentionData) => name,
                         },
+
+                        {
+                            trigger: '#',
+                            renderSuggestions: props =>
+                                renderSuggetions({ ...props, isMention: false, inputHeight }),
+                            textStyle: { ...styles.h5, color: '#5c71ad' },
+                            allowedSpacesCount: 0,
+                            isInsertSpaceAfterMention: true,
+                            isBottomMentionSuggestionsRender: true,
+                            getPlainString: ({ name }: MentionData) => name,
+                        },
                     ]}
                 />
             </View>
