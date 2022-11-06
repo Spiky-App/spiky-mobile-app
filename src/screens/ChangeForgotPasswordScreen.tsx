@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEye, faEyeSlash, faLock } from '../constants/icons/FontAwesome';
+import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
@@ -17,17 +17,22 @@ import { useForm } from '../hooks/useForm';
 import { useAppDispatch } from '../store/hooks';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
+import useSpikyService from '../hooks/useSpikyService';
 
 const initialSate = {
     newPassword: '',
     confirmPassword: '',
 };
 
-export const ChangeForgotPasswordScreen = () => {
+export const ChangeForgotPasswordScreen = ({ route }) => {
+    // deep link stuff
+    const params = route.params || {};
+    const { correo } = params;
+    // end deep link stuff
     const dispatch = useAppDispatch();
+    const { updatePasswordUri } = useSpikyService();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
     const [passVisible2, setPassVisible2] = useState(true);
@@ -41,14 +46,8 @@ export const ChangeForgotPasswordScreen = () => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
+                await updatePasswordUri(correo, newPassword);
                 onChange(initialSate);
-                dispatch(
-                    setModalAlert({
-                        isOpen: true,
-                        text: 'Contraseña restablecida',
-                        icon: faLock,
-                    })
-                );
                 navigation.navigate('LoginScreen');
             } catch (error) {
                 console.log(error);

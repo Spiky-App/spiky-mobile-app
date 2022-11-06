@@ -69,8 +69,8 @@ const Container = () => {
                 HomeScreen: {
                     path: 'homescreen',
                 },
-                ChangePasswordScreen: {
-                    path: 'changepassword/:correo',
+                ChangeForgotPasswordScreen: {
+                    path: 'changeforgotpassword/:correo',
                 },
             },
         },

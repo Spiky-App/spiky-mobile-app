@@ -404,19 +404,25 @@ function useSpikyService() {
             })
         );
     };
-    const updatePasswordUri = async (
-        email: string,
-        currentPassword: string,
-        newPassword: string
-    ) => {
-        await service.updatePasswordUri(email, currentPassword, newPassword);
-        dispatch(
-            setModalAlert({
-                isOpen: true,
-                text: 'Contraseña restablecida',
-                icon: faLock,
-            })
-        );
+    const updatePasswordUri = async (email: string, newPassword: string) => {
+        if (email) {
+            await service.updatePasswordUri(email, newPassword);
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Contraseña restablecida',
+                    icon: faLock,
+                })
+            );
+        } else {
+            console.log('[ERROR] no email sent in route params.');
+            dispatch(
+                addToast({
+                    message: 'Por favor hable con el administrador.',
+                    type: StatusType.WARNING,
+                })
+            );
+        }
     };
 
     const getIdeas = async (

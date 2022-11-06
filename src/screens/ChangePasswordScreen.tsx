@@ -19,13 +19,9 @@ const initialState = {
     confirmPassword: '',
 };
 
-export const ChangePasswordScreen = ({ route }) => {
-    // deep link stuff
-    const params = route.params || {};
-    const { correo } = params;
-    // end deep link stuff
+export const ChangePasswordScreen = () => {
     const uid = useAppSelector((state: RootState) => state.user.id);
-    const { updatePassword, updatePasswordUri } = useSpikyService();
+    const { updatePassword } = useSpikyService();
     const dispatch = useAppDispatch();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
@@ -40,16 +36,9 @@ export const ChangePasswordScreen = ({ route }) => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
-                // if route contains an email, that means the screen came by the uri and must go back to home
-                if (correo) {
-                    await updatePasswordUri(correo, currentPassword, newPassword);
-                    onChange(initialState);
-                    navigation.navigate('HomeScreen');
-                } else {
-                    await updatePassword(uid, currentPassword, newPassword);
-                    onChange(initialState);
-                    navigation.navigate('ConfigurationScreen');
-                }
+                await updatePassword(uid, currentPassword, newPassword);
+                onChange(initialState);
+                navigation.navigate('ConfigurationScreen');
             } catch (error) {
                 console.log(error);
                 dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
@@ -82,11 +71,7 @@ export const ChangePasswordScreen = ({ route }) => {
             <View style={{ ...styles.center, marginTop: 30 }}>
                 <TouchableOpacity
                     style={{ ...styles.center, position: 'absolute', left: -40, top: 0, bottom: 0 }}
-                    onPress={
-                        !correo
-                            ? () => navigation.navigate('ConfigurationScreen')
-                            : () => navigation.navigate('HomeScreen')
-                    }
+                    onPress={() => navigation.navigate('ConfigurationScreen')}
                 >
                     <FontAwesomeIcon icon={faArrowLeftLong} size={27} color="#959595" />
                 </TouchableOpacity>

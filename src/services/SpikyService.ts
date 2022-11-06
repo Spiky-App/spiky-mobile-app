@@ -156,10 +156,9 @@ class SpikyService {
             nuevaContrasena: newPassword,
         });
     }
-    updatePasswordUri(email: string, currentPassword: string, newPassword: string) {
+    updatePasswordUri(email: string, newPassword: string) {
         return this.instance.put<UpdatePasswordUri>('auth/change-password-uri', {
             email,
-            actualContrasena: currentPassword,
             nuevaContrasena: newPassword,
         });
     }
