@@ -70,7 +70,7 @@ export const ChatScreen = ({ route }: Props) => {
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
         const newChatMessages = await getChatMessages(conversationId, lastChatMessageId);
         if (newChatMessages.length === 20) setMoreChatMsg(true);
-        setChatMessages([...chatMessages, ...newChatMessages]);
+        setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
         setIsLoading(false);
         dispatch(openNewMsgConversation(conversationId));
     }

@@ -164,6 +164,8 @@ export const Comment = ({
                 modalReact={modalReact}
                 position={position}
                 commentId={comment.id}
+                messageId={comment.messageId}
+                userId={comment.user.id ? comment.user.id : 0}
                 setReactComment={setReactComment}
             />
         </View>

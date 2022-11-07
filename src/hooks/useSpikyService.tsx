@@ -60,10 +60,14 @@ function useSpikyService() {
     }, [config]);
 
     const createMessageComment = useCallback(
-        async (messageId: number, uid: number, comment: string): Promise<Comment | undefined> => {
+        async (
+            messageId: number,
+            toUser: number,
+            comment: string
+        ): Promise<Comment | undefined> => {
             let messageComment: Comment | undefined = undefined;
             try {
-                const { data } = await service.createMessageComment(messageId, uid, comment);
+                const { data } = await service.createMessageComment(messageId, user.id, comment);
                 const { respuesta } = data;
                 messageComment = {
                     id: respuesta.id_respuesta,
@@ -83,6 +87,25 @@ function useSpikyService() {
                         ? { ...msg, answersNumber: msg.answersNumber + 1 }
                         : msg;
                 });
+                if (toUser !== user.id) {
+                    socket?.emit('notify', {
+                        id_usuario1: toUser,
+                        id_usuario2: user.id,
+                        id_mensaje: messageId,
+                        tipo: 2,
+                    });
+                }
+
+                const regexp = /(@\[@\w*\]\(\d*\))/g;
+                const mentions: RegExpMatchArray | null = messageComment.comment.match(regexp);
+                if (mentions) {
+                    socket?.emit('mentions', {
+                        mentions,
+                        id_usuario2: user.id,
+                        id_mensaje: messageComment.messageId,
+                        tipo: 4,
+                    });
+                }
                 dispatch(setMessages(messagesUpdated));
             } catch {
                 dispatch(
@@ -300,6 +323,17 @@ function useSpikyService() {
                 },
                 reacciones: [],
             });
+
+            const regexp = /(@\[@\w*\]\(\d*\))/g;
+            const mentions: RegExpMatchArray | null = createdMessage.message.match(regexp);
+            if (mentions) {
+                socket?.emit('mentions', {
+                    mentions,
+                    id_usuario2: user.id,
+                    id_mensaje: createdMessage.id,
+                    tipo: 4,
+                });
+            }
         } catch {
             dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
         }
@@ -329,7 +363,7 @@ function useSpikyService() {
     };
     const createReactionMsg = (messageId: number, reaction: string[0]) => {
         service.createReactionMsg(user.id, messageId, reaction);
-        const messagesUpdated = messages.map(msg => {
+        const messagesUpdated = messages.map((msg: Message) => {
             if (msg.id === messageId) {
                 socket?.emit('notify', {
                     id_usuario1: msg.user.id,
@@ -383,8 +417,19 @@ function useSpikyService() {
             return [];
         }
     };
-    const createReactionToComment = async (commentId: number, reactionTypeAux: number) => {
+    const createReactionToComment = (
+        commentId: number,
+        reactionTypeAux: number,
+        messageId: number,
+        toUser: number
+    ) => {
         service.createReactionCmt(commentId, reactionTypeAux);
+        socket?.emit('notify', {
+            id_usuario1: toUser,
+            id_usuario2: user.id,
+            id_mensaje: messageId,
+            tipo: 5,
+        });
     };
 
     const getUsersSuggestions = async (word: string) => {
