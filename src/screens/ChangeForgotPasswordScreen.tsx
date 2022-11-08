@@ -7,6 +7,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import TextInputCustom from '../components/common/TextInput';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
@@ -21,7 +22,7 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 import useSpikyService from '../hooks/useSpikyService';
 
-const initialSate = {
+const initialState = {
     newPassword: '',
     confirmPassword: '',
 };
@@ -39,7 +40,7 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
     const [msgPassword, setMsgPassword] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
-    const { form, onChange } = useForm(initialSate);
+    const { form, onChange } = useForm(initialState);
 
     const { newPassword, confirmPassword } = form;
 
@@ -47,7 +48,7 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
                 await updatePasswordUri(correo, newPassword);
-                onChange(initialSate);
+                onChange(initialState);
                 navigation.navigate('LoginScreen');
             } catch (error) {
                 console.log(error);
@@ -87,30 +88,21 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
                         Ingrese la nueva contraseña:
                     </Text>
 
-                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
-                        <TextInput
+                    <View style={{ marginBottom: 20 }}>
+                        <TextInputCustom
                             placeholder="Nueva contraseña"
-                            placeholderTextColor="#707070"
                             secureTextEntry={passVisible1}
                             autoCorrect={false}
-                            keyboardType="email-address"
-                            style={styles.textinput}
+                            style={{ ...styles.textinput, ...styles.shadow }}
                             value={newPassword}
                             onChangeText={value => onChange({ newPassword: value })}
                             onFocus={() => setMsgPassword(true)}
                             onBlur={() => setMsgPassword(false)}
+                            icon={!passVisible1 ? faEye : faEyeSlash}
+                            touchableOpacityProps={{
+                                onPress: () => setPassVisible1(!passVisible1),
+                            }}
                         />
-                        <TouchableOpacity
-                            style={styles.iconinput}
-                            onPress={() => setPassVisible1(!passVisible1)}
-                        >
-                            <FontAwesomeIcon
-                                icon={passVisible1 ? faEye : faEyeSlash}
-                                size={16}
-                                color="#d4d4d4"
-                            />
-                        </TouchableOpacity>
-
                         {msgPassword && (
                             <PasswordValidationMsg
                                 password={newPassword}
@@ -119,27 +111,19 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
                         )}
                     </View>
 
-                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
-                        <TextInput
+                    <View style={{ marginBottom: 20 }}>
+                        <TextInputCustom
                             placeholder="Confirmar contraseña"
-                            placeholderTextColor="#707070"
-                            autoCorrect={false}
-                            keyboardType="email-address"
-                            style={styles.textinput}
                             secureTextEntry={passVisible2}
+                            autoCorrect={false}
+                            style={{ ...styles.textinput, ...styles.shadow }}
                             value={confirmPassword}
                             onChangeText={value => onChange({ confirmPassword: value })}
+                            icon={!passVisible2 ? faEye : faEyeSlash}
+                            touchableOpacityProps={{
+                                onPress: () => setPassVisible2(!passVisible2),
+                            }}
                         />
-                        <TouchableOpacity
-                            style={styles.iconinput}
-                            onPress={() => setPassVisible2(!passVisible2)}
-                        >
-                            <FontAwesomeIcon
-                                icon={passVisible2 ? faEye : faEyeSlash}
-                                size={16}
-                                color="#d4d4d4"
-                            />
-                        </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity
