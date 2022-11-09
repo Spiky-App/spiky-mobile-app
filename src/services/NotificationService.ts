@@ -97,11 +97,7 @@ class NotificationService {
                 sound: true,
             },
 
-            // Should the initial notification be popped automatically
-            // default: true
-
             popInitialNotification: true,
-
             /**
              * (optional) default: true
              * - Specified if permissions (ios) and token (android and ios) will requested or not,

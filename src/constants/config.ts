@@ -11,5 +11,3 @@ export const config: AxiosRequestConfig = {
     timeout: 10000,
     headers: {},
 };
-
-console.log(config.baseURL);
