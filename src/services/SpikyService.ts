@@ -156,11 +156,21 @@ class SpikyService {
             nuevaContrasena: newPassword,
         });
     }
-    updatePasswordUri(email: string, newPassword: string) {
-        return this.instance.put<UpdatePasswordUri>('auth/change-password-uri', {
-            email,
-            nuevaContrasena: newPassword,
-        });
+    updatePasswordUri(tokenEmail: string, correoValid: string, newPassword: string) {
+        let config = {
+            headers: {
+                'x-token': tokenEmail,
+            },
+        };
+        return this.instance.put<UpdatePasswordUri>(
+            'auth/change-password-uri',
+            {
+                validCorreo: correoValid,
+                nuevaContrasena: newPassword,
+                keyword: 'FG',
+            },
+            config
+        );
     }
 
     createMessageComment(messageId: number, uid: number, comment: string) {

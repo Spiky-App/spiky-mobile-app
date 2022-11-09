@@ -404,9 +404,13 @@ function useSpikyService() {
             })
         );
     };
-    const updatePasswordUri = async (email: string, newPassword: string) => {
-        if (email) {
-            await service.updatePasswordUri(email, newPassword);
+    const updatePasswordUri = async (
+        tokenEmail: string,
+        correoValid: string,
+        newPassword: string
+    ) => {
+        if (correoValid) {
+            await service.updatePasswordUri(tokenEmail, correoValid, newPassword);
             dispatch(
                 setModalAlert({
                     isOpen: true,

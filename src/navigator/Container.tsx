@@ -70,7 +70,7 @@ const Container = () => {
                     path: 'homescreen',
                 },
                 ChangeForgotPasswordScreen: {
-                    path: 'changeforgotpassword/:correo',
+                    path: 'changeforgotpassword',
                 },
             },
         },

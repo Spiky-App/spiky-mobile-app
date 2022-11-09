@@ -30,7 +30,7 @@ const initialState = {
 export const ChangeForgotPasswordScreen = ({ route }) => {
     // deep link stuff
     const params = route.params || {};
-    const { correo } = params;
+    const { token, correoValid } = params;
     // end deep link stuff
     const dispatch = useAppDispatch();
     const { updatePasswordUri } = useSpikyService();
@@ -47,7 +47,7 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
-                await updatePasswordUri(correo, newPassword);
+                await updatePasswordUri(token, correoValid, newPassword);
                 onChange(initialState);
                 navigation.navigate('LoginScreen');
             } catch (error) {
