@@ -10,7 +10,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faAddressCard, faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import { faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -20,8 +20,8 @@ import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
 import { useAppDispatch } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useNavigation } from '@react-navigation/native';
+import useSpikyService from '../hooks/useSpikyService';
 
 const initialSate = {
     alias: '',
@@ -30,7 +30,6 @@ const initialSate = {
 };
 
 export const RegisterScreen = ({ route }) => {
-
     const params = route.params || {};
     const { token, correoValid } = params;
 
@@ -42,21 +41,15 @@ export const RegisterScreen = ({ route }) => {
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
     const { form, onChange } = useForm(initialSate);
+    const { registerUser } = useSpikyService();
 
     const { alias, password, confirmPassword } = form;
 
     const register = async () => {
         if (passwordValid && password === confirmPassword) {
             try {
-                // TODO: register user from hook to backend here
+                await registerUser(token, alias, correoValid, password);
                 onChange(initialSate);
-                dispatch(
-                    setModalAlert({
-                        isOpen: true,
-                        text: 'Registro exitoso',
-                        icon: faAddressCard,
-                    })
-                );
                 navigation.navigate('LoginScreen');
             } catch (error) {
                 console.log(error);

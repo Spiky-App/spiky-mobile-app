@@ -30,6 +30,7 @@ import {
     GetIdeaReactions,
     GetTermsAndConditions,
     ForgotPasswordResponse,
+    RegisterUser,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -223,7 +224,25 @@ class SpikyService {
     }
 
     getEmailVerification(email: string) {
-        return this.instance.get<GetEmailVerification>(`verif/${email}`);
+        return this.instance.get<GetEmailVerification>(`verif/verify/${email}`);
+    }
+
+    registerUser(token: string, alias: string, email: string, password: string) {
+        let config = {
+            headers: {
+                'x-token': token,
+            },
+        };
+        return this.instance.post<RegisterUser>(
+            `auth/register`,
+            {
+                alias,
+                validCorreo: email,
+                contrasena: password,
+                keyword: 'VC',
+            },
+            config
+        );
     }
 
     getIdeaReactions(messageId: number) {

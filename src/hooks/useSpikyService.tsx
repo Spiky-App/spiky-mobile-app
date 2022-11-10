@@ -7,7 +7,13 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { ChatMessage, Comment, Conversation, Message } from '../types/store';
-import { faFlag, faThumbtack, faPaperPlane, faLock } from '../constants/icons/FontAwesome';
+import {
+    faFlag,
+    faThumbtack,
+    faPaperPlane,
+    faLock,
+    faAddressCard,
+} from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { generateMessageFromMensaje } from '../helpers/message';
 import {
@@ -28,6 +34,7 @@ import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
 import SocketContext from '../context/Socket/Context';
 import { generateReactionFromReaccion } from '../helpers/reaction';
+import { RegisterUser } from '../types/services/spiky';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -498,6 +505,41 @@ function useSpikyService() {
         return lists;
     };
 
+    const registerUser = async (
+        sentToken: string,
+        newUserAlias: string,
+        newUserEmail: string,
+        password: string
+    ) => {
+        try {
+            const response = await service.registerUser(
+                sentToken,
+                newUserAlias,
+                newUserEmail,
+                password
+            );
+            const { data } = response;
+            //const { ok, uid, alias, id_universidad, token, msg } = data;
+            const { ok, msg } = data;
+            if (!ok) {
+                // in case of error, message from server is Por favor hable con el administrador
+                dispatch(addToast({ message: msg, type: StatusType.WARNING }));
+            } else {
+                // in case of success, message from server is Registro exitoso
+                dispatch(
+                    setModalAlert({
+                        isOpen: true,
+                        text: msg,
+                        icon: faAddressCard,
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear cuenta', type: StatusType.WARNING }));
+        }
+    };
+
     const handleForgotPassword = async (email: string) => {
         try {
             const response = await service.handleForgotPassword(email);
@@ -539,6 +581,7 @@ function useSpikyService() {
         setNewChatMessagesNumber,
         getTermsAndConditions,
         handleForgotPassword,
+        registerUser,
     };
 }
 
