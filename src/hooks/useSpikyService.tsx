@@ -34,7 +34,6 @@ import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
 import SocketContext from '../context/Socket/Context';
 import { generateReactionFromReaccion } from '../helpers/reaction';
-import { RegisterUser } from '../types/services/spiky';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);

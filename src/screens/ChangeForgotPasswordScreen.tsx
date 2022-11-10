@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Keyboard,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import TextInputCustom from '../components/common/TextInput';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
@@ -27,7 +19,7 @@ const initialState = {
     confirmPassword: '',
 };
 
-export const ChangeForgotPasswordScreen = ({ route }) => {
+export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
     // deep link stuff
     const params = route.params || {};
     const { token, correoValid } = params;

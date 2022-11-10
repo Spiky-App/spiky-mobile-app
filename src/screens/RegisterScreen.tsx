@@ -29,7 +29,7 @@ const initialSate = {
     confirmPassword: '',
 };
 
-export const RegisterScreen = ({ route }) => {
+export const RegisterScreen = ({ route }: { route: any }) => {
     const params = route.params || {};
     const { token, correoValid } = params;
 
