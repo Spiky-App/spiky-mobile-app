@@ -29,7 +29,11 @@ const initialSate = {
     confirmPassword: '',
 };
 
-export const RegisterScreen = () => {
+export const RegisterScreen = ({ route }) => {
+
+    const params = route.params || {};
+    const { token, correoValid } = params;
+
     const dispatch = useAppDispatch();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
@@ -41,9 +45,10 @@ export const RegisterScreen = () => {
 
     const { alias, password, confirmPassword } = form;
 
-    const changePassword = async () => {
+    const register = async () => {
         if (passwordValid && password === confirmPassword) {
             try {
+                // TODO: register user from hook to backend here
                 onChange(initialSate);
                 dispatch(
                     setModalAlert({
@@ -87,7 +92,7 @@ export const RegisterScreen = () => {
                     <ArrowBack />
                     <BigTitle texts={['Escribe eso', 'que no saben']} />
 
-                    <Text style={stylescomp.textEmail}> mariana_aqui_pon_el_correo@uni.mx</Text>
+                    <Text style={stylescomp.textEmail}>{correoValid}</Text>
 
                     <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
@@ -163,7 +168,7 @@ export const RegisterScreen = () => {
                             marginTop: 20,
                             borderColor: buttonState ? '#01192E' : '#D4D4D4',
                         }}
-                        onPress={buttonState ? changePassword : () => {}}
+                        onPress={buttonState ? register : () => {}}
                     >
                         <Text
                             style={{

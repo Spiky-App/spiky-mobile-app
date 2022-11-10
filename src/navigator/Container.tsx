@@ -72,6 +72,9 @@ const Container = () => {
                 ChangeForgotPasswordScreen: {
                     path: 'changeforgotpassword',
                 },
+                RegisterScreen: {
+                    path: 'register',
+                },
             },
         },
     };
