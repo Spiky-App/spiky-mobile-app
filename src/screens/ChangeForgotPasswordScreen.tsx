@@ -98,7 +98,7 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
                             onChangeText={value => onChange({ newPassword: value })}
                             onFocus={() => setMsgPassword(true)}
                             onBlur={() => setMsgPassword(false)}
-                            icon={!passVisible1 ? faEye : faEyeSlash}
+                            icon={passVisible1 ? faEye : faEyeSlash}
                             touchableOpacityProps={{
                                 onPress: () => setPassVisible1(!passVisible1),
                             }}
@@ -119,7 +119,7 @@ export const ChangeForgotPasswordScreen = ({ route }) => {
                             style={{ ...styles.textinput, ...styles.shadow }}
                             value={confirmPassword}
                             onChangeText={value => onChange({ confirmPassword: value })}
-                            icon={!passVisible2 ? faEye : faEyeSlash}
+                            icon={passVisible2 ? faEye : faEyeSlash}
                             touchableOpacityProps={{
                                 onPress: () => setPassVisible2(!passVisible2),
                             }}
