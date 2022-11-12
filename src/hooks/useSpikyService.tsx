@@ -16,10 +16,14 @@ import {
 } from '../helpers/conversations';
 import {
     increaseNewChatMessagesNumber,
+    setUser,
     updateNewChatMessagesNumber,
 } from '../store/feature/user/userSlice';
-import { signOut } from '../store/feature/auth/authSlice';
-import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { signIn, signOut } from '../store/feature/auth/authSlice';
+import {
+    restartConfig,
+    updateServiceConfig,
+} from '../store/feature/serviceConfig/serviceConfigSlice';
 import { removeUser } from '../store/feature/user/userSlice';
 import { StorageKeys } from '../types/storage';
 import { decodeToken } from '../utils/auth';
@@ -45,19 +49,31 @@ function useSpikyService() {
             const exp_date = JSON.parse(decoded_token.toString()).exp;
             const value = new Date().setTime(exp_date * 1000);
             if (Date.now() > value) {
-                onExpiredToken();
+                logOutFunction();
             }
         }
     }, []);
-    async function onExpiredToken() {
-        await AsyncStorage.removeItem(StorageKeys.TOKEN);
-        dispatch(signOut());
-        dispatch(restartConfig());
-        dispatch(removeUser());
-    }
+
     useEffect(() => {
         setService(new SpikyService(config));
     }, [config]);
+
+    const logOutFunction = async () => {
+        try {
+            const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            if (deviceTokenStorage) {
+                await service.deleteDeviceToken(deviceTokenStorage);
+            }
+            await AsyncStorage.removeItem(StorageKeys.TOKEN);
+            await AsyncStorage.removeItem(StorageKeys.DEVICE_TOKEN);
+            dispatch(signOut());
+            dispatch(restartConfig());
+            dispatch(removeUser());
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al cerrar sesión', type: StatusType.WARNING }));
+        }
+    };
 
     const createMessageComment = useCallback(
         async (
@@ -490,6 +506,38 @@ function useSpikyService() {
         }
     };
 
+    const validateToken = async () => {
+        const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
+        if (tokenStorage) {
+            try {
+                const response = await service.getAuthRenew(tokenStorage);
+                const { data } = response;
+                const {
+                    token: token_return,
+                    alias,
+                    n_notificaciones,
+                    id_universidad,
+                    uid,
+                    n_chatmensajes,
+                } = data;
+                await AsyncStorage.setItem(StorageKeys.TOKEN, token_return);
+                dispatch(updateServiceConfig({ headers: { 'x-token': token_return } }));
+                dispatch(signIn(token_return));
+                dispatch(
+                    setUser({
+                        nickname: alias,
+                        notificationsNumber: n_notificaciones,
+                        newChatMessagesNumber: n_chatmensajes,
+                        universityId: id_universidad,
+                        id: uid,
+                    })
+                );
+            } catch {
+                logOutFunction();
+            }
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -518,6 +566,8 @@ function useSpikyService() {
         setNewChatMessagesNumber,
         getTermsAndConditions,
         handleForgotPassword,
+        validateToken,
+        logOutFunction,
     };
 }
 

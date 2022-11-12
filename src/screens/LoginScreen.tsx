@@ -48,23 +48,30 @@ export const LoginScreen = () => {
         if (validateForm(form)) {
             const { email, password } = form;
             try {
-                const response = await spikyService.login(email, password);
-                const { data } = response;
-                const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
-                    data;
-                await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-                dispatch(signIn(token));
-                dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-                dispatch(
-                    setUser({
-                        nickname: alias,
-                        notificationsNumber: n_notificaciones,
-                        newChatMessagesNumber: n_chatmensajes,
-                        universityId: id_universidad,
-                        id: uid,
-                    })
-                );
-                setFormValid(true);
+                const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                if (deviceTokenStorage) {
+                    const response = await spikyService.login(email, password, deviceTokenStorage);
+                    const { data } = response;
+                    const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                        data;
+                    await AsyncStorage.setItem(StorageKeys.TOKEN, token);
+                    dispatch(signIn(token));
+                    dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
+                    dispatch(
+                        setUser({
+                            nickname: alias,
+                            notificationsNumber: n_notificaciones,
+                            newChatMessagesNumber: n_chatmensajes,
+                            universityId: id_universidad,
+                            id: uid,
+                        })
+                    );
+                    setFormValid(true);
+                } else {
+                    dispatch(
+                        addToast({ message: 'Error al iniciar sesíon', type: StatusType.WARNING })
+                    );
+                }
             } catch (e) {
                 console.log(e);
                 dispatch(
