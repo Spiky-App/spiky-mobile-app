@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "reactNativeCliApp.app"
-               BlueprintName = "reactNativeCliApp"
-               ReferencedContainer = "container:reactNativeCliApp.xcodeproj">
+               BuildableName = "SpikyApp.app"
+               BlueprintName = "SpikyApp"
+               ReferencedContainer = "container:SpikyApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "reactNativeCliAppTests.xctest"
-               BlueprintName = "reactNativeCliAppTests"
-               ReferencedContainer = "container:reactNativeCliApp.xcodeproj">
+               BuildableName = "SpikyAppTests.xctest"
+               BlueprintName = "SpikyAppTests"
+               ReferencedContainer = "container:SpikyApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "reactNativeCliApp.app"
-            BlueprintName = "reactNativeCliApp"
-            ReferencedContainer = "container:reactNativeCliApp.xcodeproj">
+            BuildableName = "SpikyApp.app"
+            BlueprintName = "SpikyApp"
+            ReferencedContainer = "container:SpikyApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "reactNativeCliApp.app"
-            BlueprintName = "reactNativeCliApp"
-            ReferencedContainer = "container:reactNativeCliApp.xcodeproj">
+            BuildableName = "SpikyApp.app"
+            BlueprintName = "SpikyApp"
+            ReferencedContainer = "container:SpikyApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
