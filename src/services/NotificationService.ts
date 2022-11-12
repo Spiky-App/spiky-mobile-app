@@ -166,7 +166,6 @@ class NotificationService {
             importance: 'high',
             // messageId: 'google:message_id', // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module.
 
-            actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
             invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
             /* iOS and Android properties */
