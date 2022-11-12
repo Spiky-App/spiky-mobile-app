@@ -99,8 +99,8 @@ function useSpikyService() {
                     against: 0,
                 };
                 socket?.emit('notify', {
-                    id_usuario1: userId,
-                    id_usuario2: uid,
+                    id_usuario1: toUser,
+                    id_usuario2: user.id,
                     id_mensaje: respuesta.id_mensaje,
                     tipo: 2,
                 });
