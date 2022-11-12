@@ -39,7 +39,6 @@
     "react-native-controlled-mentions": "^2.2.5",
     "react-native-dotenv": "^3.3.1",
     "react-native-emoji-selector": "^0.2.0",
-    "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-push-notification": "^8.1.1",
     "react-native-reanimated": "^2.9.1",
