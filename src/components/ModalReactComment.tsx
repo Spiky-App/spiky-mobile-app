@@ -20,6 +20,8 @@ interface Props {
         left: number;
     };
     commentId: number;
+    messageId: number;
+    userId: number;
     setReactComment: React.Dispatch<React.SetStateAction<ReactComment>>;
 }
 
@@ -30,13 +32,15 @@ export const ModalReactComment = ({
     setModalReact,
     position,
     commentId,
+    messageId,
+    userId,
     setReactComment,
 }: Props) => {
     const { createReactionToComment } = useSpikyService();
     const { top, left } = position;
 
     const handleComment = (reactionTypeAux: number) => {
-        createReactionToComment(commentId, reactionTypeAux);
+        createReactionToComment(commentId, reactionTypeAux, messageId, userId);
         const newReactionType = reactionTypeAux === 1 ? ReactionType.FAVOR : ReactionType.AGAINST;
         setReactComment((value: ReactComment) => ({
             ...value,

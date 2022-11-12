@@ -94,6 +94,12 @@ export const Idea = ({ idea, filter }: Props) => {
         }
     };
 
+    const handleClickHashtag = (hashtag_text: string) => {
+        changeScreen('HashTagScreen', {
+            hashtag: hashtag_text,
+        });
+    };
+
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
     }, []);
@@ -139,6 +145,7 @@ export const Idea = ({ idea, filter }: Props) => {
                         textStyle={{ ...styles.text, ...stylescom.msg }}
                         text={message}
                         handleClickUser={handleClickUser}
+                        handleClickHashtag={handleClickHashtag}
                     />
                 </View>
 

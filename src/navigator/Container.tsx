@@ -8,10 +8,29 @@ import Toast from '../components/common/Toast';
 import { ModalAlert } from '../components/ModalAlert';
 import SocketContextComponent from '../context/Socket/Component';
 import useSpikyService from '../hooks/useSpikyService';
-
+import { AppState } from 'react-native';
+import { setAppState } from '../store/feature/ui/uiSlice';
+import { useAppDispatch } from '../store/hooks';
 const Container = () => {
+    const dispatch = useAppDispatch();
     const [isLoading, setLoading] = useState(false);
     const { validateToken } = useSpikyService();
+
+    useEffect(() => {
+        setLoading(true);
+        const state = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                dispatch(setAppState('active'));
+            }
+            if (nextAppState.match(/inactive|background/)) {
+                dispatch(setAppState('inactive'));
+            }
+        });
+
+        return () => {
+            state.remove();
+        };
+    }, []);
 
     useEffect(() => {
         setLoading(true);

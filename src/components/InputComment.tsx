@@ -4,8 +4,6 @@ import { MentionInput } from 'react-native-controlled-mentions';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import useSpikyService from '../hooks/useSpikyService';
-import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Comment } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
@@ -17,6 +15,7 @@ export interface FormComment {
 
 interface Props {
     messageId: number;
+    toUser: number;
     updateComments: (comment: Comment) => void;
     form: FormComment;
     onChange: (stateUpdated: Partial<FormComment>) => void;
@@ -32,13 +31,12 @@ const DEFAULT_FORM: FormComment = {
 
 export const InputComment = ({
     messageId,
+    toUser,
     updateComments,
     form,
     onChange,
     refInputComment,
-    userId = 0,
 }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
     const { createMessageComment } = useSpikyService();
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
@@ -46,7 +44,7 @@ export const InputComment = ({
     const { comment } = form;
     async function onPress() {
         setDisabled(true);
-        const messageComment = await createMessageComment(messageId, uid, comment, userId);
+        const messageComment = await createMessageComment(messageId, toUser, comment);
         if (messageComment) {
             updateComments(messageComment);
         }
@@ -110,6 +108,17 @@ export const InputComment = ({
                             textStyle: { ...styles.h5, color: '#5c71ad' },
                             allowedSpacesCount: 0,
                             isInsertSpaceAfterMention: true,
+                            getPlainString: ({ name }: MentionData) => name,
+                        },
+
+                        {
+                            trigger: '#',
+                            renderSuggestions: props =>
+                                renderSuggetions({ ...props, isMention: false, inputHeight }),
+                            textStyle: { ...styles.h5, color: '#5c71ad' },
+                            allowedSpacesCount: 0,
+                            isInsertSpaceAfterMention: true,
+                            isBottomMentionSuggestionsRender: true,
                             getPlainString: ({ name }: MentionData) => name,
                         },
                     ]}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
@@ -20,6 +20,7 @@ import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
 import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
 import { ChatScreen } from '../screens/ChatScreen';
+import SocketContext from '../context/Socket/Context';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -52,6 +53,9 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const universities = useAppSelector((state: RootState) => state.ui.universities);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
+    const { socket } = useContext(SocketContext);
+
     async function setSessionInfo() {
         const spikyClient = new SpikyService(config);
         try {
@@ -85,6 +89,14 @@ export const Navigator = () => {
             setSessionInfo();
         }
     }, [universities, config]);
+
+    useEffect(() => {
+        if (appState === 'inactive') {
+            socket?.emit('force-offline', {});
+        } else {
+            socket?.emit('force-online', {});
+        }
+    }, [appState, socket]);
 
     return (
         <Stack.Navigator
