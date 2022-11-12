@@ -122,6 +122,12 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         }
     };
 
+    const handleClickHashtag = (hashtag_text: string) => {
+        changeScreen('HashTagScreen', {
+            hashtag: hashtag_text,
+        });
+    };
+
     useEffect(() => {
         if (messageId) {
             handleOpenIdea();
@@ -160,15 +166,20 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
 
                                 {messageTrackingId && (
-                                    <View
-                                        style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}
-                                    >
-                                        <View>
-                                            <FontAwesomeIcon
-                                                icon={faThumbtack}
-                                                color="white"
-                                                size={13}
-                                            />
+                                    <View style={stylescom.corner_container}>
+                                        <View
+                                            style={{
+                                                ...stylescom.corner,
+                                                backgroundColor: '#FC702A',
+                                            }}
+                                        >
+                                            <View>
+                                                <FontAwesomeIcon
+                                                    icon={faThumbtack}
+                                                    color="white"
+                                                    size={13}
+                                                />
+                                            </View>
                                         </View>
                                     </View>
                                 )}
@@ -201,6 +212,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         }}
                                         text={message.message}
                                         handleClickUser={handleClickUser}
+                                        handleClickHashtag={handleClickHashtag}
                                     />
                                 </View>
 
@@ -292,6 +304,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     onChangeComment={onChange}
                                                     refInputComment={refInputComment}
                                                     handleClickUser={handleClickUser}
+                                                    handleClickHashtag={handleClickHashtag}
                                                 />
                                             )}
                                             keyExtractor={item => item.id + ''}
@@ -307,6 +320,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
                                 <InputComment
                                     messageId={messageId}
+                                    toUser={message.user.id ? message.user.id : 0}
                                     updateComments={updateComments}
                                     form={form}
                                     onChange={onChange}

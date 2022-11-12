@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
@@ -9,9 +9,11 @@ import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
+import useSpikyService from '../hooks/useSpikyService';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
@@ -19,6 +21,7 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
+    const { getPendingNotifications } = useSpikyService();
 
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
@@ -35,6 +38,10 @@ export const Header = () => {
             })
         );
     };
+
+    useEffect(() => {
+        if (appState === 'active') getPendingNotifications();
+    }, [appState]);
 
     return (
         <View style={{ backgroundColor: '#01192E' }}>
@@ -58,7 +65,7 @@ export const Header = () => {
                             <View
                                 style={{
                                     ...stylescom.flexConte,
-                                    marginLeft: 20,
+                                    marginHorizontal: 20,
                                 }}
                             >
                                 <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
