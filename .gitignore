@@ -65,3 +65,5 @@ buck-out/
 # Local build files
 .env
 .env.local
+
+spiky-firebase-adminsdk.json
