@@ -28,6 +28,7 @@ import {
     CreateChatMessageSeen,
     GetEmailVerification,
     GetIdeaReactions,
+    GetPendingNotifications,
     GetTermsAndConditions,
     ForgotPasswordResponse,
     RegisterUser,
@@ -247,6 +248,10 @@ class SpikyService {
 
     getIdeaReactions(messageId: number) {
         return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    }
+
+    getPendingNotifications() {
+        return this.instance.get<GetPendingNotifications>(`auth/pending-notif`);
     }
 
     getTermsAndConditions() {

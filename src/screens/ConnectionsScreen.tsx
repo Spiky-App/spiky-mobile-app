@@ -32,6 +32,7 @@ export const ConnectionsScreen = () => {
     );
     const navigation = useNavigation<any>();
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
     const { getConversations } = useSpikyService();
     const dispatch = useAppDispatch();
     const { socket } = useContext(SocketContext);
@@ -86,6 +87,10 @@ export const ConnectionsScreen = () => {
             loadNewConversations(newConver, conver);
         });
     }, [socket]);
+
+    useEffect(() => {
+        if (appState === 'active') loadConversations();
+    }, [appState]);
 
     useEffect(() => {
         if (!first) {

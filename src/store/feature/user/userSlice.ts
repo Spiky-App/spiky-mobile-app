@@ -34,6 +34,13 @@ export const userSlice = createSlice({
             state.universityId = initialState.universityId;
             state.id = initialState.id;
         },
+        setNotificationsAndNewChatMessagesNumber: (
+            state: UserState,
+            action: PayloadAction<{ notificationsNumber: number; newChatMessagesNumber: number }>
+        ) => {
+            state.notificationsNumber = action.payload.notificationsNumber;
+            state.newChatMessagesNumber = action.payload.newChatMessagesNumber;
+        },
         updateNotificationsNumber: (state: UserState, action: PayloadAction<number>) => {
             state.notificationsNumber += action.payload;
         },
@@ -60,6 +67,7 @@ export const {
     increaseNotificationsNumber,
     updateNewChatMessagesNumber,
     increaseNewChatMessagesNumber,
+    setNotificationsAndNewChatMessagesNumber,
 } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;

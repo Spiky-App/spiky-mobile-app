@@ -15,7 +15,8 @@ import { setUser } from '../store/feature/user/userSlice';
 import Toast from '../components/common/Toast';
 import { ModalAlert } from '../components/ModalAlert';
 import SocketContextComponent from '../context/Socket/Component';
-
+import { AppState } from 'react-native';
+import { setAppState } from '../store/feature/ui/uiSlice';
 const Container = () => {
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -49,6 +50,21 @@ const Container = () => {
         }
         setLoading(false);
     }
+
+    useEffect(() => {
+        const state = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                dispatch(setAppState('active'));
+            }
+            if (nextAppState.match(/inactive|background/)) {
+                dispatch(setAppState('inactive'));
+            }
+        });
+
+        return () => {
+            state.remove();
+        };
+    }, []);
 
     useEffect(() => {
         validateToken();

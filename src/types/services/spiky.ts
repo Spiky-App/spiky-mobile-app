@@ -282,6 +282,14 @@ export interface Reaction {
     usuario: User;
 }
 
+export interface GetPendingNotifications {
+    ok: boolean;
+    pendingNotifications: {
+        newChatMessagesNumber: number;
+        notificationsNumber: number;
+    };
+}
+
 export interface GetTermsAndConditions {
     ok: number;
     lists: TermsAndConditions;

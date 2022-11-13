@@ -43,6 +43,7 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 
 export const ChatScreen = ({ route }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
     const dispatch = useAppDispatch();
     const { bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
@@ -69,7 +70,7 @@ export const ChatScreen = ({ route }: Props) => {
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
         const newChatMessages = await getChatMessages(conversationId, lastChatMessageId);
         if (newChatMessages.length === 20) setMoreChatMsg(true);
-        setChatMessages([...chatMessages, ...newChatMessages]);
+        setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
         setIsLoading(false);
         dispatch(openNewMsgConversation(conversationId));
     }
@@ -111,6 +112,10 @@ export const ChatScreen = ({ route }: Props) => {
             };
         }, [route.params?.conversationId])
     );
+
+    useEffect(() => {
+        if (appState === 'active') loadChatMessages();
+    }, [appState]);
 
     useEffect(() => {
         socket?.on('userOnline', (resp: { converId: number }) => {

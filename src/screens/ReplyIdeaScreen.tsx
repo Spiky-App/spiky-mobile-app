@@ -46,7 +46,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setDisabled(true);
-        const content = await createChatMsgWithReply(user.id, messageId, messageReply);
+        const content = await createChatMsgWithReply(user.id, messageId, messageReply, navigation);
         if (content) {
             const { conver, newConver, userto } = content;
             socket?.emit('newChatMsgWithReply', { conver, userto, newConver });
