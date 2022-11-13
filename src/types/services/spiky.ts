@@ -8,6 +8,15 @@ export interface LoginResponse {
     token: string;
 }
 
+export interface RegisterUser {
+    ok: boolean;
+    uid: number;
+    alias: string;
+    id_universidad: number;
+    token: string;
+    msg: string;
+}
+
 export interface ForgotPasswordResponse {
     ok: boolean;
     msg: string;
@@ -167,6 +176,10 @@ export interface UsuariorData {
 }
 
 export interface UpdatePassword {
+    ok: boolean;
+}
+
+export interface UpdatePasswordUri {
     ok: boolean;
 }
 

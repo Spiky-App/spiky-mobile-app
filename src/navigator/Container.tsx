@@ -74,9 +74,30 @@ const Container = () => {
         return <SplashScreen />;
     }
 
+    // linking object takes care of deep linking
+    // register in screens object any linkable screen you want
+    // route.params.correo contains the email that wants to change password when spikyapp://changepassword/:correo
+    const linking = {
+        prefixes: ['spikyapp://'],
+        config: {
+            initialRouteName: 'HomeScreen',
+            screens: {
+                HomeScreen: {
+                    path: 'homescreen',
+                },
+                ChangeForgotPasswordScreen: {
+                    path: 'changeforgotpassword',
+                },
+                RegisterScreen: {
+                    path: 'register',
+                },
+            },
+        },
+    };
+
     return (
         <SocketContextComponent>
-            <NavigationContainer>
+            <NavigationContainer linking={linking} fallback={<SplashScreen />}>
                 <Toast>
                     <Navigator />
                 </Toast>

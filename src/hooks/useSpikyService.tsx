@@ -6,7 +6,13 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
 import { ChatMessage, Comment, Conversation, Message } from '../types/store';
-import { faFlag, faThumbtack, faPaperPlane } from '../constants/icons/FontAwesome';
+import {
+    faFlag,
+    faThumbtack,
+    faPaperPlane,
+    faLock,
+    faAddressCard,
+} from '../constants/icons/FontAwesome';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { generateMessageFromMensaje } from '../helpers/message';
 import {
@@ -473,6 +479,37 @@ function useSpikyService() {
     };
     const updatePassword = async (uid: number, currentPassword: string, newPassword: string) => {
         await service.updatePassword(uid, currentPassword, newPassword);
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: 'Contraseña restablecida',
+                icon: faLock,
+            })
+        );
+    };
+    const updatePasswordUri = async (
+        tokenEmail: string,
+        correoValid: string,
+        newPassword: string
+    ) => {
+        if (correoValid) {
+            await service.updatePasswordUri(tokenEmail, correoValid, newPassword);
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Contraseña restablecida',
+                    icon: faLock,
+                })
+            );
+        } else {
+            console.log('[ERROR] no email sent in route params.');
+            dispatch(
+                addToast({
+                    message: 'Por favor hable con el administrador.',
+                    type: StatusType.WARNING,
+                })
+            );
+        }
     };
 
     const getIdeas = async (
@@ -544,6 +581,41 @@ function useSpikyService() {
         return lists;
     };
 
+    const registerUser = async (
+        sentToken: string,
+        newUserAlias: string,
+        newUserEmail: string,
+        password: string
+    ) => {
+        try {
+            const response = await service.registerUser(
+                sentToken,
+                newUserAlias,
+                newUserEmail,
+                password
+            );
+            const { data } = response;
+            //const { ok, uid, alias, id_universidad, token, msg } = data;
+            const { ok, msg } = data;
+            if (!ok) {
+                // in case of error, message from server is Por favor hable con el administrador
+                dispatch(addToast({ message: msg, type: StatusType.WARNING }));
+            } else {
+                // in case of success, message from server is Registro exitoso
+                dispatch(
+                    setModalAlert({
+                        isOpen: true,
+                        text: msg,
+                        icon: faAddressCard,
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast({ message: 'Error al crear cuenta', type: StatusType.WARNING }));
+        }
+    };
+
     const getPendingNotifications = async () => {
         try {
             const { data } = await service.getPendingNotifications();
@@ -594,6 +666,7 @@ function useSpikyService() {
         getIdeaWithComments,
         loadUserInfo,
         updatePassword,
+        updatePasswordUri,
         getIdeas,
         getEmailVerification,
         getIdeaReactiones,
@@ -601,6 +674,7 @@ function useSpikyService() {
         getTermsAndConditions,
         getPendingNotifications,
         handleForgotPassword,
+        registerUser,
     };
 }
 
