@@ -19,6 +19,7 @@ import {
     CreateReportIdea,
     GetUserInfo,
     UpdatePassword,
+    UpdatePasswordUri,
     CreateMessageCommentResponse,
     CreateChatMsgWithReply,
     GetConversations,
@@ -31,6 +32,7 @@ import {
     GetTermsAndConditions,
     ForgotPasswordResponse,
     DeleteDeviceToken,
+    RegisterUser,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -158,6 +160,22 @@ class SpikyService {
             nuevaContrasena: newPassword,
         });
     }
+    updatePasswordUri(tokenEmail: string, correoValid: string, newPassword: string) {
+        let config = {
+            headers: {
+                'x-token': tokenEmail,
+            },
+        };
+        return this.instance.put<UpdatePasswordUri>(
+            'auth/change-password-uri',
+            {
+                validCorreo: correoValid,
+                nuevaContrasena: newPassword,
+                keyword: 'FG',
+            },
+            config
+        );
+    }
 
     createMessageComment(messageId: number, uid: number, comment: string) {
         return this.instance.post<CreateMessageCommentResponse>('/resp', {
@@ -209,7 +227,25 @@ class SpikyService {
     }
 
     getEmailVerification(email: string) {
-        return this.instance.get<GetEmailVerification>(`verif/${email}`);
+        return this.instance.get<GetEmailVerification>(`verif/verify/${email}`);
+    }
+
+    registerUser(token: string, alias: string, email: string, password: string) {
+        let config = {
+            headers: {
+                'x-token': token,
+            },
+        };
+        return this.instance.post<RegisterUser>(
+            `auth/register`,
+            {
+                alias,
+                validCorreo: email,
+                contrasena: password,
+                keyword: 'VC',
+            },
+            config
+        );
     }
 
     getIdeaReactions(messageId: number) {

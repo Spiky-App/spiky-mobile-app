@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEye, faEyeSlash, faArrowLeftLong, faLock } from '../constants/icons/FontAwesome';
+import { faEye, faEyeSlash, faArrowLeftLong } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
@@ -11,10 +11,9 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
 
-const initialSate = {
+const initialState = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -30,7 +29,7 @@ export const ChangePasswordScreen = () => {
     const [msgPassword, setMsgPassword] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
-    const { form, onChange } = useForm(initialSate);
+    const { form, onChange } = useForm(initialState);
 
     const { currentPassword, newPassword, confirmPassword } = form;
 
@@ -38,14 +37,7 @@ export const ChangePasswordScreen = () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
                 await updatePassword(uid, currentPassword, newPassword);
-                onChange(initialSate);
-                dispatch(
-                    setModalAlert({
-                        isOpen: true,
-                        text: 'Contraseña restablecida',
-                        icon: faLock,
-                    })
-                );
+                onChange(initialState);
                 navigation.navigate('ConfigurationScreen');
             } catch (error) {
                 console.log(error);

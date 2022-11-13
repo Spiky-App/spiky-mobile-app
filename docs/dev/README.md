@@ -129,3 +129,11 @@ react-native run-android
 *Note: it helps if you run emulator -avd your_em and quit it, then this react-native command.*
 
 ![img](res/em-err.png)
+
+## Handy Links
+
+- https://reactnative.dev/docs/linking
+- https://blog.jscrambler.com/how-to-handle-deep-linking-in-a-react-native-app/
+- https://stackoverflow.com/questions/28802115/i-am-trying-to-test-android-deep-link-urls-through-adb-to-launch-my-app
+- https://roycjh.medium.com/how-to-direct-users-from-email-to-your-mobile-app-or-website-using-deep-links-2727af0fc74a
+- https://stackoverflow.com/questions/53037786/how-to-display-ios-apps-deep-links-on-email-as-links

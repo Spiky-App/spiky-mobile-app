@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import {
     Text,
-    TouchableHighlight,
     View,
     TextInput,
     Keyboard,
     TouchableWithoutFeedback,
     TouchableOpacity,
+    StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
@@ -16,42 +16,85 @@ import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
+import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
+import { useAppDispatch } from '../store/hooks';
+import { StatusType } from '../types/common';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { useNavigation } from '@react-navigation/native';
+import useSpikyService from '../hooks/useSpikyService';
 
-export const RegisterScreen = () => {
-    const { onChange } = useForm({
-        alias: '',
-        contrasena: '',
-        confirContrasena: '',
-    });
+const initialSate = {
+    alias: '',
+    password: '',
+    confirmPassword: '',
+};
 
+export const RegisterScreen = ({ route }: { route: any }) => {
+    const params = route.params || {};
+    const { token, correoValid } = params;
+
+    const dispatch = useAppDispatch();
+    const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
     const [passVisible2, setPassVisible2] = useState(true);
+    const [msgPassword, setMsgPassword] = useState(false);
+    const [passwordValid, setPasswordValid] = useState(false);
+    const navigation = useNavigation<any>();
+    const { form, onChange } = useForm(initialSate);
+    const { registerUser } = useSpikyService();
+
+    const { alias, password, confirmPassword } = form;
+
+    const register = async () => {
+        if (passwordValid && password === confirmPassword) {
+            try {
+                await registerUser(token, alias, correoValid, password);
+                onChange(initialSate);
+                navigation.navigate('LoginScreen');
+            } catch (error) {
+                console.log(error);
+                dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
+            }
+        } else if (!passwordValid) {
+            dispatch(
+                addToast({
+                    message: 'La contraseña no cumple los criterios',
+                    type: StatusType.WARNING,
+                })
+            );
+        } else if (password !== confirmPassword) {
+            dispatch(
+                addToast({
+                    message: 'Las contraseñas no coinciden',
+                    type: StatusType.WARNING,
+                })
+            );
+        }
+    };
+
+    useEffect(() => {
+        if (alias != '' && password !== '' && confirmPassword !== '') {
+            setButtonState(true);
+        }
+    }, [password, confirmPassword, alias]);
 
     return (
         <BackgroundPaper>
-            <ArrowBack />
-
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <ArrowBack />
                     <BigTitle texts={['Escribe eso', 'que no saben']} />
 
-                    <Text
-                        style={{
-                            ...styles.textGrayPad,
-                            marginVertical: 15,
-                            fontSize: 14,
-                            marginLeft: 40,
-                        }}
-                    >
-                        correo1234@uni.mx
-                    </Text>
+                    <Text style={stylescomp.textEmail}>{correoValid}</Text>
 
-                    <View style={{ ...styles.input, marginBottom: 20 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Seudónimo"
+                            placeholderTextColor="#707070"
                             autoCorrect={false}
-                            keyboardType="email-address"
+                            autoCapitalize="none"
                             style={styles.textinput}
+                            value={alias}
                             onChangeText={value => onChange({ alias: value })}
                         />
                         <TouchableOpacity style={styles.iconinput}>
@@ -59,13 +102,17 @@ export const RegisterScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ ...styles.input, marginBottom: 20 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Contraseña"
+                            placeholderTextColor="#707070"
                             secureTextEntry={passVisible1}
                             autoCorrect={false}
                             style={styles.textinput}
-                            onChangeText={value => onChange({ contrasena: value })}
+                            value={password}
+                            onChangeText={value => onChange({ password: value })}
+                            onFocus={() => setMsgPassword(true)}
+                            onBlur={() => setMsgPassword(false)}
                         />
                         <TouchableOpacity
                             style={styles.iconinput}
@@ -77,15 +124,24 @@ export const RegisterScreen = () => {
                                 color="#d4d4d4"
                             />
                         </TouchableOpacity>
+
+                        {msgPassword && (
+                            <PasswordValidationMsg
+                                password={password}
+                                setPasswordValid={setPasswordValid}
+                            />
+                        )}
                     </View>
 
-                    <View style={{ ...styles.input, marginBottom: 30 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Confirmar contraseña"
-                            secureTextEntry={passVisible2}
+                            placeholderTextColor="#707070"
                             autoCorrect={false}
+                            secureTextEntry={passVisible2}
                             style={styles.textinput}
-                            onChangeText={value => onChange({ confirContrasena: value })}
+                            value={confirmPassword}
+                            onChangeText={value => onChange({ confirmPassword: value })}
                         />
                         <TouchableOpacity
                             style={styles.iconinput}
@@ -99,14 +155,36 @@ export const RegisterScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableHighlight
-                        underlayColor="#01192ebe"
-                        style={{ ...styles.button, paddingHorizontal: 30 }}
+                    <TouchableOpacity
+                        style={{
+                            ...styles.button,
+                            marginTop: 20,
+                            borderColor: buttonState ? '#01192E' : '#D4D4D4',
+                        }}
+                        onPress={buttonState ? register : () => {}}
                     >
-                        <Text style={{ ...styles.text, ...styles.textb }}>Crear cuenta</Text>
-                    </TouchableHighlight>
+                        <Text
+                            style={{
+                                ...styles.text,
+                                fontSize: 14,
+                                color: buttonState ? '#01192E' : '#D4D4D4',
+                            }}
+                        >
+                            Crear cuenta
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>
         </BackgroundPaper>
     );
 };
+
+const stylescomp = StyleSheet.create({
+    textEmail: {
+        ...styles.textGrayPad,
+        marginVertical: 15,
+        fontSize: 14,
+        width: 350,
+        textAlign: 'center',
+    },
+});
