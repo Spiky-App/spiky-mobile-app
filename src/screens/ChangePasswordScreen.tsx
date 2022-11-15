@@ -12,6 +12,7 @@ import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import useSpikyService from '../hooks/useSpikyService';
+import { validatePasswordFields } from '../helpers/passwords';
 
 const initialState = {
     currentPassword: '',
@@ -34,7 +35,8 @@ export const ChangePasswordScreen = () => {
     const { currentPassword, newPassword, confirmPassword } = form;
 
     const changePassword = async () => {
-        if (passwordValid && newPassword === confirmPassword) {
+        const passwordErrors = validatePasswordFields(newPassword, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
             try {
                 await updatePassword(uid, currentPassword, newPassword);
                 onChange(initialState);
@@ -43,20 +45,8 @@ export const ChangePasswordScreen = () => {
                 console.log(error);
                 dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
             }
-        } else if (!passwordValid) {
-            dispatch(
-                addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (newPassword !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
-                    type: StatusType.WARNING,
-                })
-            );
+        } else {
+            dispatch(addToast(passwordErrors));
         }
     };
 
