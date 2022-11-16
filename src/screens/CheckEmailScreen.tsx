@@ -20,6 +20,7 @@ import { Pressable } from 'react-native';
 import TextInputCustom from '../components/common/TextInput';
 import { HelperMessage } from '../types/common';
 import { getFormHelperMessage } from '../helpers/login.herlpers';
+//import HideWithKeyboard from 'react-native-hide-with-keyboard';
 
 export const CheckEmailScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +30,7 @@ export const CheckEmailScreen = () => {
     const [timetoverif, setTimetoverif] = useState<number | null>(null);
     const [remainTime, setRemainTime] = useState<number>(0);
     const [clock, setClock] = useState<string | null>(null);
+    const [isKeyboardOn, setKeyboardOn] = useState(false);
     const { getEmailVerification } = useSpikyService();
     const { onChange, email } = useForm({
         email: '',
@@ -50,6 +52,23 @@ export const CheckEmailScreen = () => {
             return getFormHelperMessage(value);
         }
     }
+
+    useEffect(() => {
+        const subscriptionShow = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        const subscriptionHide = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+        // cleanup function: RN v0.65.0^ uses remove() since removeListener() was deprecated
+        return () => {
+            subscriptionShow.remove();
+            subscriptionHide.remove();
+        };
+    });
+
+    const _keyboardDidShow = () => {
+        setKeyboardOn(true);
+    };
+    const _keyboardDidHide = () => {
+        setKeyboardOn(false);
+    };
 
     useEffect(() => {
         if (timetoverif) {
@@ -165,31 +184,34 @@ export const CheckEmailScreen = () => {
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-            <LogoFadeIn />
+            <LogoFadeIn toggle={isKeyboardOn} />
         </BackgroundPaper>
     );
 };
 
-const LogoFadeIn = () => {
+const LogoFadeIn = ({ toggle }: { toggle: boolean }) => {
     const { opacity, fadeIn } = useAnimation({});
 
     useEffect(() => {
         fadeIn(800, () => {}, 1000);
     }, []);
-
-    return (
-        <View
-            style={{
-                position: 'absolute',
-                bottom: 40,
-                left: 0,
-                right: 0,
-                alignItems: 'center',
-            }}
-        >
-            <Animated.View style={{ width: 100, opacity }}>
-                <LogoSvg />
-            </Animated.View>
-        </View>
-    );
+    if (!toggle) {
+        return (
+            <View
+                style={{
+                    position: 'absolute',
+                    bottom: 40,
+                    left: 0,
+                    right: 0,
+                    alignItems: 'center',
+                }}
+            >
+                <Animated.View style={{ width: 100, opacity }}>
+                    <LogoSvg />
+                </Animated.View>
+            </View>
+        );
+    } else {
+        return null;
+    }
 };

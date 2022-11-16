@@ -13,6 +13,7 @@ import { StatusType } from '../types/common';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 import useSpikyService from '../hooks/useSpikyService';
+import { validatePasswordFields } from '../helpers/passwords';
 
 const initialState = {
     newPassword: '',
@@ -37,7 +38,8 @@ export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
     const { newPassword, confirmPassword } = form;
 
     const changePassword = async () => {
-        if (passwordValid && newPassword === confirmPassword) {
+        const passwordErrors = validatePasswordFields(newPassword, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
             try {
                 await updatePasswordUri(token, correoValid, newPassword);
                 onChange(initialState);
@@ -46,20 +48,8 @@ export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
                 console.log(error);
                 dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
             }
-        } else if (!passwordValid) {
-            dispatch(
-                addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (newPassword !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
-                    type: StatusType.WARNING,
-                })
-            );
+        } else {
+            dispatch(addToast(passwordErrors));
         }
     };
 
