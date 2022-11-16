@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { ClickNotificationTypes } from '../constants/notification';
 import { StorageKeys } from '../types/storage';
+import { useNavigation } from '@react-navigation/native';
 class NotificationService {
     AndroidOptions: {
         largeIcon: string;
@@ -61,6 +62,8 @@ class NotificationService {
 
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
+                // OpenedIdeaScreen receives route params (id, filter), used in Idea component, for example.
+                const navigation = useNavigation<any>();
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
@@ -70,6 +73,10 @@ class NotificationService {
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
                             console.log('go to idea #', data.ideaId);
+                            navigation.navigate('OpenedIdeaScreen', {
+                                messageId: data.ideaId,
+                                filter: filter,
+                            });
                             break;
                         default:
                         // code block
