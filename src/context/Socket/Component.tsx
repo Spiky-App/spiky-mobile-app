@@ -109,6 +109,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
+                        toUser: conver.user_1,
                     }
                 );
             }
