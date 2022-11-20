@@ -8,14 +8,17 @@ import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageKeys } from './types/storage';
 
 const App = () => {
     const getToken = () => {
         firebase
             .messaging()
             .getToken()
-            .then(x => console.log('token ->', Platform.OS, '-> ', x))
+            .then(async x => {
+                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, x);
+            })
             .catch(e => console.log(e));
     };
     const onMessage = () => {
@@ -25,7 +28,6 @@ const App = () => {
     };
 
     const showNotification = (notification: any) => {
-        console.log('Showing notification');
         console.log(JSON.stringify(notification));
         PushNotification.localNotification({
             title: notification.title,
@@ -35,7 +37,7 @@ const App = () => {
 
     getToken();
     onMessage();
-    // const [permissions, setPermissions] = useState({});
+
     useEffect(() => {
         const type = 'notification';
         PushNotificationIOS.addEventListener(type, onRemoteNotification);
@@ -61,8 +63,6 @@ const App = () => {
                 default:
                 // code block
             }
-        } else {
-            // Do something else with push notification
         }
         // Use the appropriate result based on what you needed to do for this notification
         const result = PushNotificationIOS.FetchResult.NoData;

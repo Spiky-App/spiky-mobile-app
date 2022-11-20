@@ -71,7 +71,6 @@ function useSpikyService() {
                 await service.deleteDeviceToken(deviceTokenStorage);
             }
             await AsyncStorage.removeItem(StorageKeys.TOKEN);
-            await AsyncStorage.removeItem(StorageKeys.DEVICE_TOKEN);
             dispatch(signOut());
             dispatch(restartConfig());
             dispatch(removeUser());
@@ -104,12 +103,6 @@ function useSpikyService() {
                     favor: 0,
                     against: 0,
                 };
-                socket?.emit('notify', {
-                    id_usuario1: toUser,
-                    id_usuario2: user.id,
-                    id_mensaje: respuesta.id_mensaje,
-                    tipo: 2,
-                });
                 const messagesUpdated = messages.map(msg => {
                     return msg.id === messageId
                         ? { ...msg, answersNumber: msg.answersNumber + 1 }

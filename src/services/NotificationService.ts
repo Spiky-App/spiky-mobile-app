@@ -1,9 +1,7 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { ClickNotificationTypes } from '../constants/notification';
-import { StorageKeys } from '../types/storage';
 class NotificationService {
     AndroidOptions: {
         largeIcon: string;
@@ -55,10 +53,6 @@ class NotificationService {
     }
     configure = () => {
         PushNotification.configure({
-            onRegister: async function (token) {
-                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token.token);
-            },
-
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
                 // process the notification
