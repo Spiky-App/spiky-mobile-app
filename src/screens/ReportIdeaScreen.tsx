@@ -16,11 +16,16 @@ import { faFlag } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
+import { RootState } from '../store';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReportIdeaScreen'>;
 
 export const ReportIdeaScreen = ({ route }: Props) => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
     const [buttonState, setButtonState] = useState(false);
@@ -32,9 +37,14 @@ export const ReportIdeaScreen = ({ route }: Props) => {
 
     const { reportReason } = form;
 
-    const handlecreateReportIdea = () => {
+    const handleCreateReportIdea = async () => {
         setButtonState(false);
-        createReportIdea(messageId, reportReason, onChange, navigation);
+        const report = await createReportIdea(messageId, reportReason, uid);
+        if (report) {
+            dispatch(setModalAlert({ isOpen: true, text: report, icon: faFlag }));
+        }
+        onChange({ reportReason: '' });
+        navigation.goBack();
     };
 
     useEffect(() => {
@@ -116,7 +126,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
                                 ...stylecom.circleButton,
                                 borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
                             }}
-                            onPress={buttonState ? handlecreateReportIdea : () => {}}
+                            onPress={buttonState ? handleCreateReportIdea : undefined}
                         >
                             <View
                                 style={{

@@ -9,6 +9,7 @@ import {
     Pressable,
     Animated,
 } from 'react-native';
+import { generateReactionFromReaccion } from '../helpers/reaction';
 import { useAnimation } from '../hooks/useAnimation';
 import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
@@ -53,7 +54,9 @@ export const ModalShowReactions = ({
     }
 
     async function loadIdeaReactions() {
-        setReactions(await getIdeaReactiones(messageId));
+        const reacciones = await getIdeaReactiones(messageId);
+        const reactionList = reacciones.map(reaccion => generateReactionFromReaccion(reaccion));
+        setReactions(reactionList);
         setSelection('Todos');
         setLoading(false);
     }
@@ -80,6 +83,36 @@ export const ModalShowReactions = ({
             fadeIn(200);
         });
     }, [selection]);
+
+    const Reactions = () =>
+        reactions?.length !== 0 ? (
+            <Animated.View style={{ opacity }}>
+                <FlatList
+                    data={filteredReactions}
+                    renderItem={({ item }) => (
+                        <ReactionComp
+                            reaction={item}
+                            handleClickUser={handleClickUser}
+                            setModalReactions={setModalReactions}
+                        />
+                    )}
+                    keyExtractor={item => item.id + ''}
+                    showsVerticalScrollIndicator={false}
+                />
+            </Animated.View>
+        ) : (
+            <View style={{ ...styles.center, flex: 1 }}>
+                <Text
+                    style={{
+                        ...styles.text,
+                        ...styles.textGrayPad,
+                        textAlign: 'center',
+                    }}
+                >
+                    No hay idea que no cause reacción.
+                </Text>
+            </View>
+        );
 
     return (
         <Modal animationType="fade" visible={modalReactions} transparent={true}>
@@ -125,33 +158,8 @@ export const ModalShowReactions = ({
                                     <View style={{ ...styles.center, flex: 1 }}>
                                         <LoadingAnimated />
                                     </View>
-                                ) : reactions?.length !== 0 ? (
-                                    <Animated.View style={{ opacity }}>
-                                        <FlatList
-                                            data={filteredReactions}
-                                            renderItem={({ item }) => (
-                                                <ReactionComp
-                                                    reaction={item}
-                                                    handleClickUser={handleClickUser}
-                                                    setModalReactions={setModalReactions}
-                                                />
-                                            )}
-                                            keyExtractor={item => item.id + ''}
-                                            showsVerticalScrollIndicator={false}
-                                        />
-                                    </Animated.View>
                                 ) : (
-                                    <View style={{ ...styles.center, flex: 1 }}>
-                                        <Text
-                                            style={{
-                                                ...styles.text,
-                                                ...styles.textGrayPad,
-                                                textAlign: 'center',
-                                            }}
-                                        >
-                                            No hay idea que no cause reacción.
-                                        </Text>
-                                    </View>
+                                    <Reactions />
                                 )}
                             </View>
                         </Animated.View>

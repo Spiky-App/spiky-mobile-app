@@ -6,6 +6,7 @@ import {
     Keyboard,
     TouchableWithoutFeedback,
     Animated,
+    Pressable,
 } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -16,7 +17,6 @@ import { useAnimation } from '../hooks/useAnimation';
 import LogoSvg from '../components/svg/LogoSvg';
 import useSpikyService from '../hooks/useSpikyService';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
-import { Pressable } from 'react-native';
 import TextInputCustom from '../components/common/TextInput';
 import { HelperMessage } from '../types/common';
 import { getFormHelperMessage } from '../helpers/login.herlpers';
@@ -37,7 +37,8 @@ export const CheckEmailScreen = () => {
     async function handleSumbit() {
         if (email) {
             setIsLoading(true);
-            setMessage(await getEmailVerification(email));
+            const msg = await getEmailVerification(email);
+            setMessage(msg ? msg : null);
             setTimetoverif(Date.now());
             setIsLoading(false);
         } else {
@@ -79,6 +80,34 @@ export const CheckEmailScreen = () => {
             clearInterval(refTimeToVerif.current);
         }
     }, [remainTime]);
+
+    const VerifyMail = () =>
+        isLoading ? (
+            <View style={{ ...styles.center }}>
+                <LoadingAnimated />
+                <Text style={{ ...styles.textGray }}>Enviando correo</Text>
+            </View>
+        ) : (
+            <>
+                <View style={{ marginVertical: 25 }}>
+                    <TextInputCustom
+                        placeholder="Correo universitario"
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        onChangeText={value => onChange({ email: value })}
+                        helperMessage={getHelperMessage(email)}
+                    />
+                </View>
+                <TouchableHighlight
+                    underlayColor="#01192ebe"
+                    onPress={handleSumbit}
+                    style={{ ...styles.button, paddingHorizontal: 30 }}
+                >
+                    <Text style={{ ...styles.text, ...styles.textb }}>Verificar correo</Text>
+                </TouchableHighlight>
+            </>
+        );
 
     return (
         <BackgroundPaper>
@@ -134,33 +163,8 @@ export const CheckEmailScreen = () => {
                                     )}
                                 </View>
                             </View>
-                        ) : isLoading ? (
-                            <View style={{ ...styles.center }}>
-                                <LoadingAnimated />
-                                <Text style={{ ...styles.textGray }}>Enviando correo</Text>
-                            </View>
                         ) : (
-                            <>
-                                <View style={{ marginVertical: 25 }}>
-                                    <TextInputCustom
-                                        placeholder="Correo universitario"
-                                        autoCorrect={false}
-                                        autoCapitalize="none"
-                                        keyboardType="email-address"
-                                        onChangeText={value => onChange({ email: value })}
-                                        helperMessage={getHelperMessage(email)}
-                                    />
-                                </View>
-                                <TouchableHighlight
-                                    underlayColor="#01192ebe"
-                                    onPress={handleSumbit}
-                                    style={{ ...styles.button, paddingHorizontal: 30 }}
-                                >
-                                    <Text style={{ ...styles.text, ...styles.textb }}>
-                                        Verificar correo
-                                    </Text>
-                                </TouchableHighlight>
-                            </>
+                            <VerifyMail />
                         )}
                     </View>
                 </View>

@@ -53,6 +53,7 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "@tsconfig/react-native": "^2.0.0",
     "@types/jest": "^26.0.24",
+    "@types/node": "^18.11.9",
     "@types/react": "^18.0.15",
     "@types/react-native": "^0.69.3",
     "@types/react-native-dotenv": "^0.2.0",

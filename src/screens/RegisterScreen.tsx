@@ -10,7 +10,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import { faAddressCard, faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -22,6 +22,7 @@ import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
 
 const initialSate = {
     alias: '',
@@ -48,7 +49,16 @@ export const RegisterScreen = ({ route }: { route: any }) => {
     const register = async () => {
         if (passwordValid && password === confirmPassword) {
             try {
-                await registerUser(token, alias, correoValid, password);
+                const msg = await registerUser(token, alias, correoValid, password);
+                if (msg) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: msg,
+                            icon: faAddressCard,
+                        })
+                    );
+                }
                 onChange(initialSate);
                 navigation.navigate('LoginScreen');
             } catch (error) {

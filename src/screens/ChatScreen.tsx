@@ -19,7 +19,12 @@ import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
-import { ChatMessage as ChatMessageProp, User, Conversation } from '../types/store';
+import {
+    ChatMessage as ChatMessageProp,
+    User,
+    Conversation,
+    ChatMessage as ChatMessageI,
+} from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -34,6 +39,8 @@ import {
 import UniversityTag from '../components/common/UniversityTag';
 import { useAnimation } from '../hooks/useAnimation';
 import SendNudgeButton from '../components/SendNudgeButton';
+import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
+import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -42,6 +49,7 @@ const DEFAULT_FORM: FormChat = {
 type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 
 export const ChatScreen = ({ route }: Props) => {
+    const user = useAppSelector((state: RootState) => state.user);
     const uid = useAppSelector((state: RootState) => state.user.id);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
     const dispatch = useAppDispatch();
@@ -68,11 +76,20 @@ export const ChatScreen = ({ route }: Props) => {
         setIsLoading(true);
         setMoreChatMsg(false);
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
-        const newChatMessages = await getChatMessages(conversationId, lastChatMessageId);
-        if (newChatMessages.length === 20) setMoreChatMsg(true);
-        setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
-        setIsLoading(false);
-        dispatch(openNewMsgConversation(conversationId));
+        const chatMessagesResponse = await getChatMessages(conversationId, lastChatMessageId);
+        if (chatMessagesResponse) {
+            const { chatmensajes, n_chatmensajes_unseens } = chatMessagesResponse;
+            const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
+                generateChatMsgFromChatMensaje(chatmsg, user.id)
+            );
+            dispatch(
+                updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
+            );
+            if (newChatMessages.length === 20) setMoreChatMsg(true);
+            setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
+            setIsLoading(false);
+            dispatch(openNewMsgConversation(conversationId));
+        }
     }
 
     function loadMoreChatMsg() {

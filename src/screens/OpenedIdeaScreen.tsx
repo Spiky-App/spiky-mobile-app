@@ -33,6 +33,7 @@ import { PreReactionButton } from '../components/PreReactionButton';
 import ReactionsContainer from '../components/common/ReactionsContainer';
 import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
+import { generateMessageFromMensaje } from '../helpers/message';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -76,11 +77,14 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { getIdeaWithComments } = useSpikyService();
 
     const handleOpenIdea = async () => {
-        const messageRetrived = await getIdeaWithComments(messageId);
-        setMessage(messageRetrived);
-        setComments(messageRetrived.comments ?? []);
-        setMessageTrackingId(messageRetrived.messageTrackingId);
-        setAnswersNumber(messageRetrived.comments?.length || 0);
+        const mensaje = await getIdeaWithComments(messageId);
+        if (mensaje) {
+            const messageRetrived = generateMessageFromMensaje(mensaje);
+            setMessage(messageRetrived);
+            setComments(messageRetrived.comments ?? []);
+            setMessageTrackingId(messageRetrived.messageTrackingId);
+            setAnswersNumber(messageRetrived.comments?.length || 0);
+        }
         setLoading(false);
     };
 

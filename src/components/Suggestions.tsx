@@ -10,7 +10,7 @@ interface RenderSuggestionsProps extends MentionSuggestionsProps {
     inputHeight?: number;
 }
 
-export const renderSuggetions: FC<RenderSuggestionsProps> = ({
+export const RenderSuggetions: FC<RenderSuggestionsProps> = ({
     keyword,
     onSuggestionPress,
     isMention,
@@ -45,7 +45,11 @@ export const renderSuggetions: FC<RenderSuggestionsProps> = ({
     const getHashtagSuggestions = async (word: string) => {
         if (word === '') word = 'anyhashtag0320';
         if (word !== '#') {
-            const newHashtags = await getHashtagsSuggestions(word);
+            const hashtags = await getHashtagsSuggestions(word);
+            const newHashtags =
+                word === 'anyhashtag0320'
+                    ? hashtags
+                    : [{ hashtag: word, id_hashtag: 0 }, ...hashtags];
             setSuggestions(
                 newHashtags.map((hash: any) => ({ name: '#' + hash.hashtag, id: hash.id_hashtag }))
             );

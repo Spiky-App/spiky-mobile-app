@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -20,11 +20,14 @@ import { RootState } from '../store';
 import { addMessage, setDraft, updateMessage } from '../store/feature/messages/messagesSlice';
 import ButtonIcon from '../components/common/ButtonIcon';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
-import { renderSuggetions } from '../components/Suggestions';
+import { RenderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 import useSpikyService from '../hooks/useSpikyService';
 import { BackgroundPaper } from '../components/BackgroundPaper';
+import { generateMessageFromMensaje } from '../helpers/message';
+import SocketContext from '../context/Socket/Context';
+import { Message } from '../types/store';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
@@ -42,6 +45,9 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const [isLoading, setLoading] = useState(false);
     const { createIdea, updateDraft } = useSpikyService();
     const IDEA_MAX_LENGHT = 220;
+    const { draft } = useAppSelector((state: RootState) => state.messages);
+    const user = useAppSelector((state: RootState) => state.user);
+    const { socket } = useContext(SocketContext);
 
     function invalid() {
         const { message: mensaje } = form;
@@ -54,12 +60,51 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     function getPercentage(value: number, maxValue: number): number {
         return (value / maxValue) * 100;
     }
-    const { draft } = useAppSelector((state: RootState) => state.messages);
+
+    async function handleCreateIdea(): Promise<Message | undefined> {
+        const mensaje = await createIdea(form.message);
+        if (mensaje) {
+            const createdMessage: Message = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    id_universidad: user.universityId,
+                },
+                reacciones: [],
+            });
+            const regexp = /(@\[@\w*\]\(\d*\))/g;
+            const mentions: RegExpMatchArray | null = createdMessage.message.match(regexp);
+            if (mentions) {
+                socket?.emit('mentions', {
+                    mentions,
+                    id_usuario2: user.id,
+                    id_mensaje: createdMessage.id,
+                    tipo: 4,
+                });
+            }
+            return createdMessage;
+        }
+        return undefined;
+    }
+
+    async function handleUpdateDraft(id: number): Promise<Message | undefined> {
+        const mensaje = await updateDraft(form.message, id, true);
+        if (mensaje) {
+            return generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    id_universidad: user.universityId,
+                },
+                reacciones: [],
+            });
+        }
+        return undefined;
+    }
+
     async function onPressLocationArrow() {
         setLoading(true);
-        const message = idDraft
-            ? await updateDraft(form.message, idDraft, true)
-            : await createIdea(form.message);
+        const message = idDraft ? await handleUpdateDraft(idDraft) : await handleCreateIdea();
         if (message) {
             dispatch(setDraft(false));
             nav.navigate('CommunityScreen');
@@ -77,7 +122,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     async function onPressPenToSquare() {
         setLoading(true);
         if (isDraft) {
-            const message = await updateDraft(form.message, idDraft, false);
+            const message = await handleUpdateDraft(idDraft);
             if (message) {
                 if (draft) {
                     dispatch(updateMessage(message));
@@ -95,7 +140,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
             const message = await createIdea(form.message, true);
             if (message) {
                 if (draft) {
-                    dispatch(addMessage(message));
+                    dispatch(addMessage(generateMessageFromMensaje(message)));
                 }
                 nav.goBack();
                 dispatch(
@@ -134,7 +179,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                                 {
                                     trigger: '@',
                                     renderSuggestions: props =>
-                                        renderSuggetions({ ...props, isMention: true }),
+                                        RenderSuggetions({ ...props, isMention: true }),
                                     textStyle: { ...styles.h5, color: '#5c71ad' },
                                     allowedSpacesCount: 0,
                                     isInsertSpaceAfterMention: true,
@@ -144,7 +189,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                                 {
                                     trigger: '#',
                                     renderSuggestions: props =>
-                                        renderSuggetions({ ...props, isMention: false }),
+                                        RenderSuggetions({ ...props, isMention: false }),
                                     textStyle: { ...styles.h5, color: '#5c71ad' },
                                     allowedSpacesCount: 0,
                                     isInsertSpaceAfterMention: true,

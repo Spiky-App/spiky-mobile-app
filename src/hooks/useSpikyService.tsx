@@ -1,48 +1,36 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { ChatMessage, Comment, Conversation, Message } from '../types/store';
-import {
-    faFlag,
-    faThumbtack,
-    faPaperPlane,
-    faLock,
-    faAddressCard,
-} from '../constants/icons/FontAwesome';
-import { setMessages } from '../store/feature/messages/messagesSlice';
-import { generateMessageFromMensaje } from '../helpers/message';
-import {
-    generateChatMsgFromChatMensaje,
-    generateConversationFromConversacion,
-} from '../helpers/conversations';
-import {
-    increaseNewChatMessagesNumber,
-    setNotificationsAndNewChatMessagesNumber,
-    updateNewChatMessagesNumber,
-} from '../store/feature/user/userSlice';
+import { Toast } from '../types/store';
+import { removeUser } from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
 import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { removeUser } from '../store/feature/user/userSlice';
 import { StorageKeys } from '../types/storage';
 import { decodeToken } from '../utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import { MessageRequestData } from '../services/models/spikyService';
-import SocketContext from '../context/Socket/Context';
-import { generateReactionFromReaccion } from '../helpers/reaction';
-import { NavigationProp } from '@react-navigation/native';
+import { AxiosError } from 'axios';
+import {
+    ChatMessage,
+    Conversation,
+    GetChatMessages,
+    HashtagI,
+    Message,
+    MessageComment,
+    MessageWithReplyContent,
+    Notification,
+    PendingNotificationsI,
+    Reaction,
+    TermsAndConditions,
+    UserI,
+} from '../types/services/spiky';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const user = useAppSelector((state: RootState) => state.user);
-    const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const chats = useAppSelector((state: RootState) => state.chats);
     const dispatch = useAppDispatch();
-    const { socket } = useContext(SocketContext);
     const [service, setService] = useState<SpikyService>(new SpikyService(config));
     const token = useAppSelector((state: RootState) => state.auth.token);
     useEffect(() => {
@@ -65,451 +53,297 @@ function useSpikyService() {
         setService(new SpikyService(config));
     }, [config]);
 
+    function handleSpikyServiceToast(error: unknown, defaultMessage: string): Toast {
+        if (error instanceof AxiosError) {
+            return {
+                message: error.response?.data?.message,
+                type: StatusType.WARNING,
+            };
+        }
+        return {
+            message: defaultMessage,
+            type: StatusType.WARNING,
+        };
+    }
+
     const createMessageComment = useCallback(
         async (
             messageId: number,
-            toUser: number,
+            uid: number,
             comment: string
-        ): Promise<Comment | undefined> => {
-            let messageComment: Comment | undefined = undefined;
+        ): Promise<MessageComment | undefined> => {
             try {
-                const { data } = await service.createMessageComment(messageId, user.id, comment);
-                const { respuesta } = data;
-                messageComment = {
-                    id: respuesta.id_respuesta,
-                    comment: respuesta.respuesta,
-                    date: respuesta.fecha,
-                    messageId: respuesta.id_mensaje,
-                    user: {
-                        id: user.id,
-                        nickname: user.nickname,
-                        universityId: user.universityId,
-                    },
-                    favor: 0,
-                    against: 0,
-                };
-                const messagesUpdated = messages.map(msg => {
-                    return msg.id === messageId
-                        ? { ...msg, answersNumber: msg.answersNumber + 1 }
-                        : msg;
-                });
-                if (toUser !== user.id) {
-                    socket?.emit('notify', {
-                        id_usuario1: toUser,
-                        id_usuario2: user.id,
-                        id_mensaje: messageId,
-                        tipo: 2,
-                    });
-                }
-
-                const regexp = /(@\[@\w*\]\(\d*\))/g;
-                const mentions: RegExpMatchArray | null = messageComment.comment.match(regexp);
-                if (mentions) {
-                    socket?.emit('mentions', {
-                        mentions,
-                        id_usuario2: user.id,
-                        id_mensaje: messageComment.messageId,
-                        tipo: 4,
-                    });
-                }
-                dispatch(setMessages(messagesUpdated));
-            } catch {
-                dispatch(
-                    addToast({ message: 'Error creando respuesta', type: StatusType.WARNING })
-                );
+                const response = await service.createMessageComment(messageId, uid, comment);
+                return response.data.respuesta;
+            } catch (error) {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error creando respuesta.')));
             }
-            return messageComment;
+            return undefined;
         },
-        [service, user]
+        [service]
     );
 
     const createReportIdea = async (
         messageId: number,
         reportReason: string,
-        onChange: (
-            stateUpdated: Partial<{
-                reportReason: string;
-            }>
-        ) => void,
-        navigation: NavigationProp<
-            ReactNavigation.RootParamList,
-            never,
-            undefined,
-            Readonly<{
-                key: string;
-                index: number;
-                routeNames: never[];
-                history?: unknown[] | undefined;
-                routes: any;
-                type: string;
-                stale: false;
-            }>,
-            {},
-            {}
-        >
-    ) => {
+        uid: number
+    ): Promise<string | undefined> => {
         try {
-            const response = await service.createReportIdea(user.id, messageId, reportReason);
-            const { data } = response;
-            const { msg } = data;
-            onChange({ reportReason: '' });
-            navigation.goBack();
-            dispatch(setModalAlert({ isOpen: true, text: msg, icon: faFlag }));
+            const response = await service.createReportIdea(uid, messageId, reportReason);
+            return response.data.msg;
         } catch (error) {
             console.log(error);
-            onChange({ reportReason: '' });
-            navigation.goBack();
-            dispatch(addToast({ message: 'Error al reportar', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al reportar mensaje.')));
         }
+        return undefined;
     };
 
-    const createTracking = async (messageId: number) => {
-        const response = await service.createTracking(user.id, messageId);
-        const { data } = response;
-        const { id_tracking } = data;
-
-        const messagesUpdated = messages.map(msg => {
-            if (msg.id === messageId) {
-                return { ...msg, messageTrackingId: id_tracking };
-            } else {
-                return msg;
-            }
-        });
-        dispatch(
-            setModalAlert({
-                isOpen: true,
-                text: 'Tracking activado',
-                color: '#FC702A',
-                icon: faThumbtack,
-            })
-        );
-        dispatch(setMessages(messagesUpdated));
-        return id_tracking;
+    const createTracking = async (messageId: number, uid: number): Promise<number | undefined> => {
+        try {
+            const response = await service.createTracking(uid, messageId);
+            return response.data.id_tracking;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error siguiendo mensaje.')));
+        }
+        return undefined;
     };
 
-    const deleteTracking = async (messageId: number, filter?: string) => {
-        await service.deleteTracking(messageId);
-
-        let messagesUpdated: Message[];
-
-        if (filter === '/tracking') {
-            messagesUpdated = messages.filter(msg => msg.id !== messageId);
-        } else {
-            messagesUpdated = messages.map(msg => {
-                if (msg.id === messageId) {
-                    return { ...msg, messageTrackingId: undefined };
-                } else {
-                    return msg;
-                }
-            });
+    const deleteTracking = async (messageId: number): Promise<boolean> => {
+        try {
+            await service.deleteTracking(messageId);
+            return true;
+        } catch (error) {
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error dejando de siguiendo mensaje.'))
+            );
         }
-
-        dispatch(setModalAlert({ isOpen: true, text: 'Tracking desactivado', icon: faThumbtack }));
-        dispatch(setMessages(messagesUpdated));
+        return false;
     };
 
     const createChatMsgWithReply = async (
-        userId: number = 0,
+        userId: number,
         messageId: number,
-        chatMessage: string,
-        navigation: NavigationProp<
-            ReactNavigation.RootParamList,
-            never,
-            undefined,
-            Readonly<{
-                key: string;
-                index: number;
-                routeNames: never[];
-                history?: unknown[] | undefined;
-                routes: any;
-                type: string;
-                stale: false;
-            }>,
-            {},
-            {}
-        >
-    ) => {
+        chatMessage: string
+    ): Promise<MessageWithReplyContent | undefined> => {
         try {
             const response = await service.createChatMsgWithReply(userId, messageId, chatMessage);
-            const { data } = response;
-            const { content } = data;
-            const { userto, conver, newConver } = content;
-            const converRetrived = generateConversationFromConversacion(conver, user.id);
-            navigation.goBack();
-            dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
-            return { userto, newConver, conver: converRetrived };
+            return response.data.content;
         } catch (error) {
-            console.log(error);
-            navigation.goBack();
-            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear mensaje.')));
         }
+        return undefined;
     };
 
-    const getConversations = async () => {
+    const getConversations = async (): Promise<Conversation[]> => {
         try {
             const response = await service.getConversations();
-            const { data } = response;
-            const { convers } = data;
-            const conversationsRetrived: Conversation[] = convers.map(conver => {
-                return generateConversationFromConversacion(conver, user.id);
-            });
-            return conversationsRetrived;
+            return response.data.convers;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error al crear mensaje', type: StatusType.WARNING }));
-            return [];
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al listar conversaciones.')));
         }
+        return [];
     };
 
-    const getChatMessages = async (conversationId: number, lastChatMessageId?: number) => {
+    const getChatMessages = async (
+        conversationId: number,
+        lastChatMessageId?: number
+    ): Promise<GetChatMessages | undefined> => {
         try {
             const response = await service.getChatMessages(conversationId, lastChatMessageId);
-            const { data } = response;
-            const { chatmensajes, n_chatmensajes_unseens } = data;
-            const chatMessagesRetrived: ChatMessage[] = chatmensajes.map(chatmsg => {
-                return generateChatMsgFromChatMensaje(chatmsg, user.id);
-            });
-            dispatch(
-                updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
-            );
-            return chatMessagesRetrived;
+            return response.data;
         } catch (error) {
             console.log(error);
-            dispatch(
-                addToast({ message: 'Error al cargar los mensajes', type: StatusType.WARNING })
-            );
-            return [];
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.')));
         }
+        return undefined;
     };
 
-    const createChatMessage = async (conversationId: number, chatMessage: string) => {
+    const createChatMessage = async (
+        conversationId: number,
+        chatMessage: string
+    ): Promise<ChatMessage | undefined> => {
         try {
             const response = await service.createChatMessage(conversationId, chatMessage);
-            const { data } = response;
-            const { chatmensaje } = data;
-            const chatMessageRetrived: ChatMessage = generateChatMsgFromChatMensaje(
-                chatmensaje,
-                user.id
-            );
-
-            return chatMessageRetrived;
+            return response.data.chatmensaje;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear el mensaje.')));
         }
+        return undefined;
     };
 
-    const createChatMessageSeen = async (chatMessageId: number) => {
+    const createChatMessageSeen = async (chatMessageId: number): Promise<void> => {
         try {
-            const response = await service.createChatMessageSeen(chatMessageId);
-            const { data } = response;
-            const { content } = data;
-            const { chatmsg_seen, userto } = content;
-            return {
-                conversationId: chatmsg_seen.id_conversacion,
-                chatMessageId,
-                toUser: userto,
-            };
+            await service.createChatMessageSeen(chatMessageId);
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error al crear el mensajes', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear el mensajes.')));
         }
     };
-    const createIdea = async (message: string, draft?: boolean) => {
-        let createdMessage: Message | undefined = undefined;
+
+    const createIdea = async (message: string, draft?: boolean): Promise<Message | undefined> => {
         try {
             const response = await service.createMessage(message, draft ? 1 : 0);
-            const { data } = response;
-            const { mensaje } = data;
-            createdMessage = generateMessageFromMensaje({
-                ...mensaje,
-                usuario: {
-                    alias: user.nickname,
-                    id_universidad: user.universityId,
-                },
-                reacciones: [],
-            });
-
-            const regexp = /(@\[@\w*\]\(\d*\))/g;
-            const mentions: RegExpMatchArray | null = createdMessage.message.match(regexp);
-            if (mentions) {
-                socket?.emit('mentions', {
-                    mentions,
-                    id_usuario2: user.id,
-                    id_mensaje: createdMessage.id,
-                    tipo: 4,
-                });
-            }
-        } catch {
-            dispatch(addToast({ message: 'Error creando idea', type: StatusType.WARNING }));
+            return response.data.mensaje;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando idea.')));
         }
-        return createdMessage;
+        return undefined;
     };
-    const updateDraft = async (message: string, id: number, post: boolean) => {
-        let createdMessage: Message | undefined = undefined;
+
+    const updateDraft = async (
+        message: string,
+        id: number,
+        post: boolean
+    ): Promise<Message | undefined> => {
         try {
             const response = await service.updateDraft(message, id, post);
-            const { data } = response;
-            const { mensaje } = data;
-            createdMessage = generateMessageFromMensaje({
-                ...mensaje,
-                usuario: {
-                    alias: user.nickname,
-                    id_universidad: user.universityId,
-                },
-                reacciones: [],
-            });
+            return response.data.mensaje;
         } catch (error) {
             console.log(error);
-            dispatch(
-                addToast({ message: 'Error actualizando borrador', type: StatusType.WARNING })
-            );
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error actualizando borrador.')));
         }
-        return createdMessage;
-    };
-    const createReactionMsg = (messageId: number, reaction: string[0]) => {
-        service.createReactionMsg(user.id, messageId, reaction);
-        const messagesUpdated = messages.map((msg: Message) => {
-            if (msg.id === messageId) {
-                socket?.emit('notify', {
-                    id_usuario1: msg.user.id,
-                    id_usuario2: user.id,
-                    id_mensaje: msg.id,
-                    tipo: 1,
-                });
-                let isNew = true;
-                let reactions = msg.reactions.map(r => {
-                    if (r.reaction === reaction) {
-                        isNew = false;
-                        return {
-                            reaction: r.reaction,
-                            count: r.count + 1,
-                        };
-                    } else {
-                        return r;
-                    }
-                });
-                if (isNew) {
-                    reactions = [...reactions, { reaction, count: 1 }];
-                }
-                return {
-                    ...msg,
-                    reactions,
-                    myReaction: reaction,
-                };
-            } else {
-                return msg;
-            }
-        });
-        dispatch(setMessages(messagesUpdated));
-    };
-    const deleteIdea = async (messageId: number) => {
-        service.deleteMessage(messageId);
-    };
-    const updateNotifications = async (arrayIds: number[]) => {
-        service.updateNotifications(arrayIds);
-    };
-    const retrieveNotifications = async () => {
-        try {
-            const response = await service.getNotifications();
-            const { data } = response;
-            const { notificaciones } = data;
-            return notificaciones.map(n => generateNotificationsFromNotificacion(n));
-        } catch (error) {
-            console.log(error);
-            dispatch(
-                addToast({ message: 'Error al obtener notificaciones', type: StatusType.WARNING })
-            );
-            return [];
-        }
-    };
-    const createReactionToComment = (
-        commentId: number,
-        reactionTypeAux: number,
-        messageId: number,
-        toUser: number
-    ) => {
-        service.createReactionCmt(commentId, reactionTypeAux);
-        socket?.emit('notify', {
-            id_usuario1: toUser,
-            id_usuario2: user.id,
-            id_mensaje: messageId,
-            tipo: 5,
-        });
+        return undefined;
     };
 
-    const getUsersSuggestions = async (word: string) => {
+    const createReactionMsg = async (
+        messageId: number,
+        reaction: string[0],
+        uid: number
+    ): Promise<boolean> => {
+        try {
+            await service.createReactionMsg(uid, messageId, reaction);
+            return true;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando reacción.')));
+        }
+        return false;
+    };
+
+    const deleteIdea = async (messageId: number): Promise<boolean> => {
+        try {
+            await service.deleteMessage(messageId);
+            return true;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error eliminando idea.')));
+        }
+        return false;
+    };
+
+    const updateNotifications = async (arrayIds: number[]): Promise<boolean> => {
+        try {
+            await service.updateNotifications(arrayIds);
+            return true;
+        } catch (error) {
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error actualizando notificaciones.'))
+            );
+        }
+        return false;
+    };
+
+    const retrieveNotifications = async (): Promise<Notification[]> => {
+        try {
+            const response = await service.getNotifications();
+            return response.data.notificaciones;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al obtener notificaciones.')));
+        }
+        return [];
+    };
+
+    const createReactionToComment = async (
+        commentId: number,
+        reactionTypeAux: number
+    ): Promise<boolean> => {
+        try {
+            await service.createReactionCmt(commentId, reactionTypeAux);
+            return true;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando reacción.')));
+        }
+        return false;
+    };
+
+    const getUsersSuggestions = async (word: string): Promise<UserI[]> => {
         try {
             const response = await service.getUserSuggestions(word);
-            const { data } = response;
-            const { usuarios } = data;
-            return usuarios;
+            return response.data.usuarios;
         } catch (error) {
             console.log(error);
-            return [];
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error obteniendo sugerencia de usuarios.'))
+            );
         }
+        return [];
     };
-    const getHashtagsSuggestions = async (word: string) => {
+
+    const getHashtagsSuggestions = async (word: string): Promise<HashtagI[]> => {
         try {
             const response = await service.getHashtagsSuggestions(word);
-            const { data } = response;
-            const { hashtags } = data;
-            return word === 'anyhashtag0320'
-                ? hashtags
-                : [{ hashtag: word, id_hashtag: 0 }, ...hashtags];
+            return response.data.hashtags;
         } catch (error) {
             console.log(error);
-            return [];
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error obteniendo sugerencia de hashtags.'))
+            );
+        }
+        return [];
+    };
+
+    const getIdeaWithComments = async (messageId: number): Promise<Message | undefined> => {
+        try {
+            const response = await service.getMessageAndComments(messageId);
+            return { ...response.data.mensaje, num_respuestas: response.data.num_respuestas };
+        } catch (error) {
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error obteniendo idea con comentarios.'))
+            );
         }
     };
-    const getIdeaWithComments = async (messageId: number) => {
-        const response = await service.getMessageAndComments(messageId);
-        const { data } = response;
-        const { mensaje, num_respuestas } = data;
-        return generateMessageFromMensaje({
-            ...mensaje,
-            num_respuestas: num_respuestas,
-        });
+
+    const loadUserInfo = async (): Promise<UserI | undefined> => {
+        try {
+            const response = await service.getUserInfo();
+            return response.data.usuario;
+        } catch (error) {
+            dispatch(
+                addToast(handleSpikyServiceToast(error, 'Error cargando información del usuario.'))
+            );
+        }
+        return undefined;
     };
-    const loadUserInfo = async () => {
-        const response = await service.getUserInfo();
-        const { data: fetchData } = response;
-        const { usuario } = fetchData;
-        return usuario;
+
+    const updatePassword = async (
+        uid: number,
+        currentPassword: string,
+        newPassword: string
+    ): Promise<boolean> => {
+        try {
+            await service.updatePassword(uid, currentPassword, newPassword);
+            return true;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error actualizando contraseña.')));
+        }
+        return false;
     };
-    const updatePassword = async (uid: number, currentPassword: string, newPassword: string) => {
-        await service.updatePassword(uid, currentPassword, newPassword);
-        dispatch(
-            setModalAlert({
-                isOpen: true,
-                text: 'Contraseña restablecida',
-                icon: faLock,
-            })
-        );
-    };
+
     const updatePasswordUri = async (
         tokenEmail: string,
         correoValid: string,
         newPassword: string
-    ) => {
-        if (correoValid) {
+    ): Promise<boolean> => {
+        try {
             await service.updatePasswordUri(tokenEmail, correoValid, newPassword);
-            dispatch(
-                setModalAlert({
-                    isOpen: true,
-                    text: 'Contraseña restablecida',
-                    icon: faLock,
-                })
-            );
-        } else {
+            return true;
+        } catch (error) {
             console.log('[ERROR] no email sent in route params.');
-            dispatch(
-                addToast({
-                    message: 'Por favor hable con el administrador.',
-                    type: StatusType.WARNING,
-                })
-            );
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error actualizando contraseña.')));
         }
+        return false;
     };
 
     const getIdeas = async (
@@ -517,68 +351,49 @@ function useSpikyService() {
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ) => {
+    ): Promise<Message[] | undefined> => {
         try {
-            const { data: messagesData } = await service.getMessages(
-                uid,
-                filter,
-                lastMessageId,
-                parameters
-            );
-            const { mensajes } = messagesData;
-            return mensajes.map((mensaje, index) => {
-                return generateMessageFromMensaje(mensaje, index);
-            });
+            const response = await service.getMessages(uid, filter, lastMessageId, parameters);
+            return response.data.mensajes;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error cargando mensajes', type: StatusType.WARNING }));
-            return [];
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando mensajes.')));
         }
+        return [];
     };
 
-    const getEmailVerification = async (email: string) => {
+    const getEmailVerification = async (email: string): Promise<string | undefined> => {
         try {
             const response = await service.getEmailVerification(email);
-            const { data } = response;
-            const { msg } = data;
-            return msg;
+            return response.data.msg;
         } catch (error) {
             console.log(error);
             dispatch(
-                addToast({
-                    message: 'Correo invalido, ingrese otro correo  ',
-                    type: StatusType.WARNING,
-                })
+                addToast(handleSpikyServiceToast(error, 'Correo invalido, ingrese otro correo.'))
             );
-            return null;
         }
+        return undefined;
     };
 
-    const getIdeaReactiones = async (messageId: number) => {
+    const getIdeaReactiones = async (messageId: number): Promise<Reaction[]> => {
         try {
-            const { data } = await service.getIdeaReactions(messageId);
-            const { reacciones } = data;
-            return reacciones.map(reaccion => {
-                return generateReactionFromReaccion(reaccion);
-            });
+            const response = await service.getIdeaReactions(messageId);
+            return response.data.reacciones;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error cargando reacciones', type: StatusType.WARNING }));
-            return [];
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
         }
+        return [];
     };
 
-    const setNewChatMessagesNumber = (conversationId: number) => {
-        if (chats.activeConversationId !== conversationId) {
-            dispatch(increaseNewChatMessagesNumber());
+    const getTermsAndConditions = async (): Promise<TermsAndConditions | undefined> => {
+        try {
+            const response = await service.getTermsAndConditions();
+            return response.data.lists;
+        } catch (error) {
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
         }
-    };
-
-    const getTermsAndConditions = async () => {
-        const response = await service.getTermsAndConditions();
-        const { data } = response;
-        const { lists } = data;
-        return lists;
+        return undefined;
     };
 
     const registerUser = async (
@@ -586,7 +401,7 @@ function useSpikyService() {
         newUserAlias: string,
         newUserEmail: string,
         password: string
-    ) => {
+    ): Promise<string | undefined> => {
         try {
             const response = await service.registerUser(
                 sentToken,
@@ -594,54 +409,38 @@ function useSpikyService() {
                 newUserEmail,
                 password
             );
-            const { data } = response;
-            //const { ok, uid, alias, id_universidad, token, msg } = data;
-            const { ok, msg } = data;
-            if (!ok) {
-                // in case of error, message from server is Por favor hable con el administrador
-                dispatch(addToast({ message: msg, type: StatusType.WARNING }));
-            } else {
-                // in case of success, message from server is Registro exitoso
-                dispatch(
-                    setModalAlert({
-                        isOpen: true,
-                        text: msg,
-                        icon: faAddressCard,
-                    })
-                );
-            }
+            return response.data.msg;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error al crear cuenta', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear cuenta.')));
         }
+        return undefined;
     };
 
-    const getPendingNotifications = async () => {
+    const getPendingNotifications = async (): Promise<PendingNotificationsI | undefined> => {
         try {
-            const { data } = await service.getPendingNotifications();
-            const { pendingNotifications } = data;
-            const { newChatMessagesNumber, notificationsNumber } = pendingNotifications;
-            dispatch(
-                setNotificationsAndNewChatMessagesNumber({
-                    newChatMessagesNumber,
-                    notificationsNumber,
-                })
-            );
+            const response = await service.getPendingNotifications();
+            return response.data.pendingNotifications;
         } catch (error) {
             console.log(error);
+            dispatch(
+                addToast(
+                    handleSpikyServiceToast(error, 'Error al obtener notificaciones pendientes.')
+                )
+            );
         }
+        return undefined;
     };
 
-    const handleForgotPassword = async (email: string) => {
+    const handleForgotPassword = async (email: string): Promise<string | undefined> => {
         try {
             const response = await service.handleForgotPassword(email);
-            const { data } = response;
-            const { msg } = data;
-            return msg;
+            return response.data.msg;
         } catch (error) {
             console.log(error);
-            dispatch(addToast({ message: 'Error enviado el correo', type: StatusType.WARNING }));
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error enviado el correo.')));
         }
+        return undefined;
     };
 
     return {
@@ -670,7 +469,6 @@ function useSpikyService() {
         getIdeas,
         getEmailVerification,
         getIdeaReactiones,
-        setNewChatMessagesNumber,
         getTermsAndConditions,
         getPendingNotifications,
         handleForgotPassword,

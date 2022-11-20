@@ -13,6 +13,8 @@ import { StatusType } from '../types/common';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const initialState = {
     newPassword: '',
@@ -39,7 +41,15 @@ export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
-                await updatePasswordUri(token, correoValid, newPassword);
+                if (correoValid && (await updatePasswordUri(token, correoValid, newPassword))) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: 'Contraseña restablecida',
+                            icon: faLock,
+                        })
+                    );
+                }
                 onChange(initialState);
                 navigation.navigate('LoginScreen');
             } catch (error) {

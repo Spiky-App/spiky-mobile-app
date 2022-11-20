@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store/index';
 import { useEffect, useState } from 'react';
 import useSpikyService from './useSpikyService';
+import { generateMessageFromMensaje } from '../helpers/message';
 
 export const useMessages = (filter: string, params: MessageRequestData) => {
     const { id: uid } = useAppSelector((state: RootState) => state.user);
@@ -14,6 +15,28 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
 
     const dispatch = useAppDispatch();
 
+    async function handleGetIdeas(newLoad: boolean) {
+        const lastMessageId =
+            messages.length > 0 && !newLoad ? messages[messages.length - 1].id : undefined;
+        const mensajes = await getIdeas(uid, filter, lastMessageId, params);
+        if (mensajes) {
+            const messagesRetrived = mensajes.map((mensaje, index) =>
+                generateMessageFromMensaje(mensaje, index)
+            );
+            if (newLoad) {
+                dispatch(setMessages(messagesRetrived));
+            } else {
+                dispatch(setMessages([...messages, ...messagesRetrived]));
+            }
+            dispatch(setMessages([...messages, ...(newLoad ? messagesRetrived : [])]));
+            if (messagesRetrived.length < 15) {
+                setMoreMsg(false);
+            } else {
+                setMoreMsg(true);
+            }
+        }
+    }
+
     const fetchMessages = async (newLoad: boolean) => {
         if (draft) {
             params = { draft: draft ? 1 : 0, ...params };
@@ -21,25 +44,12 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
         if (univers != undefined) {
             params = { univers: univers, ...params };
         }
-        const lastMessageId =
-            messages.length > 0 && !newLoad ? messages[messages.length - 1].id : undefined;
 
         if (params.search === '' && filter === '/search') {
             dispatch(setMessages([]));
         } else {
             setLoading(true);
-            const messagesRetrived = await getIdeas(uid, filter, lastMessageId, params);
-            if (newLoad) {
-                dispatch(setMessages(messagesRetrived));
-            } else {
-                dispatch(setMessages([...messages, ...messagesRetrived]));
-            }
-
-            if (messagesRetrived.length < 15) {
-                setMoreMsg(false);
-            } else {
-                setMoreMsg(true);
-            }
+            await handleGetIdeas(newLoad);
             setLoading(false);
         }
     };

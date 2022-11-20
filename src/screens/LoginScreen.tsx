@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
     Keyboard,
@@ -47,6 +48,7 @@ export const LoginScreen = () => {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
+            console.log(config);
             try {
                 const response = await spikyService.login(email, password);
                 const { data } = response;
@@ -66,10 +68,12 @@ export const LoginScreen = () => {
                 );
                 setFormValid(true);
             } catch (e) {
-                console.log(e);
-                dispatch(
-                    addToast({ message: e.response.data.msg || '', type: StatusType.WARNING })
-                );
+                if (e instanceof AxiosError) {
+                    console.log(e.message);
+                    dispatch(
+                        addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
+                    );
+                }
                 setFormValid(false);
             }
         } else {

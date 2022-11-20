@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Modal, TouchableWithoutFeedback, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { faCheck, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { ReactionType } from '../types/store';
 import useSpikyService from '../hooks/useSpikyService';
+import { useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import SocketContext from '../context/Socket/Context';
 
 interface ReactComment {
     against: number;
@@ -36,17 +39,28 @@ export const ModalReactComment = ({
     userId,
     setReactComment,
 }: Props) => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { socket } = useContext(SocketContext);
     const { createReactionToComment } = useSpikyService();
     const { top, left } = position;
 
-    const handleComment = (reactionTypeAux: number) => {
-        createReactionToComment(commentId, reactionTypeAux, messageId, userId);
-        const newReactionType = reactionTypeAux === 1 ? ReactionType.FAVOR : ReactionType.AGAINST;
-        setReactComment((value: ReactComment) => ({
-            ...value,
-            [reactioTypes[reactionTypeAux - 1]]: value[reactioTypes[reactionTypeAux - 1]] + 1,
-            reactionCommentType: newReactionType,
-        }));
+    const handleComment = async (reactionTypeAux: number) => {
+        const wasCreated = await createReactionToComment(commentId, reactionTypeAux);
+        if (wasCreated) {
+            socket?.emit('notify', {
+                id_usuario1: userId,
+                id_usuario2: uid,
+                id_mensaje: messageId,
+                tipo: 5,
+            });
+            const newReactionType =
+                reactionTypeAux === 1 ? ReactionType.FAVOR : ReactionType.AGAINST;
+            setReactComment((value: ReactComment) => ({
+                ...value,
+                [reactioTypes[reactionTypeAux - 1]]: value[reactioTypes[reactionTypeAux - 1]] + 1,
+                reactionCommentType: newReactionType,
+            }));
+        }
         setModalReact(false);
     };
 

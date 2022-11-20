@@ -124,7 +124,7 @@ export interface ChatMessage {
     userId: number;
     message: string;
     date: number;
-    replyMessage?: replyMessage;
+    replyMessage?: ReplyMessageI;
     seens?: Seen[];
     newMsg: boolean;
 }
@@ -134,7 +134,7 @@ export interface Seen {
     date: number;
 }
 
-interface replyMessage {
+interface ReplyMessageI {
     id: number;
     message: string;
     user: User;

@@ -6,10 +6,11 @@ import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
 import useSpikyService from '../hooks/useSpikyService';
+import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -22,7 +23,7 @@ export const Header = () => {
         right: 0,
     });
     const { getPendingNotifications } = useSpikyService();
-
+    const dispatch = useAppDispatch();
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
     );
@@ -40,7 +41,25 @@ export const Header = () => {
     };
 
     useEffect(() => {
-        if (appState === 'active') getPendingNotifications();
+        async function handleGetPendingNotf() {
+            const pendingNotifications = await getPendingNotifications();
+            if (pendingNotifications) {
+                const {
+                    newChatMessagesNumber: newChatMessagesNumberS,
+                    notificationsNumber: notificationsNumberS,
+                } = pendingNotifications;
+                dispatch(
+                    setNotificationsAndNewChatMessagesNumber({
+                        newChatMessagesNumber: newChatMessagesNumberS,
+                        notificationsNumber: notificationsNumberS,
+                    })
+                );
+            }
+        }
+
+        if (appState === 'active') {
+            handleGetPendingNotf();
+        }
     }, [appState]);
 
     return (

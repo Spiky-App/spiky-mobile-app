@@ -12,6 +12,8 @@ import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const initialState = {
     currentPassword: '',
@@ -36,7 +38,16 @@ export const ChangePasswordScreen = () => {
     const changePassword = async () => {
         if (passwordValid && newPassword === confirmPassword) {
             try {
-                await updatePassword(uid, currentPassword, newPassword);
+                const wasUpdated = await updatePassword(uid, currentPassword, newPassword);
+                if (wasUpdated) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: 'Contraseña restablecida',
+                            icon: faLock,
+                        })
+                    );
+                }
                 onChange(initialState);
                 navigation.navigate('ConfigurationScreen');
             } catch (error) {
