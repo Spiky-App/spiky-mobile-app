@@ -351,7 +351,7 @@ function useSpikyService() {
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ): Promise<Message[] | undefined> => {
+    ): Promise<Message[]> => {
         try {
             const response = await service.getMessages(uid, filter, lastMessageId, parameters);
             return response.data.mensajes;

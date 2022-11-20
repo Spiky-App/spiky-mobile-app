@@ -48,7 +48,6 @@ export const LoginScreen = () => {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
-            console.log(config);
             try {
                 const response = await spikyService.login(email, password);
                 const { data } = response;
@@ -67,9 +66,10 @@ export const LoginScreen = () => {
                     })
                 );
                 setFormValid(true);
+                console.log('signed');
             } catch (e) {
                 if (e instanceof AxiosError) {
-                    console.log(e.message);
+                    console.log(e, 'login');
                     dispatch(
                         addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
                     );
