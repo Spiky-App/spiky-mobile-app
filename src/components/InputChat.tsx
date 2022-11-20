@@ -3,6 +3,8 @@ import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-nat
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
@@ -36,6 +38,7 @@ export const InputChat = ({
     toUser,
     HideKeyboardAfterSumbit,
 }: Props) => {
+    const nickname = useAppSelector((state: RootState) => state.user.nickname);
     const [isDisabled, setDisabled] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const { createChatMessage } = useSpikyService();
@@ -58,7 +61,7 @@ export const InputChat = ({
         socket?.emit('newChatMsg', {
             chatmsg: newChatMessages,
             userto: toUser.id,
-            nickname: toUser.nickname,
+            nickname: nickname,
             isOnline: toUser.online,
         });
         if (timeoutRef.current) {

@@ -55,10 +55,11 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
 
         socket?.on('notify', resp => {
+            console.log('notify frontend');
             dispatch(updateNotificationsNumber(1));
             notificationService.showNotification(
                 1,
-                'Notificación 🔔',
+                'Notificación',
                 '@' + resp.alias + ' ' + mensajes[resp.tipo],
                 {
                     type: ClickNotificationTypes.GO_TO_IDEA,
@@ -103,11 +104,8 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(increaseNewChatMessagesNumber());
                 notificationService.showNotification(
                     conver.id,
-                    'Nuevo mensaje 💬',
-                    '@' +
-                        userFrom.nickname +
-                        ' te ha enviado un mensaje ' +
-                        conver.chatmessage.message,
+                    `Mensaje de @${userFrom.nickname}`,
+                    conver.chatmessage.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
@@ -124,8 +122,8 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
                 notificationService.showNotification(
                     chatmsg.id,
-                    'Nuevo mensaje 💬',
-                    '@' + nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
+                    `Mensaje de @${nickname}`,
+                    chatmsg.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: chatmsg.conversationId,
@@ -141,7 +139,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
                     converId,
-                    'Notificación 🛎️',
+                    'Notificación',
                     '@' + nickname + ' te ha enviado un zumbido',
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
