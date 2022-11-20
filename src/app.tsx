@@ -28,7 +28,6 @@ const App = () => {
     };
 
     const showNotification = (notification: any) => {
-        console.log(JSON.stringify(notification));
         PushNotification.localNotification({
             title: notification.title,
             message: notification.body!,
@@ -48,10 +47,8 @@ const App = () => {
 
     const onRemoteNotification = (notification: any) => {
         const isClicked = notification.getData().userInteraction === 1;
-        console.log(notification.data, ' ----> REMOTE NOTIFICATION');
         if (isClicked) {
             // Navigate user to another screen
-            console.log(notification.data, ' ----> REMOTE NOTIFICATION');
             const { data } = notification;
             switch (data.type) {
                 case ClickNotificationTypes.GO_TO_CONVERSATION:
