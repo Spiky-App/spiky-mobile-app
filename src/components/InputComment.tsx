@@ -78,7 +78,7 @@ export const InputComment = ({
 
     async function onPressButton() {
         setDisabled(true);
-        const messageComment = await createMessageComment(messageId, toUser, comment);
+        const messageComment = await createMessageComment(messageId, user.id, comment);
         if (messageComment) {
             const newComment: Comment = {
                 id: messageComment.id_respuesta,
