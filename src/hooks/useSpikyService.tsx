@@ -54,11 +54,9 @@ function useSpikyService() {
     }, [config]);
 
     function handleSpikyServiceToast(error: unknown, defaultMessage: string): Toast {
-        console.log('error', error, 'message: ', defaultMessage);
-
         if (error instanceof AxiosError) {
             return {
-                message: error.response?.data?.message,
+                message: error.response?.data?.msg,
                 type: StatusType.WARNING,
             };
         }
@@ -436,6 +434,7 @@ function useSpikyService() {
 
     const handleForgotPassword = async (email: string): Promise<string | undefined> => {
         try {
+            console.log(config);
             const response = await service.handleForgotPassword(email);
             return response.data.msg;
         } catch (error) {

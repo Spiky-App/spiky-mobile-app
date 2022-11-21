@@ -52,41 +52,6 @@ export const ForgotPwdScreen = () => {
         setLoading(false);
     }
 
-    const ChangePassOrEmail = () =>
-        !isNextMsg ? (
-            <TouchableHighlight
-                underlayColor="#01192ebe"
-                onPress={sendReestablishPasswordEmail}
-                style={{ ...styles.button, paddingHorizontal: 30 }}
-                disabled={isLoading}
-            >
-                <Text
-                    style={{
-                        ...styles.text,
-                        ...styles.textb,
-                    }}
-                >
-                    Cambiar Contraseña
-                </Text>
-            </TouchableHighlight>
-        ) : (
-            <TouchableHighlight
-                underlayColor="#01192ebe"
-                onPress={handleReestablishEmail}
-                style={{ ...styles.button, paddingHorizontal: 30 }}
-                disabled={isLoading}
-            >
-                <Text
-                    style={{
-                        ...styles.text,
-                        ...styles.textb,
-                    }}
-                >
-                    Cambiar Correo
-                </Text>
-            </TouchableHighlight>
-        );
-
     return (
         <BackgroundPaper>
             <ArrowBack />
@@ -118,7 +83,39 @@ export const ForgotPwdScreen = () => {
                         {underlyingValue}
                     </Text>
                     {!isLoading ? (
-                        <ChangePassOrEmail />
+                        !isNextMsg ? (
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={sendReestablishPasswordEmail}
+                                style={{ ...styles.button, paddingHorizontal: 30 }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Cambiar Contraseña
+                                </Text>
+                            </TouchableHighlight>
+                        ) : (
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={handleReestablishEmail}
+                                style={{ ...styles.button, paddingHorizontal: 30 }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Cambiar Correo
+                                </Text>
+                            </TouchableHighlight>
+                        )
                     ) : (
                         <View>
                             <Text style={{ ...styles.textGray }}>Enviando Correo...</Text>

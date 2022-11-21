@@ -57,12 +57,10 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
         if (content) {
             const { userto, conver, newConver } = content;
             const converRetrived = generateConversationFromConversacion(conver, uid);
-            navigation.goBack();
             dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
             socket?.emit('newChatMsgWithReply', { conver: converRetrived, userto, newConver });
-        } else {
-            navigation.goBack();
         }
+        navigation.goBack();
         setDisabled(false);
     }
 

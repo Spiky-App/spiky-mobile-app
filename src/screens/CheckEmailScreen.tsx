@@ -81,34 +81,6 @@ export const CheckEmailScreen = () => {
         }
     }, [remainTime]);
 
-    const VerifyMail = () =>
-        isLoading ? (
-            <View style={{ ...styles.center }}>
-                <LoadingAnimated />
-                <Text style={{ ...styles.textGray }}>Enviando correo</Text>
-            </View>
-        ) : (
-            <>
-                <View style={{ marginVertical: 25 }}>
-                    <TextInputCustom
-                        placeholder="Correo universitario"
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        onChangeText={value => onChange({ email: value })}
-                        helperMessage={getHelperMessage(email)}
-                    />
-                </View>
-                <TouchableHighlight
-                    underlayColor="#01192ebe"
-                    onPress={handleSumbit}
-                    style={{ ...styles.button, paddingHorizontal: 30 }}
-                >
-                    <Text style={{ ...styles.text, ...styles.textb }}>Verificar correo</Text>
-                </TouchableHighlight>
-            </>
-        );
-
     return (
         <BackgroundPaper>
             <ArrowBack />
@@ -163,8 +135,33 @@ export const CheckEmailScreen = () => {
                                     )}
                                 </View>
                             </View>
+                        ) : isLoading ? (
+                            <View style={{ ...styles.center }}>
+                                <LoadingAnimated />
+                                <Text style={{ ...styles.textGray }}>Enviando correo</Text>
+                            </View>
                         ) : (
-                            <VerifyMail />
+                            <>
+                                <View style={{ marginVertical: 25 }}>
+                                    <TextInputCustom
+                                        placeholder="Correo universitario"
+                                        autoCorrect={false}
+                                        autoCapitalize="none"
+                                        keyboardType="email-address"
+                                        onChangeText={value => onChange({ email: value })}
+                                        helperMessage={getHelperMessage(email)}
+                                    />
+                                </View>
+                                <TouchableHighlight
+                                    underlayColor="#01192ebe"
+                                    onPress={handleSumbit}
+                                    style={{ ...styles.button, paddingHorizontal: 30 }}
+                                >
+                                    <Text style={{ ...styles.text, ...styles.textb }}>
+                                        Verificar correo
+                                    </Text>
+                                </TouchableHighlight>
+                            </>
                         )}
                     </View>
                 </View>
