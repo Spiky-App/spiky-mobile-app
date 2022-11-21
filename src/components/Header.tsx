@@ -15,6 +15,7 @@ import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
+    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
@@ -57,7 +58,7 @@ export const Header = () => {
             }
         }
 
-        if (appState === 'active') {
+        if (appState === 'active' && config?.headers?.['x-token']) {
             handleGetPendingNotf();
         }
     }, [appState]);

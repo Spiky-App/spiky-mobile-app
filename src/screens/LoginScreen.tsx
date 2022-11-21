@@ -66,10 +66,8 @@ export const LoginScreen = () => {
                     })
                 );
                 setFormValid(true);
-                console.log('signed');
             } catch (e) {
                 if (e instanceof AxiosError) {
-                    console.log(e, 'login');
                     dispatch(
                         addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
                     );

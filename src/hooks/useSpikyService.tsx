@@ -54,6 +54,8 @@ function useSpikyService() {
     }, [config]);
 
     function handleSpikyServiceToast(error: unknown, defaultMessage: string): Toast {
+        console.log('error', error, 'message: ', defaultMessage);
+
         if (error instanceof AxiosError) {
             return {
                 message: error.response?.data?.message,

@@ -51,7 +51,6 @@ export const ChangePasswordScreen = () => {
                 onChange(initialState);
                 navigation.navigate('ConfigurationScreen');
             } catch (error) {
-                console.log(error);
                 dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
             }
         } else if (!passwordValid) {
