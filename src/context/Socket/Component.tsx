@@ -53,6 +53,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             console.log(reason);
         });
 
+        // this is triggered when a user reacts to an idea,
         socket?.on('notify', resp => {
             dispatch(updateNotificationsNumber(1));
             notificationService.showNotification(

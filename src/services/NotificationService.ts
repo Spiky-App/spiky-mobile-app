@@ -4,7 +4,8 @@ import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { ClickNotificationTypes } from '../constants/notification';
 import { StorageKeys } from '../types/storage';
-import { useNavigation } from '@react-navigation/native';
+import * as RootNavigation from '../helpers/navigator';
+
 class NotificationService {
     AndroidOptions: {
         largeIcon: string;
@@ -46,12 +47,17 @@ class NotificationService {
             {
                 channelId: 'fcm_fallback_notification_channel', // (required)
                 channelName: 'Channel', // (required)
+                playSound: false, // (optional) default: true
+                soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+                importance: 4, // (optional) default: 4. Int value of the Android notification importance
+                vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
             },
-            created => console.log(`createChannel returned '${created}`)
+            // if it returns false that means the channel already existed. Also you don't have to call the last line, it's optional
+            created => console.log(`createChannel returned '${created}'`)
         );
 
         PushNotification.getChannels(function (channels) {
-            console.log(channels);
+            console.log(`channels: '${channels}'`);
         });
     }
     configure = () => {
@@ -63,22 +69,24 @@ class NotificationService {
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
                 // OpenedIdeaScreen receives route params (id, filter), used in Idea component, for example. Idea < MessageFeed Fatlist < Community Screen
-                const navigation = useNavigation<any>();
+                console.log('onNotification triggered');
+                console.log(notification);
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
+                    console.log('notification.userInteraction');
                     console.log(data);
                     switch (data.type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
                             console.log('go to conversation #', data.conversationId);
-                            navigation.navigate('ChatScreen', {
+                            RootNavigation.navigate('ChatScreen', {
                                 conversationId: data.conversationId,
                                 toUser: data.toUser, // check if showNotification data {toUser} gives onNotification access to its data
                             });
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
-                            console.log('go to idea #', data.ideaId);
-                            navigation.navigate('OpenedIdeaScreen', {
+                            console.log('############## go to idea #', data.ideaId);
+                            RootNavigation.navigate('OpenedIdeaScreen', {
                                 messageId: data.ideaId,
                                 filter: '',
                             });
