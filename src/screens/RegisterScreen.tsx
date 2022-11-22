@@ -22,6 +22,7 @@ import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
+import { validatePasswordFields } from '../helpers/passwords';
 
 const initialSate = {
     alias: '',
@@ -46,7 +47,8 @@ export const RegisterScreen = ({ route }: { route: any }) => {
     const { alias, password, confirmPassword } = form;
 
     const register = async () => {
-        if (passwordValid && password === confirmPassword) {
+        const passwordErrors = validatePasswordFields(password, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
             try {
                 await registerUser(token, alias, correoValid, password);
                 onChange(initialSate);
@@ -55,20 +57,8 @@ export const RegisterScreen = ({ route }: { route: any }) => {
                 console.log(error);
                 dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
             }
-        } else if (!passwordValid) {
-            dispatch(
-                addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (password !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
-                    type: StatusType.WARNING,
-                })
-            );
+        } else {
+            dispatch(addToast(passwordErrors));
         }
     };
 
