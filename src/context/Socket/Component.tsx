@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
 import { ChatMessage, Conversation } from '../../types/store';
 import { SocketContextProvider } from './Context';
+import { User } from '../../types/store';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
 const mensajes = [
@@ -110,33 +111,37 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
-                        toUser: conver.user_1,
+                        toUser: conver.user_2,
                     }
                 );
             }
         });
 
         socket?.removeListener('newChatMsg');
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; nickname: string }) => {
-            const { chatmsg, nickname } = resp;
-            if (activeConversationId !== chatmsg.conversationId) {
-                dispatch(increaseNewChatMessagesNumber());
-                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
-                notificationService.showNotification(
-                    chatmsg.id,
-                    'Spiky | Nuevo mensaje 💬',
-                    '@' + nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
-                    {
-                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
-                        conversationId: chatmsg.conversationId,
-                    }
-                );
+        socket?.on(
+            'newChatMsg',
+            (resp: { chatmsg: ChatMessage; nickname: string; toUser: User }) => {
+                const { chatmsg, nickname, toUser } = resp;
+                if (activeConversationId !== chatmsg.conversationId) {
+                    dispatch(increaseNewChatMessagesNumber());
+                    dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                    notificationService.showNotification(
+                        chatmsg.id,
+                        'Spiky | Nuevo mensaje 💬',
+                        '@' + nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
+                        {
+                            type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                            conversationId: chatmsg.conversationId,
+                            toUser,
+                        }
+                    );
+                }
             }
-        });
+        );
 
         socket?.removeListener('sendNudge');
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId, nickname } = resp;
+        socket?.on('sendNudge', (resp: { converId: number; nickname: string; toUser: User }) => {
+            const { converId, nickname, toUser } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
@@ -146,6 +151,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: converId,
+                        toUser,
                     }
                 );
             }

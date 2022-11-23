@@ -59,6 +59,7 @@ export const InputChat = ({
             chatmsg: newChatMessages,
             userto: toUser.id,
             nickname: toUser.nickname,
+            toUser,
         });
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);

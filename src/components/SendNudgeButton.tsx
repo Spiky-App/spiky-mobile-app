@@ -5,6 +5,7 @@ import { faBellConcierge } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
+import { User } from '../types/store';
 
 const styles = StyleSheet.create({
     iconContainer: {
@@ -27,11 +28,18 @@ interface Props {
 const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     const { socket } = useContext(SocketContext);
     const { nickname } = useAppSelector((state: RootState) => state.user);
+    const userInfo = useAppSelector((state: RootState) => state.user);
+    const userObj: User = {
+        id: userInfo.id,
+        nickname: userInfo.nickname,
+        universityId: userInfo.universityId,
+    };
     async function handleSendNudge() {
         socket?.emit('sendNudge', {
             converId: conversationId,
             userto: toUser,
             nickname: nickname,
+            toUser: userObj,
         });
     }
     const animatedValue = new Animated.Value(0);

@@ -78,18 +78,20 @@ class NotificationService {
                     console.log(data);
                     switch (data.type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
-                            console.log('go to conversation #', data.conversationId);
+                            console.log('--> go to conversation #', data.conversationId);
                             RootNavigation.navigate('ChatScreen', {
                                 conversationId: data.conversationId,
                                 toUser: data.toUser, // check if showNotification data {toUser} gives onNotification access to its data
                             });
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
-                            console.log('############## go to idea #', data.ideaId);
+                            console.log('--> go to idea #', data.ideaId);
                             RootNavigation.navigate('OpenedIdeaScreen', {
                                 messageId: data.ideaId,
                                 filter: '',
                             });
+                            // decrease notification count here
+                            //dispatch(updateNotificationsNumber(-1));
                             break;
                         default:
                         // code block
