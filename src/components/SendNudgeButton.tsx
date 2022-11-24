@@ -39,7 +39,7 @@ const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
             converId: conversationId,
             userto: toUser,
             nickname: nickname,
-            toUser: userObj,
+            sender: userObj,
         });
     }
     const animatedValue = new Animated.Value(0);

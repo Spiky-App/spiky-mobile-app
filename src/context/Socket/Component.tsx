@@ -111,7 +111,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
-                        toUser: conver.user_2,
+                        toUser: conver.user_1,
                     }
                 );
             }
@@ -120,8 +120,9 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         socket?.removeListener('newChatMsg');
         socket?.on(
             'newChatMsg',
-            (resp: { chatmsg: ChatMessage; nickname: string; toUser: User }) => {
-                const { chatmsg, nickname, toUser } = resp;
+            (resp: { chatmsg: ChatMessage; nickname: string; sender: User }) => {
+                const { chatmsg, nickname, sender } = resp;
+                console.log('socket resp5', resp, sender);
                 if (activeConversationId !== chatmsg.conversationId) {
                     dispatch(increaseNewChatMessagesNumber());
                     dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
@@ -132,7 +133,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                         {
                             type: ClickNotificationTypes.GO_TO_CONVERSATION,
                             conversationId: chatmsg.conversationId,
-                            toUser,
+                            toUser: sender,
                         }
                     );
                 }
@@ -140,8 +141,8 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         );
 
         socket?.removeListener('sendNudge');
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string; toUser: User }) => {
-            const { converId, nickname, toUser } = resp;
+        socket?.on('sendNudge', (resp: { converId: number; nickname: string; sender: User }) => {
+            const { converId, nickname, sender } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
@@ -151,7 +152,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: converId,
-                        toUser,
+                        toUser: sender,
                     }
                 );
             }
