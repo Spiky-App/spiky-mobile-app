@@ -7,7 +7,7 @@ import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
 import { useAppSelector } from '../store/hooks';
-import { RootState } from '../store';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 export interface FormChat {
     message: string;
@@ -46,12 +46,7 @@ export const InputChat = ({
     const [counter, setCounter] = useState(0);
     const timeoutRef = useRef<null | number>(null);
     const IDEA_MAX_LENGHT = 200;
-    const userInfo = useAppSelector((state: RootState) => state.user);
-    const userObj: User = {
-        id: userInfo.id,
-        nickname: userInfo.nickname,
-        universityId: userInfo.universityId,
-    };
+    const userObj = useAppSelector(selectUserAsObject);
 
     function invalid() {
         const { message: mensaje } = form;
