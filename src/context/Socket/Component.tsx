@@ -120,7 +120,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         socket?.removeListener('newChatMsg');
         socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; sender: User }) => {
             const { chatmsg, sender } = resp;
-            console.log('socket resp5', resp, sender);
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
