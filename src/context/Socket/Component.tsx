@@ -118,37 +118,34 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         });
 
         socket?.removeListener('newChatMsg');
-        socket?.on(
-            'newChatMsg',
-            (resp: { chatmsg: ChatMessage; nickname: string; sender: User }) => {
-                const { chatmsg, nickname, sender } = resp;
-                console.log('socket resp5', resp, sender);
-                if (activeConversationId !== chatmsg.conversationId) {
-                    dispatch(increaseNewChatMessagesNumber());
-                    dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
-                    notificationService.showNotification(
-                        chatmsg.id,
-                        'Spiky | Nuevo mensaje 💬',
-                        '@' + nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
-                        {
-                            type: ClickNotificationTypes.GO_TO_CONVERSATION,
-                            conversationId: chatmsg.conversationId,
-                            toUser: sender,
-                        }
-                    );
-                }
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; sender: User }) => {
+            const { chatmsg, sender } = resp;
+            console.log('socket resp5', resp, sender);
+            if (activeConversationId !== chatmsg.conversationId) {
+                dispatch(increaseNewChatMessagesNumber());
+                dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                notificationService.showNotification(
+                    chatmsg.id,
+                    'Spiky | Nuevo mensaje 💬',
+                    '@' + sender.nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: chatmsg.conversationId,
+                        toUser: sender,
+                    }
+                );
             }
-        );
+        });
 
         socket?.removeListener('sendNudge');
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string; sender: User }) => {
-            const { converId, nickname, sender } = resp;
+        socket?.on('sendNudge', (resp: { converId: number; sender: User }) => {
+            const { converId, sender } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
                     converId,
                     'Spiky | Notificación 🛎️',
-                    '@' + nickname + ' te ha enviado un zumbido',
+                    '@' + sender.nickname + ' te ha enviado un zumbido',
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: converId,

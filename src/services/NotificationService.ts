@@ -81,7 +81,7 @@ class NotificationService {
                             console.log('--> go to conversation #', data.conversationId);
                             RootNavigation.navigate('ChatScreen', {
                                 conversationId: data.conversationId,
-                                toUser: data.toUser, // check if showNotification data {toUser} gives onNotification access to its data
+                                toUser: data.toUser,
                             });
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:

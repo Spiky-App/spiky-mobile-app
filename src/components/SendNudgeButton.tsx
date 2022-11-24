@@ -27,7 +27,6 @@ interface Props {
 
 const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     const { socket } = useContext(SocketContext);
-    const { nickname } = useAppSelector((state: RootState) => state.user);
     const userInfo = useAppSelector((state: RootState) => state.user);
     const userObj: User = {
         id: userInfo.id,
@@ -38,7 +37,6 @@ const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
         socket?.emit('sendNudge', {
             converId: conversationId,
             userto: toUser,
-            nickname: nickname,
             sender: userObj,
         });
     }
