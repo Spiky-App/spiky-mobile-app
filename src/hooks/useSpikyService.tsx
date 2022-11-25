@@ -2,10 +2,10 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { setModalAlert, setUniversities } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { ChatMessage, Comment, Conversation, Message } from '../types/store';
+import { ChatMessage, Comment, Conversation, Message, University } from '../types/store';
 import {
     faFlag,
     faThumbtack,
@@ -71,8 +71,8 @@ function useSpikyService() {
                 await service.deleteDeviceToken(deviceTokenStorage);
             }
             await AsyncStorage.removeItem(StorageKeys.TOKEN);
-            dispatch(signOut());
             dispatch(restartConfig());
+            dispatch(signOut());
             dispatch(removeUser());
         } catch (error) {
             console.log(error);
@@ -659,6 +659,28 @@ function useSpikyService() {
         }
     };
 
+    async function setSessionInfo() {
+        const spikyClient = new SpikyService(config);
+        try {
+            const { data: universitiesData } = await spikyClient.getUniversities();
+            const { universidades } = universitiesData;
+            const universitiesResponse: University[] = universidades.map<University>(
+                university => ({
+                    id: university.id_universidad,
+                    shortname: university.alias,
+                    color: university.color,
+                    backgroundColor: university.background_color,
+                })
+            );
+            dispatch(setUniversities(universitiesResponse));
+        } catch (e) {
+            console.log(e);
+            dispatch(
+                addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
+            );
+        }
+    }
+
     const validateToken = async () => {
         const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
         if (tokenStorage) {
@@ -685,6 +707,7 @@ function useSpikyService() {
                         id: uid,
                     })
                 );
+                setSessionInfo();
             } catch {
                 logOutFunction();
             }

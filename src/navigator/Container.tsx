@@ -17,8 +17,15 @@ const Container = () => {
     const [isLoading, setLoading] = useState(false);
     const { validateToken } = useSpikyService();
 
-    useEffect(() => {
+    async function handleValidateToken() {
         setLoading(true);
+        await validateToken();
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        handleValidateToken();
+
         const state = AppState.addEventListener('change', nextAppState => {
             if (nextAppState === 'active') {
                 if (Platform.OS === 'ios') {
@@ -34,12 +41,6 @@ const Container = () => {
         return () => {
             state.remove();
         };
-    }, []);
-
-    useEffect(() => {
-        setLoading(true);
-        validateToken();
-        setLoading(false);
     }, []);
 
     if (isLoading) {
