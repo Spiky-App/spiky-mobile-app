@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -266,17 +267,12 @@ android {
 }
 
 dependencies {
-
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
-    implementation platform('com.google.firebase:firebase-bom:27.0.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation project(':react-native-push-notification')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
@@ -300,7 +296,6 @@ dependencies {
         implementation jscFlavor
     }
 }
-apply plugin: 'com.google.gms.google-services'
 
 if (isNewArchitectureEnabled()) {
     // If new architecture is enabled, we let you build RN from source
@@ -334,4 +329,3 @@ def isNewArchitectureEnabled() {
     // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
-apply plugin: "com.google.gms.google-services"

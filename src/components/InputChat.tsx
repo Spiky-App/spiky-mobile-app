@@ -6,6 +6,8 @@ import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
+import { useAppSelector } from '../store/hooks';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 export interface FormChat {
     message: string;
@@ -44,6 +46,7 @@ export const InputChat = ({
     const [counter, setCounter] = useState(0);
     const timeoutRef = useRef<null | number>(null);
     const IDEA_MAX_LENGHT = 200;
+    const userObj = useAppSelector(selectUserAsObject);
 
     function invalid() {
         const { message: mensaje } = form;
@@ -55,17 +58,19 @@ export const InputChat = ({
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        socket?.emit('newChatMsg', {
-            chatmsg: newChatMessages,
-            userto: toUser.id,
-            nickname: toUser.nickname,
-        });
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
             setIsTyping(false);
         }
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    sender: userObj,
+                });
+            }
         }
     }
 
