@@ -3,11 +3,11 @@ import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-nat
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
-import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 export interface FormChat {
     message: string;
@@ -38,7 +38,6 @@ export const InputChat = ({
     toUser,
     HideKeyboardAfterSumbit,
 }: Props) => {
-    const nickname = useAppSelector((state: RootState) => state.user.nickname);
     const [isDisabled, setDisabled] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const { createChatMessage } = useSpikyService();
@@ -47,6 +46,7 @@ export const InputChat = ({
     const [counter, setCounter] = useState(0);
     const timeoutRef = useRef<null | number>(null);
     const IDEA_MAX_LENGHT = 200;
+    const userObj = useAppSelector(selectUserAsObject);
 
     function invalid() {
         const { message: mensaje } = form;
@@ -58,18 +58,19 @@ export const InputChat = ({
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        socket?.emit('newChatMsg', {
-            chatmsg: newChatMessages,
-            userto: toUser.id,
-            nickname: nickname,
-            isOnline: toUser.online,
-        });
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
             setIsTyping(false);
         }
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    sender: userObj,
+                });
+            }
         }
     }
 

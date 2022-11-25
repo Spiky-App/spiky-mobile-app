@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { navigationRef } from '../helpers/navigator';
 import { Navigator } from './Navigator';
 import SplashScreen from '../screens/SplashScreen';
 // Workaround to avoid error of axios [AxiosError: Unsupported protocol undefined:]
@@ -12,6 +13,7 @@ import { AppState, Platform } from 'react-native';
 import { setAppState } from '../store/feature/ui/uiSlice';
 import { useAppDispatch } from '../store/hooks';
 import PushNotification from 'react-native-push-notification';
+
 const Container = () => {
     const dispatch = useAppDispatch();
     const [isLoading, setLoading] = useState(false);
@@ -70,7 +72,7 @@ const Container = () => {
 
     return (
         <SocketContextComponent>
-            <NavigationContainer linking={linking} fallback={<SplashScreen />}>
+            <NavigationContainer linking={linking} fallback={<SplashScreen />} ref={navigationRef}>
                 <Toast>
                     <Navigator />
                 </Toast>

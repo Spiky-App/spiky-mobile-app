@@ -3,8 +3,8 @@ import React, { useContext } from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import { faBellConcierge } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
-import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 const styles = StyleSheet.create({
     iconContainer: {
@@ -26,12 +26,12 @@ interface Props {
 
 const SendNudgeButton = ({ conversationId, toUser, isOnline }: Props) => {
     const { socket } = useContext(SocketContext);
-    const { nickname } = useAppSelector((state: RootState) => state.user);
+    const userObj = useAppSelector(selectUserAsObject);
     async function handleSendNudge() {
         socket?.emit('sendNudge', {
             converId: conversationId,
             userto: toUser,
-            nickname: nickname,
+            sender: userObj,
         });
     }
     const animatedValue = new Animated.Value(0);

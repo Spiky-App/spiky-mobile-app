@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
+import { User } from '../../../types/store';
 
 interface UserState {
     nickname: string;
@@ -71,5 +72,15 @@ export const {
 } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
+
+export const selectUserAsObject = (state: RootState) => {
+    const user: User = {
+        id: state.user.id,
+        nickname: state.user.nickname,
+        universityId: state.user.universityId,
+        online: true,
+    };
+    return user;
+};
 
 export default userSlice.reducer;

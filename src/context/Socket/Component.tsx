@@ -54,6 +54,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             console.log(reason);
         });
 
+        // this is triggered when a user reacts to an idea,
         socket?.on('notify', resp => {
             console.log('notify frontend');
             dispatch(updateNotificationsNumber(1));
@@ -109,41 +110,44 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
+                        toUser: conver.user_1.id === uid ? conver.user_1 : conver.user_2,
                     }
                 );
             }
         });
 
         socket?.removeListener('newChatMsg');
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; nickname: string }) => {
-            const { chatmsg, nickname } = resp;
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; sender: User }) => {
+            const { chatmsg, sender } = resp;
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
                 notificationService.showNotification(
                     chatmsg.id,
-                    `Mensaje de @${nickname}`,
+                    `Mensaje de @${sender.nickname}`,
                     chatmsg.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: chatmsg.conversationId,
+                        toUser: sender,
                     }
                 );
             }
         });
 
         socket?.removeListener('sendNudge');
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId, nickname } = resp;
+        socket?.on('sendNudge', (resp: { converId: number; sender: User }) => {
+            const { converId, sender } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
                     converId,
                     'Notificación',
-                    '@' + nickname + ' te ha enviado un zumbido',
+                    '@' + sender.nickname + ' te ha enviado un zumbido',
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: converId,
+                        toUser: sender,
                     }
                 );
             }
