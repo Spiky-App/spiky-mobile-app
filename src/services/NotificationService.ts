@@ -69,23 +69,17 @@ class NotificationService {
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
                 // OpenedIdeaScreen receives route params (id, filter), used in Idea component, for example. Idea < MessageFeed Fatlist < Community Screen
-                console.log('onNotification triggered');
-                console.log(notification);
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
-                    console.log('notification.userInteraction');
-                    console.log(data);
                     switch (data.type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
-                            console.log('--> go to conversation #', data.conversationId);
                             RootNavigation.navigate('ChatScreen', {
                                 conversationId: data.conversationId,
                                 toUser: data.toUser,
                             });
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
-                            console.log('--> go to idea #', data.ideaId);
                             RootNavigation.navigate('OpenedIdeaScreen', {
                                 messageId: data.ideaId,
                                 filter: '',

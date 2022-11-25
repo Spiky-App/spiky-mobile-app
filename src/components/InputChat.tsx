@@ -58,19 +58,19 @@ export const InputChat = ({
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        if (userObj) {
-            socket?.emit('newChatMsg', {
-                chatmsg: newChatMessages,
-                userto: toUser.id,
-                sender: userObj,
-            });
-        }
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
             setIsTyping(false);
         }
         if (newChatMessages) {
             updateChatMessages(newChatMessages);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    sender: userObj,
+                });
+            }
         }
     }
 

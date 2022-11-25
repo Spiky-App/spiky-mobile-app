@@ -78,6 +78,7 @@ export const selectUserAsObject = (state: RootState) => {
         id: state.user.id,
         nickname: state.user.nickname,
         universityId: state.user.universityId,
+        online: true,
     };
     return user;
 };
