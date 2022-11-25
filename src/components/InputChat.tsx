@@ -58,7 +58,6 @@ export const InputChat = ({
 
     async function handleCreateChatMessage() {
         const newChatMessages = await createChatMessage(conversationId, message);
-        console.log('sender ', userObj);
         if (userObj) {
             socket?.emit('newChatMsg', {
                 chatmsg: newChatMessages,
