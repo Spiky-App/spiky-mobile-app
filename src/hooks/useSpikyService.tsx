@@ -659,10 +659,9 @@ function useSpikyService() {
         }
     };
 
-    async function setSessionInfo() {
-        const spikyClient = new SpikyService(config);
+    const setSessionInfo = async () => {
         try {
-            const { data: universitiesData } = await spikyClient.getUniversities();
+            const { data: universitiesData } = await service.getUniversities();
             const { universidades } = universitiesData;
             const universitiesResponse: University[] = universidades.map<University>(
                 university => ({
@@ -679,7 +678,7 @@ function useSpikyService() {
                 addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
             );
         }
-    }
+    };
 
     const validateToken = async () => {
         const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
@@ -707,7 +706,6 @@ function useSpikyService() {
                         id: uid,
                     })
                 );
-                await setSessionInfo();
             } catch {
                 logOutFunction();
             }
@@ -747,6 +745,7 @@ function useSpikyService() {
         registerUser,
         validateToken,
         logOutFunction,
+        setSessionInfo,
     };
 }
 

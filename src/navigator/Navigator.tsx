@@ -19,6 +19,7 @@ import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScree
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import SocketContext from '../context/Socket/Context';
 import { User } from '../types/store';
+import useSpikyService from '../hooks/useSpikyService';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -52,6 +53,7 @@ export const Navigator = () => {
     const token = useAppSelector((state: RootState) => state.auth.token);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
     const { socket } = useContext(SocketContext);
+    const { setSessionInfo } = useSpikyService();
 
     // I changed this because the token in store.auth can be
     // defined before config.headers.x-token that is the one
@@ -69,6 +71,12 @@ export const Navigator = () => {
             }
         }
     }, [appState, socket, token]);
+
+    useEffect(() => {
+        if (token) {
+            setSessionInfo();
+        }
+    }, [token]);
 
     return (
         <Stack.Navigator
