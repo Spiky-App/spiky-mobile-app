@@ -16,7 +16,7 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
-import { User } from '../types/store';
+import { Message, User } from '../types/store';
 import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
@@ -48,6 +48,7 @@ export const ModalIdeaOptions = ({
     filter,
 }: Props) => {
     const { top, left } = position;
+    const uid = useAppSelector((state: RootState) => state.user.id);
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const messages = useAppSelector((state: RootState) => state.messages.messages);
@@ -63,13 +64,57 @@ export const ModalIdeaOptions = ({
         navigation.navigate(screen, params);
     };
 
+    async function handleCreateTracking() {
+        const id_tracking = await createTracking(messageId, uid);
+        if (id_tracking) {
+            const messagesUpdated = messages.map(msg => {
+                if (msg.id === messageId) {
+                    return { ...msg, messageTrackingId: id_tracking };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Tracking activado',
+                    color: '#FC702A',
+                    icon: faThumbtack,
+                })
+            );
+            dispatch(setMessages(messagesUpdated));
+        }
+        if (setMessageTrackingId) setMessageTrackingId(id_tracking);
+    }
+
+    async function handleDeleteTracking() {
+        const isDeleted = await deleteTracking(messageId);
+        if (isDeleted) {
+            let messagesUpdated: Message[];
+            if (filter === '/tracking') {
+                messagesUpdated = messages.filter(msg => msg.id !== messageId);
+            } else {
+                messagesUpdated = messages.map(msg => {
+                    if (msg.id === messageId) {
+                        return { ...msg, messageTrackingId: undefined };
+                    } else {
+                        return msg;
+                    }
+                });
+            }
+            dispatch(
+                setModalAlert({ isOpen: true, text: 'Tracking desactivado', icon: faThumbtack })
+            );
+            dispatch(setMessages(messagesUpdated));
+            if (setMessageTrackingId) setMessageTrackingId(undefined);
+        }
+    }
+
     async function handleTracking() {
         if (!messageTrackingId) {
-            const id_tracking = await createTracking(messageId);
-            if (setMessageTrackingId) setMessageTrackingId(id_tracking);
+            await handleCreateTracking();
         } else {
-            await deleteTracking(messageId, filter);
-            if (setMessageTrackingId) setMessageTrackingId(undefined);
+            await handleDeleteTracking();
         }
         setIdeaOptions(false);
     }

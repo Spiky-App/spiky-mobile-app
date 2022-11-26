@@ -75,7 +75,6 @@ export const Navigator = () => {
             );
             dispatch(setUniversities(universitiesResponse));
         } catch (e) {
-            console.log(e);
             dispatch(
                 addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
             );

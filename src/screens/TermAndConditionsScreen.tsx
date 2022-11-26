@@ -22,7 +22,9 @@ export const TermAndConditionsScreen = () => {
 
     const loadData = async () => {
         const list = await getTermsAndConditions();
-        setInfo(list);
+        if (list) {
+            setInfo(list);
+        }
         setIsLoading(false);
     };
 

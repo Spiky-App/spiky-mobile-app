@@ -6,6 +6,7 @@ import {
     Keyboard,
     TouchableWithoutFeedback,
     Animated,
+    Pressable,
 } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -16,7 +17,6 @@ import { useAnimation } from '../hooks/useAnimation';
 import LogoSvg from '../components/svg/LogoSvg';
 import useSpikyService from '../hooks/useSpikyService';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
-import { Pressable } from 'react-native';
 import TextInputCustom from '../components/common/TextInput';
 import { HelperMessage } from '../types/common';
 import { getFormHelperMessage } from '../helpers/login.herlpers';
@@ -39,7 +39,8 @@ export const CheckEmailScreen = () => {
     async function handleSumbit() {
         if (email) {
             setIsLoading(true);
-            setMessage(await getEmailVerification(email));
+            const msg = await getEmailVerification(email);
+            setMessage(msg ? msg : null);
             setTimetoverif(Date.now());
             setIsLoading(false);
         } else {

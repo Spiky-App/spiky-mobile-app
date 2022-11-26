@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, Conversation, User } from '../types/store';
 import { faCircleNodes } from '../constants/icons/FontAwesome';
+import { generateConversationFromConversacion } from '../helpers/conversations';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
@@ -39,7 +40,10 @@ export const ConnectionsScreen = () => {
 
     async function loadConversations() {
         setLoading(true);
-        const newConversations = await getConversations();
+        const conversationsList = await getConversations();
+        const newConversations = conversationsList.map(conver =>
+            generateConversationFromConversacion(conver, uid)
+        );
         dispatch(setConversations(newConversations));
         setLoading(false);
     }
@@ -116,6 +120,13 @@ export const ConnectionsScreen = () => {
         }, [])
     );
 
+    const LoadingConversations = () =>
+        loading ? (
+            <LoadingAnimated />
+        ) : (
+            <EmptyState message="Una buena conversacion empieza con una gran idea." />
+        );
+
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
@@ -134,10 +145,8 @@ export const ConnectionsScreen = () => {
                     showsVerticalScrollIndicator={false}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                 />
-            ) : loading ? (
-                <LoadingAnimated />
             ) : (
-                <EmptyState message="Una buena conversacion empieza con una gran idea." />
+                <LoadingConversations />
             )}
         </BackgroundPaper>
     );

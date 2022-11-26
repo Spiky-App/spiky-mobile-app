@@ -49,12 +49,13 @@ export const Idea = ({ idea, filter }: Props) => {
     const isDraft = draft === 1;
     const fecha = getTime(date.toString());
 
-    const handleDelete = () => {
-        deleteIdea(id);
-
-        const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
-        dispatch(setMessages(messagesUpdated));
-        dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
+    const handleDelete = async () => {
+        const wasDeleted = await deleteIdea(id);
+        if (wasDeleted) {
+            const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
+            dispatch(setMessages(messagesUpdated));
+            dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
+        }
     };
 
     const handleOpenIdea = () => {

@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-native';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
+import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
 import useSpikyService from '../hooks/useSpikyService';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
@@ -36,6 +39,7 @@ export const InputChat = ({
     toUser,
     HideKeyboardAfterSumbit,
 }: Props) => {
+    const user = useAppSelector((state: RootState) => state.user);
     const [isDisabled, setDisabled] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const { createChatMessage } = useSpikyService();
@@ -54,16 +58,17 @@ export const InputChat = ({
     }
 
     async function handleCreateChatMessage() {
-        const newChatMessages = await createChatMessage(conversationId, message);
-        socket?.emit('newChatMsg', {
-            chatmsg: newChatMessages,
-            userto: toUser.id,
-        });
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            setIsTyping(false);
-        }
-        if (newChatMessages) {
+        const chatmensaje = await createChatMessage(conversationId, message);
+        if (chatmensaje) {
+            const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
+            socket?.emit('newChatMsg', {
+                chatmsg: newChatMessages,
+                userto: toUser.id,
+            });
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                setIsTyping(false);
+            }
             updateChatMessages(newChatMessages);
         }
     }
