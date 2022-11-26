@@ -707,7 +707,7 @@ function useSpikyService() {
                         id: uid,
                     })
                 );
-                setSessionInfo();
+                await setSessionInfo();
             } catch {
                 logOutFunction();
             }

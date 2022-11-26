@@ -55,8 +55,8 @@ export const LoginScreen = () => {
                     const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
                         data;
                     await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-                    dispatch(signIn(token));
                     dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
+                    dispatch(signIn(token));
                     dispatch(
                         setUser({
                             nickname: alias,

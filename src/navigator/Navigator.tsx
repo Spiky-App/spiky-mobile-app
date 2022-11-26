@@ -49,7 +49,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
+    const token = useAppSelector((state: RootState) => state.auth.token);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
     const { socket } = useContext(SocketContext);
 
@@ -61,12 +61,14 @@ export const Navigator = () => {
     // and in store's auth.token
 
     useEffect(() => {
-        if (appState === 'inactive' && config?.headers?.token) {
-            socket?.emit('force-offline', {});
-        } else {
-            socket?.emit('force-online', {});
+        if (token) {
+            if (appState === 'inactive') {
+                socket?.emit('force-offline', {});
+            } else {
+                socket?.emit('force-online', {});
+            }
         }
-    }, [appState, socket]);
+    }, [appState, socket, token]);
 
     return (
         <Stack.Navigator
@@ -77,7 +79,7 @@ export const Navigator = () => {
                 },
             }}
         >
-            {!config?.headers?.token ? (
+            {!token ? (
                 <>
                     <Stack.Screen name="HomeScreen" component={HomeScreen} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
