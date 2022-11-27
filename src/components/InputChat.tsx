@@ -68,6 +68,7 @@ export const InputChat = ({
                 socket?.emit('newChatMsg', {
                     chatmsg: newChatMessages,
                     userto: toUser.id,
+                    isOnline: toUser.online,
                     sender: userObj,
                 });
             }
