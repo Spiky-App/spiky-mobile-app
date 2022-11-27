@@ -5,31 +5,32 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
+import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 
-const manifest1 = [
-    'Antes de eso..',
+const manifest2 = [
+    'Bienvenido spiker',
     '',
-    'Es tiempo de hablar, di lo que tengas que decir',
-    'Mantente anónimo, no des pista de quién eres',
-    'Escucha, contribuye y conecta (u oponte)',
-    'Di lo que nadie se atreve a decir y pon el mundo de cabeza',
-    'Conocerás más siendo miembro..',
+    'Eres privilegiado de ser spiker, hazte escuchar',
+    'Este espacio se rige por ideas y no por apariencias',
+    'Nada es verdadero hasta que la “sabiduría de las masas” lo expresen',
+    'Genera discusiones para crear soluciones',
+    'Ninguna idea es mala, no tengas pelos en la lengua',
+    'No te claves con una idea, es de sabios cambiar de opinión',
+    '',
 ];
 
-export const ManifestPart1Screen = () => {
+export const ManifestPart2Screen = () => {
     const { opacity, position, fadeIn, scale, fadeOut, movingPositionAndScale } = useAnimation({});
     const [state, setState] = useState(0);
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
 
-    const nextManifiesto = () => {
-        fadeOut(1000, () => setState(state + 1));
-    };
+    const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
 
     useEffect(() => {
-        if (state > 6) {
-            navigation.replace('CheckEmailScreen');
+        if (state > 8) {
+            navigation.replace('CommunityScreen');
             clearTimeout(timeRef.current);
         } else if (state === 1) {
             fadeIn(1200);
@@ -40,7 +41,9 @@ export const ManifestPart1Screen = () => {
         } else {
             const delay = state == 0 ? 1500 : 4000;
             timeRef.current = setTimeout(nextManifiesto, delay);
-            fadeIn(1200);
+            fadeIn(1200, () => {
+                if (state === 7) setAux(true);
+            });
         }
     }, [state]);
 
@@ -58,7 +61,7 @@ export const ManifestPart1Screen = () => {
                 // onPress={() => nextManifiesto()}
             >
                 <View style={styles.center}>
-                    {state > 0 && (
+                    {state > 0 && state < 8 && (
                         <Animated.View
                             style={{
                                 ...styles.center,
@@ -75,7 +78,7 @@ export const ManifestPart1Screen = () => {
                                     marginBottom: 5,
                                 }}
                             >
-                                Conoce nuestro
+                                Lo último del
                             </Text>
                             <Text
                                 style={{
@@ -97,7 +100,15 @@ export const ManifestPart1Screen = () => {
                             opacity,
                         }}
                     >
-                        {state !== 1 && <Manifiesto state={state} />}
+                        {state < 8 ? (
+                            state !== 1 && <Manifiesto state={state} />
+                        ) : (
+                            <View style={{ flex: 1, justifyContent: 'center' }}>
+                                <View style={{ width: 180 }}>
+                                    <LogoAndIconSvg />
+                                </View>
+                            </View>
+                        )}
                     </Animated.View>
                 </View>
             </TouchableWithoutFeedback>
@@ -112,17 +123,17 @@ interface ManifiestoProps {
 const Manifiesto = ({ state }: ManifiestoProps) => {
     return (
         <View style={{ flexDirection: 'row', marginHorizontal: 50 }}>
-            {state !== 6 && state !== 0 && (
+            {state !== 0 && (
                 <View style={{ ...styles.center, marginRight: 15 }}>
                     <Text style={{ ...styles.text, ...styles.h3, color: '#707070', fontSize: 28 }}>
-                        {state - 1 + '.'}
+                        {state + 3 + '.'}
                     </Text>
                 </View>
             )}
 
             <View style={styles.center}>
                 <Text style={{ ...styles.text, ...styles.h3, fontSize: 28 }}>
-                    {manifest1[state]}
+                    {manifest2[state]}
                     <Text style={styles.orange}>.</Text>
                 </Text>
             </View>

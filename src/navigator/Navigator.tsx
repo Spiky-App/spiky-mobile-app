@@ -23,6 +23,7 @@ import { ChatScreen } from '../screens/ChatScreen';
 import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import SocketContext from '../context/Socket/Context';
+import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -48,6 +49,7 @@ export type RootStackParamList = {
     };
     ChatScreen: { conversationId: number; toUser: User };
     ChangeForgotPasswordScreen: undefined;
+    ManifestPart2Screen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -133,6 +135,7 @@ export const Navigator = () => {
                     <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                    <Stack.Screen name="ManifestPart2Screen" component={ManifestPart2Screen} />
                     <Stack.Screen
                         name="TermAndConditionsScreen"
                         component={TermAndConditionsScreen}
