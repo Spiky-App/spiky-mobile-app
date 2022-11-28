@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { Animated, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useNavigation } from '@react-navigation/native';
-import LogoSvg from '../components/svg/LogoSvg';
-import { useAnimation } from '../hooks/useAnimation';
+import { LogoFadeIn } from '../components/common/LogoFadeIn';
 
 export const HomeScreen = () => {
     const navigation = useNavigation<any>();
@@ -41,30 +40,6 @@ export const HomeScreen = () => {
             </View>
             <LogoFadeIn />
         </BackgroundPaper>
-    );
-};
-
-const LogoFadeIn = () => {
-    const { opacity, fadeIn } = useAnimation({});
-
-    useEffect(() => {
-        fadeIn(800, () => {}, 1000);
-    }, []);
-
-    return (
-        <View
-            style={{
-                position: 'absolute',
-                bottom: 40,
-                left: 0,
-                right: 0,
-                alignItems: 'center',
-            }}
-        >
-            <Animated.View style={{ width: 100, opacity }}>
-                <LogoSvg />
-            </Animated.View>
-        </View>
     );
 };
 
