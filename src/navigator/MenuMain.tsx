@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     createDrawerNavigator,
     DrawerContentComponentProps,
     DrawerContentScrollView,
-    useDrawerStatus,
 } from '@react-navigation/drawer';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { faBell, faPlus } from '../constants/icons/FontAwesome';
@@ -21,7 +20,6 @@ import { HashTagScreen } from '../screens/HashTagScreen';
 import { CommonActions } from '@react-navigation/native';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import { styles } from '../themes/appTheme';
-// import IconGray from '../components/svg/IconGray';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { menuInfo } from '../constants/navigator';
@@ -48,7 +46,7 @@ export const MenuMain = () => {
     return (
         <Drawer.Navigator
             screenOptions={{
-                drawerType: 'front', // Menú modo horizontal
+                drawerType: 'front',
                 headerShown: true,
                 header: () => {
                     return <Header />;
@@ -57,7 +55,6 @@ export const MenuMain = () => {
                     backgroundColor: '#F8F8F8',
                     width: '60%',
                 },
-                /* overlayColor: '#6363635c', */
             }}
             useLegacyImplementation={true}
             drawerContent={props => <MenuInterno {...props} />}
@@ -81,8 +78,11 @@ export const MenuMain = () => {
 
 const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
-    const [screenActive, setScreenActive] = useState('');
-    const isDrawerOpen = useDrawerStatus() === 'open';
+    const routes = navigation.getState().routes;
+    const lengthHistory = navigation.getState().history?.length || 0;
+    const lastScreen: any = navigation.getState().history?.[lengthHistory - 2];
+    const screenActiveObj = routes.filter(route => route.key === lastScreen?.key);
+    const screenActive = screenActiveObj[0]?.name || '';
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
     );
@@ -96,16 +96,6 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
             })
         );
     };
-
-    useEffect(() => {
-        if (isDrawerOpen) {
-            const routes = navigation.getState().routes;
-            const lengthHistory = navigation.getState().history?.length || 0;
-            const lastScreen: any = navigation.getState().history?.[lengthHistory - 2];
-            const screenActiveObj = routes.filter(route => route.key === lastScreen?.key);
-            setScreenActive(screenActiveObj[0]?.name || '');
-        }
-    }, [isDrawerOpen]);
 
     return (
         <DrawerContentScrollView
