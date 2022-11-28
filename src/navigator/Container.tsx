@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Navigator } from './Navigator';
+import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
+import { Navigator, RootStackParamList } from './Navigator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from '../types/storage';
 import SpikyService from '../services/SpikyService';
@@ -17,11 +17,15 @@ import { ModalAlert } from '../components/ModalAlert';
 import SocketContextComponent from '../context/Socket/Component';
 import { AppState } from 'react-native';
 import { setAppState } from '../store/feature/ui/uiSlice';
+import NetInfo from '@react-native-community/netinfo';
+import NoConnectionScreen from '../screens/NoConnectionScreen';
+
 const Container = () => {
     const dispatch = useAppDispatch();
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const spikyService = new SpikyService(config);
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const [hasInternetConnection, setInternetConnection] = useState<boolean>(true);
 
     async function validateToken() {
         setLoading(true);
@@ -61,14 +65,26 @@ const Container = () => {
             }
         });
 
+        const unsubscribe = NetInfo.addEventListener(networkState => {
+            const { isConnected } = networkState;
+            if (isConnected != hasInternetConnection && isConnected != null) {
+                setInternetConnection(isConnected);
+            }
+        });
+
         return () => {
             state.remove();
+            unsubscribe();
         };
-    }, []);
+    }, [hasInternetConnection]);
 
     useEffect(() => {
         validateToken();
     }, []);
+
+    if (!hasInternetConnection) {
+        return <NoConnectionScreen />;
+    }
 
     if (isLoading) {
         return <SplashScreen />;
@@ -77,7 +93,7 @@ const Container = () => {
     // linking object takes care of deep linking
     // register in screens object any linkable screen you want
     // route.params.correo contains the email that wants to change password when spikyapp://changepassword/:correo
-    const linking = {
+    const linking: LinkingOptions<RootStackParamList> = {
         prefixes: ['spikyapp://'],
         config: {
             initialRouteName: 'HomeScreen',
