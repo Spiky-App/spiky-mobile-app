@@ -122,6 +122,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                console.log('catched newChatMsg');
                 notificationService.showNotification(
                     chatmsg.id,
                     `Mensaje de @${sender.nickname}`,

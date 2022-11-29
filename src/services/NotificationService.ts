@@ -68,6 +68,10 @@ class NotificationService {
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
+                    // data in remote notifs is defined in pushNotification func in the server
+                    console.log('onNotif', data, notification);
+                    // isRemote is 1 from background, and undefined in local notifs
+                    console.log('isRemote', data.isRemote);
                     switch (data.type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
                             RootNavigation.navigate('ChatScreen', {
