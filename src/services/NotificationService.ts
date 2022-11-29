@@ -72,20 +72,42 @@ class NotificationService {
                     console.log('onNotif', data, notification);
                     // isRemote is 1 from background, and undefined in local notifs
                     console.log('isRemote', data.isRemote);
-                    switch (data.type) {
+                    let type = data.type;
+                    typeof type === 'string' ? (type = parseInt(type)) : (type = data.type);
+                    let routeParams = {};
+                    switch (type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
-                            RootNavigation.navigate('ChatScreen', {
-                                conversationId: data.conversationId,
-                                toUser: data.toUser,
-                            });
+                            if (!data.isRemote) {
+                                routeParams = {
+                                    conversationId: data.conversationId,
+                                    toUser: data.toUser,
+                                };
+                            } else {
+                                routeParams = {
+                                    conversationId: data.contentId,
+                                    toUser: {
+                                        id: data.userId,
+                                        nickname: data.userAlias,
+                                        universityId: parseInt(data.userUniId),
+                                        online: Boolean(JSON.parse(data.userIsOnline)),
+                                    },
+                                };
+                            }
+                            RootNavigation.navigate('ChatScreen', routeParams);
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
-                            RootNavigation.navigate('OpenedIdeaScreen', {
-                                messageId: data.ideaId,
-                                filter: '',
-                            });
-                            // decrease notification count here
-                            //dispatch(updateNotificationsNumber(-1));
+                            if (!data.isRemote) {
+                                routeParams = {
+                                    messageId: data.ideaId,
+                                    filter: '',
+                                };
+                            } else {
+                                routeParams = {
+                                    messageId: data.contentId,
+                                    filter: '',
+                                };
+                            }
+                            RootNavigation.navigate('OpenedIdeaScreen', routeParams);
                             break;
                         default:
                         // code block
