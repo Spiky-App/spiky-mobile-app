@@ -29,12 +29,12 @@ const initialSate = {
     alias: '',
     password: '',
     confirmPassword: '',
+    checkTermsConditions: false,
 };
 
 export const RegisterScreen = ({ route }: { route: any }) => {
     const params = route.params || {};
     const { token, correoValid } = params;
-
     const dispatch = useAppDispatch();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
@@ -45,30 +45,41 @@ export const RegisterScreen = ({ route }: { route: any }) => {
     const { form, onChange } = useForm(initialSate);
     const { registerUser } = useSpikyService();
 
-    const { alias, password, confirmPassword } = form;
+    const { alias, password, confirmPassword, checkTermsConditions } = form;
 
     const register = async () => {
         const passwordErrors = validatePasswordFields(password, passwordValid, confirmPassword);
-        if (passwordErrors === undefined) {
-            try {
-                const msg = await registerUser(token, alias, correoValid, password);
-                if (msg) {
+        if (checkTermsConditions) {
+            if (passwordErrors === undefined) {
+                try {
+                    const msg = await registerUser(token, alias, correoValid, password);
+                    if (msg) {
+                        dispatch(
+                            setModalAlert({
+                                isOpen: true,
+                                text: msg,
+                                icon: faAddressCard,
+                            })
+                        );
+                    }
+                    onChange(initialSate);
+                    navigation.navigate('LoginScreen');
+                } catch (error) {
+                    console.log(error);
                     dispatch(
-                        setModalAlert({
-                            isOpen: true,
-                            text: msg,
-                            icon: faAddressCard,
-                        })
+                        addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
                     );
                 }
-                onChange(initialSate);
-                navigation.navigate('LoginScreen');
-            } catch (error) {
-                console.log(error);
-                dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
+            } else {
+                dispatch(addToast(passwordErrors));
             }
         } else {
-            dispatch(addToast(passwordErrors));
+            dispatch(
+                addToast({
+                    message: 'Términos y condiciones sin acpetar.',
+                    type: StatusType.WARNING,
+                })
+            );
         }
     };
 
