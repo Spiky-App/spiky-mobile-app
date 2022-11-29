@@ -2,6 +2,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { ClickNotificationTypes } from '../constants/notification';
+import messaging from '@react-native-firebase/messaging';
 
 import * as RootNavigation from '../helpers/navigator';
 
@@ -127,6 +128,9 @@ class NotificationService {
             },
             created => console.log(`createChannel returned '${created}`)
         );
+        messaging().setBackgroundMessageHandler(async remoteMessage => {
+            console.log('Message handled in the background!', remoteMessage);
+        });
     };
 
     buildAdroidNotification = (id: number, title: string, message: string, data = {}) => {
