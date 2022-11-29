@@ -12,12 +12,12 @@ import { styles } from '../themes/appTheme';
 import { TermsAndConditions } from '../types/services/spiky';
 
 export const TermAndConditionsScreen = () => {
-    const [terms, setTerms] = useState(true);
+    const [terms, setTerms] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [aux, setAux] = useState(true);
     const [info, setInfo] = useState<TermsAndConditions | null>(null);
-    const [title, setTitle] = useState(['Términos y ', 'condiciones']);
-    const [alternateTitle, setAlternateTitle] = useState(['Aviso de ', 'privacidad']);
+    const [title, setTitle] = useState(['Aviso de ', 'privacidad']);
+    const [alternateTitle, setAlternateTitle] = useState(['Términos y ', 'condiciones']);
     const { getTermsAndConditions } = useSpikyService();
     const { opacity, fadeIn, fadeOut } = useAnimation({});
 
