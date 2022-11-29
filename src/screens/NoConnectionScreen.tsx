@@ -13,7 +13,7 @@ const NoConnectionScreen = () => {
                 <View style={{ marginBottom: 10 }}>
                     <FontAwesomeIcon icon={faTriangleExclamation} color={'#01192E'} size={80} />
                 </View>
-                <Text style={styles.h3}>
+                <Text style={{ ...styles.text, ...styles.h3 }}>
                     Ooops
                     <Text style={styles.orange}>!</Text>
                 </Text>
