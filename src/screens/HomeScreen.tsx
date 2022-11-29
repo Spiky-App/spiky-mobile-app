@@ -25,8 +25,7 @@ export const HomeScreen = () => {
             <View style={stylecom.wrapContainer}>
                 <TouchableHighlight
                     underlayColor="#01192ebe"
-                    // onPress={() => navigation.navigate('LoginScreen')}
-                    onPress={() => navigation.navigate('RegisterScreen')}
+                    onPress={() => navigation.navigate('LoginScreen')}
                     style={styles.button}
                 >
                     <Text style={{ ...styles.text, ...styles.textb }}>Soy miembro</Text>
