@@ -32,7 +32,7 @@ export type RootStackParamList = {
     CheckEmailScreen: undefined;
     ForgotPwdScreen: undefined;
     ChangePasswordScreen: undefined;
-    RegisterScreen: undefined;
+    RegisterScreen: { token: string; correoValid: string };
     MenuMain: undefined;
     CreateIdeaScreen: { draftedIdea?: string; draftID?: number };
     OpenedIdeaScreen: { messageId: number; filter?: string };
@@ -48,7 +48,7 @@ export type RootStackParamList = {
         };
     };
     ChatScreen: { conversationId: number; toUser: User };
-    ChangeForgotPasswordScreen: undefined;
+    ChangeForgotPasswordScreen: { token: string; correoValid: string };
     ManifestPart2Screen: undefined;
 };
 
@@ -135,12 +135,9 @@ export const Navigator = () => {
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
                     <Stack.Screen name="ManifestPart2Screen" component={ManifestPart2Screen} />
-                    <Stack.Screen
-                        name="TermAndConditionsScreen"
-                        component={TermAndConditionsScreen}
-                    />
                 </>
             )}
+            <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />
         </Stack.Navigator>
     );
 };

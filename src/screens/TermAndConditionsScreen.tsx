@@ -14,9 +14,10 @@ import { TermsAndConditions } from '../types/services/spiky';
 export const TermAndConditionsScreen = () => {
     const [terms, setTerms] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [aux, setAux] = useState(true);
     const [info, setInfo] = useState<TermsAndConditions | null>(null);
-    const [title, setTitle] = useState(['Términos y ', 'condiciones']);
-    const [alternateTitle, setAlternateTitle] = useState(['Aviso de ', 'privacidad']);
+    const [title, setTitle] = useState(['Aviso de ', 'privacidad']);
+    const [alternateTitle, setAlternateTitle] = useState(['Términos y ', 'condiciones']);
     const { getTermsAndConditions } = useSpikyService();
     const { opacity, fadeIn, fadeOut } = useAnimation({});
 
@@ -37,10 +38,11 @@ export const TermAndConditionsScreen = () => {
             fadeOut(400, () => {
                 setTitle(alternateTitle);
                 setAlternateTitle(title);
+                setTerms(value => !value);
                 fadeIn(400, () => {}, 300);
             });
         }
-    }, [terms, info]);
+    }, [aux, info]);
 
     return (
         <BackgroundPaper>
@@ -58,7 +60,7 @@ export const TermAndConditionsScreen = () => {
                         />
                         <TouchableOpacity
                             style={{ ...styles.center, flexDirection: 'row', paddingBottom: 10 }}
-                            onPress={() => setTerms(!terms)}
+                            onPress={() => setAux(value => !value)}
                         >
                             <Text style={{ ...styles.text, ...styles.link, fontSize: 16 }}>
                                 {alternateTitle}

@@ -16,16 +16,20 @@ import useSpikyService from '../hooks/useSpikyService';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { validatePasswordFields } from '../helpers/passwords';
+import { RootStackParamList } from '../navigator/Navigator';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 
 const initialState = {
     newPassword: '',
     confirmPassword: '',
 };
 
-export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
+type Props = DrawerScreenProps<RootStackParamList, 'ChangeForgotPasswordScreen'>;
+
+export const ChangeForgotPasswordScreen = ({ route }: Props) => {
     // deep link stuff
-    const params = route.params || {};
-    const { token, correoValid } = params;
+    const token = route.params?.token;
+    const correoValid = route.params?.correoValid;
     // end deep link stuff
     const dispatch = useAppDispatch();
     const { updatePasswordUri } = useSpikyService();
