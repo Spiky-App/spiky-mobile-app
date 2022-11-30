@@ -3,10 +3,10 @@ import { Keyboard, TextInput, View, FlatList, Text, StyleSheet } from 'react-nat
 import { faLocationArrow } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
+import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
-import { useAppSelector } from '../store/hooks';
 import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 export interface FormChat {
@@ -68,6 +68,7 @@ export const InputChat = ({
                 socket?.emit('newChatMsg', {
                     chatmsg: newChatMessages,
                     userto: toUser.id,
+                    isOnline: toUser.online,
                     sender: userObj,
                 });
             }

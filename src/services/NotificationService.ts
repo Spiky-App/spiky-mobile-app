@@ -1,9 +1,9 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { ClickNotificationTypes } from '../constants/notification';
-import { StorageKeys } from '../types/storage';
+import messaging from '@react-native-firebase/messaging';
+
 import * as RootNavigation from '../helpers/navigator';
 
 class NotificationService {
@@ -62,30 +62,52 @@ class NotificationService {
     }
     configure = () => {
         PushNotification.configure({
-            onRegister: async function (token) {
-                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token.token);
-            },
-
             // (required) Called when a remote is received or opened, or local notification is opened
             onNotification: function (notification) {
                 // OpenedIdeaScreen receives route params (id, filter), used in Idea component, for example. Idea < MessageFeed Fatlist < Community Screen
                 // process the notification
                 if (notification.userInteraction) {
                     const { data } = notification;
-                    switch (data.type) {
+                    // data in remote notifs is defined in pushNotification func in the server
+                    console.log('onNotif', data, notification);
+                    // isRemote is 1 from background, and undefined in local notifs
+                    console.log('isRemote', data.isRemote);
+                    let type = data.type;
+                    typeof type === 'string' ? (type = parseInt(type)) : (type = data.type);
+                    let routeParams = {};
+                    switch (type) {
                         case ClickNotificationTypes.GO_TO_CONVERSATION:
-                            RootNavigation.navigate('ChatScreen', {
-                                conversationId: data.conversationId,
-                                toUser: data.toUser,
-                            });
+                            if (!data.isRemote) {
+                                routeParams = {
+                                    conversationId: data.conversationId,
+                                    toUser: data.toUser,
+                                };
+                            } else {
+                                routeParams = {
+                                    conversationId: data.contentId,
+                                    toUser: {
+                                        id: data.userId,
+                                        nickname: data.userAlias,
+                                        universityId: parseInt(data.userUniId),
+                                        online: Boolean(JSON.parse(data.userIsOnline)),
+                                    },
+                                };
+                            }
+                            RootNavigation.navigate('ChatScreen', routeParams);
                             break;
                         case ClickNotificationTypes.GO_TO_IDEA:
-                            RootNavigation.navigate('OpenedIdeaScreen', {
-                                messageId: data.ideaId,
-                                filter: '',
-                            });
-                            // decrease notification count here
-                            //dispatch(updateNotificationsNumber(-1));
+                            if (!data.isRemote) {
+                                routeParams = {
+                                    messageId: data.ideaId,
+                                    filter: '',
+                                };
+                            } else {
+                                routeParams = {
+                                    messageId: data.contentId,
+                                    filter: '',
+                                };
+                            }
+                            RootNavigation.navigate('OpenedIdeaScreen', routeParams);
                             break;
                         default:
                         // code block
@@ -132,6 +154,9 @@ class NotificationService {
             },
             created => console.log(`createChannel returned '${created}`)
         );
+        messaging().setBackgroundMessageHandler(async remoteMessage => {
+            console.log('Message handled in the background!', remoteMessage);
+        });
     };
 
     buildAdroidNotification = (id: number, title: string, message: string, data = {}) => {
@@ -169,7 +194,6 @@ class NotificationService {
         /*options = {},
         date: Date */
     ) => {
-        console.log('notification triggered');
         PushNotification.localNotification({
             /* Android Only Properties */
             channelId: 'fcm_fallback_notification_channel', // (required) channelId, if the channel doesn't exist, notification will not trigger.

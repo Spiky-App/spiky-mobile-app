@@ -13,18 +13,18 @@ import {
 } from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
-import { ChatMessage, Conversation } from '../../types/store';
+import { ChatMessage, Conversation, User } from '../../types/store';
 import { SocketContextProvider } from './Context';
-import { User } from '../../types/store';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
 const mensajes = [
     '',
     'reaccionó a tu idea.',
     'respondió a tu idea.',
-    'respondió en tu tracking',
+    'respondió en tu tracking.',
     'te mencionó.',
     'reacciono a tu comentario.',
+    'reacciono en tu tracking.',
 ];
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
@@ -56,10 +56,11 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
         // this is triggered when a user reacts to an idea,
         socket?.on('notify', resp => {
+            console.log('notify frontend');
             dispatch(updateNotificationsNumber(1));
             notificationService.showNotification(
                 1,
-                'Spiky | Notificación 🔔',
+                'Notificación',
                 '@' + resp.alias + ' ' + mensajes[resp.tipo],
                 {
                     type: ClickNotificationTypes.GO_TO_IDEA,
@@ -99,19 +100,17 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         socket?.removeListener('newChatMsgWithReply');
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
             const { conver } = resp;
+            const userFrom: User = conver.user_1.id === uid ? conver.user_2 : conver.user_1;
             if (activeConversationId !== conver.id) {
                 dispatch(increaseNewChatMessagesNumber());
                 notificationService.showNotification(
                     conver.id,
-                    'Spiky | Réplica de tu idea 💬',
-                    '@' +
-                        conver.user_1.nickname +
-                        ' respondió una de tus publicaciones: ' +
-                        conver.chatmessage.message,
+                    `Mensaje de @${userFrom.nickname}`,
+                    conver.chatmessage.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: conver.id,
-                        toUser: conver.user_1,
+                        toUser: conver.user_1.id === uid ? conver.user_1 : conver.user_2,
                     }
                 );
             }
@@ -123,10 +122,11 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                console.log('catched newChatMsg');
                 notificationService.showNotification(
                     chatmsg.id,
-                    'Spiky | Nuevo mensaje 💬',
-                    '@' + sender.nickname + ' te ha enviado un mensaje: ' + chatmsg.message,
+                    `Mensaje de @${sender.nickname}`,
+                    chatmsg.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: chatmsg.conversationId,
@@ -143,7 +143,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             if (activeConversationId !== converId) {
                 notificationService.showNotification(
                     converId,
-                    'Spiky | Notificación 🛎️',
+                    'Notificación',
                     '@' + sender.nickname + ' te ha enviado un zumbido',
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
