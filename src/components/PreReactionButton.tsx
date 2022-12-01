@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     StyleSheet,
     View,
@@ -15,6 +15,11 @@ import { faPlus, faFaceSmile } from '../constants/icons/FontAwesome';
 import { emojis1, emojis2 } from '../constants/emojis/emojis';
 import useSpikyService from '../hooks/useSpikyService';
 import EmojisKeyboard from './EmojisKeyboard';
+import { Message } from '../types/store';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import SocketContext from '../context/Socket/Context';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 
 interface Positions {
     x: number;
@@ -28,6 +33,10 @@ interface Props {
     messageId: number;
 }
 export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => {
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const user = useAppSelector((state: RootState) => state.user);
+    const dispatch = useAppDispatch();
+    const { socket } = useContext(SocketContext);
     const width = useRef(new Animated.Value(20)).current;
     const opacity = useRef(new Animated.Value(0)).current;
     const inputRange = [0, 100];
@@ -63,8 +72,43 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
         });
     }
 
-    function handleReaction(reaction: string[0]) {
-        createReactionMsg(messageId, reaction);
+    async function handleReaction(reaction: string[0]) {
+        const wasCreated = await createReactionMsg(messageId, reaction, user.id);
+        if (wasCreated) {
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === messageId) {
+                    socket?.emit('notify', {
+                        id_usuario1: msg.user.id,
+                        id_usuario2: user.id,
+                        id_mensaje: msg.id,
+                        tipo: 1,
+                    });
+                    let isNew = true;
+                    let reactions = msg.reactions.map(r => {
+                        if (r.reaction === reaction) {
+                            isNew = false;
+                            return {
+                                reaction: r.reaction,
+                                count: r.count + 1,
+                            };
+                        } else {
+                            return r;
+                        }
+                    });
+                    if (isNew) {
+                        reactions = [...reactions, { reaction, count: 1 }];
+                    }
+                    return {
+                        ...msg,
+                        reactions,
+                        myReaction: reaction,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
     }
 
     useEffect(() => {

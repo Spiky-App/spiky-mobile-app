@@ -34,9 +34,8 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
 
     const new_mensaje = transformMsg(notification.message);
 
-    const handleOpenIdea = () => {
-        if (!notification.seen) {
-            updateNotifications([notification.id]);
+    const handleOpenIdea = async () => {
+        if (!notification.seen && (await updateNotifications([notification.id]))) {
             dispatch(updateNotificationsNumber(-1));
         }
         navigation.navigate('OpenedIdeaScreen', {

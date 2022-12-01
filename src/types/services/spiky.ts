@@ -59,11 +59,11 @@ export interface Message {
     reacciones: ReactionCount[];
     mi_reaccion?: string;
     trackings?: [{ id_tracking: number }];
-    usuario: User;
+    usuario: UserI;
     respuestas?: Comment[];
 }
 
-interface User {
+export interface UserI {
     alias: string;
     id_universidad: number;
     id_usuario?: number;
@@ -88,17 +88,17 @@ export interface UpdateDraftResponse {
 
 export interface GetUsersSuggetionProps {
     ok: boolean;
-    usuarios: User[];
+    usuarios: UserI[];
 }
 
-interface Hashtag {
+export interface HashtagI {
     id_hashtag: number;
     hashtag: string;
 }
 
 export interface GetHashtagsSuggetionProps {
     ok: boolean;
-    hashtags: Hashtag[];
+    hashtags: HashtagI[];
 }
 
 export interface CreateTrackingProps {
@@ -133,7 +133,7 @@ export interface Comment {
     id_usuario: number;
     resp_reaccion_1: number | null;
     resp_reaccion_2: number | null;
-    usuario: User;
+    usuario: UserI;
     resp_reacciones: {
         tipo: number;
     }[];
@@ -155,7 +155,7 @@ export interface Notification {
     visto: boolean;
     updatedAt: string | null;
     createdAt: string;
-    usuario2: User;
+    usuario2: UserI;
     mensaje: {
         mensaje: string;
     };
@@ -167,10 +167,10 @@ export interface UpdateNotifications {
 
 export interface GetUserInfo {
     ok: boolean;
-    usuario: UsuariorData;
+    usuario: UserI;
 }
 
-export interface UsuariorData {
+export interface UserI {
     correo: string;
     universidad: string;
 }
@@ -188,13 +188,13 @@ export interface CreateMessageCommentResponse {
     respuesta: MessageComment;
 }
 
-interface MessageComment {
+export interface MessageComment {
     id_respuesta: number;
     respuesta: string;
     id_mensaje: number;
     id_usuario: number;
     fecha: number;
-    usuario?: User;
+    usuario?: UserI;
 }
 
 export interface CreateReportIdea {
@@ -204,11 +204,13 @@ export interface CreateReportIdea {
 
 export interface CreateChatMsgWithReply {
     ok: boolean;
-    content: {
-        userto: number;
-        conver: Conversation;
-        newConver: boolean;
-    };
+    content: MessageWithReplyContent;
+}
+
+export interface MessageWithReplyContent {
+    userto: number;
+    conver: Conversation;
+    newConver: boolean;
 }
 
 export interface GetConversations {
@@ -218,8 +220,8 @@ export interface GetConversations {
 
 export interface Conversation {
     id_conversacion: number;
-    usuario1: User;
-    usuario2: User;
+    usuario1: UserI;
+    usuario2: UserI;
     chatmensajes: ChatMessage;
 }
 
@@ -249,7 +251,7 @@ export interface Seen {
 interface ReplyMessage {
     id_mensaje: number;
     mensaje: string;
-    usuario: User;
+    usuario: UserI;
 }
 
 export interface CreateChatMessage {
@@ -279,15 +281,17 @@ export interface GetIdeaReactions {
 export interface Reaction {
     id_reaccion: number;
     reaccion: string;
-    usuario: User;
+    usuario: UserI;
 }
 
 export interface GetPendingNotifications {
     ok: boolean;
-    pendingNotifications: {
-        newChatMessagesNumber: number;
-        notificationsNumber: number;
-    };
+    pendingNotifications: PendingNotificationsI;
+}
+
+export interface PendingNotificationsI {
+    newChatMessagesNumber: number;
+    notificationsNumber: number;
 }
 
 export interface GetTermsAndConditions {

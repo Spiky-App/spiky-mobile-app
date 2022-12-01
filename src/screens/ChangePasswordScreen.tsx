@@ -12,6 +12,9 @@ import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { validatePasswordFields } from '../helpers/passwords';
 
 const initialState = {
     currentPassword: '',
@@ -34,29 +37,26 @@ export const ChangePasswordScreen = () => {
     const { currentPassword, newPassword, confirmPassword } = form;
 
     const changePassword = async () => {
-        if (passwordValid && newPassword === confirmPassword) {
+        const passwordErrors = validatePasswordFields(newPassword, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
             try {
-                await updatePassword(uid, currentPassword, newPassword);
+                const wasUpdated = await updatePassword(uid, currentPassword, newPassword);
+                if (wasUpdated) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: 'Contraseña restablecida',
+                            icon: faLock,
+                        })
+                    );
+                }
                 onChange(initialState);
                 navigation.navigate('ConfigurationScreen');
             } catch (error) {
-                console.log(error);
                 dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
             }
-        } else if (!passwordValid) {
-            dispatch(
-                addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (newPassword !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
-                    type: StatusType.WARNING,
-                })
-            );
+        } else {
+            dispatch(addToast(passwordErrors));
         }
     };
 

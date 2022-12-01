@@ -13,16 +13,23 @@ import { StatusType } from '../types/common';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { validatePasswordFields } from '../helpers/passwords';
+import { RootStackParamList } from '../navigator/Navigator';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 
 const initialState = {
     newPassword: '',
     confirmPassword: '',
 };
 
-export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
+type Props = DrawerScreenProps<RootStackParamList, 'ChangeForgotPasswordScreen'>;
+
+export const ChangeForgotPasswordScreen = ({ route }: Props) => {
     // deep link stuff
-    const params = route.params || {};
-    const { token, correoValid } = params;
+    const token = route.params?.token;
+    const correoValid = route.params?.correoValid;
     // end deep link stuff
     const dispatch = useAppDispatch();
     const { updatePasswordUri } = useSpikyService();
@@ -37,29 +44,26 @@ export const ChangeForgotPasswordScreen = ({ route }: { route: any }) => {
     const { newPassword, confirmPassword } = form;
 
     const changePassword = async () => {
-        if (passwordValid && newPassword === confirmPassword) {
+        const passwordErrors = validatePasswordFields(newPassword, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
             try {
-                await updatePasswordUri(token, correoValid, newPassword);
+                if (correoValid && (await updatePasswordUri(token, correoValid, newPassword))) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: 'Contraseña restablecida',
+                            icon: faLock,
+                        })
+                    );
+                }
                 onChange(initialState);
                 navigation.navigate('LoginScreen');
             } catch (error) {
                 console.log(error);
                 dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
             }
-        } else if (!passwordValid) {
-            dispatch(
-                addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (newPassword !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
-                    type: StatusType.WARNING,
-                })
-            );
+        } else {
+            dispatch(addToast(passwordErrors));
         }
     };
 

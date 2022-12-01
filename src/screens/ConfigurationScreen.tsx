@@ -6,7 +6,7 @@ import { styles } from '../themes/appTheme';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { UsuariorData } from '../types/services/spiky';
+import { UserI } from '../types/services/spiky';
 import useSpikyService from '../hooks/useSpikyService';
 
 interface UserData {
@@ -14,7 +14,7 @@ interface UserData {
     university: string;
 }
 
-function generateDataFromData(data: UsuariorData): UserData {
+function generateDataFromData(data: UserI): UserData {
     return {
         email: data.correo,
         university: data.universidad,
@@ -33,8 +33,10 @@ export const ConfigurationScreen = () => {
 
     const loadData = async () => {
         const usuario = await loadUserInfo();
-        setData(generateDataFromData(usuario));
-        setLoading(false);
+        if (usuario) {
+            setData(generateDataFromData(usuario));
+            setLoading(false);
+        }
     };
 
     useFocusEffect(() => {

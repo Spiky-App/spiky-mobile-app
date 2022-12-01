@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
     Keyboard,
@@ -73,10 +74,11 @@ export const LoginScreen = () => {
                     );
                 }
             } catch (e) {
-                console.log(e);
-                dispatch(
-                    addToast({ message: e.response.data.msg || '', type: StatusType.WARNING })
-                );
+                if (e instanceof AxiosError) {
+                    dispatch(
+                        addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
+                    );
+                }
                 setFormValid(false);
             }
         } else {

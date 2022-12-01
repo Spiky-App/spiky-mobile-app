@@ -8,9 +8,16 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
     StyleSheet,
+    Pressable,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import {
+    faAddressCard,
+    faCheck,
+    faCircleInfo,
+    faEye,
+    faEyeSlash,
+} from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -22,17 +29,23 @@ import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { validatePasswordFields } from '../helpers/passwords';
+import { RootStackParamList } from '../navigator/Navigator';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 
 const initialSate = {
     alias: '',
     password: '',
     confirmPassword: '',
+    checkTermsConditions: false,
 };
 
-export const RegisterScreen = ({ route }: { route: any }) => {
-    const params = route.params || {};
-    const { token, correoValid } = params;
+type Props = DrawerScreenProps<RootStackParamList, 'RegisterScreen'>;
 
+export const RegisterScreen = ({ route }: Props) => {
+    const token = route.params?.token;
+    const correoValid = route.params?.correoValid;
     const dispatch = useAppDispatch();
     const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
@@ -43,29 +56,38 @@ export const RegisterScreen = ({ route }: { route: any }) => {
     const { form, onChange } = useForm(initialSate);
     const { registerUser } = useSpikyService();
 
-    const { alias, password, confirmPassword } = form;
+    const { alias, password, confirmPassword, checkTermsConditions } = form;
 
     const register = async () => {
-        if (passwordValid && password === confirmPassword) {
-            try {
-                await registerUser(token, alias, correoValid, password);
-                onChange(initialSate);
-                navigation.navigate('LoginScreen');
-            } catch (error) {
-                console.log(error);
-                dispatch(addToast({ message: 'Cambio no completado', type: StatusType.WARNING }));
+        const passwordErrors = validatePasswordFields(password, passwordValid, confirmPassword);
+        if (checkTermsConditions) {
+            if (passwordErrors === undefined) {
+                try {
+                    const msg = await registerUser(token, alias, correoValid, password);
+                    if (msg) {
+                        dispatch(
+                            setModalAlert({
+                                isOpen: true,
+                                text: msg,
+                                icon: faAddressCard,
+                            })
+                        );
+                    }
+                    onChange(initialSate);
+                    navigation.navigate('LoginScreen');
+                } catch (error) {
+                    console.log(error);
+                    dispatch(
+                        addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
+                    );
+                }
+            } else {
+                dispatch(addToast(passwordErrors));
             }
-        } else if (!passwordValid) {
+        } else {
             dispatch(
                 addToast({
-                    message: 'La contraseña no cumple los criterios',
-                    type: StatusType.WARNING,
-                })
-            );
-        } else if (password !== confirmPassword) {
-            dispatch(
-                addToast({
-                    message: 'Las contraseñas no coinciden',
+                    message: 'Términos y condiciones sin acpetar.',
                     type: StatusType.WARNING,
                 })
             );
@@ -73,10 +95,16 @@ export const RegisterScreen = ({ route }: { route: any }) => {
     };
 
     useEffect(() => {
-        if (alias != '' && password !== '' && confirmPassword !== '') {
+        if (alias != '' && password !== '' && confirmPassword !== '' && checkTermsConditions) {
             setButtonState(true);
         }
-    }, [password, confirmPassword, alias]);
+        if (
+            (alias === '' || password === '' || confirmPassword === '' || !checkTermsConditions) &&
+            buttonState
+        ) {
+            setButtonState(false);
+        }
+    }, [password, confirmPassword, alias, checkTermsConditions]);
 
     return (
         <BackgroundPaper>
@@ -155,6 +183,34 @@ export const RegisterScreen = ({ route }: { route: any }) => {
                         </TouchableOpacity>
                     </View>
 
+                    <Pressable
+                        style={{ ...styles.center, marginBottom: 10 }}
+                        onPress={() => navigation.navigate('TermAndConditionsScreen')}
+                    >
+                        <Text style={{ ...styles.textbold, fontSize: 13 }}>
+                            Ver términos y condiciones
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={stylescomp.containercheckBox}
+                        onPress={() => onChange({ checkTermsConditions: !checkTermsConditions })}
+                    >
+                        <View
+                            style={{
+                                ...stylescomp.checkBox,
+                                backgroundColor: checkTermsConditions ? '#01192E' : 'transparent',
+                            }}
+                        >
+                            {checkTermsConditions && (
+                                <FontAwesomeIcon icon={faCheck} size={13} color="white" />
+                            )}
+                        </View>
+                        <Text style={{ ...styles.text, fontSize: 12 }}>
+                            He leído y acepto los términos y condiciones de uso.
+                        </Text>
+                    </Pressable>
+
                     <TouchableOpacity
                         style={{
                             ...styles.button,
@@ -186,5 +242,20 @@ const stylescomp = StyleSheet.create({
         fontSize: 14,
         width: 350,
         textAlign: 'center',
+    },
+    checkBox: {
+        ...styles.center,
+        width: 18,
+        height: 18,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderColor: '#01192E',
+        marginRight: 10,
+    },
+    containercheckBox: {
+        ...styles.center,
+        width: 220,
+        marginVertical: 10,
+        flexDirection: 'row',
     },
 });

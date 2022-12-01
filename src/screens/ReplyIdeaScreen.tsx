@@ -22,10 +22,17 @@ import useSpikyService from '../hooks/useSpikyService';
 import { transformMsg } from '../helpers/transformMsg';
 import SocketContext from '../context/Socket/Context';
 import UniversityTag from '../components/common/UniversityTag';
+import { generateConversationFromConversacion } from '../helpers/conversations';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { RootState } from '../store';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReplyIdeaScreen'>;
 
 export const ReplyIdeaScreen = ({ route }: Props) => {
+    const dispatch = useAppDispatch();
+    const uid = useAppSelector((state: RootState) => state.user.id);
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
@@ -46,11 +53,14 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setDisabled(true);
-        const content = await createChatMsgWithReply(user.id, messageId, messageReply, navigation);
+        const content = await createChatMsgWithReply(user.id!!, messageId, messageReply);
         if (content) {
-            const { conver, newConver, userto } = content;
-            socket?.emit('newChatMsgWithReply', { conver, userto, newConver });
+            const { userto, conver, newConver } = content;
+            const converRetrived = generateConversationFromConversacion(conver, uid);
+            dispatch(setModalAlert({ isOpen: true, text: 'Mensaje enviado', icon: faPaperPlane }));
+            socket?.emit('newChatMsgWithReply', { conver: converRetrived, userto, newConver });
         }
+        navigation.goBack();
         setDisabled(false);
     }
 

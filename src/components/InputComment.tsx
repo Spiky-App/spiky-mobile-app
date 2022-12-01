@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MentionInput } from 'react-native-controlled-mentions';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { faLocationArrow } from '../constants/icons/FontAwesome';
+import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
+import { RootState } from '../store';
+import { setMessages } from '../store/feature/messages/messagesSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Comment } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
-import { renderSuggetions } from './Suggestions';
+import { RenderSuggetions } from './Suggestions';
 
 export interface FormComment {
     comment: string;
@@ -38,15 +42,59 @@ export const InputComment = ({
     refInputComment,
 }: Props) => {
     const { createMessageComment } = useSpikyService();
+    const dispatch = useAppDispatch();
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const user = useAppSelector((state: RootState) => state.user);
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
     const [inputHeight, setInputHeight] = useState(0);
+    const { socket } = useContext(SocketContext);
     const { comment } = form;
-    async function onPress() {
+
+    async function handleNewComment(newComment: Comment) {
+        const messagesUpdated = messages.map(msg =>
+            msg.id === messageId ? { ...msg, answersNumber: msg.answersNumber + 1 } : msg
+        );
+        if (toUser !== user.id) {
+            socket?.emit('notify', {
+                id_usuario1: toUser,
+                id_usuario2: user.id,
+                id_mensaje: messageId,
+                tipo: 2,
+            });
+        }
+        const regexp = /(@\[@\w*\]\(\d*\))/g;
+        const mentions: RegExpMatchArray | null = newComment.comment.match(regexp);
+        if (mentions) {
+            socket?.emit('mentions', {
+                mentions,
+                id_usuario2: user.id,
+                id_mensaje: newComment.messageId,
+                tipo: 4,
+            });
+        }
+        dispatch(setMessages(messagesUpdated));
+        updateComments(newComment);
+    }
+
+    async function onPressButton() {
         setDisabled(true);
-        const messageComment = await createMessageComment(messageId, toUser, comment);
+        const messageComment = await createMessageComment(messageId, user.id, comment);
         if (messageComment) {
-            updateComments(messageComment);
+            const newComment: Comment = {
+                id: messageComment.id_respuesta,
+                comment: messageComment.respuesta,
+                date: messageComment.fecha,
+                messageId: messageComment.id_mensaje,
+                user: {
+                    id: user.id,
+                    nickname: user.nickname,
+                    universityId: user.universityId,
+                },
+                favor: 0,
+                against: 0,
+            };
+            handleNewComment(newComment);
         }
         onChange(DEFAULT_FORM);
         Keyboard.dismiss();
@@ -104,7 +152,7 @@ export const InputComment = ({
                         {
                             trigger: '@',
                             renderSuggestions: props =>
-                                renderSuggetions({ ...props, isMention: true, inputHeight }),
+                                RenderSuggetions({ ...props, isMention: true, inputHeight }),
                             textStyle: { ...styles.h5, color: '#5c71ad' },
                             allowedSpacesCount: 0,
                             isInsertSpaceAfterMention: true,
@@ -114,7 +162,7 @@ export const InputComment = ({
                         {
                             trigger: '#',
                             renderSuggestions: props =>
-                                renderSuggetions({ ...props, isMention: false, inputHeight }),
+                                RenderSuggetions({ ...props, isMention: false, inputHeight }),
                             textStyle: { ...styles.h5, color: '#5c71ad' },
                             allowedSpacesCount: 0,
                             isInsertSpaceAfterMention: true,
@@ -136,7 +184,7 @@ export const InputComment = ({
                     }}
                     iconStyle={{ transform: [{ rotate: '45deg' }] }}
                     disabled={isDisabled}
-                    onPress={onPress}
+                    onPress={onPressButton}
                 />
                 {counter <= 40 && (
                     <Text

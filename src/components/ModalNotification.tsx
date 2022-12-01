@@ -8,6 +8,7 @@ import {
     FlatList,
     TouchableOpacity,
 } from 'react-native';
+import { generateNotificationsFromNotificacion } from '../helpers/notification';
 import useSpikyService from '../hooks/useSpikyService';
 import { clearNotificationsNumber } from '../store/feature/user/userSlice';
 import { useAppDispatch } from '../store/hooks';
@@ -27,12 +28,15 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
     const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState<NotificationProps[]>([]);
     const getNotifications = async () => {
-        const retrievedNotifications = retrieveNotifications();
-        retrievedNotifications && setNotifications(await retrievedNotifications);
+        const notificaciones = await retrieveNotifications();
+        const retrievedNotifications = notificaciones.map(n =>
+            generateNotificationsFromNotificacion(n)
+        );
+        retrievedNotifications && setNotifications(retrievedNotifications);
         setLoading(false);
     };
 
-    const cleanNotifications = () => {
+    const cleanNotifications = async () => {
         let array_nofi: number[] = [];
 
         let new_notis = notifications.map(n => {
@@ -42,8 +46,9 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
             }
             return n;
         });
-        updateNotifications(array_nofi);
-        setNotifications(new_notis);
+        if (await updateNotifications(array_nofi)) {
+            setNotifications(new_notis);
+        }
         dispatch(clearNotificationsNumber());
     };
 
@@ -53,6 +58,30 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
             getNotifications();
         }
     }, [modalNotif]);
+
+    const NotificationList = () =>
+        notifications?.length !== 0 ? (
+            <FlatList
+                data={notifications}
+                renderItem={({ item }) => (
+                    <Notification notification={item} setModalNotif={setModalNotif} />
+                )}
+                keyExtractor={item => item.id + ''}
+                showsVerticalScrollIndicator={false}
+            />
+        ) : (
+            <View style={{ ...styles.center, flex: 1 }}>
+                <Text
+                    style={{
+                        ...styles.text,
+                        ...styles.textGrayPad,
+                        textAlign: 'center',
+                    }}
+                >
+                    No tienes notificaciones.
+                </Text>
+            </View>
+        );
 
     return (
         <Modal animationType="fade" visible={modalNotif} transparent={true}>
@@ -100,30 +129,8 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
                                     <View style={{ ...styles.center, flex: 1 }}>
                                         <LoadingAnimated />
                                     </View>
-                                ) : notifications?.length !== 0 ? (
-                                    <FlatList
-                                        data={notifications}
-                                        renderItem={({ item }) => (
-                                            <Notification
-                                                notification={item}
-                                                setModalNotif={setModalNotif}
-                                            />
-                                        )}
-                                        keyExtractor={item => item.id + ''}
-                                        showsVerticalScrollIndicator={false}
-                                    />
                                 ) : (
-                                    <View style={{ ...styles.center, flex: 1 }}>
-                                        <Text
-                                            style={{
-                                                ...styles.text,
-                                                ...styles.textGrayPad,
-                                                textAlign: 'center',
-                                            }}
-                                        >
-                                            No tienes notificaciones.
-                                        </Text>
-                                    </View>
+                                    <NotificationList />
                                 )}
                             </View>
                         </View>
