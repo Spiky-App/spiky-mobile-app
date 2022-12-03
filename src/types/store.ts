@@ -145,3 +145,9 @@ export interface Reaction {
     reaction: string;
     user: User;
 }
+
+export interface ChatMessageToReply {
+    messageId: number;
+    message: string;
+    user: User;
+}

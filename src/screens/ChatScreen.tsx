@@ -24,6 +24,7 @@ import {
     User,
     Conversation,
     ChatMessage as ChatMessageI,
+    ChatMessageToReply,
 } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -50,7 +51,6 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 
 export const ChatScreen = ({ route }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
-    const uid = useAppSelector((state: RootState) => state.user.id);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
     const dispatch = useAppDispatch();
     const { bottom } = useSafeAreaInsets();
@@ -66,6 +66,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { socket } = useContext(SocketContext);
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
+    const [messageToReply, setMessageToReply] = useState<ChatMessageToReply | null>(null);
     const {
         opacity: opacity_Typing,
         fadeIn: fadeIn_Typing,
@@ -100,7 +101,7 @@ export const ChatScreen = ({ route }: Props) => {
         if (chatMessage) {
             setChatMessages(v => [chatMessage, ...v]);
             dispatch(updateLastChatMsgConversation({ chatMsg: chatMessage, newMsg: false }));
-            if (chatMessage.userId !== uid) createChatMessageSeen(chatMessage.id);
+            if (chatMessage.userId !== user.id) createChatMessageSeen(chatMessage.id);
         }
     }
 
@@ -239,7 +240,13 @@ export const ChatScreen = ({ route }: Props) => {
                         ref={refFlatList}
                         style={stylescomp.wrap}
                         data={chatMessages}
-                        renderItem={({ item }) => <ChatMessage uid={uid} msg={item} />}
+                        renderItem={({ item }) => (
+                            <ChatMessage
+                                msg={item}
+                                user={item.userId === user.id ? user : toUser}
+                                setMessageToReply={setMessageToReply}
+                            />
+                        )}
                         keyExtractor={item => item.id + ''}
                         showsVerticalScrollIndicator={false}
                         inverted
@@ -266,6 +273,8 @@ export const ChatScreen = ({ route }: Props) => {
                         refFlatList={refFlatList}
                         toUser={toUser}
                         HideKeyboardAfterSumbit
+                        messageToReply={messageToReply}
+                        setMessageToReply={setMessageToReply}
                     />
                 </View>
             </KeyboardAvoidingView>
