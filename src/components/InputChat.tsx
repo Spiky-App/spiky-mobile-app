@@ -79,7 +79,11 @@ export const InputChat = ({
     }
 
     async function handleCreateChatMessage() {
-        const chatmensaje = await createChatMessage(conversationId, message);
+        const chatmensaje = await createChatMessage(
+            conversationId,
+            message,
+            messageToReply?.messageId
+        );
         if (chatmensaje) {
             const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
             socket?.emit('newChatMsg', {

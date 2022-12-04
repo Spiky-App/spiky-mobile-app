@@ -172,10 +172,15 @@ function useSpikyService() {
 
     const createChatMessage = async (
         conversationId: number,
-        chatMessage: string
+        chatMessage: string,
+        chatMessageRepliedId?: number
     ): Promise<ChatMessage | undefined> => {
         try {
-            const response = await service.createChatMessage(conversationId, chatMessage);
+            const response = await service.createChatMessage(
+                conversationId,
+                chatMessage,
+                chatMessageRepliedId
+            );
             return response.data.chatmensaje;
         } catch (error) {
             console.log(error);

@@ -213,10 +213,11 @@ class SpikyService {
         return this.instance.get<GetChatMessages>(`conver/chatmsg`, { params });
     }
 
-    createChatMessage(conversationId: number, chatMessage: string) {
+    createChatMessage(conversationId: number, chatMessage: string, chatMessageRepliedId?: number) {
         return this.instance.post<CreateChatMessage>(`conver/chatmsg`, {
             id_conversacion: conversationId,
             chatmensaje: chatMessage,
+            id_chatmensaje: chatMessageRepliedId,
         });
     }
 
