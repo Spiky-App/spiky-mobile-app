@@ -58,6 +58,17 @@ function generateChatMsgFromChatMensaje(chatmensaje: ChatMensaje, uid: number): 
                   },
               }
             : undefined,
+        reply: chatmensaje.reply
+            ? {
+                  id: chatmensaje.reply.chatmensaje.id_chatmensaje,
+                  message: chatmensaje.reply.chatmensaje.chatmensaje,
+                  user: {
+                      id: chatmensaje.reply.chatmensaje.usuario.id_usuario,
+                      nickname: chatmensaje.reply.chatmensaje.usuario.alias,
+                      universityId: chatmensaje.reply.chatmensaje.usuario.id_universidad,
+                  },
+              }
+            : undefined,
         seens: seensRetrived,
         newMsg: newRetrived,
     };

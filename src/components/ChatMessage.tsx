@@ -98,6 +98,21 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                             </Text>
                         </View>
                     )}
+                    {msg.reply && (
+                        <View style={stylescomp.containerReplyMsg}>
+                            <View style={{ flexDirection: 'row', marginBottom: 3 }}>
+                                <Text style={{ ...styles.textbold, fontSize: 12 }}>
+                                    @{msg.reply.user.nickname}
+                                </Text>
+                                <UniversityTag id={msg.reply.user.universityId} fontSize={12} />
+                            </View>
+                            <Text style={{ ...styles.text, fontSize: 12 }}>
+                                {msg.reply.message.length > 73
+                                    ? msg.reply.message.substring(0, 73) + '...'
+                                    : msg.reply.message}
+                            </Text>
+                        </View>
+                    )}
                     <View
                         style={{
                             ...stylescomp.message,
