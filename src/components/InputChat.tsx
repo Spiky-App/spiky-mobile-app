@@ -84,6 +84,7 @@ export const InputChat = ({
             message,
             messageToReply?.messageId
         );
+        setMessageToReply(null);
         if (chatmensaje) {
             const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
             socket?.emit('newChatMsg', {
