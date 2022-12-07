@@ -264,6 +264,7 @@ export const ChatScreen = ({ route }: Props) => {
                             flexGrow: 1,
                             justifyContent: 'flex-end',
                         }}
+                        keyboardShouldPersistTaps={'handled'}
                     />
                     <InputChat
                         form={form}

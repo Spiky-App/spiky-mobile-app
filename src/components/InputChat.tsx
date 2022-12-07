@@ -84,7 +84,6 @@ export const InputChat = ({
             message,
             messageToReply?.messageId
         );
-        setMessageToReply(null);
         if (chatmensaje) {
             const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
             socket?.emit('newChatMsg', {
@@ -110,6 +109,7 @@ export const InputChat = ({
     function onPress() {
         setDisabled(true);
         handleCreateChatMessage();
+        setMessageToReply(null);
         onChange(DEFAULT_FORM);
         refFlatList.current?.scrollToIndex({ index: 0 });
         if (!HideKeyboardAfterSumbit) Keyboard.dismiss();
@@ -118,7 +118,7 @@ export const InputChat = ({
     function handleCancelReply() {
         Animated.timing(height, {
             toValue: 0,
-            duration: 100,
+            duration: 50,
             useNativeDriver: false,
         }).start(() => setMessageToReply(null));
     }

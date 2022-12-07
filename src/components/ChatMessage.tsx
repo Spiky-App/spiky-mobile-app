@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef } from 'react';
-import { Animated, PanResponder, StyleSheet, Text, View } from 'react-native';
+import { Animated, PanResponder, StyleSheet, Text, View, Keyboard } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { useAnimation } from '../hooks/useAnimation';
@@ -50,9 +50,9 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                         user: user,
                         message: msg.message,
                     });
-                }
+                } else if (gestureState.dx === 0) Keyboard.dismiss();
                 if (opacityReplyIcon._value > 0) opacityReplyIcon.setValue(0);
-                Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: true }).start();
+                Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
             },
         })
     ).current;
