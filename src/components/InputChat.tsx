@@ -86,10 +86,6 @@ export const InputChat = ({
         );
         if (chatmensaje) {
             const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
-            socket?.emit('newChatMsg', {
-                chatmsg: newChatMessages,
-                userto: toUser.id,
-            });
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
                 setIsTyping(false);
