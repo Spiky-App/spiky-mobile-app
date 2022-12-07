@@ -31,6 +31,7 @@ import {
     GetPendingNotifications,
     GetTermsAndConditions,
     ForgotPasswordResponse,
+    DeleteDeviceToken,
     RegisterUser,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
@@ -40,10 +41,11 @@ class SpikyService {
     constructor(config?: AxiosRequestConfig) {
         this.instance = axios.create(config);
     }
-    login(email: string, password: string) {
+    login(email: string, password: string, deviceTokenStorage: string) {
         return this.instance.post<LoginResponse>('auth/login', {
             contrasena: password,
             correo: email,
+            device_token: deviceTokenStorage,
         });
     }
 
@@ -256,6 +258,12 @@ class SpikyService {
 
     getTermsAndConditions() {
         return this.instance.get<GetTermsAndConditions>(`lists/terms`);
+    }
+
+    deleteDeviceToken(deviceTokenStorage: string) {
+        return this.instance.post<DeleteDeviceToken>(`auth/logout`, {
+            device_token: deviceTokenStorage,
+        });
     }
 }
 

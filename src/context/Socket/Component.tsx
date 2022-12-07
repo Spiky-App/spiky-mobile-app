@@ -1,7 +1,9 @@
 import React, { PropsWithChildren, useEffect } from 'react';
 import { Vibration } from 'react-native';
 import { socketBaseUrl } from '../../constants/config';
+import { ClickNotificationTypes } from '../../constants/notification';
 import { useSocket } from '../../hooks/useSocket';
+import { notificationService } from '../../services/NotificationService';
 import { RootState } from '../../store';
 import { updateLastChatMsgConversation } from '../../store/feature/chats/chatsSlice';
 import { addToast } from '../../store/feature/toast/toastSlice';
@@ -11,7 +13,7 @@ import {
 } from '../../store/feature/user/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
-import { ChatMessage, Conversation } from '../../types/store';
+import { ChatMessage, Conversation, User } from '../../types/store';
 import { SocketContextProvider } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
@@ -19,9 +21,10 @@ const mensajes = [
     '',
     'reaccionó a tu idea.',
     'respondió a tu idea.',
-    'respondió en tu tracking',
+    'respondió en tu tracking.',
     'te mencionó.',
     'reacciono a tu comentario.',
+    'reacciono en tu tracking.',
 ];
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {
@@ -51,13 +54,18 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             console.log(reason);
         });
 
+        // this is triggered when a user reacts to an idea,
         socket?.on('notify', resp => {
+            console.log('notify frontend');
             dispatch(updateNotificationsNumber(1));
-            dispatch(
-                addToast({
-                    message: resp.alias + ' ' + mensajes[resp.tipo],
-                    type: StatusType.NOTIFICATION,
-                })
+            notificationService.showNotification(
+                1,
+                'Notificación',
+                '@' + resp.alias + ' ' + mensajes[resp.tipo],
+                {
+                    type: ClickNotificationTypes.GO_TO_IDEA,
+                    ideaId: resp.id_mensaje,
+                }
             );
         });
 
@@ -92,30 +100,56 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
         socket?.removeListener('newChatMsgWithReply');
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation }) => {
             const { conver } = resp;
+            const userFrom: User = conver.user_1.id === uid ? conver.user_2 : conver.user_1;
             if (activeConversationId !== conver.id) {
                 dispatch(increaseNewChatMessagesNumber());
+                notificationService.showNotification(
+                    conver.id,
+                    `Mensaje de @${userFrom.nickname}`,
+                    conver.chatmessage.message,
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: conver.id,
+                        toUser: conver.user_1.id === uid ? conver.user_1 : conver.user_2,
+                    }
+                );
             }
         });
 
         socket?.removeListener('newChatMsg');
-        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage }) => {
-            const { chatmsg } = resp;
+        socket?.on('newChatMsg', (resp: { chatmsg: ChatMessage; sender: User }) => {
+            const { chatmsg, sender } = resp;
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
+                console.log('catched newChatMsg');
+                notificationService.showNotification(
+                    chatmsg.id,
+                    `Mensaje de @${sender.nickname}`,
+                    chatmsg.message,
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: chatmsg.conversationId,
+                        toUser: sender,
+                    }
+                );
             }
         });
 
         socket?.removeListener('sendNudge');
-        socket?.on('sendNudge', (resp: { converId: number; nickname: string }) => {
-            const { converId } = resp;
+        socket?.on('sendNudge', (resp: { converId: number; sender: User }) => {
+            const { converId, sender } = resp;
             Vibration.vibrate();
             if (activeConversationId !== converId) {
-                dispatch(
-                    addToast({
-                        message: '@' + resp.nickname + ' te ha enviado un zumbido',
-                        type: StatusType.NUDGE,
-                    })
+                notificationService.showNotification(
+                    converId,
+                    'Notificación',
+                    '@' + sender.nickname + ' te ha enviado un zumbido',
+                    {
+                        type: ClickNotificationTypes.GO_TO_CONVERSATION,
+                        conversationId: converId,
+                        toUser: sender,
+                    }
                 );
             }
         });

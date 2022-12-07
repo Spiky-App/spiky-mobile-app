@@ -24,6 +24,7 @@ interface Props {
     form: FormComment;
     onChange: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
+    userId: number;
 }
 
 const MAX_LENGHT = 180;

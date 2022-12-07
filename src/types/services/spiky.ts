@@ -309,3 +309,8 @@ export interface TermsAndConditions {
         paragraphs: string[];
     }[];
 }
+
+export interface DeleteDeviceToken {
+    ok: boolean;
+    msg: string;
+}

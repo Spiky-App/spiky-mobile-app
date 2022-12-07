@@ -4,10 +4,9 @@ import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { Toast } from '../types/store';
-import { removeUser } from '../store/feature/user/userSlice';
 import { signOut } from '../store/feature/auth/authSlice';
 import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
+import { removeUser } from '../store/feature/user/userSlice';
 import { StorageKeys } from '../types/storage';
 import { decodeToken } from '../utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,6 +26,7 @@ import {
     TermsAndConditions,
     UserI,
 } from '../types/services/spiky';
+import { Toast } from '../types/store';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -39,16 +39,11 @@ function useSpikyService() {
             const exp_date = JSON.parse(decoded_token.toString()).exp;
             const value = new Date().setTime(exp_date * 1000);
             if (Date.now() > value) {
-                onExpiredToken();
+                logOutFunction();
             }
         }
     }, []);
-    async function onExpiredToken() {
-        await AsyncStorage.removeItem(StorageKeys.TOKEN);
-        dispatch(signOut());
-        dispatch(restartConfig());
-        dispatch(removeUser());
-    }
+
     useEffect(() => {
         setService(new SpikyService(config));
     }, [config]);
@@ -64,6 +59,22 @@ function useSpikyService() {
             message: defaultMessage,
             type: StatusType.WARNING,
         };
+    }
+
+    async function logOutFunction() {
+        try {
+            const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            if (deviceTokenStorage) {
+                await service.deleteDeviceToken(deviceTokenStorage);
+            }
+            await AsyncStorage.removeItem(StorageKeys.TOKEN);
+            dispatch(restartConfig());
+            dispatch(signOut());
+            dispatch(removeUser());
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al cerrar sesión.')));
+        }
     }
 
     const createMessageComment = useCallback(
@@ -434,7 +445,6 @@ function useSpikyService() {
 
     const handleForgotPassword = async (email: string): Promise<string | undefined> => {
         try {
-            console.log(config);
             const response = await service.handleForgotPassword(email);
             return response.data.msg;
         } catch (error) {
@@ -442,6 +452,25 @@ function useSpikyService() {
             dispatch(addToast(handleSpikyServiceToast(error, 'Error enviado el correo.')));
         }
         return undefined;
+    };
+
+    const setSessionInfo = async () => {
+        try {
+            const response = await service.getUniversities();
+            return response.data.universidades;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando universidades.')));
+        }
+    };
+
+    const validateToken = async (tokenStorage: string) => {
+        try {
+            const response = await service.getAuthRenew(tokenStorage);
+            return response.data;
+        } catch {
+            logOutFunction();
+        }
     };
 
     return {
@@ -474,6 +503,9 @@ function useSpikyService() {
         getPendingNotifications,
         handleForgotPassword,
         registerUser,
+        validateToken,
+        logOutFunction,
+        setSessionInfo,
     };
 }
 

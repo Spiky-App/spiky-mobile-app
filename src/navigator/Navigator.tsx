@@ -11,11 +11,6 @@ import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
 import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
 import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import SpikyService from '../services/SpikyService';
-import { setUniversities } from '../store/feature/ui/uiSlice';
-import { University, User } from '../types/store';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
 import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
 import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
@@ -23,7 +18,10 @@ import { ChatScreen } from '../screens/ChatScreen';
 import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import SocketContext from '../context/Socket/Context';
+import { University, User } from '../types/store';
+import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
+import { setUniversities } from '../store/feature/ui/uiSlice';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -55,31 +53,26 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-    const dispatch = useAppDispatch();
     const token = useAppSelector((state: RootState) => state.auth.token);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const universities = useAppSelector((state: RootState) => state.ui.universities);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
+    const dispatch = useAppDispatch();
     const { socket } = useContext(SocketContext);
+    const { setSessionInfo } = useSpikyService();
 
-    async function setSessionInfo() {
-        const spikyClient = new SpikyService(config);
-        try {
-            const { data: universitiesData } = await spikyClient.getUniversities();
-            const { universidades } = universitiesData;
-            const universitiesResponse: University[] = universidades.map<University>(
-                university => ({
-                    id: university.id_universidad,
-                    shortname: university.alias,
-                    color: university.color,
-                    backgroundColor: university.background_color,
-                })
-            );
-            dispatch(setUniversities(universitiesResponse));
-        } catch (e) {
-            dispatch(
-                addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
-            );
+    async function handleSessionInfo() {
+        if (token) {
+            const unversities = await setSessionInfo();
+            if (unversities) {
+                const universitiesResponse: University[] = unversities.map<University>(
+                    university => ({
+                        id: university.id_universidad,
+                        shortname: university.alias,
+                        color: university.color,
+                        backgroundColor: university.background_color,
+                    })
+                );
+                dispatch(setUniversities(universitiesResponse));
+            }
         }
     }
 
@@ -89,19 +82,20 @@ export const Navigator = () => {
     // TODO: centralize in one place where to put the token,
     // because i think it is saved in axios, in SecureStorage
     // and in store's auth.token
-    useEffect(() => {
-        if (config?.headers?.['x-token'] && !universities) {
-            setSessionInfo();
-        }
-    }, [universities, config]);
 
     useEffect(() => {
-        if (appState === 'inactive') {
-            socket?.emit('force-offline', {});
-        } else {
-            socket?.emit('force-online', {});
+        if (token) {
+            if (appState === 'inactive') {
+                socket?.emit('force-offline', {});
+            } else {
+                socket?.emit('force-online', {});
+            }
         }
-    }, [appState, socket]);
+    }, [appState, socket, token]);
+
+    useEffect(() => {
+        handleSessionInfo();
+    }, [token]);
 
     return (
         <Stack.Navigator

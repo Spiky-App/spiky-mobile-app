@@ -11,12 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useNavigation } from '@react-navigation/native';
 import { faRightFromBracket, faGear } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
-import { useAppDispatch } from '../store/hooks';
-import { signOut } from '../store/feature/auth/authSlice';
-import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { removeUser } from '../store/feature/user/userSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StorageKeys } from '../types/storage';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface Props {
     setProfileOption: (value: boolean) => void;
@@ -28,16 +23,9 @@ interface Props {
 }
 
 export const ModalProfile = ({ setProfileOption, profileOption, position }: Props) => {
-    const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
+    const { logOutFunction } = useSpikyService();
     const { top, right } = position;
-
-    async function onPressLogout() {
-        await AsyncStorage.removeItem(StorageKeys.TOKEN);
-        dispatch(signOut());
-        dispatch(restartConfig());
-        dispatch(removeUser());
-    }
 
     return (
         <Modal animationType="fade" visible={profileOption} transparent={true}>
@@ -80,7 +68,10 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                 </Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={stylescom.optionModal} onPress={onPressLogout}>
+                            <TouchableOpacity
+                                style={stylescom.optionModal}
+                                onPress={logOutFunction}
+                            >
                                 <FontAwesomeIcon icon={faRightFromBracket} color="white" />
                                 <Text style={{ ...styles.text, ...stylescom.textModal }}>
                                     Cerrar sesión

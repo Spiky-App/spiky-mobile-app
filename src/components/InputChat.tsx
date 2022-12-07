@@ -9,6 +9,7 @@ import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
 
 export interface FormChat {
     message: string;
@@ -48,6 +49,7 @@ export const InputChat = ({
     const [counter, setCounter] = useState(0);
     const timeoutRef = useRef<null | number>(null);
     const IDEA_MAX_LENGHT = 200;
+    const userObj = useAppSelector(selectUserAsObject);
 
     function invalid() {
         const { message: mensaje } = form;
@@ -61,15 +63,19 @@ export const InputChat = ({
         const chatmensaje = await createChatMessage(conversationId, message);
         if (chatmensaje) {
             const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
-            socket?.emit('newChatMsg', {
-                chatmsg: newChatMessages,
-                userto: toUser.id,
-            });
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
                 setIsTyping(false);
             }
             updateChatMessages(newChatMessages);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    isOnline: toUser.online,
+                    sender: userObj,
+                });
+            }
         }
     }
 

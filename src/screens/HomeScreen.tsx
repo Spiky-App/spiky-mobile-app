@@ -7,7 +7,6 @@ import { LogoFadeIn } from '../components/common/LogoFadeIn';
 
 export const HomeScreen = () => {
     const navigation = useNavigation<any>();
-
     return (
         <BackgroundPaper>
             <View style={stylecom.container}>
