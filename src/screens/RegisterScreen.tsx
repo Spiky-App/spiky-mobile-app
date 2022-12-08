@@ -33,6 +33,9 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { validatePasswordFields } from '../helpers/passwords';
 import { RootStackParamList } from '../navigator/Navigator';
 import { DrawerScreenProps } from '@react-navigation/drawer';
+import { AxiosError } from 'axios';
+import { StorageKeys } from '../types/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialSate = {
     alias: '',
@@ -54,7 +57,7 @@ export const RegisterScreen = ({ route }: Props) => {
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
     const { form, onChange } = useForm(initialSate);
-    const { registerUser } = useSpikyService();
+    const { registerUser, logInUser } = useSpikyService();
 
     const { alias, password, confirmPassword, checkTermsConditions } = form;
 
@@ -74,12 +77,34 @@ export const RegisterScreen = ({ route }: Props) => {
                         );
                     }
                     onChange(initialSate);
-                    navigation.navigate('LoginScreen');
                 } catch (error) {
                     console.log(error);
                     dispatch(
                         addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
                     );
+                }
+                try {
+                    const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                    if (deviceTokenStorage) {
+                        await logInUser(correoValid, password, deviceTokenStorage);
+                    } else {
+                        dispatch(
+                            addToast({
+                                message: 'Error al iniciar sesíon',
+                                type: StatusType.WARNING,
+                            })
+                        );
+                        navigation.navigate('LoginScreen');
+                    }
+                } catch (e) {
+                    if (e instanceof AxiosError) {
+                        dispatch(
+                            addToast({
+                                message: e.response?.data.msg || '',
+                                type: StatusType.WARNING,
+                            })
+                        );
+                    }
                 }
             } else {
                 dispatch(addToast(passwordErrors));

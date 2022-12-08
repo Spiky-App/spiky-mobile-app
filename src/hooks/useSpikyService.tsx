@@ -4,9 +4,12 @@ import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { StatusType } from '../types/common';
-import { signOut } from '../store/feature/auth/authSlice';
-import { restartConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { removeUser } from '../store/feature/user/userSlice';
+import { signIn, signOut } from '../store/feature/auth/authSlice';
+import {
+    restartConfig,
+    updateServiceConfig,
+} from '../store/feature/serviceConfig/serviceConfigSlice';
+import { removeUser, setUser } from '../store/feature/user/userSlice';
 import { StorageKeys } from '../types/storage';
 import { decodeToken } from '../utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -427,6 +430,34 @@ function useSpikyService() {
         }
         return undefined;
     };
+    const logInUser = async (
+        correoValid: string,
+        password: string,
+        deviceTokenStorage: string
+    ): Promise<string | undefined> => {
+        try {
+            const response = await service.login(correoValid, password, deviceTokenStorage);
+            const { data } = response;
+            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = response.data;
+            await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
+            dispatch(updateServiceConfig({ headers: { 'x-token': data.token } }));
+            dispatch(signIn(data.token));
+            dispatch(
+                setUser({
+                    nickname: alias,
+                    notificationsNumber: n_notificaciones,
+                    newChatMessagesNumber: n_chatmensajes,
+                    universityId: id_universidad,
+                    id: uid,
+                })
+            );
+            return undefined;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al hacer auto-login.')));
+        }
+        return undefined;
+    };
 
     const getPendingNotifications = async (): Promise<PendingNotificationsI | undefined> => {
         try {
@@ -506,6 +537,7 @@ function useSpikyService() {
         validateToken,
         logOutFunction,
         setSessionInfo,
+        logInUser,
     };
 }
 
