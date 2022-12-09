@@ -11,13 +11,7 @@ import {
     Pressable,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {
-    faAddressCard,
-    faCheck,
-    faCircleInfo,
-    faEye,
-    faEyeSlash,
-} from '../constants/icons/FontAwesome';
+import { faCheck, faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -29,13 +23,9 @@ import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { validatePasswordFields } from '../helpers/passwords';
 import { RootStackParamList } from '../navigator/Navigator';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import { AxiosError } from 'axios';
-import { StorageKeys } from '../types/storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialSate = {
     alias: '',
@@ -57,7 +47,7 @@ export const RegisterScreen = ({ route }: Props) => {
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
     const { form, onChange } = useForm(initialSate);
-    const { registerUser, logInUser } = useSpikyService();
+    const { registerUser } = useSpikyService();
 
     const { alias, password, confirmPassword, checkTermsConditions } = form;
 
@@ -66,16 +56,8 @@ export const RegisterScreen = ({ route }: Props) => {
         if (checkTermsConditions) {
             if (passwordErrors === undefined) {
                 try {
-                    const msg = await registerUser(token, alias, correoValid, password);
-                    if (msg) {
-                        dispatch(
-                            setModalAlert({
-                                isOpen: true,
-                                text: msg,
-                                icon: faAddressCard,
-                            })
-                        );
-                    }
+                    await registerUser(token, alias, correoValid, password);
+                    navigation.navigate('ManifestPart2Screen', { correoValid, password });
                     onChange(initialSate);
                 } catch (error) {
                     console.log(error);
@@ -83,36 +65,13 @@ export const RegisterScreen = ({ route }: Props) => {
                         addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
                     );
                 }
-                try {
-                    const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-                    if (deviceTokenStorage) {
-                        await logInUser(correoValid, password, deviceTokenStorage);
-                    } else {
-                        dispatch(
-                            addToast({
-                                message: 'Error al iniciar sesíon',
-                                type: StatusType.WARNING,
-                            })
-                        );
-                        navigation.navigate('LoginScreen');
-                    }
-                } catch (e) {
-                    if (e instanceof AxiosError) {
-                        dispatch(
-                            addToast({
-                                message: e.response?.data.msg || '',
-                                type: StatusType.WARNING,
-                            })
-                        );
-                    }
-                }
             } else {
                 dispatch(addToast(passwordErrors));
             }
         } else {
             dispatch(
                 addToast({
-                    message: 'Términos y condiciones sin acpetar.',
+                    message: 'Términos y condiciones sin aceptar.',
                     type: StatusType.WARNING,
                 })
             );

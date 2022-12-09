@@ -6,6 +6,14 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { StatusType } from '../types/common';
+import { StorageKeys } from '../types/storage';
+import { useAppDispatch } from '../store/hooks';
+import useSpikyService from '../hooks/useSpikyService';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { RootStackParamList } from '../navigator/Navigator';
 
 const manifest2 = [
     'Bienvenido spiker',
@@ -18,19 +26,35 @@ const manifest2 = [
     'No te claves con una idea, es de sabios cambiar de opinión',
     '',
 ];
+type Props = DrawerScreenProps<RootStackParamList, 'ManifestPart2Screen'>;
 
-export const ManifestPart2Screen = () => {
+export const ManifestPart2Screen = ({ route }: Props) => {
     const { opacity, position, fadeIn, scale, fadeOut, movingPositionAndScale } = useAnimation({});
     const [state, setState] = useState(0);
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
-
+    const dispatch = useAppDispatch();
+    const { logInUser } = useSpikyService();
+    const { correoValid, password } = route.params;
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
-
+    const logUser = async () => {
+        const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        if (deviceTokenStorage) {
+            await logInUser(correoValid, password, deviceTokenStorage);
+        } else {
+            dispatch(
+                addToast({
+                    message: 'Error al iniciar sesíon',
+                    type: StatusType.WARNING,
+                })
+            );
+            navigation.navigate('LoginScreen');
+        }
+    };
     useEffect(() => {
         if (state > 8) {
-            navigation.replace('CommunityScreen');
+            logUser();
             clearTimeout(timeRef.current);
         } else if (state === 1) {
             fadeIn(1200);

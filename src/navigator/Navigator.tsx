@@ -47,7 +47,7 @@ export type RootStackParamList = {
     };
     ChatScreen: { conversationId: number; toUser: User };
     ChangeForgotPasswordScreen: { token: string; correoValid: string };
-    ManifestPart2Screen: undefined;
+    ManifestPart2Screen: { correoValid: string; password: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -119,6 +119,7 @@ export const Navigator = () => {
                         name="ChangeForgotPasswordScreen"
                         component={ChangeForgotPasswordScreen}
                     />
+                    <Stack.Screen name="ManifestPart2Screen" component={ManifestPart2Screen} />
                 </>
             ) : (
                 <>
@@ -128,7 +129,6 @@ export const Navigator = () => {
                     <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
-                    <Stack.Screen name="ManifestPart2Screen" component={ManifestPart2Screen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />
