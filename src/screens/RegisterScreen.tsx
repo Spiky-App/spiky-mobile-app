@@ -11,13 +11,7 @@ import {
     Pressable,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {
-    faAddressCard,
-    faCheck,
-    faCircleInfo,
-    faEye,
-    faEyeSlash,
-} from '../constants/icons/FontAwesome';
+import { faCheck, faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -29,7 +23,6 @@ import { StatusType } from '../types/common';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
-import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { validatePasswordFields } from '../helpers/passwords';
 import { RootStackParamList } from '../navigator/Navigator';
 import { DrawerScreenProps } from '@react-navigation/drawer';
@@ -63,20 +56,29 @@ export const RegisterScreen = ({ route }: Props) => {
         if (checkTermsConditions) {
             if (passwordErrors === undefined) {
                 try {
-                    const msg = await registerUser(token, alias, correoValid, password);
-                    if (msg) {
-                        dispatch(
-                            setModalAlert({
-                                isOpen: true,
-                                text: msg,
-                                icon: faAddressCard,
-                            })
-                        );
+                    const { ok } = await registerUser(token, alias, correoValid, password);
+                    if (ok) {
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'ManifestPart2Screen',
+                                    params: { correoValid, password },
+                                },
+                            ],
+                        });
                     }
                     onChange(initialSate);
-                    navigation.navigate('LoginScreen');
                 } catch (error) {
                     console.log(error);
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'HomeScreen',
+                            },
+                        ],
+                    });
                     dispatch(
                         addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
                     );
@@ -87,7 +89,7 @@ export const RegisterScreen = ({ route }: Props) => {
         } else {
             dispatch(
                 addToast({
-                    message: 'Términos y condiciones sin acpetar.',
+                    message: 'Términos y condiciones sin aceptar.',
                     type: StatusType.WARNING,
                 })
             );
