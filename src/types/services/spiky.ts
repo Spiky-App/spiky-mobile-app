@@ -238,6 +238,7 @@ export interface ChatMessage {
     chatmensaje: string;
     fecha: string;
     mensaje?: ReplyMessage;
+    reply?: Reply;
     seens: Seen[];
 }
 
@@ -252,6 +253,14 @@ interface ReplyMessage {
     id_mensaje: number;
     mensaje: string;
     usuario: UserI;
+}
+
+interface Reply {
+    chatmensaje: {
+        id_chatmensaje: number;
+        chatmensaje: string;
+        usuario: UserI;
+    };
 }
 
 export interface CreateChatMessage {
