@@ -415,7 +415,7 @@ function useSpikyService() {
         newUserAlias: string,
         newUserEmail: string,
         password: string
-    ): Promise<string | undefined> => {
+    ): Promise<{ ok: boolean }> => {
         try {
             const response = await service.registerUser(
                 sentToken,
@@ -423,12 +423,12 @@ function useSpikyService() {
                 newUserEmail,
                 password
             );
-            return response.data.msg;
+            return response.data;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear cuenta.')));
+            return { ok: false };
         }
-        return undefined;
     };
     const logInUser = async (
         correoValid: string,

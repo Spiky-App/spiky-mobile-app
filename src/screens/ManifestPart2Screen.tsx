@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Animated, Text, View, TouchableWithoutFeedback } from 'react-native';
-import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
@@ -78,12 +77,7 @@ export const ManifestPart2Screen = ({ route }: Props) => {
 
     return (
         <BackgroundPaper>
-            <ArrowBack />
-
-            <TouchableWithoutFeedback
-                style={{ ...styles.center }}
-                // onPress={() => nextManifiesto()}
-            >
+            <TouchableWithoutFeedback style={{ ...styles.center }}>
                 <View style={styles.center}>
                     {state > 0 && state < 8 && (
                         <Animated.View

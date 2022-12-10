@@ -56,11 +56,29 @@ export const RegisterScreen = ({ route }: Props) => {
         if (checkTermsConditions) {
             if (passwordErrors === undefined) {
                 try {
-                    await registerUser(token, alias, correoValid, password);
-                    navigation.navigate('ManifestPart2Screen', { correoValid, password });
+                    const { ok } = await registerUser(token, alias, correoValid, password);
+                    if (ok) {
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'ManifestPart2Screen',
+                                    params: { correoValid, password },
+                                },
+                            ],
+                        });
+                    }
                     onChange(initialSate);
                 } catch (error) {
                     console.log(error);
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'HomeScreen',
+                            },
+                        ],
+                    });
                     dispatch(
                         addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
                     );
