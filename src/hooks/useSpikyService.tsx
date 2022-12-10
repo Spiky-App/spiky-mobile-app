@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SpikyService from '../services/SpikyService';
 import { RootState } from '../store';
 import { addToast } from '../store/feature/toast/toastSlice';
@@ -77,22 +77,20 @@ function useSpikyService() {
         }
     }
 
-    const createMessageComment = useCallback(
-        async (
-            messageId: number,
-            uid: number,
-            comment: string
-        ): Promise<MessageComment | undefined> => {
-            try {
-                const response = await service.createMessageComment(messageId, uid, comment);
-                return response.data.respuesta;
-            } catch (error) {
-                dispatch(addToast(handleSpikyServiceToast(error, 'Error creando respuesta.')));
-            }
-            return undefined;
-        },
-        [service]
-    );
+    const createMessageComment = async (
+        messageId: number,
+        uid: number,
+        comment: string
+    ): Promise<MessageComment | undefined> => {
+        try {
+            const response = await service.createMessageComment(messageId, uid, comment);
+            return response.data.respuesta;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando respuesta.')));
+        }
+        return undefined;
+    };
 
     const createReportIdea = async (
         messageId: number,
@@ -114,6 +112,7 @@ function useSpikyService() {
             const response = await service.createTracking(uid, messageId);
             return response.data.id_tracking;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error siguiendo mensaje.')));
         }
         return undefined;
@@ -124,6 +123,7 @@ function useSpikyService() {
             await service.deleteTracking(messageId);
             return true;
         } catch (error) {
+            console.log(error);
             dispatch(
                 addToast(handleSpikyServiceToast(error, 'Error dejando de siguiendo mensaje.'))
             );
@@ -140,6 +140,7 @@ function useSpikyService() {
             const response = await service.createChatMsgWithReply(userId, messageId, chatMessage);
             return response.data.content;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al crear mensaje.')));
         }
         return undefined;
@@ -203,6 +204,7 @@ function useSpikyService() {
             const response = await service.createMessage(message, draft ? 1 : 0);
             return response.data.mensaje;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error creando idea.')));
         }
         return undefined;
@@ -243,6 +245,7 @@ function useSpikyService() {
             await service.deleteMessage(messageId);
             return true;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error eliminando idea.')));
         }
         return false;
@@ -253,6 +256,7 @@ function useSpikyService() {
             await service.updateNotifications(arrayIds);
             return true;
         } catch (error) {
+            console.log(error);
             dispatch(
                 addToast(handleSpikyServiceToast(error, 'Error actualizando notificaciones.'))
             );
@@ -279,6 +283,7 @@ function useSpikyService() {
             await service.createReactionCmt(commentId, reactionTypeAux);
             return true;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error creando reacción.')));
         }
         return false;
@@ -315,6 +320,7 @@ function useSpikyService() {
             const response = await service.getMessageAndComments(messageId);
             return { ...response.data.mensaje, num_respuestas: response.data.num_respuestas };
         } catch (error) {
+            console.log(error);
             dispatch(
                 addToast(handleSpikyServiceToast(error, 'Error obteniendo idea con comentarios.'))
             );
@@ -326,6 +332,7 @@ function useSpikyService() {
             const response = await service.getUserInfo();
             return response.data.usuario;
         } catch (error) {
+            console.log(error);
             dispatch(
                 addToast(handleSpikyServiceToast(error, 'Error cargando información del usuario.'))
             );
@@ -342,6 +349,7 @@ function useSpikyService() {
             await service.updatePassword(uid, currentPassword, newPassword);
             return true;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error actualizando contraseña.')));
         }
         return false;
@@ -407,6 +415,7 @@ function useSpikyService() {
             const response = await service.getTermsAndConditions();
             return response.data.lists;
         } catch (error) {
+            console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
         }
         return undefined;
