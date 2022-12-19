@@ -200,11 +200,16 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => handleClickUser(message.user)}>
-                                        <Text style={{ ...styles.user, fontSize: 14 }}>
-                                            @{message.user.nickname}
-                                        </Text>
+                                        <View style={stylescom.button_user}>
+                                            <Text style={{ ...styles.user, fontSize: 15 }}>
+                                                @{message.user.nickname}
+                                            </Text>
+                                            <UniversityTag
+                                                id={message.user.universityId}
+                                                fontSize={14}
+                                            />
+                                        </View>
                                     </TouchableOpacity>
-                                    <UniversityTag id={message.user.universityId} fontSize={14} />
                                 </View>
 
                                 <View style={{ marginVertical: 8 }}>
@@ -252,7 +257,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     <FontAwesomeIcon
                                                         icon={faMessage}
                                                         color={'#D4D4D4'}
-                                                        size={14}
+                                                        size={16}
                                                     />
                                                     <Text style={styles.numberGray}>
                                                         {answersNumber === 0 ? ' ' : answersNumber}
@@ -329,7 +334,6 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     form={form}
                                     onChange={onChange}
                                     refInputComment={refInputComment}
-                                    userId={message.user.id}
                                 />
                             </>
                         ) : (
@@ -465,5 +469,10 @@ const stylescom = StyleSheet.create({
         top: 0,
         bottom: 0,
         left: -16,
+    },
+    button_user: {
+        flexDirection: 'row',
+        paddingVertical: 5,
+        alignSelf: 'flex-start',
     },
 });

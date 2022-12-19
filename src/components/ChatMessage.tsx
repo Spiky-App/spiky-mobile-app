@@ -121,7 +121,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                         }}
                     >
                         <View>
-                            <Text style={stylescomp.text}>{msg.message}</Text>
+                            <Text style={styles.text}>{msg.message}</Text>
                         </View>
                         <View>
                             <Text style={stylescomp.time}>{time}</Text>

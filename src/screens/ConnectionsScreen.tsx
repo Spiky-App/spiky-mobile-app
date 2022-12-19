@@ -170,7 +170,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                 {newMsg && <View style={stylescomp.newChatMsg} />}
                 <View style={stylescomp.converContainer}>
                     <View style={{ ...styles.flex, alignItems: 'center' }}>
-                        <Text style={{ ...styles.textbold, fontSize: 14 }}>@{toUser.nickname}</Text>
+                        <Text style={{ ...styles.user, fontSize: 15 }}>@{toUser.nickname}</Text>
                         <UniversityTag id={toUser.universityId} fontSize={14} />
                         <View
                             style={{
@@ -180,7 +180,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         />
                     </View>
                     <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
-                        <Text style={{ ...styles.text, fontSize: 13, overflow: 'scroll' }}>
+                        <Text style={{ ...styles.text, overflow: 'scroll' }}>
                             {conver.chatmessage.message.length > 80
                                 ? conver.chatmessage.message.substring(0, 80) + '...'
                                 : conver.chatmessage.message}

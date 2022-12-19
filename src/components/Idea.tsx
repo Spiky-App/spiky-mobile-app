@@ -132,14 +132,12 @@ export const Idea = ({ idea, filter }: Props) => {
                     </View>
                 )}
 
-                <View style={styles.flex}>
-                    <Pressable onPress={() => handleClickUser(user)}>
-                        <Text style={{ ...stylescom.user, ...styles.textbold }}>
-                            @{user.nickname}
-                        </Text>
-                    </Pressable>
-                    <UniversityTag id={user.universityId} fontSize={13} />
-                </View>
+                <Pressable onPress={() => handleClickUser(user)}>
+                    <View style={stylescom.button_user}>
+                        <Text style={styles.user}>@{user.nickname}</Text>
+                        <UniversityTag id={user.universityId} fontSize={13} />
+                    </View>
+                </Pressable>
 
                 <View style={{ marginTop: 6 }}>
                     <MsgTransform
@@ -184,7 +182,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                         <FontAwesomeIcon
                                             icon={faMessage}
                                             color={'#D4D4D4'}
-                                            size={14}
+                                            size={16}
                                         />
                                         <Text style={{ ...styles.text, ...stylescom.number }}>
                                             {answersNumber === 0 ? '' : answersNumber}
@@ -269,13 +267,8 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    user: {
-        ...styles.textbold,
-        fontWeight: '600',
-        fontSize: 13,
-    },
     msg: {
-        fontSize: 13,
+        ...styles.text,
         textAlign: 'left',
         flexShrink: 1,
     },
@@ -283,6 +276,7 @@ const stylescom = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: 10,
     },
     publishDraft: {
         flexDirection: 'row',
@@ -342,5 +336,10 @@ const stylescom = StyleSheet.create({
         left: 0,
         right: 0,
         overflow: 'hidden',
+    },
+    button_user: {
+        flexDirection: 'row',
+        paddingVertical: 4,
+        alignSelf: 'flex-start',
     },
 });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { faReply, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -62,12 +62,12 @@ export const Comment = ({
     return (
         <View style={stylescom.wrap}>
             <View style={{ ...styles.flex, marginTop: 4 }}>
-                <TouchableOpacity onPress={() => handleClickUser(comment.user)}>
-                    <Text style={{ ...styles.user, ...styles.textbold }}>
-                        @{comment.user.nickname}
-                    </Text>
-                </TouchableOpacity>
-                <UniversityTag id={comment.user.universityId} fontSize={13} />
+                <Pressable onPress={() => handleClickUser(comment.user)}>
+                    <View style={stylescom.button_user}>
+                        <Text style={styles.user}> @{comment.user.nickname}</Text>
+                        <UniversityTag id={comment.user.universityId} fontSize={13} />
+                    </View>
+                </Pressable>
 
                 <Text style={{ ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
                 {uid !== comment.user.id && (
@@ -180,5 +180,10 @@ const stylescom = StyleSheet.create({
         color: '#ffff',
         fontSize: 12,
         marginLeft: 2,
+    },
+    button_user: {
+        flexDirection: 'row',
+        paddingVertical: 4,
+        alignSelf: 'flex-start',
     },
 });

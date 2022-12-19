@@ -140,7 +140,7 @@ export const ModalIdeaOptions = ({
                     }}
                 >
                     <TouchableWithoutFeedback>
-                        <View style={{ ...stylescomp.container, top: top + 20, left: left - 115 }}>
+                        <View style={{ ...stylescomp.container, top: top + 20, left: left - 100 }}>
                             {!myIdea ? (
                                 <>
                                     <TouchableOpacity

@@ -64,7 +64,9 @@ const stylescom = StyleSheet.create({
     dots: {
         fontWeight: '600',
         color: '#bebebe',
-        fontSize: 22,
-        marginLeft: 20,
+        fontSize: 24,
+        marginLeft: 5,
+        paddingHorizontal: 8,
+        top: -4,
     },
 });

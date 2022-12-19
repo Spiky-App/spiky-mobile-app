@@ -27,7 +27,7 @@ import {
     ChatMessageToReply,
 } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
@@ -42,6 +42,7 @@ import { useAnimation } from '../hooks/useAnimation';
 import SendNudgeButton from '../components/SendNudgeButton';
 import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
+import { MessageRequestData } from '../services/models/spikyService';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -116,6 +117,27 @@ export const ChatScreen = ({ route }: Props) => {
             setToUserIsTyping(false);
         }
     }
+
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        navigation.pop();
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route_n: { name: string }) => route_n.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
 
     useFocusEffect(
         useCallback(() => {
@@ -202,18 +224,25 @@ export const ChatScreen = ({ route }: Props) => {
                         <TouchableOpacity
                             style={{
                                 ...styles.center,
-                                marginRight: 10,
-                                marginLeft: 20,
+                                paddingRight: 10,
+                                paddingLeft: 20,
+                                paddingVertical: 10,
                             }}
                             onPress={handleGoBack}
                         >
                             <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                         </TouchableOpacity>
-                        <Text
-                            style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}
+                        <TouchableOpacity
+                            onPress={() =>
+                                changeScreen('ProfileScreen', {
+                                    alias: toUser.nickname,
+                                })
+                            }
                         >
-                            {'@' + toUser.nickname}
-                        </Text>
+                            <Text style={{ ...styles.h3, color: '#ffff', marginRight: 5 }}>
+                                {'@' + toUser.nickname}
+                            </Text>
+                        </TouchableOpacity>
                         <UniversityTag id={toUser.universityId} fontSize={23} />
                         <View
                             style={{
