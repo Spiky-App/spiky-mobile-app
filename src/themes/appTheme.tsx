@@ -154,4 +154,17 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    button_user: {
+        flexDirection: 'row',
+        paddingVertical: 2,
+        alignSelf: 'flex-start',
+    },
+    arrow_back: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        left: 5,
+        top: 0,
+        bottom: 0,
+    },
 });

@@ -94,13 +94,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                                 <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
                             </View>
                             <TouchableOpacity
-                                style={{
-                                    ...styles.center,
-                                    ...stylecom.posAbsolute,
-                                    left: 5,
-                                    top: 0,
-                                    bottom: 0,
-                                }}
+                                style={styles.arrow_back}
                                 onPress={() => navigation.goBack()}
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} color={'#bebebe'} size={25} />

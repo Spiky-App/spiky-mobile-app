@@ -63,7 +63,7 @@ export const Comment = ({
         <View style={stylescom.wrap}>
             <View style={{ ...styles.flex, marginTop: 4 }}>
                 <Pressable onPress={() => handleClickUser(comment.user)}>
-                    <View style={stylescom.button_user}>
+                    <View style={styles.button_user}>
                         <Text style={styles.user}> @{comment.user.nickname}</Text>
                         <UniversityTag id={comment.user.universityId} fontSize={13} />
                     </View>
@@ -180,10 +180,5 @@ const stylescom = StyleSheet.create({
         color: '#ffff',
         fontSize: 12,
         marginLeft: 2,
-    },
-    button_user: {
-        flexDirection: 'row',
-        paddingVertical: 4,
-        alignSelf: 'flex-start',
     },
 });

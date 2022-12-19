@@ -133,7 +133,7 @@ export const Idea = ({ idea, filter }: Props) => {
                 )}
 
                 <Pressable onPress={() => handleClickUser(user)}>
-                    <View style={stylescom.button_user}>
+                    <View style={styles.button_user}>
                         <Text style={styles.user}>@{user.nickname}</Text>
                         <UniversityTag id={user.universityId} fontSize={13} />
                     </View>
@@ -336,10 +336,5 @@ const stylescom = StyleSheet.create({
         left: 0,
         right: 0,
         overflow: 'hidden',
-    },
-    button_user: {
-        flexDirection: 'row',
-        paddingVertical: 4,
-        alignSelf: 'flex-start',
     },
 });

@@ -155,6 +155,17 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                     <>
                         <View style={stylescom.wrap}>
                             <View style={stylescom.subwrap}>
+                                <TouchableOpacity
+                                    style={styles.arrow_back}
+                                    onPress={() => navigation.goBack()}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faChevronLeft}
+                                        color={'#bebebe'}
+                                        size={25}
+                                    />
+                                </TouchableOpacity>
+
                                 {isOwner && (
                                     <View style={stylescom.corner_container}>
                                         <View style={stylescom.corner}>
@@ -189,7 +200,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
 
                                 <View style={stylescom.flex}>
-                                    <TouchableOpacity
+                                    {/* <TouchableOpacity
                                         style={stylescom.backArrow}
                                         onPress={() => navigation.goBack()}
                                     >
@@ -198,9 +209,9 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             color={'#01192E'}
                                             size={15}
                                         />
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                     <TouchableOpacity onPress={() => handleClickUser(message.user)}>
-                                        <View style={stylescom.button_user}>
+                                        <View style={styles.button_user}>
                                             <Text style={{ ...styles.user, fontSize: 15 }}>
                                                 @{message.user.nickname}
                                             </Text>
@@ -387,7 +398,8 @@ const stylescom = StyleSheet.create({
     subwrap: {
         paddingTop: 15,
         paddingBottom: 8,
-        paddingHorizontal: 25,
+        paddingRight: 25,
+        paddingLeft: 32,
         borderRadius: 8,
     },
     msg: {
@@ -469,10 +481,5 @@ const stylescom = StyleSheet.create({
         top: 0,
         bottom: 0,
         left: -16,
-    },
-    button_user: {
-        flexDirection: 'row',
-        paddingVertical: 5,
-        alignSelf: 'flex-start',
     },
 });
