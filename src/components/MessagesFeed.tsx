@@ -62,7 +62,7 @@ const MessagesFeed = ({
             <IdeasHeader title={title} myideas={myideas} icon={icon} profile={profile} />
             {messages?.length !== 0 ? (
                 <FlatList
-                    style={{ width: '90%' }}
+                    style={{ width: '100%' }}
                     data={messages}
                     renderItem={({ item }) => <Idea idea={item} filter={filter} />}
                     keyExtractor={item => item.id + ''}

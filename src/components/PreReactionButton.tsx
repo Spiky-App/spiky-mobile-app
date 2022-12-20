@@ -152,7 +152,7 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
                 <TouchableWithoutFeedback onPress={handleCloseModal}>
                     <View style={stylescomp.wrapModal}>
                         <TouchableWithoutFeedback>
-                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 160 }}>
+                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 159 }}>
                                 <Animated.View
                                     style={{
                                         ...stylescomp.containerbig,
@@ -238,7 +238,7 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
 const stylescomp = StyleSheet.create({
     container: {
         ...styles.center,
-        ...styles.shadow,
+        ...styles.shadow_button,
         height: 42,
         minWidth: 42,
         borderRadius: 20,
@@ -257,10 +257,11 @@ const stylescomp = StyleSheet.create({
         height: 42,
         alignItems: 'flex-end',
         position: 'absolute',
+        ...styles.shadow_button,
     },
     containerbig: {
         ...styles.center,
-        ...styles.shadow,
+        ...styles.shadow_button,
         height: 42,
         width: 200,
         borderRadius: 20,

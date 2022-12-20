@@ -167,4 +167,14 @@ export const styles = StyleSheet.create({
         top: 0,
         bottom: 0,
     },
+    shadow_button: {
+        shadowColor: '#484848',
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 0,
+        elevation: 6,
+    },
 });

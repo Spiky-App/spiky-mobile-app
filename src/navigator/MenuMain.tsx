@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     createDrawerNavigator,
@@ -80,9 +80,9 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
     const [modalNotif, setModalNotif] = useState(false);
     const routes = navigation.getState().routes;
     const lengthHistory = navigation.getState().history?.length || 0;
-    const lastScreen: any = navigation.getState().history?.[lengthHistory - 2];
+    const lastScreen: any = navigation.getState().history?.[lengthHistory - 1];
     const screenActiveObj = routes.filter(route => route.key === lastScreen?.key);
-    const screenActive = screenActiveObj[0]?.name || '';
+    const [screenActive, setScreenActive] = useState('Comunidad');
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
     );
@@ -96,6 +96,12 @@ const MenuInterno = ({ navigation }: DrawerContentComponentProps) => {
             })
         );
     };
+
+    useEffect(() => {
+        if (screenActiveObj[0]) {
+            setScreenActive(screenActiveObj[0]?.name);
+        }
+    }, [lastScreen]);
 
     return (
         <DrawerContentScrollView

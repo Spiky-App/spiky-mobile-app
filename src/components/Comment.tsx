@@ -76,7 +76,14 @@ export const Comment = ({
                             style={{ ...styles.numberGray, marginLeft: 10 }}
                             onPress={handleReply}
                         >
-                            <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
+                            <FontAwesomeIcon
+                                icon={faReply}
+                                color="#E6E6E6"
+                                style={{
+                                    ...styles.shadow_button,
+                                    shadowColor: '#484848b9',
+                                }}
+                            />
                         </TouchableOpacity>
                         {reactionCommentType === undefined && (
                             <TouchableOpacity
@@ -92,6 +99,10 @@ export const Comment = ({
                                     color="#E6E6E6"
                                     underlayColor={'#01192ebe'}
                                     pressed={modalReact}
+                                    style={{
+                                        ...styles.shadow_button,
+                                        shadowColor: '#484848b9',
+                                    }}
                                 />
                             </TouchableOpacity>
                         )}

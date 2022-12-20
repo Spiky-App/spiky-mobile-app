@@ -269,6 +269,13 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                         icon={faMessage}
                                                         color={'#D4D4D4'}
                                                         size={16}
+                                                        style={{
+                                                            ...styles.shadow_button,
+                                                            shadowOffset: {
+                                                                width: 1.5,
+                                                                height: 2,
+                                                            },
+                                                        }}
                                                     />
                                                     <Text style={styles.numberGray}>
                                                         {answersNumber === 0 ? ' ' : answersNumber}

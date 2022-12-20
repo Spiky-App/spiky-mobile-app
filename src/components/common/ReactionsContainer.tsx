@@ -73,6 +73,7 @@ const stylescomp = StyleSheet.create({
         ...styles.center,
     },
     container: {
+        ...styles.shadow_button,
         flexDirection: 'row',
         paddingHorizontal: 4,
         paddingVertical: 2,

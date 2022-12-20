@@ -71,6 +71,7 @@ export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Prop
                     <View
                         style={{
                             ...styles.center,
+                            ...styles.shadow_button,
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
@@ -119,6 +120,7 @@ const stylecom = StyleSheet.create({
         flexWrap: 'wrap',
     },
     filterContainer: {
+        ...styles.shadow_button,
         backgroundColor: '#D4D4D4',
         borderRadius: 3,
         paddingHorizontal: 10,
