@@ -248,8 +248,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             <PreReactionButton
                                                 messageId={message.id}
                                                 bottom={-15}
-                                                right={-25}
-                                                left={-25}
+                                                right={-24}
                                             />
                                         </>
                                     ) : (

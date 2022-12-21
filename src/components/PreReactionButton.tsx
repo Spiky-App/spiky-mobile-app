@@ -29,10 +29,9 @@ interface Positions {
 interface Props {
     bottom: number;
     right: number;
-    left: number;
     messageId: number;
 }
-export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => {
+export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
@@ -131,7 +130,7 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
 
     return (
         <>
-            <View style={{ position: 'absolute', left, bottom, right, alignItems: 'flex-end' }}>
+            <View style={{ position: 'absolute', bottom, right, alignItems: 'flex-end' }}>
                 <View
                     style={{
                         ...stylescomp.container,

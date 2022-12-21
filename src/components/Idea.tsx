@@ -160,12 +160,7 @@ export const Idea = ({ idea, filter }: Props) => {
                         {!myReaction && !isOwner ? (
                             <>
                                 <View style={{ flex: 1, height: 15 }} />
-                                <PreReactionButton
-                                    messageId={id}
-                                    bottom={-15}
-                                    right={-25}
-                                    left={-25}
-                                />
+                                <PreReactionButton messageId={id} bottom={-15} right={-24} />
                             </>
                         ) : (
                             <>
