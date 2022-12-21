@@ -270,7 +270,7 @@ export const Idea = ({ idea, filter }: Props) => {
 
 const stylescom = StyleSheet.create({
     wrap: {
-        width: '95%',
+        width: '90%',
         // paddingHorizontal: 10,
         backgroundColor: 'white',
         borderRadius: 8,

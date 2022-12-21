@@ -94,6 +94,23 @@ export const ChatScreen = ({ route }: Props) => {
         }
     }
 
+    async function updateLastChatMessages() {
+        setMoreChatMsg(false);
+        const chatMessagesResponse = await getChatMessages(conversationId);
+        if (chatMessagesResponse) {
+            const { chatmensajes, n_chatmensajes_unseens } = chatMessagesResponse;
+            const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
+                generateChatMsgFromChatMensaje(chatmsg, user.id)
+            );
+            dispatch(
+                updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
+            );
+            if (newChatMessages.length === 20) setMoreChatMsg(true);
+            setChatMessages(newChatMessages);
+            dispatch(openNewMsgConversation(conversationId));
+        }
+    }
+
     function loadMoreChatMsg() {
         if (moreChatMsg) loadChatMessages(true);
     }
@@ -154,10 +171,6 @@ export const ChatScreen = ({ route }: Props) => {
     );
 
     useEffect(() => {
-        if (appState === 'active') loadChatMessages();
-    }, [appState]);
-
-    useEffect(() => {
         socket?.on('userOnline', (resp: { converId: number }) => {
             const { converId } = resp;
             if (converId === conversationId) setToUser({ ...toUser, online: true });
@@ -203,10 +216,14 @@ export const ChatScreen = ({ route }: Props) => {
     }, [socket, conversationId, toUserIsTyping]);
 
     useEffect(() => {
-        if (conversationId) {
-            loadChatMessages();
+        if (conversationId && appState === 'active') {
+            if (chatMessages?.length === 0) {
+                loadChatMessages();
+            } else {
+                updateLastChatMessages();
+            }
         }
-    }, [conversationId]);
+    }, [conversationId, appState]);
 
     return (
         <BackgroundPaper topDark>
@@ -265,36 +282,43 @@ export const ChatScreen = ({ route }: Props) => {
                         flex: 1,
                     }}
                 >
-                    <FlatList
-                        ref={refFlatList}
-                        style={stylescomp.wrap}
-                        data={chatMessages}
-                        renderItem={({ item }) => (
-                            <ChatMessage
-                                msg={item}
-                                user={item.userId === user.id ? user : toUser}
-                                setMessageToReply={setMessageToReply}
-                            />
-                        )}
-                        keyExtractor={item => item.id + ''}
-                        showsVerticalScrollIndicator={false}
-                        inverted
-                        onEndReached={loadMoreChatMsg}
-                        ListHeaderComponent={
-                            <TypingBubble
-                                opacity={opacity_Typing}
-                                fadeIn={fadeIn_Typing}
-                                toUserIsTyping={toUserIsTyping}
-                            />
-                        }
-                        ListFooterComponent={isLoading ? LoadingAnimated : <></>}
-                        ListFooterComponentStyle={{ marginVertical: 12 }}
-                        contentContainerStyle={{
-                            flexGrow: 1,
-                            justifyContent: 'flex-end',
-                        }}
-                        keyboardShouldPersistTaps={'handled'}
-                    />
+                    {chatMessages?.length !== 0 && !isLoading ? (
+                        <FlatList
+                            ref={refFlatList}
+                            style={stylescomp.wrap}
+                            data={chatMessages}
+                            renderItem={({ item }) => (
+                                <ChatMessage
+                                    msg={item}
+                                    user={item.userId === user.id ? user : toUser}
+                                    setMessageToReply={setMessageToReply}
+                                />
+                            )}
+                            keyExtractor={item => item.id + ''}
+                            showsVerticalScrollIndicator={false}
+                            inverted
+                            onEndReached={loadMoreChatMsg}
+                            ListHeaderComponent={
+                                <TypingBubble
+                                    opacity={opacity_Typing}
+                                    fadeIn={fadeIn_Typing}
+                                    toUserIsTyping={toUserIsTyping}
+                                />
+                            }
+                            ListFooterComponent={isLoading ? LoadingAnimated : <></>}
+                            ListFooterComponentStyle={{ marginVertical: 12 }}
+                            contentContainerStyle={{
+                                flexGrow: 1,
+                                justifyContent: 'flex-end',
+                            }}
+                            keyboardShouldPersistTaps={'handled'}
+                        />
+                    ) : (
+                        <View style={{ flex: 1 }}>
+                            <LoadingAnimated></LoadingAnimated>
+                        </View>
+                    )}
+
                     <InputChat
                         form={form}
                         onChange={onChange}

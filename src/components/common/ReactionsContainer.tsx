@@ -99,6 +99,7 @@ const stylescomp = StyleSheet.create({
     },
     moreReaction: {
         ...styles.center,
+        ...styles.shadow_button,
         paddingHorizontal: 4,
         backgroundColor: '#D4D4D4',
         paddingVertical: 3,
