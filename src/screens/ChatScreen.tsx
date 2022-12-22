@@ -278,36 +278,30 @@ export const ChatScreen = ({ route }: Props) => {
                         flex: 1,
                     }}
                 >
-                    {chatMessages?.length !== 0 && !isLoading ? (
-                        <FlatList
-                            ref={refFlatList}
-                            style={stylescomp.wrap}
-                            data={chatMessages}
-                            renderItem={({ item }) => (
-                                <ChatMessage
-                                    msg={item}
-                                    user={item.userId === user.id ? user : toUser}
-                                    setMessageToReply={setMessageToReply}
-                                />
-                            )}
-                            keyExtractor={item => item.id + ''}
-                            showsVerticalScrollIndicator={false}
-                            inverted
-                            onEndReached={loadMoreChatMsg}
-                            ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
-                            ListFooterComponent={isLoading ? LoadingAnimated : <></>}
-                            ListFooterComponentStyle={{ marginVertical: 12 }}
-                            contentContainerStyle={{
-                                flexGrow: 1,
-                                justifyContent: 'flex-end',
-                            }}
-                            keyboardShouldPersistTaps={'handled'}
-                        />
-                    ) : (
-                        <View style={{ flex: 1 }}>
-                            <LoadingAnimated />
-                        </View>
-                    )}
+                    <FlatList
+                        ref={refFlatList}
+                        style={stylescomp.wrap}
+                        data={chatMessages}
+                        renderItem={({ item }) => (
+                            <ChatMessage
+                                msg={item}
+                                user={item.userId === user.id ? user : toUser}
+                                setMessageToReply={setMessageToReply}
+                            />
+                        )}
+                        keyExtractor={item => item.id + ''}
+                        showsVerticalScrollIndicator={false}
+                        inverted
+                        onEndReached={loadMoreChatMsg}
+                        ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
+                        ListFooterComponent={isLoading ? LoadingAnimated : <></>}
+                        ListFooterComponentStyle={{ marginVertical: 12 }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            justifyContent: 'flex-end',
+                        }}
+                        keyboardShouldPersistTaps={'handled'}
+                    />
 
                     <InputChat
                         form={form}
