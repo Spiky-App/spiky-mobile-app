@@ -38,10 +38,7 @@ export const Comment = ({
         reactionCommentType: comment.reactionCommentType,
     });
     const [modalReact, setModalReact] = useState(false);
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
+    const [position, setPosition] = useState({ top: 0 });
     const date = getTime(comment.date.toString());
     const { against, favor, reactionCommentType } = reactComment;
 
@@ -89,10 +86,7 @@ export const Comment = ({
                             <TouchableOpacity
                                 style={{ width: 18, marginLeft: 6 }}
                                 onPress={event => {
-                                    setPosition({
-                                        top: event.nativeEvent.pageY,
-                                        left: event.nativeEvent.pageX,
-                                    });
+                                    setPosition({ top: event.nativeEvent.pageY });
                                 }}
                             >
                                 <IconGray
@@ -122,10 +116,11 @@ export const Comment = ({
             <View style={{ flexDirection: 'row' }}>
                 <View
                     style={{
+                        ...styles.shadow_button,
                         flexDirection: 'row',
                         paddingVertical: 2,
                         borderRadius: 4,
-                        backgroundColor: '#bebebe',
+                        backgroundColor: '#D4D4D4',
                         marginTop: 3,
                     }}
                 >
@@ -188,7 +183,7 @@ const stylescom = StyleSheet.create({
         marginVertical: 8,
     },
     text: {
-        color: '#ffff',
+        color: '#01192e5a',
         fontSize: 12,
         marginLeft: 2,
     },

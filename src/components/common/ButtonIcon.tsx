@@ -9,6 +9,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import { styles } from '../../themes/appTheme';
 
 interface Props extends TouchableOpacityProps {
     icon: IconDefinition;
@@ -19,8 +20,9 @@ function ButtonIcon({ disabled, icon, onPress, iconStyle, style }: Props) {
     return (
         <TouchableOpacity
             style={[
-                styles.circleButton,
-                { backgroundColor: disabled ? '#d4d4d4d3' : '#01192E' },
+                stylescomp.circleButton,
+                { backgroundColor: disabled ? '#D4D4D4' : '#01192E' },
+                styles.shadow_button,
                 style,
             ]}
             onPress={onPress}
@@ -35,7 +37,7 @@ function ButtonIcon({ disabled, icon, onPress, iconStyle, style }: Props) {
 
 export default ButtonIcon;
 
-const styles = StyleSheet.create({
+const stylescomp = StyleSheet.create({
     circleButton: {
         justifyContent: 'center',
         alignItems: 'center',

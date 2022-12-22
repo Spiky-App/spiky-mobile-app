@@ -68,11 +68,7 @@ export const ChatScreen = ({ route }: Props) => {
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
     const [messageToReply, setMessageToReply] = useState<ChatMessageToReply | null>(null);
-    const {
-        opacity: opacity_Typing,
-        fadeIn: fadeIn_Typing,
-        fadeOut: fadeOut_Typing,
-    } = useAnimation({ init_opacity: 0 });
+    const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
 
     async function loadChatMessages(loadMore?: boolean) {
         setIsLoading(true);
@@ -298,13 +294,7 @@ export const ChatScreen = ({ route }: Props) => {
                             showsVerticalScrollIndicator={false}
                             inverted
                             onEndReached={loadMoreChatMsg}
-                            ListHeaderComponent={
-                                <TypingBubble
-                                    opacity={opacity_Typing}
-                                    fadeIn={fadeIn_Typing}
-                                    toUserIsTyping={toUserIsTyping}
-                                />
-                            }
+                            ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
                             ListFooterComponent={isLoading ? LoadingAnimated : <></>}
                             ListFooterComponentStyle={{ marginVertical: 12 }}
                             contentContainerStyle={{
@@ -315,7 +305,7 @@ export const ChatScreen = ({ route }: Props) => {
                         />
                     ) : (
                         <View style={{ flex: 1 }}>
-                            <LoadingAnimated></LoadingAnimated>
+                            <LoadingAnimated />
                         </View>
                     )}
 
@@ -338,23 +328,51 @@ export const ChatScreen = ({ route }: Props) => {
 
 interface TypingBubbleProps {
     toUserIsTyping: boolean;
-    opacity: Animated.Value;
-    fadeIn: (duration?: number, callback?: () => void, delay?: number) => void;
 }
 
-const TypingBubble = ({ toUserIsTyping, opacity, fadeIn }: TypingBubbleProps) => {
+const TypingBubble = ({ toUserIsTyping }: TypingBubbleProps) => {
+    const height = useRef(new Animated.Value(0)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
+    const inputRange = [0, 100];
+    const outputRange = [0, 100];
+    const heightAnimated = height.interpolate({ inputRange, outputRange });
+
     useEffect(() => {
         if (toUserIsTyping) {
-            fadeIn(300);
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(height, {
+                    toValue: 30,
+                    duration: 280,
+                    useNativeDriver: false,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(height, {
+                    toValue: 0,
+                    duration: 280,
+                    useNativeDriver: false,
+                }),
+            ]).start();
         }
     }, [toUserIsTyping]);
 
-    if (!toUserIsTyping) {
-        return <></>;
-    }
+    // if (!toUserIsTyping) {
+    //     return <></>;
+    // }
 
     return (
-        <Animated.View style={{ ...stylescomp.writting, opacity }}>
+        <Animated.View style={{ ...stylescomp.writting, height: heightAnimated, opacity }}>
             <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
         </Animated.View>
     );
@@ -383,9 +401,9 @@ const stylescomp = StyleSheet.create({
     },
     writting: {
         ...styles.shadow,
-        height: 30,
         width: 60,
         justifyContent: 'center',
+        // alignItems: 'center',
         backgroundColor: 'white',
         marginVertical: 8,
     },

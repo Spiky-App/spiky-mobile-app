@@ -161,7 +161,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 >
                                     <FontAwesomeIcon
                                         icon={faChevronLeft}
-                                        color={'#bebebe'}
+                                        color={'#D4D4D4'}
                                         size={25}
                                     />
                                 </TouchableOpacity>
@@ -200,16 +200,6 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
 
                                 <View style={stylescom.flex}>
-                                    {/* <TouchableOpacity
-                                        style={stylescom.backArrow}
-                                        onPress={() => navigation.goBack()}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faChevronLeft}
-                                            color={'#01192E'}
-                                            size={15}
-                                        />
-                                    </TouchableOpacity> */}
                                     <TouchableOpacity onPress={() => handleClickUser(message.user)}>
                                         <View style={styles.button_user}>
                                             <Text style={{ ...styles.user, fontSize: 15 }}>

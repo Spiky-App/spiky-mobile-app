@@ -133,7 +133,10 @@ export const Idea = ({ idea, filter }: Props) => {
                         </View>
                     )}
 
-                    <Pressable onPress={() => handleClickUser(user)}>
+                    <Pressable
+                        onPress={() => handleClickUser(user)}
+                        style={{ alignSelf: 'flex-start' }}
+                    >
                         <View style={styles.button_user}>
                             <Text style={styles.user}>@{user.nickname}</Text>
                             <UniversityTag id={user.universityId} fontSize={13} />
