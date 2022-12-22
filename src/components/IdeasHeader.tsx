@@ -20,10 +20,11 @@ interface Props {
     title: string;
     myideas?: boolean;
     connections?: boolean;
+    profile?: boolean;
     icon: IconDefinition;
 }
 
-export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
+export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
     const { opacity, fadeIn } = useAnimation({});
@@ -52,6 +53,7 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
             </View>
 
             {!connections &&
+                !profile &&
                 (!myideas ? (
                     <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
                         <TouchableHighlight
@@ -69,10 +71,10 @@ export const IdeasHeader = ({ title, myideas, connections, icon }: Props) => {
                     <View
                         style={{
                             ...styles.center,
+                            ...styles.shadow_button,
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
-                            // flexGrow: 1,
                             marginLeft: 15,
                         }}
                     >
@@ -118,6 +120,7 @@ const stylecom = StyleSheet.create({
         flexWrap: 'wrap',
     },
     filterContainer: {
+        ...styles.shadow_button,
         backgroundColor: '#D4D4D4',
         borderRadius: 3,
         paddingHorizontal: 10,

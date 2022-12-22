@@ -24,7 +24,12 @@ export const ManifestPart1Screen = () => {
     const navigation = useNavigation<any>();
 
     const nextManifiesto = () => {
-        fadeOut(1000, () => setState(state + 1));
+        fadeOut(500, () => setState(state + 1));
+    };
+
+    const handleForceNextManifiesto = () => {
+        clearTimeout(timeRef.current);
+        nextManifiesto();
     };
 
     useEffect(() => {
@@ -32,20 +37,20 @@ export const ManifestPart1Screen = () => {
             navigation.replace('CheckEmailScreen');
             clearTimeout(timeRef.current);
         } else if (state === 1) {
-            fadeIn(1200);
+            fadeIn(900);
             timeRef.current = setTimeout(() => {
                 setAux(false);
-                movingPositionAndScale(0, -320, 1, 0.7, 1500, nextManifiesto);
-            }, 2500);
+                movingPositionAndScale(0, -320, 1, 0.7, 900, nextManifiesto);
+            }, 1500);
         } else {
-            const delay = state == 0 ? 1500 : 4000;
+            const delay = state === 0 ? 1000 : 2200;
             timeRef.current = setTimeout(nextManifiesto, delay);
-            fadeIn(1200);
+            fadeIn(800);
         }
     }, [state]);
 
     useEffect(() => {
-        setTimeout(() => fadeIn(1200), 1000);
+        setTimeout(() => fadeIn(800), 800);
         return () => clearTimeout(timeRef.current);
     }, []);
 
@@ -55,7 +60,7 @@ export const ManifestPart1Screen = () => {
 
             <TouchableWithoutFeedback
                 style={{ ...styles.center }}
-                // onPress={() => nextManifiesto()}
+                onPress={() => handleForceNextManifiesto()}
             >
                 <View style={styles.center}>
                     {state > 0 && (

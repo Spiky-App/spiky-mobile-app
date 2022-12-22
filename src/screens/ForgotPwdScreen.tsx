@@ -64,6 +64,7 @@ export const ForgotPwdScreen = () => {
                         <View style={{ ...styles.input, marginBottom: 5, marginTop: 25 }}>
                             <TextInput
                                 placeholder="Correo universitario"
+                                placeholderTextColor="#707070"
                                 autoCorrect={false}
                                 keyboardType="email-address"
                                 style={styles.textinput}

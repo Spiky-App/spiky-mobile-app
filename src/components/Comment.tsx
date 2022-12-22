@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { faReply, faXmark } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
@@ -38,10 +38,7 @@ export const Comment = ({
         reactionCommentType: comment.reactionCommentType,
     });
     const [modalReact, setModalReact] = useState(false);
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
+    const [position, setPosition] = useState({ top: 0 });
     const date = getTime(comment.date.toString());
     const { against, favor, reactionCommentType } = reactComment;
 
@@ -62,12 +59,12 @@ export const Comment = ({
     return (
         <View style={stylescom.wrap}>
             <View style={{ ...styles.flex, marginTop: 4 }}>
-                <TouchableOpacity onPress={() => handleClickUser(comment.user)}>
-                    <Text style={{ ...styles.user, ...styles.textbold }}>
-                        @{comment.user.nickname}
-                    </Text>
-                </TouchableOpacity>
-                <UniversityTag id={comment.user.universityId} fontSize={13} />
+                <Pressable onPress={() => handleClickUser(comment.user)}>
+                    <View style={styles.button_user}>
+                        <Text style={styles.user}> @{comment.user.nickname}</Text>
+                        <UniversityTag id={comment.user.universityId} fontSize={13} />
+                    </View>
+                </Pressable>
 
                 <Text style={{ ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
                 {uid !== comment.user.id && (
@@ -76,22 +73,30 @@ export const Comment = ({
                             style={{ ...styles.numberGray, marginLeft: 10 }}
                             onPress={handleReply}
                         >
-                            <FontAwesomeIcon icon={faReply} color="#E6E6E6" />
+                            <FontAwesomeIcon
+                                icon={faReply}
+                                color="#E6E6E6"
+                                style={{
+                                    ...styles.shadow_button,
+                                    shadowColor: '#484848b9',
+                                }}
+                            />
                         </TouchableOpacity>
                         {reactionCommentType === undefined && (
                             <TouchableOpacity
                                 style={{ width: 18, marginLeft: 6 }}
                                 onPress={event => {
-                                    setPosition({
-                                        top: event.nativeEvent.pageY,
-                                        left: event.nativeEvent.pageX,
-                                    });
+                                    setPosition({ top: event.nativeEvent.pageY });
                                 }}
                             >
                                 <IconGray
                                     color="#E6E6E6"
                                     underlayColor={'#01192ebe'}
                                     pressed={modalReact}
+                                    style={{
+                                        ...styles.shadow_button,
+                                        shadowColor: '#484848b9',
+                                    }}
                                 />
                             </TouchableOpacity>
                         )}
@@ -111,10 +116,11 @@ export const Comment = ({
             <View style={{ flexDirection: 'row' }}>
                 <View
                     style={{
+                        ...styles.shadow_button,
                         flexDirection: 'row',
                         paddingVertical: 2,
                         borderRadius: 4,
-                        backgroundColor: '#bebebe',
+                        backgroundColor: '#D4D4D4',
                         marginTop: 3,
                     }}
                 >
@@ -177,7 +183,7 @@ const stylescom = StyleSheet.create({
         marginVertical: 8,
     },
     text: {
-        color: '#ffff',
+        color: '#01192e5a',
         fontSize: 12,
         marginLeft: 2,
     },

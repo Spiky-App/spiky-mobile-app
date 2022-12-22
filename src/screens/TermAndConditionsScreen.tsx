@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -18,6 +18,7 @@ export const TermAndConditionsScreen = () => {
     const [info, setInfo] = useState<TermsAndConditions | null>(null);
     const [title, setTitle] = useState(['Aviso de ', 'privacidad']);
     const [alternateTitle, setAlternateTitle] = useState(['Términos y ', 'condiciones']);
+    const refScrollView = useRef<ScrollView>(null);
     const { getTermsAndConditions } = useSpikyService();
     const { opacity, fadeIn, fadeOut } = useAnimation({});
 
@@ -39,6 +40,7 @@ export const TermAndConditionsScreen = () => {
                 setTitle(alternateTitle);
                 setAlternateTitle(title);
                 setTerms(value => !value);
+                refScrollView.current?.scrollTo();
                 fadeIn(400, () => {}, 300);
             });
         }
@@ -57,6 +59,7 @@ export const TermAndConditionsScreen = () => {
                         <BigTitle texts={title} />
                         <ContainerInfo
                             sections={terms ? info?.termsAndConditions : info?.noticeOfPrivacy}
+                            refScrollView={refScrollView}
                         />
                         <TouchableOpacity
                             style={{ ...styles.center, flexDirection: 'row', paddingBottom: 10 }}
@@ -79,12 +82,13 @@ interface PropsInfo {
         title: string;
         paragraphs: string[];
     }[];
+    refScrollView: React.RefObject<ScrollView>;
 }
 
-const ContainerInfo = ({ sections }: PropsInfo) => {
+const ContainerInfo = ({ sections, refScrollView }: PropsInfo) => {
     return (
         <View style={stylescom.container}>
-            <ScrollView>
+            <ScrollView ref={refScrollView}>
                 {sections &&
                     sections.map(section => (
                         <View key={section.title} style={{ marginBottom: 20 }}>

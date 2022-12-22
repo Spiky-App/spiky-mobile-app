@@ -51,33 +51,42 @@ export const ManifestPart2Screen = ({ route }: Props) => {
             navigation.navigate('LoginScreen');
         }
     };
+
+    const handleForceNextManifiesto = () => {
+        clearTimeout(timeRef.current);
+        nextManifiesto();
+    };
+
     useEffect(() => {
         if (state > 8) {
             logUser();
             clearTimeout(timeRef.current);
         } else if (state === 1) {
-            fadeIn(1200);
+            fadeIn(900);
             timeRef.current = setTimeout(() => {
                 setAux(false);
-                movingPositionAndScale(0, -320, 1, 0.7, 1500, nextManifiesto);
-            }, 2500);
+                movingPositionAndScale(0, -320, 1, 0.7, 900, nextManifiesto);
+            }, 1500);
         } else {
-            const delay = state == 0 ? 1500 : 4000;
+            const delay = state == 0 ? 1000 : 2200;
             timeRef.current = setTimeout(nextManifiesto, delay);
-            fadeIn(1200, () => {
+            fadeIn(800, () => {
                 if (state === 7) setAux(true);
             });
         }
     }, [state]);
 
     useEffect(() => {
-        setTimeout(() => fadeIn(1200), 1000);
+        setTimeout(() => fadeIn(800), 800);
         return () => clearTimeout(timeRef.current);
     }, []);
 
     return (
         <BackgroundPaper>
-            <TouchableWithoutFeedback style={{ ...styles.center }}>
+            <TouchableWithoutFeedback
+                style={{ ...styles.center }}
+                onPress={() => handleForceNextManifiesto()}
+            >
                 <View style={styles.center}>
                     {state > 0 && state < 8 && (
                         <Animated.View

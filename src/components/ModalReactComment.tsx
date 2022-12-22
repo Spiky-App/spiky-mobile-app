@@ -20,7 +20,6 @@ interface Props {
     modalReact: boolean;
     position: {
         top: number;
-        left: number;
     };
     commentId: number;
     messageId: number;
@@ -42,7 +41,7 @@ export const ModalReactComment = ({
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { socket } = useContext(SocketContext);
     const { createReactionToComment } = useSpikyService();
-    const { top, left } = position;
+    const { top } = position;
 
     const handleComment = async (reactionTypeAux: number) => {
         const wasCreated = await createReactionToComment(commentId, reactionTypeAux);
@@ -93,8 +92,8 @@ export const ModalReactComment = ({
                                 position: 'absolute',
                                 flexDirection: 'row',
                                 width: 150,
-                                top: top - 52,
-                                left: left + 5,
+                                top: top - 56,
+                                right: 20,
                             }}
                         >
                             <TouchableOpacity

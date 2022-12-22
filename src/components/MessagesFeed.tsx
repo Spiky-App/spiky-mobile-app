@@ -23,6 +23,7 @@ interface MessagesFeedProp {
     filter: string;
     title: string;
     myideas: boolean;
+    profile?: boolean;
     icon: IconDefinition;
     emptyTitle: string;
 }
@@ -32,6 +33,7 @@ const MessagesFeed = ({
     filter,
     title,
     myideas = false,
+    profile,
     icon,
     emptyTitle,
 }: MessagesFeedProp) => {
@@ -57,10 +59,10 @@ const MessagesFeed = ({
     }, []);
     return (
         <>
-            <IdeasHeader title={title} myideas={myideas} icon={icon} />
+            <IdeasHeader title={title} myideas={myideas} icon={icon} profile={profile} />
             {messages?.length !== 0 ? (
                 <FlatList
-                    style={{ width: '90%' }}
+                    style={{ width: '100%' }}
                     data={messages}
                     renderItem={({ item }) => <Idea idea={item} filter={filter} />}
                     keyExtractor={item => item.id + ''}

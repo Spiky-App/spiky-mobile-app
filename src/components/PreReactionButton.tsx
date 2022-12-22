@@ -29,10 +29,9 @@ interface Positions {
 interface Props {
     bottom: number;
     right: number;
-    left: number;
     messageId: number;
 }
-export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => {
+export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
@@ -131,7 +130,7 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
 
     return (
         <>
-            <View style={{ position: 'absolute', left, bottom, right, alignItems: 'flex-end' }}>
+            <View style={{ position: 'absolute', bottom, right, alignItems: 'flex-end' }}>
                 <View
                     style={{
                         ...stylescomp.container,
@@ -152,7 +151,7 @@ export const PreReactionButton = ({ bottom, right, left, messageId }: Props) => 
                 <TouchableWithoutFeedback onPress={handleCloseModal}>
                     <View style={stylescomp.wrapModal}>
                         <TouchableWithoutFeedback>
-                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 160 }}>
+                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 159 }}>
                                 <Animated.View
                                     style={{
                                         ...stylescomp.containerbig,
@@ -238,7 +237,7 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
 const stylescomp = StyleSheet.create({
     container: {
         ...styles.center,
-        ...styles.shadow,
+        ...styles.shadow_button,
         height: 42,
         minWidth: 42,
         borderRadius: 20,
@@ -257,10 +256,11 @@ const stylescomp = StyleSheet.create({
         height: 42,
         alignItems: 'flex-end',
         position: 'absolute',
+        ...styles.shadow_button,
     },
     containerbig: {
         ...styles.center,
-        ...styles.shadow,
+        ...styles.shadow_button,
         height: 42,
         width: 200,
         borderRadius: 20,

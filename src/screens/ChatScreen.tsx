@@ -27,7 +27,7 @@ import {
     ChatMessageToReply,
 } from '../types/store';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
@@ -42,6 +42,7 @@ import { useAnimation } from '../hooks/useAnimation';
 import SendNudgeButton from '../components/SendNudgeButton';
 import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
+import { MessageRequestData } from '../services/models/spikyService';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -67,11 +68,7 @@ export const ChatScreen = ({ route }: Props) => {
     const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
     const [messageToReply, setMessageToReply] = useState<ChatMessageToReply | null>(null);
-    const {
-        opacity: opacity_Typing,
-        fadeIn: fadeIn_Typing,
-        fadeOut: fadeOut_Typing,
-    } = useAnimation({ init_opacity: 0 });
+    const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
 
     async function loadChatMessages(loadMore?: boolean) {
         setIsLoading(true);
@@ -89,6 +86,23 @@ export const ChatScreen = ({ route }: Props) => {
             if (newChatMessages.length === 20) setMoreChatMsg(true);
             setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
             setIsLoading(false);
+            dispatch(openNewMsgConversation(conversationId));
+        }
+    }
+
+    async function updateLastChatMessages() {
+        setMoreChatMsg(false);
+        const chatMessagesResponse = await getChatMessages(conversationId);
+        if (chatMessagesResponse) {
+            const { chatmensajes, n_chatmensajes_unseens } = chatMessagesResponse;
+            const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
+                generateChatMsgFromChatMensaje(chatmsg, user.id)
+            );
+            dispatch(
+                updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
+            );
+            if (newChatMessages.length === 20) setMoreChatMsg(true);
+            setChatMessages(newChatMessages);
             dispatch(openNewMsgConversation(conversationId));
         }
     }
@@ -117,6 +131,27 @@ export const ChatScreen = ({ route }: Props) => {
         }
     }
 
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        navigation.pop();
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route_n: { name: string }) => route_n.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
+
     useFocusEffect(
         useCallback(() => {
             setConversationId(route.params?.conversationId);
@@ -130,10 +165,6 @@ export const ChatScreen = ({ route }: Props) => {
             };
         }, [route.params?.conversationId])
     );
-
-    useEffect(() => {
-        if (appState === 'active') loadChatMessages();
-    }, [appState]);
 
     useEffect(() => {
         socket?.on('userOnline', (resp: { converId: number }) => {
@@ -181,10 +212,14 @@ export const ChatScreen = ({ route }: Props) => {
     }, [socket, conversationId, toUserIsTyping]);
 
     useEffect(() => {
-        if (conversationId) {
-            loadChatMessages();
+        if (conversationId && appState === 'active') {
+            if (chatMessages?.length === 0) {
+                loadChatMessages();
+            } else {
+                updateLastChatMessages();
+            }
         }
-    }, [conversationId]);
+    }, [conversationId, appState]);
 
     return (
         <BackgroundPaper topDark>
@@ -202,18 +237,25 @@ export const ChatScreen = ({ route }: Props) => {
                         <TouchableOpacity
                             style={{
                                 ...styles.center,
-                                marginRight: 10,
-                                marginLeft: 20,
+                                paddingRight: 10,
+                                paddingLeft: 20,
+                                paddingVertical: 10,
                             }}
                             onPress={handleGoBack}
                         >
                             <FontAwesomeIcon icon={faChevronLeft} color={'white'} size={18} />
                         </TouchableOpacity>
-                        <Text
-                            style={{ ...styles.text, ...styles.h3, color: '#ffff', marginRight: 5 }}
+                        <TouchableOpacity
+                            onPress={() =>
+                                changeScreen('ProfileScreen', {
+                                    alias: toUser.nickname,
+                                })
+                            }
                         >
-                            {'@' + toUser.nickname}
-                        </Text>
+                            <Text style={{ ...styles.h3, color: '#ffff', marginRight: 5 }}>
+                                {'@' + toUser.nickname}
+                            </Text>
+                        </TouchableOpacity>
                         <UniversityTag id={toUser.universityId} fontSize={23} />
                         <View
                             style={{
@@ -251,13 +293,7 @@ export const ChatScreen = ({ route }: Props) => {
                         showsVerticalScrollIndicator={false}
                         inverted
                         onEndReached={loadMoreChatMsg}
-                        ListHeaderComponent={
-                            <TypingBubble
-                                opacity={opacity_Typing}
-                                fadeIn={fadeIn_Typing}
-                                toUserIsTyping={toUserIsTyping}
-                            />
-                        }
+                        ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
                         ListFooterComponent={isLoading ? LoadingAnimated : <></>}
                         ListFooterComponentStyle={{ marginVertical: 12 }}
                         contentContainerStyle={{
@@ -266,6 +302,7 @@ export const ChatScreen = ({ route }: Props) => {
                         }}
                         keyboardShouldPersistTaps={'handled'}
                     />
+
                     <InputChat
                         form={form}
                         onChange={onChange}
@@ -285,23 +322,51 @@ export const ChatScreen = ({ route }: Props) => {
 
 interface TypingBubbleProps {
     toUserIsTyping: boolean;
-    opacity: Animated.Value;
-    fadeIn: (duration?: number, callback?: () => void, delay?: number) => void;
 }
 
-const TypingBubble = ({ toUserIsTyping, opacity, fadeIn }: TypingBubbleProps) => {
+const TypingBubble = ({ toUserIsTyping }: TypingBubbleProps) => {
+    const height = useRef(new Animated.Value(0)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
+    const inputRange = [0, 100];
+    const outputRange = [0, 100];
+    const heightAnimated = height.interpolate({ inputRange, outputRange });
+
     useEffect(() => {
         if (toUserIsTyping) {
-            fadeIn(300);
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(height, {
+                    toValue: 30,
+                    duration: 280,
+                    useNativeDriver: false,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(height, {
+                    toValue: 0,
+                    duration: 280,
+                    useNativeDriver: false,
+                }),
+            ]).start();
         }
     }, [toUserIsTyping]);
 
-    if (!toUserIsTyping) {
-        return <></>;
-    }
+    // if (!toUserIsTyping) {
+    //     return <></>;
+    // }
 
     return (
-        <Animated.View style={{ ...stylescomp.writting, opacity }}>
+        <Animated.View style={{ ...stylescomp.writting, height: heightAnimated, opacity }}>
             <Text style={{ ...styles.textbold, ...stylescomp.dots }}>...</Text>
         </Animated.View>
     );
@@ -330,9 +395,9 @@ const stylescomp = StyleSheet.create({
     },
     writting: {
         ...styles.shadow,
-        height: 30,
         width: 60,
         justifyContent: 'center',
+        // alignItems: 'center',
         backgroundColor: 'white',
         marginVertical: 8,
     },

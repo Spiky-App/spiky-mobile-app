@@ -155,6 +155,17 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                     <>
                         <View style={stylescom.wrap}>
                             <View style={stylescom.subwrap}>
+                                <TouchableOpacity
+                                    style={styles.arrow_back}
+                                    onPress={() => navigation.goBack()}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faChevronLeft}
+                                        color={'#D4D4D4'}
+                                        size={25}
+                                    />
+                                </TouchableOpacity>
+
                                 {isOwner && (
                                     <View style={stylescom.corner_container}>
                                         <View style={stylescom.corner}>
@@ -189,22 +200,17 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
 
                                 <View style={stylescom.flex}>
-                                    <TouchableOpacity
-                                        style={stylescom.backArrow}
-                                        onPress={() => navigation.goBack()}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faChevronLeft}
-                                            color={'#01192E'}
-                                            size={15}
-                                        />
-                                    </TouchableOpacity>
                                     <TouchableOpacity onPress={() => handleClickUser(message.user)}>
-                                        <Text style={{ ...styles.user, fontSize: 14 }}>
-                                            @{message.user.nickname}
-                                        </Text>
+                                        <View style={styles.button_user}>
+                                            <Text style={{ ...styles.user, fontSize: 15 }}>
+                                                @{message.user.nickname}
+                                            </Text>
+                                            <UniversityTag
+                                                id={message.user.universityId}
+                                                fontSize={14}
+                                            />
+                                        </View>
                                     </TouchableOpacity>
-                                    <UniversityTag id={message.user.universityId} fontSize={14} />
                                 </View>
 
                                 <View style={{ marginVertical: 8 }}>
@@ -232,8 +238,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             <PreReactionButton
                                                 messageId={message.id}
                                                 bottom={-15}
-                                                right={-25}
-                                                left={-25}
+                                                right={-24}
                                             />
                                         </>
                                     ) : (
@@ -252,7 +257,14 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     <FontAwesomeIcon
                                                         icon={faMessage}
                                                         color={'#D4D4D4'}
-                                                        size={14}
+                                                        size={16}
+                                                        style={{
+                                                            ...styles.shadow_button,
+                                                            shadowOffset: {
+                                                                width: 1.5,
+                                                                height: 2,
+                                                            },
+                                                        }}
                                                     />
                                                     <Text style={styles.numberGray}>
                                                         {answersNumber === 0 ? ' ' : answersNumber}
@@ -329,7 +341,6 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     form={form}
                                     onChange={onChange}
                                     refInputComment={refInputComment}
-                                    userId={message.user.id}
                                 />
                             </>
                         ) : (
@@ -383,7 +394,8 @@ const stylescom = StyleSheet.create({
     subwrap: {
         paddingTop: 15,
         paddingBottom: 8,
-        paddingHorizontal: 25,
+        paddingRight: 25,
+        paddingLeft: 32,
         borderRadius: 8,
     },
     msg: {

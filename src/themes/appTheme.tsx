@@ -18,6 +18,7 @@ export const styles = StyleSheet.create({
     text: {
         fontFamily: 'Helvetica',
         color: '#01192E',
+        fontSize: 14,
     },
     textbold: {
         fontFamily: 'Helvetica-Bold',
@@ -27,16 +28,19 @@ export const styles = StyleSheet.create({
     h1: {
         fontSize: 60,
         fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
         fontWeight: '500',
     },
     h2: {
         fontSize: 45,
         fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
         fontWeight: '600',
     },
     h3: {
         fontSize: 23,
         fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
         fontWeight: '600',
     },
     h5: {
@@ -127,8 +131,9 @@ export const styles = StyleSheet.create({
     },
     user: {
         fontFamily: 'Helvetica-Bold',
+        fontWeight: '600',
         color: '#01192E',
-        fontSize: 13,
+        fontSize: 14,
     },
     msg: {
         fontSize: 13,
@@ -148,5 +153,28 @@ export const styles = StyleSheet.create({
         backgroundColor: '#6363635c',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    button_user: {
+        flexDirection: 'row',
+        paddingVertical: 2,
+        alignSelf: 'flex-start',
+    },
+    arrow_back: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        left: 5,
+        top: 0,
+        bottom: 0,
+    },
+    shadow_button: {
+        shadowColor: '#484848',
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 0,
+        elevation: 6,
     },
 });
