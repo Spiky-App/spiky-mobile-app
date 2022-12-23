@@ -1,5 +1,5 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useContext } from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import UniversityTag from '../components/common/UniversityTag';
@@ -13,8 +13,6 @@ import { RootState } from '../store';
 import {
     addConversation,
     openNewMsgConversation,
-    resetActiveConversationId,
-    setActiveConversationId,
     setConversations,
     setUserStateConversation,
     updateLastChatMsgConversation,
@@ -52,7 +50,6 @@ export const ConnectionsScreen = () => {
         if (newMsg) {
             dispatch(openNewMsgConversation(id));
         }
-        dispatch(setActiveConversationId(id));
         navigation.navigate('ChatScreen', {
             conversationId: id,
             toUser,
@@ -109,16 +106,6 @@ export const ConnectionsScreen = () => {
             }
         });
     }, [socket, activeConversationId]);
-
-    useEffect(() => {
-        loadConversations();
-    }, []);
-
-    useFocusEffect(
-        useCallback(() => {
-            dispatch(resetActiveConversationId());
-        }, [])
-    );
 
     const LoadingConversations = () =>
         loading ? (

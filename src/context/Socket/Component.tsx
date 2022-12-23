@@ -56,7 +56,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
         // this is triggered when a user reacts to an idea,
         socket?.on('notify', resp => {
-            console.log('notify frontend');
             dispatch(updateNotificationsNumber(1));
             notificationService.showNotification(
                 1,
@@ -122,7 +121,6 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             if (activeConversationId !== chatmsg.conversationId) {
                 dispatch(increaseNewChatMessagesNumber());
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
-                console.log('catched newChatMsg');
                 notificationService.showNotification(
                     chatmsg.id,
                     `Mensaje de @${sender.nickname}`,

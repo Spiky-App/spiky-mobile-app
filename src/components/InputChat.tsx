@@ -126,7 +126,7 @@ export const InputChat = ({
         if (messageLength <= MAX_LENGHT && messageLength > 0) {
             if (isDisabled) setDisabled(false);
         } else setDisabled(true);
-        if (!isTyping && toUser.online) {
+        if (!isTyping && toUser.online && message !== '') {
             setIsTyping(true);
             socket?.emit('isTyping', {
                 converId: conversationId,

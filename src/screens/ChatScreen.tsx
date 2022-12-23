@@ -35,6 +35,7 @@ import { ChatMessage } from '../components/ChatMessage';
 import {
     openNewMsgConversation,
     resetActiveConversationId,
+    setActiveConversationId,
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import UniversityTag from '../components/common/UniversityTag';
@@ -53,6 +54,7 @@ type Props = DrawerScreenProps<RootStackParamList, 'ChatScreen'>;
 export const ChatScreen = ({ route }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const appState = useAppSelector((state: RootState) => state.ui.appState);
+    const conversationId = useAppSelector((state: RootState) => state.chats.activeConversationId);
     const dispatch = useAppDispatch();
     const { bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
@@ -65,7 +67,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { getChatMessages, createChatMessageSeen } = useSpikyService();
     const navigation = useNavigation<any>();
     const { socket } = useContext(SocketContext);
-    const [conversationId, setConversationId] = useState<number>(0);
+    // const [conversationId, setConversationId] = useState<number>(0);
     const [toUser, setToUser] = useState<User>(route.params?.toUser);
     const [messageToReply, setMessageToReply] = useState<ChatMessageToReply | null>(null);
     const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
@@ -74,9 +76,13 @@ export const ChatScreen = ({ route }: Props) => {
         setIsLoading(true);
         setMoreChatMsg(false);
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
-        const chatMessagesResponse = await getChatMessages(conversationId, lastChatMessageId);
+        const chatMessagesResponse = await getChatMessages(
+            conversationId,
+            !loadMore ? toUser.id : undefined,
+            lastChatMessageId
+        );
         if (chatMessagesResponse) {
-            const { chatmensajes, n_chatmensajes_unseens } = chatMessagesResponse;
+            const { chatmensajes, n_chatmensajes_unseens, toUserIsOnline } = chatMessagesResponse;
             const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
                 generateChatMsgFromChatMensaje(chatmsg, user.id)
             );
@@ -85,30 +91,37 @@ export const ChatScreen = ({ route }: Props) => {
             );
             if (newChatMessages.length === 20) setMoreChatMsg(true);
             setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
+            if (loadMore) setToUser({ ...toUser, online: toUserIsOnline });
             setIsLoading(false);
             dispatch(openNewMsgConversation(conversationId));
         }
     }
 
-    async function updateLastChatMessages() {
+    async function loadFirstChatMessages() {
         setMoreChatMsg(false);
-        const chatMessagesResponse = await getChatMessages(conversationId);
+        const firstChatMessageId = chatMessages[0].id;
+        const chatMessagesResponse = await getChatMessages(
+            conversationId,
+            toUser.id,
+            undefined,
+            firstChatMessageId
+        );
         if (chatMessagesResponse) {
-            const { chatmensajes, n_chatmensajes_unseens } = chatMessagesResponse;
+            const { chatmensajes, n_chatmensajes_unseens, toUserIsOnline } = chatMessagesResponse;
             const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
                 generateChatMsgFromChatMensaje(chatmsg, user.id)
             );
             dispatch(
                 updateNewChatMessagesNumber(user.newChatMessagesNumber - n_chatmensajes_unseens)
             );
-            if (newChatMessages.length === 20) setMoreChatMsg(true);
-            setChatMessages(newChatMessages);
+            setToUser({ ...toUser, online: toUserIsOnline });
             dispatch(openNewMsgConversation(conversationId));
+            setChatMessages(v => [...newChatMessages, ...v]);
         }
     }
 
     function loadMoreChatMsg() {
-        if (moreChatMsg) loadChatMessages(true);
+        if (moreChatMsg && conversationId !== 0) loadChatMessages(true);
     }
 
     function updateChatMessages(chatMessage: ChatMessageProp) {
@@ -154,14 +167,15 @@ export const ChatScreen = ({ route }: Props) => {
 
     useFocusEffect(
         useCallback(() => {
-            setConversationId(route.params?.conversationId);
+            dispatch(setActiveConversationId(route.params?.conversationId));
+            console.log('setActiveConversationId ', route.params?.conversationId);
             return () => {
-                setConversationId(0);
                 socket?.removeListener('userOnline');
                 socket?.removeListener('userOffline');
                 socket?.removeListener('newChatMsg');
                 socket?.removeListener('newChatMsg');
                 dispatch(resetActiveConversationId());
+                console.log('resetActiveConversationId ', route.params?.conversationId);
             };
         }, [route.params?.conversationId])
     );
@@ -177,6 +191,7 @@ export const ChatScreen = ({ route }: Props) => {
             if (converId === conversationId) setToUser({ ...toUser, online: false });
         });
 
+        console.log('newChatMsg');
         socket?.on('newChatMsg', resp => {
             setToUserIsTyping(false);
             const { chatmsg } = resp;
@@ -185,7 +200,7 @@ export const ChatScreen = ({ route }: Props) => {
                 updateChatMessages(chatmsg);
             }
         });
-
+        console.log('newChatMsgWithReply');
         socket?.on('newChatMsgWithReply', (resp: { conver: Conversation; newConver: boolean }) => {
             const { conver } = resp;
             if (conver.id === conversationId) {
@@ -212,11 +227,11 @@ export const ChatScreen = ({ route }: Props) => {
     }, [socket, conversationId, toUserIsTyping]);
 
     useEffect(() => {
-        if (conversationId && appState === 'active') {
+        if (conversationId !== 0 && appState === 'active') {
             if (chatMessages?.length === 0) {
                 loadChatMessages();
             } else {
-                updateLastChatMessages();
+                loadFirstChatMessages();
             }
         }
     }, [conversationId, appState]);
@@ -265,7 +280,7 @@ export const ChatScreen = ({ route }: Props) => {
                         />
                     </View>
                     <SendNudgeButton
-                        conversationId={conversationId}
+                        conversationId={route.params?.conversationId}
                         toUser={toUser.id}
                         isOnline={toUser.online}
                     />
@@ -307,7 +322,7 @@ export const ChatScreen = ({ route }: Props) => {
                         form={form}
                         onChange={onChange}
                         updateChatMessages={updateChatMessages}
-                        conversationId={conversationId}
+                        conversationId={route.params?.conversationId}
                         refFlatList={refFlatList}
                         toUser={toUser}
                         HideKeyboardAfterSumbit
@@ -360,10 +375,6 @@ const TypingBubble = ({ toUserIsTyping }: TypingBubbleProps) => {
             ]).start();
         }
     }, [toUserIsTyping]);
-
-    // if (!toUserIsTyping) {
-    //     return <></>;
-    // }
 
     return (
         <Animated.View style={{ ...stylescomp.writting, height: heightAnimated, opacity }}>

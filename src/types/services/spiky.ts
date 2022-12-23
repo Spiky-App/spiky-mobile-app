@@ -229,6 +229,7 @@ export interface GetChatMessages {
     ok: boolean;
     chatmensajes: ChatMessage[];
     n_chatmensajes_unseens: number;
+    toUserIsOnline: boolean;
 }
 
 export interface ChatMessage {
