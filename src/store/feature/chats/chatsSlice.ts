@@ -5,11 +5,13 @@ import { ChatMessage, Conversation } from '../../../types/store';
 interface ChatsState {
     conversations: Conversation[];
     activeConversationId: number;
+    updateAuxActiveConversation: boolean;
 }
 
 const initialState: ChatsState = {
     conversations: [],
     activeConversationId: 0,
+    updateAuxActiveConversation: false,
 };
 
 export const chatsSlice = createSlice({
@@ -24,7 +26,7 @@ export const chatsSlice = createSlice({
         },
         openNewMsgConversation: (state: ChatsState, action: PayloadAction<number>) => {
             state.conversations = state.conversations.map(conver => {
-                if (conver.id === action.payload) {
+                if (conver.id == action.payload) {
                     let converUpdated = {
                         ...conver,
                         chatmessage: { ...conver.chatmessage, newMsg: false },
@@ -74,6 +76,9 @@ export const chatsSlice = createSlice({
         resetActiveConversationId: (state: ChatsState) => {
             state.activeConversationId = initialState.activeConversationId;
         },
+        updateAuxActiveConversation: (state: ChatsState) => {
+            state.updateAuxActiveConversation = !state.updateAuxActiveConversation;
+        },
     },
 });
 
@@ -85,6 +90,7 @@ export const {
     updateLastChatMsgConversation,
     resetActiveConversationId,
     setActiveConversationId,
+    updateAuxActiveConversation,
 } = chatsSlice.actions;
 
 export const selectChats = (state: RootState) => state.chats;

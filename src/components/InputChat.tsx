@@ -107,7 +107,7 @@ export const InputChat = ({
         handleCreateChatMessage();
         setMessageToReply(null);
         onChange(DEFAULT_FORM);
-        refFlatList.current?.scrollToIndex({ index: 0 });
+        refFlatList.current?.scrollToOffset({ offset: 0 });
         if (!HideKeyboardAfterSumbit) Keyboard.dismiss();
     }
 

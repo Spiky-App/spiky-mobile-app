@@ -12,9 +12,9 @@ import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
 import {
     addConversation,
-    openNewMsgConversation,
     setConversations,
     setUserStateConversation,
+    updateAuxActiveConversation,
     updateLastChatMsgConversation,
 } from '../store/feature/chats/chatsSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -46,10 +46,7 @@ export const ConnectionsScreen = () => {
         setLoading(false);
     }
 
-    function onOpenConversation(id: number, newMsg: boolean, toUser: User) {
-        if (newMsg) {
-            dispatch(openNewMsgConversation(id));
-        }
+    function onOpenConversation(id: number, toUser: User) {
         navigation.navigate('ChatScreen', {
             conversationId: id,
             toUser,
@@ -96,6 +93,7 @@ export const ConnectionsScreen = () => {
     useEffect(() => {
         if (!first) {
             socket?.removeListener('newChatMsg');
+            dispatch(updateAuxActiveConversation());
         } else {
             setFirst(false);
         }
@@ -142,7 +140,7 @@ export const ConnectionsScreen = () => {
 interface ConversationItemProp {
     conver: Conversation;
     uid: number;
-    onOpenConversation: (id: number, newMsg: boolean, toUser: User) => void;
+    onOpenConversation: (id: number, toUser: User) => void;
 }
 
 const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemProp) => {
@@ -152,7 +150,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
     const { newMsg } = chatmessage;
 
     return (
-        <TouchableOpacity onPress={() => onOpenConversation(conver.id, newMsg, toUser)}>
+        <TouchableOpacity onPress={() => onOpenConversation(conver.id, toUser)}>
             <View style={stylescomp.converWrap}>
                 {newMsg && <View style={stylescomp.newChatMsg} />}
                 <View style={stylescomp.converContainer}>
