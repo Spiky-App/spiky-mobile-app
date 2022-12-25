@@ -82,9 +82,9 @@ class NotificationService {
                                 };
                             } else {
                                 routeParams = {
-                                    conversationId: data.contentId,
+                                    conversationId: parseInt(data.contentId),
                                     toUser: {
-                                        id: data.userId,
+                                        id: parseInt(data.userId),
                                         nickname: data.userAlias,
                                         universityId: parseInt(data.userUniId),
                                         online: Boolean(JSON.parse(data.userIsOnline)),

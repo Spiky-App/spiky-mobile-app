@@ -74,7 +74,6 @@ export const ChatScreen = ({ route }: Props) => {
     const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
 
     async function loadChatMessages(loadMore?: boolean) {
-        console.log('loadChatMessages');
         setIsLoading(true);
         setMoreChatMsg(false);
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
@@ -98,7 +97,6 @@ export const ChatScreen = ({ route }: Props) => {
     }
 
     async function loadFirstChatMessages() {
-        console.log('loadFirstChatMessages');
         const firstChatMessageId = chatMessages[0].id;
         const chatMessagesResponse = await getChatMessages(
             activeConversationId,
