@@ -69,9 +69,7 @@ class NotificationService {
                 if (notification.userInteraction) {
                     const { data } = notification;
                     // data in remote notifs is defined in pushNotification func in the server
-                    console.log('onNotif', data, notification);
                     // isRemote is 1 from background, and undefined in local notifs
-                    console.log('isRemote', data.isRemote);
                     let type = data.type;
                     typeof type === 'string' ? (type = parseInt(type)) : (type = data.type);
                     let routeParams = {};
@@ -84,9 +82,9 @@ class NotificationService {
                                 };
                             } else {
                                 routeParams = {
-                                    conversationId: data.contentId,
+                                    conversationId: parseInt(data.contentId),
                                     toUser: {
-                                        id: data.userId,
+                                        id: parseInt(data.userId),
                                         nickname: data.userAlias,
                                         universityId: parseInt(data.userUniId),
                                         online: Boolean(JSON.parse(data.userIsOnline)),

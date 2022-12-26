@@ -205,10 +205,17 @@ class SpikyService {
         return this.instance.get<GetConversations>(`conver`);
     }
 
-    getChatMessages(conversationId: number, lastChatMessageId?: number) {
+    getChatMessages(
+        conversationId: number,
+        toUserId?: number,
+        lastChatMessageId?: number,
+        firstChatMessageId?: number
+    ) {
         const params = {
             conver: conversationId,
             id_ultimoChatmensaje: lastChatMessageId,
+            id_primerChatmensaje: firstChatMessageId,
+            toUserId,
         };
         return this.instance.get<GetChatMessages>(`conver/chatmsg`, { params });
     }

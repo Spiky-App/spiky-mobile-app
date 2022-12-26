@@ -52,7 +52,7 @@ export const userSlice = createSlice({
             state.notificationsNumber = state.notificationsNumber + 1;
         },
         updateNewChatMessagesNumber: (state: UserState, action: PayloadAction<number>) => {
-            state.newChatMessagesNumber = action.payload;
+            state.newChatMessagesNumber = state.newChatMessagesNumber + action.payload;
         },
         increaseNewChatMessagesNumber: (state: UserState) => {
             state.newChatMessagesNumber = state.newChatMessagesNumber + 1;

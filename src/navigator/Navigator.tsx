@@ -22,6 +22,7 @@ import { University, User } from '../types/store';
 import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
+import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -57,7 +58,7 @@ export const Navigator = () => {
     const appState = useAppSelector((state: RootState) => state.ui.appState);
     const dispatch = useAppDispatch();
     const { socket } = useContext(SocketContext);
-    const { setSessionInfo } = useSpikyService();
+    const { setSessionInfo, getPendingNotifications } = useSpikyService();
 
     async function handleSessionInfo() {
         if (token) {
@@ -76,12 +77,36 @@ export const Navigator = () => {
         }
     }
 
+    async function handleGetPendingNotf() {
+        if (token) {
+            const pendingNotifications = await getPendingNotifications();
+            if (pendingNotifications) {
+                const {
+                    newChatMessagesNumber: newChatMessagesNumberS,
+                    notificationsNumber: notificationsNumberS,
+                } = pendingNotifications;
+                dispatch(
+                    setNotificationsAndNewChatMessagesNumber({
+                        newChatMessagesNumber: newChatMessagesNumberS,
+                        notificationsNumber: notificationsNumberS,
+                    })
+                );
+            }
+        }
+    }
+
     // I changed this because the token in store.auth can be
     // defined before config.headers.x-token that is the one
     // that we actually use here
     // TODO: centralize in one place where to put the token,
     // because i think it is saved in axios, in SecureStorage
     // and in store's auth.token
+
+    useEffect(() => {
+        if (appState === 'active' && token) {
+            handleGetPendingNotf();
+        }
+    }, [appState, token]);
 
     useEffect(() => {
         if (token) {

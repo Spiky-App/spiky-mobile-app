@@ -162,10 +162,17 @@ function useSpikyService() {
 
     const getChatMessages = async (
         conversationId: number,
-        lastChatMessageId?: number
+        toUserId?: number,
+        lastChatMessageId?: number,
+        firstChatMessageId?: number
     ): Promise<GetChatMessages | undefined> => {
         try {
-            const response = await service.getChatMessages(conversationId, lastChatMessageId);
+            const response = await service.getChatMessages(
+                conversationId,
+                toUserId,
+                lastChatMessageId,
+                firstChatMessageId
+            );
             return response.data;
         } catch (error) {
             console.log(error);

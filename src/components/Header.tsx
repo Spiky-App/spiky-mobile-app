@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
@@ -6,16 +6,12 @@ import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
-import useSpikyService from '../hooks/useSpikyService';
-import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
-    const appState = useAppSelector((state: RootState) => state.ui.appState);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
@@ -23,8 +19,6 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
-    const { getPendingNotifications } = useSpikyService();
-    const dispatch = useAppDispatch();
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
     );
@@ -40,28 +34,6 @@ export const Header = () => {
             })
         );
     };
-
-    useEffect(() => {
-        async function handleGetPendingNotf() {
-            const pendingNotifications = await getPendingNotifications();
-            if (pendingNotifications) {
-                const {
-                    newChatMessagesNumber: newChatMessagesNumberS,
-                    notificationsNumber: notificationsNumberS,
-                } = pendingNotifications;
-                dispatch(
-                    setNotificationsAndNewChatMessagesNumber({
-                        newChatMessagesNumber: newChatMessagesNumberS,
-                        notificationsNumber: notificationsNumberS,
-                    })
-                );
-            }
-        }
-
-        if (appState === 'active' && config?.headers?.['x-token']) {
-            handleGetPendingNotf();
-        }
-    }, [appState]);
 
     return (
         <View style={{ backgroundColor: '#01192E' }}>
