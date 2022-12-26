@@ -88,6 +88,7 @@ export const ModalShowReactions = ({
         reactions?.length !== 0 ? (
             <Animated.View style={{ opacity }}>
                 <FlatList
+                    style={{ marginBottom: 20 }}
                     data={filteredReactions}
                     renderItem={({ item }) => (
                         <ReactionComp
@@ -125,33 +126,31 @@ export const ModalShowReactions = ({
                                 transform: [{ translateY: position }],
                             }}
                         >
-                            <>
-                                <View style={stylescom.containerCount}>
-                                    <FlatList
-                                        horizontal
-                                        data={reactionCount}
-                                        renderItem={({ item }) => (
-                                            <ReactionItem
-                                                reaction={item.reaction}
-                                                count={item.count}
-                                                selected={selection === item.reaction}
-                                                setSelection={setSelection}
-                                            />
-                                        )}
-                                        ListHeaderComponent={
-                                            <ReactionItem
-                                                reaction={'Todos'}
-                                                count={countReactions()}
-                                                selected={selection === 'Todos'}
-                                                setSelection={setSelection}
-                                            />
-                                        }
-                                        keyExtractor={item => item.reaction}
-                                        contentContainerStyle={stylescom.flatListCount}
-                                        showsHorizontalScrollIndicator={true}
-                                    />
-                                </View>
-                            </>
+                            <View style={stylescom.containerCount}>
+                                <FlatList
+                                    horizontal
+                                    data={reactionCount}
+                                    renderItem={({ item }) => (
+                                        <ReactionItem
+                                            reaction={item.reaction}
+                                            count={item.count}
+                                            selected={selection === item.reaction}
+                                            setSelection={setSelection}
+                                        />
+                                    )}
+                                    ListHeaderComponent={
+                                        <ReactionItem
+                                            reaction={'Todos'}
+                                            count={countReactions()}
+                                            selected={selection === 'Todos'}
+                                            setSelection={setSelection}
+                                        />
+                                    }
+                                    keyExtractor={item => item.reaction}
+                                    contentContainerStyle={stylescom.flatListCount}
+                                    showsHorizontalScrollIndicator={true}
+                                />
+                            </View>
 
                             <View style={stylescom.subContainer}>
                                 {loading ? (
@@ -234,7 +233,7 @@ const stylescom = StyleSheet.create({
     },
     subContainer: {
         marginHorizontal: 5,
-        height: '100%',
+        flex: 1,
         marginBottom: 5,
     },
     reactContainer: {
