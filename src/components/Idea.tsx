@@ -1,181 +1,275 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { faCheck, faLightbulb, faMessage, faMinus, faXmark } from '../constants/icons/FontAwesome';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { faLightbulb, faMessage, faPen } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ModalIdeaOptions } from './ModalIdeaOptions';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
-import { Message } from '../types/store';
-import { useAppSelector } from '../store/hooks';
+import { Message, User } from '../types/store';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
+import MsgTransform from './MsgTransform';
+import { useAnimation } from '../hooks/useAnimation';
+import { setMessages } from '../store/feature/messages/messagesSlice';
+import { MessageRequestData } from '../services/models/spikyService';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import useSpikyService from '../hooks/useSpikyService';
+import UniversityTag from './common/UniversityTag';
+import ReactionsContainer from './common/ReactionsContainer';
+import { PreReactionButton } from './PreReactionButton';
+import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 
 interface Props {
     idea: Message;
+    filter: string;
 }
 
-export const Idea = ({ idea }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
+export const Idea = ({ idea, filter }: Props) => {
+    const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const { deleteIdea } = useSpikyService();
+    const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
-    const [ideaOptions, setIdeaOptions] = useState(false);
-    const [position, setPosition] = useState({
-        top: 0,
-        left: 0,
-    });
-    const isOwner = idea.user.id === uid;
-    const fecha = getTime(idea.date);
+    const { opacity, fadeIn } = useAnimation({});
+    const {
+        id,
+        message,
+        date,
+        user,
+        answersNumber,
+        messageTrackingId,
+        myReaction,
+        reactions,
+        sequence,
+        draft,
+    } = idea;
+    const isOwner = user.id === uid;
+    const isDraft = draft === 1;
+    const fecha = getTime(date.toString());
+
+    const handleDelete = async () => {
+        const wasDeleted = await deleteIdea(id);
+        if (wasDeleted) {
+            const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
+            dispatch(setMessages(messagesUpdated));
+            dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
+        }
+    };
+
+    const handleOpenIdea = () => {
+        navigation.navigate('OpenedIdeaScreen', {
+            messageId: id,
+            filter: filter,
+        });
+    };
+
+    const changeScreen = (screen: string, params?: MessageRequestData) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: screen,
+                        params: {
+                            ...targetRoute?.params,
+                            ...params,
+                        },
+                    },
+                ],
+            })
+        );
+    };
+
+    const handleClickUser = (goToUser: User) => {
+        if (goToUser.nickname === nickname) {
+            changeScreen('MyIdeasScreen');
+        } else {
+            changeScreen('ProfileScreen', {
+                alias: goToUser.nickname,
+            });
+        }
+    };
+
+    const handleClickHashtag = (hashtag_text: string) => {
+        changeScreen('HashTagScreen', {
+            hashtag: hashtag_text,
+        });
+    };
 
     useEffect(() => {
-        if (position.top !== 0) {
-            setIdeaOptions(value => !value);
-        }
-    }, [position]);
+        fadeIn(150, () => {}, sequence * 150);
+    }, []);
 
     return (
-        <View style={stylescom.wrap}>
-            <View style={stylescom.subwrap}>
-                {isOwner && (
-                    <View style={stylescom.corner}>
-                        <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                            <FontAwesomeIcon icon={faLightbulb} color="white" size={13} />
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Animated.View style={{ ...stylescom.wrap, opacity }}>
+                <View style={stylescom.subwrap}>
+                    {isOwner && (
+                        <View style={stylescom.corner_container}>
+                            <View style={stylescom.corner}>
+                                <View style={{ transform: [{ rotate: '-45deg' }] }}>
+                                    <FontAwesomeIcon
+                                        icon={isDraft ? faPen : faLightbulb}
+                                        color="white"
+                                        size={13}
+                                    />
+                                </View>
+                            </View>
                         </View>
-                    </View>
-                )}
+                    )}
 
-                {idea.id_tracking && (
-                    <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
-                        <View>
-                            <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                    {messageTrackingId && (
+                        <View style={stylescom.corner_container}>
+                            <View style={{ ...stylescom.corner, backgroundColor: '#FC702A' }}>
+                                <View>
+                                    <FontAwesomeIcon icon={faThumbtack} color="white" size={13} />
+                                </View>
+                            </View>
                         </View>
-                    </View>
-                )}
+                    )}
 
-                <View style={styles.flex}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate('ProfileScreen', {
-                                alias: idea.user.alias,
-                            });
+                    <Pressable
+                        onPress={() => handleClickUser(user)}
+                        style={{ alignSelf: 'flex-start' }}
+                    >
+                        <View style={styles.button_user}>
+                            <Text style={styles.user}>@{user.nickname}</Text>
+                            <UniversityTag id={user.universityId} fontSize={13} />
+                        </View>
+                    </Pressable>
+
+                    <View style={{ marginTop: 6 }}>
+                        <MsgTransform
+                            textStyle={{ ...styles.text, ...stylescom.msg }}
+                            text={message}
+                            handleClickUser={handleClickUser}
+                            handleClickHashtag={handleClickHashtag}
+                        />
+                    </View>
+
+                    <View
+                        style={{
+                            ...stylescom.container,
+                            marginTop: 2,
+                            justifyContent: 'space-between',
+                            position: 'relative',
                         }}
                     >
-                        <Text style={{ ...stylescom.user, ...styles.textbold }}>
-                            @{idea.user.alias}
-                        </Text>
-                    </TouchableOpacity>
-                    <Text style={{ ...styles.text, fontSize: 13 }}> de </Text>
-                    <Text style={{ ...styles.text, fontSize: 13 }}>
-                        {idea.user.university.shortname}
-                    </Text>
-                </View>
+                        {!myReaction && !isOwner ? (
+                            <>
+                                <View style={{ flex: 1, height: 15 }} />
+                                <PreReactionButton messageId={id} bottom={-15} right={-24} />
+                            </>
+                        ) : (
+                            <>
+                                {isDraft ? (
+                                    <Pressable style={stylescom.eraseDraft} onPress={handleDelete}>
+                                        <FontAwesomeIcon
+                                            icon={faTrash}
+                                            color="#bebebe"
+                                            size={16}
+                                            style={{
+                                                ...styles.shadow_button,
+                                                shadowOffset: {
+                                                    width: 1.5,
+                                                    height: 2,
+                                                },
+                                            }}
+                                        />
+                                    </Pressable>
+                                ) : (
+                                    <View style={stylescom.container}>
+                                        {reactions.length > 0 && (
+                                            <ReactionsContainer
+                                                reactionCount={reactions}
+                                                myReaction={myReaction}
+                                                messageId={id}
+                                                handleClickUser={handleClickUser}
+                                            />
+                                        )}
 
-                <Text style={{ ...styles.text, ...stylescom.msg }}>{idea.message}</Text>
+                                        <Pressable
+                                            style={stylescom.reaction}
+                                            onPress={handleOpenIdea}
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faMessage}
+                                                color={'#D4D4D4'}
+                                                size={16}
+                                                style={{
+                                                    ...styles.shadow_button,
+                                                    shadowOffset: {
+                                                        width: 1.5,
+                                                        height: 2,
+                                                    },
+                                                }}
+                                            />
+                                            <Text style={{ ...styles.text, ...stylescom.number }}>
+                                                {answersNumber === 0 ? '' : answersNumber}
+                                            </Text>
+                                        </Pressable>
+                                    </View>
+                                )}
 
-                <View
-                    style={{
-                        ...stylescom.container,
-                        marginTop: 2,
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    {idea.reaction_type == 0 && !isOwner ? (
-                        <View style={{ ...stylescom.container, ...stylescom.containerReact }}>
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => {}}
-                            >
-                                <FontAwesomeIcon icon={faXmark} color="white" size={18} />
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => {}}
-                            >
-                                <FontAwesomeIcon icon={faCheck} color="white" size={18} />
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                style={stylescom.reactButton}
-                                underlayColor="#01192E"
-                                onPress={() => {}}
-                            >
-                                <FontAwesomeIcon icon={faMinus} color="white" size={18} />
-                            </TouchableHighlight>
-                        </View>
-                    ) : (
-                        <>
-                            <View style={stylescom.container}>
-                                <View style={stylescom.reaction}>
-                                    <FontAwesomeIcon
-                                        icon={faXmark}
-                                        color={idea.reaction_type === 2 ? '#6A000E' : '#bebebe'}
-                                        size={12}
-                                    />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.against === 0 ? '' : idea.against}
-                                    </Text>
+                                <View style={stylescom.container}>
+                                    {isDraft ? (
+                                        <>
+                                            <Pressable
+                                                style={stylescom.publishDraft}
+                                                onPress={() =>
+                                                    navigation.navigate('CreateIdeaScreen', {
+                                                        draftedIdea: message,
+                                                        draftID: id,
+                                                    })
+                                                }
+                                            >
+                                                <View style={stylescom.publishContainer}>
+                                                    <Text style={stylescom.publish}>
+                                                        {'editar / publicar'}
+                                                    </Text>
+                                                </View>
+                                            </Pressable>
+                                            <Text style={{ ...styles.text, ...stylescom.number }}>
+                                                {fecha}
+                                            </Text>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Text style={{ ...styles.text, ...stylescom.number }}>
+                                                {fecha}
+                                            </Text>
+                                            <PreModalIdeaOptions
+                                                myIdea={isOwner}
+                                                message={{
+                                                    messageId: id,
+                                                    message,
+                                                    user,
+                                                    messageTrackingId,
+                                                    date,
+                                                }}
+                                                filter={filter}
+                                            />
+                                        </>
+                                    )}
                                 </View>
-
-                                <View style={stylescom.reaction}>
-                                    <FontAwesomeIcon
-                                        icon={faCheck}
-                                        color={idea.reaction_type === 1 ? '#0B5F00' : '#bebebe'}
-                                        size={12}
-                                    />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.favor === 0 ? '' : idea.favor}
-                                    </Text>
-                                </View>
-
-                                <TouchableOpacity
-                                    style={stylescom.reaction}
-                                    onPress={() => {
-                                        navigation.navigate('OpenedIdeaScreen');
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faMessage} color={'#bebebe'} size={12} />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {idea.answersNumber === 0 ? '' : idea.answersNumber}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={stylescom.container}>
-                                <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
-
-                                <TouchableOpacity
-                                    onPress={event => {
-                                        setPosition({
-                                            top: event.nativeEvent.pageY,
-                                            left: event.nativeEvent.pageX,
-                                        });
-                                    }}
-                                >
-                                    <Text style={{ ...styles.textbold, ...stylescom.dots }}>
-                                        ...
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <ModalIdeaOptions
-                                    setIdeaOptions={setIdeaOptions}
-                                    ideaOptions={ideaOptions}
-                                    position={position}
-                                    myIdea={isOwner}
-                                />
-                            </View>
-                        </>
-                    )}
+                            </>
+                        )}
+                    </View>
                 </View>
-            </View>
+            </Animated.View>
         </View>
     );
 };
 
 const stylescom = StyleSheet.create({
     wrap: {
-        width: '100%',
+        width: '90%',
+        // paddingHorizontal: 10,
         backgroundColor: 'white',
         borderRadius: 8,
         marginVertical: 8,
@@ -193,59 +287,65 @@ const stylescom = StyleSheet.create({
         paddingBottom: 8,
         paddingHorizontal: 25,
         borderRadius: 8,
-        overflow: 'hidden',
     },
     container: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: 'red'
-    },
-    user: {
-        fontWeight: '600',
-        fontSize: 13,
     },
     msg: {
-        fontSize: 13,
-        fontWeight: '300',
-        textAlign: 'justify',
+        ...styles.text,
+        textAlign: 'left',
         flexShrink: 1,
-        width: '100%',
-        marginTop: 6,
-        // backgroundColor: 'red'
     },
     reaction: {
         flexDirection: 'row',
-        marginRight: 25,
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: 10,
+    },
+    publishDraft: {
+        flexDirection: 'row',
+        marginLeft: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
+    },
+    eraseDraft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
+        marginBottom: 5,
     },
     number: {
         fontWeight: '300',
         fontSize: 12,
         color: '#bebebe',
-        marginLeft: 3,
+        marginLeft: 5,
     },
-    dots: {
-        fontWeight: '600',
-        color: '#bebebe',
-        fontSize: 22,
-        marginLeft: 20,
-    },
-    reactButton: {
+    publishContainer: {
+        ...styles.shadow_button,
         backgroundColor: '#D4D4D4',
-        borderRadius: 2,
-        width: '25%',
+        borderRadius: 4,
+        paddingHorizontal: 6,
+        paddingVertical: 3,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 3,
-    },
-    containerReact: {
-        justifyContent: 'space-around',
-        flex: 1,
         flexDirection: 'row',
-        marginTop: 8,
+        marginRight: 10,
+    },
+    publish: {
+        ...styles.h5,
+        fontSize: 13,
+        color: 'white',
+    },
+    erase: {
+        fontWeight: '300',
+        fontSize: 12,
+        color: '#01192E',
+        marginLeft: 1,
     },
     corner: {
         position: 'absolute',
@@ -256,5 +356,13 @@ const stylescom = StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 4,
         paddingHorizontal: 30,
+    },
+    corner_container: {
+        borderRadius: 8,
+        position: 'absolute',
+        height: 40,
+        left: 0,
+        right: 0,
+        overflow: 'hidden',
     },
 });

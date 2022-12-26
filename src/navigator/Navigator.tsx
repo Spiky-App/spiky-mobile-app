@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
@@ -11,11 +11,18 @@ import { OpenedIdeaScreen } from '../screens/OpenedIdeaScreen';
 import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
 import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import SpikyService from '../services/SpikyService';
+import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
+import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
+import { ChatScreen } from '../screens/ChatScreen';
+import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
+import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
+import SocketContext from '../context/Socket/Context';
+import { University, User } from '../types/store';
+import useSpikyService from '../hooks/useSpikyService';
+import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
-import { University } from '../types/store';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
+import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -23,46 +30,97 @@ export type RootStackParamList = {
     CheckEmail: undefined;
     CheckEmailScreen: undefined;
     ForgotPwdScreen: undefined;
-    RegisterScreen: undefined;
+    ChangePasswordScreen: undefined;
+    RegisterScreen: { token: string; correoValid: string };
     MenuMain: undefined;
-    CreateIdeaScreen: undefined;
-    OpenedIdeaScreen: undefined;
+    CreateIdeaScreen: { draftedIdea?: string; draftID?: number };
+    OpenedIdeaScreen: { messageId: number; filter?: string };
     ManifestPart1Screen: undefined;
+    TermAndConditionsScreen: undefined;
+    ReportIdeaScreen: { messageId: number };
+    ReplyIdeaScreen: {
+        message: {
+            messageId: number;
+            message: string;
+            user: User;
+            date: number;
+        };
+    };
+    ChatScreen: { conversationId: number; toUser: User };
+    ChangeForgotPasswordScreen: { token: string; correoValid: string };
+    ManifestPart2Screen: { correoValid: string; password: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const Navigator = () => {
-    const dispatch = useAppDispatch();
     const token = useAppSelector((state: RootState) => state.auth.token);
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
-    const universities = useAppSelector((state: RootState) => state.ui.universities);
-    // const { messages } = useAppSelector((state: RootState) => state.messages);
-    console.info('render Navigator');
-    async function setSessionInfo() {
-        const spikyClient = new SpikyService(config);
-        try {
-            const { data: universitiesData } = await spikyClient.getUniversities();
-            const { universidades } = universitiesData;
-            const universitiesResponse: University[] = universidades.map<University>(
-                university => ({
-                    id: university.id_universidad ?? 0,
-                    shortname: university.alias,
-                })
-            );
-            dispatch(setUniversities(universitiesResponse));
-        } catch {
-            dispatch(
-                addToast({ message: 'Error cargando universidades', type: StatusType.WARNING })
-            );
+    const appState = useAppSelector((state: RootState) => state.ui.appState);
+    const dispatch = useAppDispatch();
+    const { socket } = useContext(SocketContext);
+    const { setSessionInfo, getPendingNotifications } = useSpikyService();
+
+    async function handleSessionInfo() {
+        if (token) {
+            const unversities = await setSessionInfo();
+            if (unversities) {
+                const universitiesResponse: University[] = unversities.map<University>(
+                    university => ({
+                        id: university.id_universidad,
+                        shortname: university.alias,
+                        color: university.color,
+                        backgroundColor: university.background_color,
+                    })
+                );
+                dispatch(setUniversities(universitiesResponse));
+            }
         }
     }
 
-    useEffect(() => {
-        if (token && !universities) {
-            setSessionInfo();
+    async function handleGetPendingNotf() {
+        if (token) {
+            const pendingNotifications = await getPendingNotifications();
+            if (pendingNotifications) {
+                const {
+                    newChatMessagesNumber: newChatMessagesNumberS,
+                    notificationsNumber: notificationsNumberS,
+                } = pendingNotifications;
+                dispatch(
+                    setNotificationsAndNewChatMessagesNumber({
+                        newChatMessagesNumber: newChatMessagesNumberS,
+                        notificationsNumber: notificationsNumberS,
+                    })
+                );
+            }
         }
-    }, [token, universities, config]);
+    }
+
+    // I changed this because the token in store.auth can be
+    // defined before config.headers.x-token that is the one
+    // that we actually use here
+    // TODO: centralize in one place where to put the token,
+    // because i think it is saved in axios, in SecureStorage
+    // and in store's auth.token
+
+    useEffect(() => {
+        if (appState === 'active' && token) {
+            handleGetPendingNotf();
+        }
+    }, [appState, token]);
+
+    useEffect(() => {
+        if (token) {
+            if (appState === 'inactive') {
+                socket?.emit('force-offline', {});
+            } else {
+                socket?.emit('force-online', {});
+            }
+        }
+    }, [appState, socket, token]);
+
+    useEffect(() => {
+        handleSessionInfo();
+    }, [token]);
 
     return (
         <Stack.Navigator
@@ -79,16 +137,26 @@ export const Navigator = () => {
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
                     <Stack.Screen name="CheckEmailScreen" component={CheckEmailScreen} />
                     <Stack.Screen name="ForgotPwdScreen" component={ForgotPwdScreen} />
+                    <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
                     <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
                     <Stack.Screen name="ManifestPart1Screen" component={ManifestPart1Screen} />
+                    <Stack.Screen
+                        name="ChangeForgotPasswordScreen"
+                        component={ChangeForgotPasswordScreen}
+                    />
+                    <Stack.Screen name="ManifestPart2Screen" component={ManifestPart2Screen} />
                 </>
             ) : (
                 <>
                     <Stack.Screen name="MenuMain" component={MenuMain} />
                     <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
                     <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
+                    <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
+                    <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
+                    <Stack.Screen name="ChatScreen" component={ChatScreen} />
                 </>
             )}
+            <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />
         </Stack.Navigator>
     );
 };

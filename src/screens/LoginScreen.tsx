@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
     Keyboard,
@@ -48,24 +49,36 @@ export const LoginScreen = () => {
         if (validateForm(form)) {
             const { email, password } = form;
             try {
-                const response = await spikyService.login(email, password);
-                const { data } = response;
-                const { token, alias, n_notificaciones, universidad, uid } = data;
-                await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-                dispatch(signIn(token));
-                dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-                dispatch(
-                    setUser({
-                        nickname: alias,
-                        notificationsNumber: n_notificaciones,
-                        university: universidad,
-                        id: uid,
-                    })
-                );
-                setFormValid(true);
+                const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                if (deviceTokenStorage) {
+                    const response = await spikyService.login(email, password, deviceTokenStorage);
+                    const { data } = response;
+                    const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
+                        data;
+                    await AsyncStorage.setItem(StorageKeys.TOKEN, token);
+                    dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
+                    dispatch(signIn(token));
+                    dispatch(
+                        setUser({
+                            nickname: alias,
+                            notificationsNumber: n_notificaciones,
+                            newChatMessagesNumber: n_chatmensajes,
+                            universityId: id_universidad,
+                            id: uid,
+                        })
+                    );
+                    setFormValid(true);
+                } else {
+                    dispatch(
+                        addToast({ message: 'Error al iniciar sesíon', type: StatusType.WARNING })
+                    );
+                }
             } catch (e) {
-                console.log(e);
-                dispatch(addToast({ message: 'Error iniciando sesión', type: StatusType.WARNING }));
+                if (e instanceof AxiosError) {
+                    dispatch(
+                        addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
+                    );
+                }
                 setFormValid(false);
             }
         } else {
@@ -85,7 +98,7 @@ export const LoginScreen = () => {
             <ArrowBack />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ marginBottom: 80 }}>
+                    <View style={{ marginBottom: 40 }}>
                         <BigTitle texts={['Agente', 'de cambio']} />
                     </View>
                     <View style={{ marginBottom: 20 }}>
@@ -103,11 +116,12 @@ export const LoginScreen = () => {
                             placeholder="Contraseña"
                             secureTextEntry={passVisible}
                             autoCorrect={false}
-                            style={styles.textinput}
+                            style={{ ...styles.textinput, ...styles.shadow }}
                             onChangeText={value => onChange({ password: value })}
                             helperMessage={getHelperMessage(form.password)}
                             icon={passVisible ? faEye : faEyeSlash}
                             touchableOpacityProps={{ onPress: () => setPassVisible(!passVisible) }}
+                            onSubmitEditing={login}
                         />
                     </View>
                     <TouchableOpacity
@@ -133,12 +147,12 @@ export const LoginScreen = () => {
                                 ...(isLoading && { color: '#707070' }),
                             }}
                         >
-                            {(!isLoading ? 'Iniciar sesión' : 'Cargando...').toUpperCase()}
+                            {!isLoading ? 'Iniciar sesión' : 'Cargando...'}
                         </Text>
                     </TouchableHighlight>
                     <TouchableOpacity
                         style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('CheckEmailScreen')}
+                        onPress={() => navigation.navigate('ManifestPart1Screen')}
                     >
                         <Text style={styles.linkPad}>Solicitar cuenta</Text>
                     </TouchableOpacity>

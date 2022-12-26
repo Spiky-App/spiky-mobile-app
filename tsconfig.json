@@ -6,6 +6,7 @@
 
     /* Completeness */
     // "skipLibCheck": true                        /* Skip type checking all .d.ts files. */
+    "types": ["node"]
   },
   "typeRoots": ["./src/types"] // <------ you need to add this
 }

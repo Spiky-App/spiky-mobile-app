@@ -11,7 +11,7 @@ export const ArrowBack = () => {
 
     return (
         <TouchableOpacity
-            style={{ ...stylescom.arrow, marginTop: top > 0 ? top : 20 }}
+            style={{ ...stylescom.arrow, marginTop: top > 0 ? 5 : 20 }}
             onPress={() => navigation.goBack()}
         >
             <FontAwesomeIcon icon={faChevronLeft} size={30} color="#959595" />
@@ -22,7 +22,7 @@ export const ArrowBack = () => {
 const stylescom = StyleSheet.create({
     arrow: {
         position: 'absolute',
-        top: 0,
+        top: 50,
         left: 0,
         paddingLeft: 15,
     },

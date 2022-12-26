@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -7,22 +7,64 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
 import { useForm } from '../hooks/useForm';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { StatusType } from '../types/common';
+import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { validatePasswordFields } from '../helpers/passwords';
 
-const initialSate = {
-    actualContrasena: '',
-    nuevaContrasena: '',
-    confirContrasena: '',
+const initialState = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
 };
 
 export const ChangePasswordScreen = () => {
+    const uid = useAppSelector((state: RootState) => state.user.id);
+    const { updatePassword } = useSpikyService();
+    const dispatch = useAppDispatch();
+    const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
     const [passVisible2, setPassVisible2] = useState(true);
     const [msgPassword, setMsgPassword] = useState(false);
-    const [, setPasswordValid] = useState(false);
+    const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
-    const { form, onChange } = useForm(initialSate);
+    const { form, onChange } = useForm(initialState);
 
-    const { nuevaContrasena } = form;
+    const { currentPassword, newPassword, confirmPassword } = form;
+
+    const changePassword = async () => {
+        const passwordErrors = validatePasswordFields(newPassword, passwordValid, confirmPassword);
+        if (passwordErrors === undefined) {
+            try {
+                const wasUpdated = await updatePassword(uid, currentPassword, newPassword);
+                if (wasUpdated) {
+                    dispatch(
+                        setModalAlert({
+                            isOpen: true,
+                            text: 'Contraseña restablecida',
+                            icon: faLock,
+                        })
+                    );
+                }
+                onChange(initialState);
+                navigation.navigate('ConfigurationScreen');
+            } catch (error) {
+                dispatch(addToast({ message: 'Contraseña incorrecta', type: StatusType.WARNING }));
+            }
+        } else {
+            dispatch(addToast(passwordErrors));
+        }
+    };
+
+    useEffect(() => {
+        if (currentPassword !== '' && newPassword !== '' && confirmPassword !== '') {
+            setButtonState(true);
+        }
+    }, [currentPassword, newPassword, confirmPassword]);
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
@@ -48,11 +90,13 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Contraseña actual"
+                        placeholderTextColor="#707070"
                         secureTextEntry={passVisible1}
                         autoCorrect={false}
                         keyboardType="email-address"
                         style={styles.textinput}
-                        onChangeText={value => onChange({ actualContrasena: value })}
+                        value={currentPassword}
+                        onChangeText={value => onChange({ currentPassword: value })}
                     />
                     <TouchableOpacity
                         style={styles.iconinput}
@@ -69,11 +113,13 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Nueva contraseña"
+                        placeholderTextColor="#707070"
                         secureTextEntry={passVisible2}
                         autoCorrect={false}
                         keyboardType="email-address"
                         style={styles.textinput}
-                        onChangeText={value => onChange({ nuevaContrasena: value })}
+                        value={newPassword}
+                        onChangeText={value => onChange({ newPassword: value })}
                         onFocus={() => setMsgPassword(true)}
                         onBlur={() => setMsgPassword(false)}
                     />
@@ -90,7 +136,7 @@ export const ChangePasswordScreen = () => {
 
                     {msgPassword && (
                         <PasswordValidationMsg
-                            password={nuevaContrasena}
+                            password={newPassword}
                             setPasswordValid={setPasswordValid}
                         />
                     )}
@@ -99,16 +145,33 @@ export const ChangePasswordScreen = () => {
                 <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                     <TextInput
                         placeholder="Confirmar contraseña"
+                        placeholderTextColor="#707070"
                         autoCorrect={false}
                         keyboardType="email-address"
                         style={styles.textinput}
                         secureTextEntry={true}
-                        onChangeText={value => onChange({ confirContrasena: value })}
+                        value={confirmPassword}
+                        onChangeText={value => onChange({ confirmPassword: value })}
                     />
                 </View>
 
-                <TouchableOpacity style={{ ...styles.button, marginTop: 50 }} onPress={() => {}}>
-                    <Text style={{ ...styles.text, fontSize: 14 }}>Cambiar contraseña</Text>
+                <TouchableOpacity
+                    style={{
+                        ...styles.button,
+                        marginTop: 50,
+                        borderColor: buttonState ? '#01192E' : '#D4D4D4',
+                    }}
+                    onPress={buttonState ? changePassword : () => {}}
+                >
+                    <Text
+                        style={{
+                            ...styles.text,
+                            fontSize: 14,
+                            color: buttonState ? '#01192E' : '#D4D4D4',
+                        }}
+                    >
+                        Cambiar contraseña
+                    </Text>
                 </TouchableOpacity>
             </View>
         </BackgroundPaper>

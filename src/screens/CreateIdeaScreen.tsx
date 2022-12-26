@@ -1,143 +1,283 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
     View,
-    SafeAreaView,
-    TextInput,
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { MentionInput } from 'react-native-controlled-mentions';
 import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
+import { DrawerParamList } from '../navigator/MenuMain';
+import { DrawerNavigationProp, DrawerScreenProps } from '@react-navigation/drawer';
+import { RootStackParamList } from '../navigator/Navigator';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import { addMessage, setDraft, updateMessage } from '../store/feature/messages/messagesSlice';
+import ButtonIcon from '../components/common/ButtonIcon';
+import { MentionData } from 'react-native-controlled-mentions/dist/types';
+import { RenderSuggetions } from '../components/Suggestions';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
+import useSpikyService from '../hooks/useSpikyService';
+import { BackgroundPaper } from '../components/BackgroundPaper';
+import { generateMessageFromMensaje } from '../helpers/message';
+import SocketContext from '../context/Socket/Context';
+import { Message } from '../types/store';
 
-export const CreateIdeaScreen = () => {
-    const [counter, setCounter] = useState(0);
-    const [buttonState, setButtonState] = useState(true);
-    const navigation = useNavigation();
+type NavigationProp = DrawerNavigationProp<DrawerParamList>;
+type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
+
+export const CreateIdeaScreen = ({ route }: Props) => {
+    const draftedIdea = route.params?.draftedIdea;
+    const idDraft = route.params?.draftID;
+    const isDraft = idDraft !== undefined;
+    const dispatch = useAppDispatch();
     const { form, onChange } = useForm({
-        mensaje: '',
+        message: draftedIdea || '',
     });
+    const nav = useNavigation<NavigationProp>();
+    const [counter, setCounter] = useState(0);
+    const [isLoading, setLoading] = useState(false);
+    const { createIdea, updateDraft } = useSpikyService();
+    const IDEA_MAX_LENGHT = 220;
+    const { draft } = useAppSelector((state: RootState) => state.messages);
+    const user = useAppSelector((state: RootState) => state.user);
+    const { socket } = useContext(SocketContext);
 
-    const { mensaje } = form;
+    function invalid() {
+        const { message: mensaje } = form;
+        if (!mensaje || mensaje.length > IDEA_MAX_LENGHT) {
+            return true;
+        }
+        return false;
+    }
 
-    useEffect(() => {
-        setCounter(220 - mensaje.length);
-        if (mensaje.length <= 220 && mensaje.length > 0) {
-            if (buttonState) {
-                setButtonState(false);
+    function getPercentage(value: number, maxValue: number): number {
+        return (value / maxValue) * 100;
+    }
+
+    async function handleCreateIdea(): Promise<Message | undefined> {
+        const mensaje = await createIdea(form.message);
+        if (mensaje) {
+            const createdMessage: Message = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    id_universidad: user.universityId,
+                },
+                reacciones: [],
+            });
+            const regexp = /(@\[@\w*\]\(\d*\))/g;
+            const mentions: RegExpMatchArray | null = createdMessage.message.match(regexp);
+            if (mentions) {
+                socket?.emit('mentions', {
+                    mentions,
+                    id_usuario2: user.id,
+                    id_mensaje: createdMessage.id,
+                    tipo: 4,
+                });
+            }
+            return createdMessage;
+        }
+        return undefined;
+    }
+
+    async function handleUpdateDraft(id: number): Promise<Message | undefined> {
+        const mensaje = await updateDraft(form.message, id, true);
+        if (mensaje) {
+            return generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    id_universidad: user.universityId,
+                },
+                reacciones: [],
+            });
+        }
+        return undefined;
+    }
+
+    async function onPressLocationArrow() {
+        setLoading(true);
+        const message = idDraft ? await handleUpdateDraft(idDraft) : await handleCreateIdea();
+        if (message) {
+            dispatch(setDraft(false));
+            nav.navigate('CommunityScreen');
+            dispatch(addMessage(message));
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Idea publicada.',
+                    icon: faFlagCheckered,
+                })
+            );
+        }
+        setLoading(false);
+    }
+    async function onPressPenToSquare() {
+        setLoading(true);
+        if (isDraft) {
+            const message = await handleUpdateDraft(idDraft);
+            if (message) {
+                if (draft) {
+                    dispatch(updateMessage(message));
+                }
+                nav.goBack();
+                dispatch(
+                    setModalAlert({
+                        isOpen: true,
+                        text: 'Borrador actualizado.',
+                        icon: faPenToSquare,
+                    })
+                );
             }
         } else {
-            setButtonState(true);
+            const message = await createIdea(form.message, true);
+            if (message) {
+                if (draft) {
+                    dispatch(addMessage(generateMessageFromMensaje(message)));
+                }
+                nav.goBack();
+                dispatch(
+                    setModalAlert({ isOpen: true, text: 'Borrador guardado.', icon: faPenToSquare })
+                );
+            }
         }
-    }, [mensaje]);
+
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        const { message: mensaje } = form;
+        setCounter(IDEA_MAX_LENGHT - mensaje.length);
+    }, [form]);
+
+    const messageLenght = form.message.length;
 
     return (
-        <SafeAreaView style={stylecom.container}>
-            <KeyboardAvoidingView behavior="height" style={stylecom.container}>
-                <View style={{ height: '40%' }}>
-                    <TextInput
-                        placeholder="Perpetua tu idea.."
-                        placeholderTextColor="#707070"
-                        style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
-                        multiline={true}
-                        onChangeText={value => onChange({ mensaje: value })}
-                        autoFocus
-                    />
-                </View>
-
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        position: 'absolute',
-                        bottom: Platform.OS === 'ios' ? 70 : 50,
-                    }}
-                >
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                    </TouchableOpacity>
-
-                    <View style={stylecom.WrapperMaxCounterNIdea}>
-                        <View style={stylecom.ConteMaxCounterNIdea}>
-                            <View style={stylecom.MaxCounterNIdea}></View>
-                            {counter <= 40 && (
-                                <Text
-                                    style={
-                                        counter < 0
-                                            ? stylecom.MaxCounterTextNIdeaRed
-                                            : stylecom.MaxCounterTextNIdea
-                                    }
-                                >
-                                    {counter}
-                                </Text>
-                            )}
-                            <View
-                                style={{
-                                    ...(counter < 0
-                                        ? stylecom.MaxCounterNIdeaColorRed
-                                        : stylecom.MaxCounterNIdeaColor),
-                                    width:
-                                        ((mensaje.length < 220 ? mensaje.length : 220) / 220) *
-                                            100 +
-                                        `%`,
-                                }}
-                            ></View>
-                        </View>
-                    </View>
-
-                    <TouchableOpacity
-                        style={{
-                            ...stylecom.circleButton,
-                            borderColor: buttonState ? '#d4d4d4d3' : '#01192E',
-                        }}
-                        onPress={() => {}}
-                    >
-                        <FontAwesomeIcon
-                            icon={faPenToSquare}
-                            size={16}
-                            color={buttonState ? '#d4d4d4d3' : '#01192E'}
+        <BackgroundPaper style={stylecom.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={stylecom.container}
+            >
+                <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                    <View style={stylecom.wrap}>
+                        <MentionInput
+                            placeholder="Perpetua tu idea.."
+                            placeholderTextColor="#707070"
+                            style={{ ...styles.textinput, fontSize: 16 }}
+                            multiline={true}
+                            autoFocus
+                            value={form.message}
+                            onChange={value => onChange({ message: value })}
+                            partTypes={[
+                                {
+                                    trigger: '@',
+                                    renderSuggestions: props =>
+                                        RenderSuggetions({ ...props, isMention: true }),
+                                    textStyle: { ...styles.h5, color: '#5c71ad' },
+                                    allowedSpacesCount: 0,
+                                    isInsertSpaceAfterMention: true,
+                                    isBottomMentionSuggestionsRender: true,
+                                    getPlainString: ({ name }: MentionData) => name,
+                                },
+                                {
+                                    trigger: '#',
+                                    renderSuggestions: props =>
+                                        RenderSuggetions({ ...props, isMention: false }),
+                                    textStyle: { ...styles.h5, color: '#5c71ad' },
+                                    allowedSpacesCount: 0,
+                                    isInsertSpaceAfterMention: true,
+                                    isBottomMentionSuggestionsRender: true,
+                                    getPlainString: ({ name }: MentionData) => name,
+                                },
+                            ]}
                         />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
+                    </View>
+                    <View
                         style={{
-                            ...stylecom.circleButton,
-                            borderColor: buttonState ? '#d4d4d4d3' : '#01192E',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '90%',
+                            position: 'absolute',
+                            bottom: 20,
                         }}
-                        onPress={() => {}}
                     >
-                        <View
-                            style={{
-                                transform: [{ rotate: '45deg' }],
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faLocationArrow}
-                                size={16}
-                                color={buttonState ? '#d4d4d4d3' : '#01192E'}
-                            />
+                        <TouchableOpacity onPress={() => nav.goBack()} disabled={isLoading}>
+                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
+                        </TouchableOpacity>
+                        <View style={stylecom.WrapperMaxCounterNIdea}>
+                            <View style={stylecom.ConteMaxCounterNIdea}>
+                                <View style={stylecom.MaxCounterNIdea}></View>
+                                {counter <= 40 && (
+                                    <Text
+                                        style={
+                                            counter < 0
+                                                ? stylecom.MaxCounterTextNIdeaRed
+                                                : stylecom.MaxCounterTextNIdea
+                                        }
+                                    >
+                                        {counter}
+                                    </Text>
+                                )}
+                                <View
+                                    style={[
+                                        counter < 0
+                                            ? stylecom.MaxCounterNIdeaColorRed
+                                            : stylecom.MaxCounterNIdeaColor,
+                                        {
+                                            width:
+                                                getPercentage(
+                                                    messageLenght < IDEA_MAX_LENGHT
+                                                        ? messageLenght
+                                                        : IDEA_MAX_LENGHT,
+                                                    IDEA_MAX_LENGHT
+                                                ) + '%',
+                                        },
+                                    ]}
+                                />
+                            </View>
                         </View>
-                    </TouchableOpacity>
+                        <ButtonIcon
+                            disabled={isLoading || invalid()}
+                            icon={faPenToSquare}
+                            onPress={onPressPenToSquare}
+                        />
+                        <ButtonIcon
+                            disabled={isLoading || invalid()}
+                            icon={faLocationArrow}
+                            onPress={onPressLocationArrow}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                        />
+                    </View>
                 </View>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </BackgroundPaper>
     );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stylecom = StyleSheet.create({
     container: {
+        width: '95%',
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
+    },
+    wrap: {
+        ...styles.shadow,
+        flex: 1,
+        borderRadius: 10,
+        width: '100%',
+        backgroundColor: 'white',
+        paddingHorizontal: 25,
+        paddingTop: 30,
     },
     circleButton: {
         justifyContent: 'center',

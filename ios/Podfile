@@ -4,8 +4,9 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'reactNativeCliApp' do
+target 'SpikyApp' do
   config = use_native_modules!
+  
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -19,7 +20,7 @@ target 'reactNativeCliApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'reactNativeCliAppTests' do
+  target 'SpikyAppTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -34,4 +35,11 @@ target 'reactNativeCliApp' do
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
+  
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  $RNFirebaseAsStaticFramework = true
+  
 end

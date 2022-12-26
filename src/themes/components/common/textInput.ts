@@ -4,10 +4,19 @@ const StylesComponent = StyleSheet.create({
     textInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        width: 300,
-        padding: 10,
+        width: 280,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        height: 43,
+        shadowColor: '#4d4d4d',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
         backgroundColor: 'white',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 6,
         borderRadius: 4,
     },
     textInput: {
@@ -24,10 +33,12 @@ const StylesComponent = StyleSheet.create({
         fontWeight: '300',
     },
     textInputContainerError: {
-        borderBottomColor: '#FF0000',
+        borderBottomColor: '#9b0000',
     },
     textError: {
-        color: '#FF0000',
+        color: '#9b0000',
+        marginTop: 8,
+        paddingLeft: 8,
     },
 });
 

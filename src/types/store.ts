@@ -1,14 +1,18 @@
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { StatusType } from './common';
 
 export interface University {
-    id?: number;
+    id: number;
     shortname: string;
+    backgroundColor: string;
+    color: string;
 }
 
 export interface User {
-    id: number;
-    alias: string;
-    university: University;
+    id?: number;
+    nickname: string;
+    universityId: number;
+    online?: boolean;
 }
 interface Response {
     fecha: string;
@@ -34,21 +38,123 @@ export interface ActiveMessage {
     num_respuestas: number;
     banned: number;
 }
+
+export interface Tracking {
+    id: number;
+}
+
+export enum ReactionType {
+    NEUTRAL = 0,
+    FAVOR = 1,
+    AGAINST = 2,
+}
+
 export interface Message {
     id: number;
     message: string;
-    date: string;
-    favor: number;
-    neutral: number;
-    against: number;
+    date: number;
     user: User;
-    reaction_type?: number;
-    id_tracking?: number;
+    myReaction?: string;
+    reactions: ReactionCount[];
+    messageTrackingId?: number;
     answersNumber: number;
     draft: number;
+    sequence: number;
+    comments?: Comment[];
+}
+
+export interface ReactionCount {
+    reaction: string;
+    count: number;
 }
 
 export interface Toast {
     message: string;
     type?: StatusType;
+}
+
+export interface ModalAlert {
+    isOpen: boolean;
+    text?: string;
+    icon?: IconDefinition;
+    color?: string;
+}
+
+export interface Comment {
+    id: number;
+    comment: string;
+    date: number;
+    messageId: number;
+    user: User;
+    favor: number;
+    against: number;
+    reactionCommentType?: ReactionType;
+}
+
+export interface Notification {
+    id: number;
+    messageId: number;
+    message: string;
+    type: NotificationType;
+    seen: boolean;
+    updatedAt: string | null;
+    createdAt: string;
+    user: User;
+}
+
+export enum NotificationType {
+    NOTHING = 0,
+    REACT_IDEA = 1,
+    COMMENT_IDEA = 2,
+    COMMENT_TRACKING = 3,
+    MENTION = 4,
+    REACT_COMMENT = 5,
+}
+
+export interface Conversation {
+    id: number;
+    user_1: User;
+    user_2: User;
+    chatmessage: ChatMessage;
+}
+
+export interface ChatMessage {
+    id: number;
+    conversationId: number;
+    userId: number;
+    message: string;
+    date: number;
+    replyMessage?: ReplyMessageI;
+    reply?: Reply;
+    seens?: Seen[];
+    newMsg: boolean;
+}
+
+export interface Seen {
+    userId: number;
+    date: number;
+}
+
+interface Reply {
+    id: number;
+    message: string;
+    user: User;
+}
+
+interface ReplyMessageI {
+    id: number;
+    message: string;
+    user: User;
+}
+
+export interface Reaction {
+    id: number;
+    reaction: string;
+    user: User;
+}
+
+export interface ChatMessageToReply {
+    messageId: number;
+    message: string;
+    user: User;
 }

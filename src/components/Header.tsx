@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { useNavigation } from '@react-navigation/native';
-import {
-    View,
-    Text,
-    StyleSheet,
-    ImageBackground,
-    SafeAreaView,
-    TouchableOpacity,
-} from 'react-native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 import { faBars, faUser } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,17 +19,32 @@ export const Header = () => {
         top: 0,
         right: 0,
     });
+    const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
+        (state: RootState) => state.user
+    );
 
-    const n_notificaciones = useAppSelector((state: RootState) => state.user.notificationsNumber);
+    const changeScreen = (screen: string) => {
+        const targetRoute = navigation
+            .getState()
+            .routes.find((route: { name: string }) => route.name === screen);
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: screen, params: targetRoute?.params }],
+            })
+        );
+    };
 
     return (
-        <ImageBackground
-            source={require('../constants/images/background-paper.png')}
-            resizeMode="cover"
-        >
+        <View style={{ backgroundColor: '#01192E' }}>
+            <StatusBar barStyle="light-content" translucent={false} />
             <SafeAreaView>
                 <View
-                    style={{ ...stylescom.container, marginTop: top > 0 ? 0 : 15 }}
+                    style={{
+                        ...stylescom.container,
+                        marginTop: top > 0 ? 0 : 15,
+                        justifyContent: 'space-between',
+                    }}
                     onLayout={({ nativeEvent }) => {
                         setPosition({
                             top: nativeEvent.layout.y + 10,
@@ -44,28 +52,35 @@ export const Header = () => {
                         });
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() => navigation.openDrawer()}
-                        style={{ justifyContent: 'center', alignItems: 'center' }}
-                    >
-                        <View style={{ ...stylescom.flexConte, marginLeft: 20 }}>
-                            <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
-                            {n_notificaciones > 0 && (
-                                <View style={stylescom.notif}>
-                                    <Text style={stylescom.textnotif}>{n_notificaciones}</Text>
-                                </View>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-
-                    <View style={{ width: 75, marginLeft: 15 }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('CommunityScreen')}>
-                            <LogoWhiteSvg />
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                            <View
+                                style={{
+                                    ...stylescom.flexConte,
+                                    marginHorizontal: 20,
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
+                                {notificationsNumber + newChatMessagesNumber > 0 && (
+                                    <>
+                                        {newChatMessagesNumber > 0 && (
+                                            <View style={stylescom.newChats} />
+                                        )}
+                                        <View style={stylescom.notif}>
+                                            <Text style={stylescom.textnotif}>
+                                                {notificationsNumber + newChatMessagesNumber}
+                                            </Text>
+                                        </View>
+                                    </>
+                                )}
+                            </View>
                         </TouchableOpacity>
+                        <View style={{ marginLeft: 10, width: 75, justifyContent: 'center' }}>
+                            <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
+                                <LogoWhiteSvg />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
-                    <View style={{ flex: 1 }} />
-
                     <TouchableOpacity
                         style={{ ...stylescom.flexConte, marginRight: 20 }}
                         onPress={() => setProfileOption(true)}
@@ -81,7 +96,7 @@ export const Header = () => {
                     />
                 </View>
             </SafeAreaView>
-        </ImageBackground>
+        </View>
     );
 };
 
@@ -122,6 +137,16 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         top: 6,
         right: -6,
+    },
+    newChats: {
+        ...styles.center,
+        backgroundColor: '#D4D4D4',
+        height: 18,
+        width: 18,
+        borderRadius: 100,
+        position: 'absolute',
+        top: 6,
+        right: -9,
     },
     textnotif: {
         ...styles.text,

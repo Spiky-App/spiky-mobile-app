@@ -1,71 +1,151 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import {
     Text,
-    TouchableHighlight,
     View,
     TextInput,
     Keyboard,
     TouchableWithoutFeedback,
     TouchableOpacity,
+    StyleSheet,
+    Pressable,
+    Animated,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import { faCheck, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
 import { ArrowBack } from '../components/ArrowBack';
 import { BigTitle } from '../components/BigTitle';
+import { PasswordValidationMsg } from '../components/PasswordValidationMsg';
+import { useAppDispatch } from '../store/hooks';
+import { StatusType } from '../types/common';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { useNavigation } from '@react-navigation/native';
+import useSpikyService from '../hooks/useSpikyService';
+import { validatePasswordFields } from '../helpers/passwords';
+import { RootStackParamList } from '../navigator/Navigator';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { useAnimation } from '../hooks/useAnimation';
 
-export const RegisterScreen = () => {
-    const { onChange } = useForm({
-        alias: '',
-        contrasena: '',
-        confirContrasena: '',
-    });
+const initialSate = {
+    alias: '',
+    password: '',
+    confirmPassword: '',
+    checkTermsConditions: false,
+};
 
+type Props = DrawerScreenProps<RootStackParamList, 'RegisterScreen'>;
+
+export const RegisterScreen = ({ route }: Props) => {
+    const token = route.params?.token;
+    const correoValid = route.params?.correoValid;
+    const dispatch = useAppDispatch();
+    const [buttonState, setButtonState] = useState(false);
     const [passVisible1, setPassVisible1] = useState(true);
     const [passVisible2, setPassVisible2] = useState(true);
+    const [msgPassword, setMsgPassword] = useState(false);
+    const [aliasMsg, setAliasMsg] = useState(false);
+    const [passwordValid, setPasswordValid] = useState(false);
+    const navigation = useNavigation<any>();
+    const { form, onChange } = useForm(initialSate);
+    const { registerUser } = useSpikyService();
+
+    const { alias, password, confirmPassword, checkTermsConditions } = form;
+
+    const register = async () => {
+        const passwordErrors = validatePasswordFields(password, passwordValid, confirmPassword);
+        if (checkTermsConditions) {
+            if (passwordErrors === undefined) {
+                try {
+                    const { ok } = await registerUser(token, alias, correoValid, password);
+                    if (ok) {
+                        navigation.reset({
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'ManifestPart2Screen',
+                                    params: { correoValid, password },
+                                },
+                            ],
+                        });
+                    }
+                    onChange(initialSate);
+                } catch (error) {
+                    console.log(error);
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: 'HomeScreen',
+                            },
+                        ],
+                    });
+                    dispatch(
+                        addToast({ message: 'Cambio no completado', type: StatusType.WARNING })
+                    );
+                }
+            } else {
+                dispatch(addToast(passwordErrors));
+            }
+        } else {
+            dispatch(
+                addToast({
+                    message: 'Términos y condiciones sin aceptar.',
+                    type: StatusType.WARNING,
+                })
+            );
+        }
+    };
+
+    useEffect(() => {
+        if (alias != '' && password !== '' && confirmPassword !== '' && checkTermsConditions) {
+            setButtonState(true);
+        }
+        if (
+            (alias === '' || password === '' || confirmPassword === '' || !checkTermsConditions) &&
+            buttonState
+        ) {
+            setButtonState(false);
+        }
+    }, [password, confirmPassword, alias, checkTermsConditions]);
 
     return (
         <BackgroundPaper>
-            <ArrowBack />
-
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <ArrowBack />
                     <BigTitle texts={['Escribe eso', 'que no saben']} />
 
-                    <Text
-                        style={{
-                            ...styles.textGrayPad,
-                            marginVertical: 15,
-                            fontSize: 14,
-                            marginLeft: 40,
-                        }}
-                    >
-                        correo1234@uni.mx
-                    </Text>
+                    <Text style={stylescomp.textEmail}>{correoValid}</Text>
 
-                    <View style={{ ...styles.input, marginBottom: 20 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Seudónimo"
+                            placeholderTextColor="#707070"
                             autoCorrect={false}
-                            keyboardType="email-address"
+                            autoCapitalize="none"
                             style={styles.textinput}
+                            value={alias}
                             onChangeText={value => onChange({ alias: value })}
+                            onFocus={() => setAliasMsg(true)}
+                            onBlur={() => setAliasMsg(false)}
                         />
-                        <TouchableOpacity style={styles.iconinput} onPress={() => {}}>
-                            <FontAwesomeIcon icon={faCircleInfo} size={16} color="#d4d4d4" />
-                        </TouchableOpacity>
+                        <AliasMsg aliasMsg={aliasMsg} />
                     </View>
 
-                    <View style={{ ...styles.input, marginBottom: 20 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Contraseña"
+                            placeholderTextColor="#707070"
                             secureTextEntry={passVisible1}
                             autoCorrect={false}
                             style={styles.textinput}
-                            onChangeText={value => onChange({ contrasena: value })}
+                            value={password}
+                            onChangeText={value => onChange({ password: value })}
+                            onFocus={() => setMsgPassword(true)}
+                            onBlur={() => setMsgPassword(false)}
                         />
                         <TouchableOpacity
                             style={styles.iconinput}
@@ -77,15 +157,24 @@ export const RegisterScreen = () => {
                                 color="#d4d4d4"
                             />
                         </TouchableOpacity>
+
+                        {msgPassword && (
+                            <PasswordValidationMsg
+                                password={password}
+                                setPasswordValid={setPasswordValid}
+                            />
+                        )}
                     </View>
 
-                    <View style={{ ...styles.input, marginBottom: 30 }}>
+                    <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
                         <TextInput
                             placeholder="Confirmar contraseña"
-                            secureTextEntry={passVisible2}
+                            placeholderTextColor="#707070"
                             autoCorrect={false}
+                            secureTextEntry={passVisible2}
                             style={styles.textinput}
-                            onChangeText={value => onChange({ confirContrasena: value })}
+                            value={confirmPassword}
+                            onChangeText={value => onChange({ confirmPassword: value })}
                         />
                         <TouchableOpacity
                             style={styles.iconinput}
@@ -99,15 +188,119 @@ export const RegisterScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableHighlight
-                        underlayColor="#01192ebe"
-                        onPress={() => {}}
-                        style={{ ...styles.button, paddingHorizontal: 30 }}
+                    <Pressable
+                        style={{ ...styles.center, marginBottom: 10 }}
+                        onPress={() => navigation.navigate('TermAndConditionsScreen')}
                     >
-                        <Text style={{ ...styles.text, ...styles.textb }}>Crear cuenta</Text>
-                    </TouchableHighlight>
+                        <Text style={{ ...styles.textbold, fontSize: 13 }}>
+                            Ver términos y condiciones
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={stylescomp.containercheckBox}
+                        onPress={() => onChange({ checkTermsConditions: !checkTermsConditions })}
+                    >
+                        <View
+                            style={{
+                                ...stylescomp.checkBox,
+                                backgroundColor: checkTermsConditions ? '#01192E' : 'transparent',
+                            }}
+                        >
+                            {checkTermsConditions && (
+                                <FontAwesomeIcon icon={faCheck} size={13} color="white" />
+                            )}
+                        </View>
+                        <Text style={{ ...styles.text, fontSize: 12 }}>
+                            He leído y acepto los términos y condiciones de uso.
+                        </Text>
+                    </Pressable>
+
+                    <TouchableOpacity
+                        style={{
+                            ...styles.button,
+                            marginTop: 20,
+                            borderColor: buttonState ? '#01192E' : '#D4D4D4',
+                        }}
+                        onPress={buttonState ? register : () => {}}
+                    >
+                        <Text
+                            style={{
+                                ...styles.text,
+                                fontSize: 14,
+                                color: buttonState ? '#01192E' : '#D4D4D4',
+                            }}
+                        >
+                            Crear cuenta
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>
         </BackgroundPaper>
     );
 };
+
+interface AliasMsgProps {
+    aliasMsg: boolean;
+}
+const AliasMsg = ({ aliasMsg }: AliasMsgProps) => {
+    const { opacity, fadeIn } = useAnimation({});
+
+    useEffect(() => {
+        if (aliasMsg) fadeIn();
+    }, [aliasMsg]);
+
+    if (!aliasMsg) return <></>;
+
+    return (
+        <Animated.View
+            style={{
+                ...styles.input,
+                position: 'absolute',
+                width: 280,
+                top: -100,
+                opacity,
+                alignItems: 'center',
+            }}
+        >
+            <Text style={{ ...stylescomp.msgGrayText, ...styles.textbold, color: '#707070' }}>
+                ¡Importante!
+            </Text>
+            <Text style={stylescomp.msgGrayText}>
+                Si tus padres no supieron escoger tu nombre, es tu segunda oportunidad. Te
+                recomendamos usar un seudónimo que no te identifique.
+            </Text>
+        </Animated.View>
+    );
+};
+
+const stylescomp = StyleSheet.create({
+    textEmail: {
+        ...styles.textGrayPad,
+        marginVertical: 15,
+        fontSize: 14,
+        width: 350,
+        textAlign: 'center',
+    },
+    checkBox: {
+        ...styles.center,
+        width: 18,
+        height: 18,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderColor: '#01192E',
+        marginRight: 10,
+    },
+    containercheckBox: {
+        ...styles.center,
+        width: 220,
+        marginVertical: 10,
+        flexDirection: 'row',
+    },
+    msgGrayText: {
+        ...styles.text,
+        ...styles.textGray,
+        fontSize: 12,
+        textAlign: 'center',
+    },
+});

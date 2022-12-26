@@ -29,7 +29,7 @@ function TextInputCustom(props: Props) {
     const textStyle = getTextStyle();
     const textInputContainerSyle = getTextInputContainerStyle();
     return (
-        <View>
+        <View style={{ marginBottom: 15 }}>
             <View style={{ ...StylesComponent.textInputContainer, ...textInputContainerSyle }}>
                 <TextInput
                     {...props}
@@ -38,12 +38,19 @@ function TextInputCustom(props: Props) {
                 />
                 {icon && (
                     <TouchableOpacity {...touchableOpacityProps}>
-                        <FontAwesomeIcon icon={icon} size={27} color="#d4d4d4" />
+                        <FontAwesomeIcon icon={icon} size={23} color="#d4d4d4" />
                     </TouchableOpacity>
                 )}
             </View>
             {helperMessage && (
-                <Text style={{ ...StylesComponent.text, ...textStyle }}>
+                <Text
+                    style={{
+                        ...StylesComponent.text,
+                        ...textStyle,
+                        position: 'absolute',
+                        bottom: -20,
+                    }}
+                >
                     {helperMessage.message}
                 </Text>
             )}
