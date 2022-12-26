@@ -53,7 +53,7 @@ export const PasswordValidationMsg = ({ password, setPasswordValid }: Props) => 
                 opacity,
             }}
         >
-            <Text style={{ ...styles.text, ...styles.textGray, fontSize: 11, marginBottom: 6 }}>
+            <Text style={{ ...styles.text, ...styles.textGray, fontSize: 12, marginBottom: 6 }}>
                 La contraseña debe de contener al menos:
             </Text>
 
@@ -136,7 +136,7 @@ const stylescom = StyleSheet.create({
     text: {
         ...styles.text,
         ...styles.textGray,
-        fontSize: 11,
+        fontSize: 12,
         marginRight: 5,
     },
 });

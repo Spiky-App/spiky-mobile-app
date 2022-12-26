@@ -9,9 +9,10 @@ import {
     TouchableOpacity,
     StyleSheet,
     Pressable,
+    Animated,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faCheck, faCircleInfo, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import { faCheck, faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useForm } from '../hooks/useForm';
 import { styles } from '../themes/appTheme';
@@ -26,6 +27,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { validatePasswordFields } from '../helpers/passwords';
 import { RootStackParamList } from '../navigator/Navigator';
 import { DrawerScreenProps } from '@react-navigation/drawer';
+import { useAnimation } from '../hooks/useAnimation';
 
 const initialSate = {
     alias: '',
@@ -44,6 +46,7 @@ export const RegisterScreen = ({ route }: Props) => {
     const [passVisible1, setPassVisible1] = useState(true);
     const [passVisible2, setPassVisible2] = useState(true);
     const [msgPassword, setMsgPassword] = useState(false);
+    const [aliasMsg, setAliasMsg] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
     const navigation = useNavigation<any>();
     const { form, onChange } = useForm(initialSate);
@@ -126,10 +129,10 @@ export const RegisterScreen = ({ route }: Props) => {
                             style={styles.textinput}
                             value={alias}
                             onChangeText={value => onChange({ alias: value })}
+                            onFocus={() => setAliasMsg(true)}
+                            onBlur={() => setAliasMsg(false)}
                         />
-                        <TouchableOpacity style={styles.iconinput}>
-                            <FontAwesomeIcon icon={faCircleInfo} size={16} color="#d4d4d4" />
-                        </TouchableOpacity>
+                        <AliasMsg aliasMsg={aliasMsg} />
                     </View>
 
                     <View style={{ ...styles.input, marginBottom: 20, width: 280 }}>
@@ -237,6 +240,40 @@ export const RegisterScreen = ({ route }: Props) => {
     );
 };
 
+interface AliasMsgProps {
+    aliasMsg: boolean;
+}
+const AliasMsg = ({ aliasMsg }: AliasMsgProps) => {
+    const { opacity, fadeIn } = useAnimation({});
+
+    useEffect(() => {
+        if (aliasMsg) fadeIn();
+    }, [aliasMsg]);
+
+    if (!aliasMsg) return <></>;
+
+    return (
+        <Animated.View
+            style={{
+                ...styles.input,
+                position: 'absolute',
+                width: 280,
+                top: -100,
+                opacity,
+                alignItems: 'center',
+            }}
+        >
+            <Text style={{ ...stylescomp.msgGrayText, ...styles.textbold, color: '#707070' }}>
+                ¡Importante!
+            </Text>
+            <Text style={stylescomp.msgGrayText}>
+                Si tus padres no supieron escoger tu nombre, es tu segunda oportunidad. Te
+                recomendamos usar un seudónimo que no te identifique.
+            </Text>
+        </Animated.View>
+    );
+};
+
 const stylescomp = StyleSheet.create({
     textEmail: {
         ...styles.textGrayPad,
@@ -259,5 +296,11 @@ const stylescomp = StyleSheet.create({
         width: 220,
         marginVertical: 10,
         flexDirection: 'row',
+    },
+    msgGrayText: {
+        ...styles.text,
+        ...styles.textGray,
+        fontSize: 12,
+        textAlign: 'center',
     },
 });
