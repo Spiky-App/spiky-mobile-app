@@ -167,10 +167,10 @@ export interface UpdateNotifications {
 
 export interface GetUserInfo {
     ok: boolean;
-    usuario: UserI;
+    usuario: UserInfo;
 }
 
-export interface UserI {
+export interface UserInfo {
     correo: string;
     universidad: string;
 }
