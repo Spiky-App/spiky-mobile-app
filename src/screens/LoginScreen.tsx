@@ -70,7 +70,7 @@ export const LoginScreen = () => {
                     setFormValid(true);
                 } else {
                     dispatch(
-                        addToast({ message: 'Error al iniciar sesión b', type: StatusType.WARNING })
+                        addToast({ message: 'Error al iniciar sesión.', type: StatusType.WARNING })
                     );
                 }
             } catch (e) {

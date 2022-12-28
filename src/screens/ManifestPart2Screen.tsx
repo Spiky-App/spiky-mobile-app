@@ -44,7 +44,7 @@ export const ManifestPart2Screen = ({ route }: Props) => {
         } else {
             dispatch(
                 addToast({
-                    message: 'Error al iniciar sesión',
+                    message: 'Error al iniciar sesión.',
                     type: StatusType.WARNING,
                 })
             );
