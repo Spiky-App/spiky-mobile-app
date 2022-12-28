@@ -6,7 +6,7 @@ import { styles } from '../themes/appTheme';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { UserI } from '../types/services/spiky';
+import { UserInfo } from '../types/services/spiky';
 import useSpikyService from '../hooks/useSpikyService';
 
 interface UserData {
@@ -14,7 +14,7 @@ interface UserData {
     university: string;
 }
 
-function generateDataFromData(data: UserI): UserData {
+function generateDataFromData(data: UserInfo): UserData {
     return {
         email: data.correo,
         university: data.universidad,

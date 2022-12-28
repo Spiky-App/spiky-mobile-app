@@ -28,6 +28,7 @@ import {
     Reaction,
     TermsAndConditions,
     UserI,
+    UserInfo,
 } from '../types/services/spiky';
 import { Toast } from '../types/store';
 
@@ -337,7 +338,7 @@ function useSpikyService() {
         }
     };
 
-    const loadUserInfo = async (): Promise<UserI | undefined> => {
+    const loadUserInfo = async (): Promise<UserInfo | undefined> => {
         try {
             const response = await service.getUserInfo();
             return response.data.usuario;
