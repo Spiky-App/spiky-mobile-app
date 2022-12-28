@@ -48,8 +48,8 @@ export const LoginScreen = () => {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
+            const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             try {
-                const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
                 if (deviceTokenStorage) {
                     const response = await spikyService.login(email, password, deviceTokenStorage);
                     const { data } = response;
@@ -70,13 +70,16 @@ export const LoginScreen = () => {
                     setFormValid(true);
                 } else {
                     dispatch(
-                        addToast({ message: 'Error al iniciar sesión', type: StatusType.WARNING })
+                        addToast({ message: 'Error al iniciar sesión b', type: StatusType.WARNING })
                     );
                 }
             } catch (e) {
                 if (e instanceof AxiosError) {
                     dispatch(
-                        addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
+                        addToast({
+                            message: e.response?.data.msg || 'No se pudo conectar al servidor.',
+                            type: StatusType.WARNING,
+                        })
                     );
                 }
                 setFormValid(false);
