@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import Container from './navigator/Container';
@@ -9,17 +9,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from './types/storage';
 
 const App = () => {
-    const getToken = () => {
-        firebase
-            .messaging()
-            .getToken()
-            .then(async x => {
-                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, x);
-            })
-            .catch(e => console.log(e));
-    };
+    const getToken = async () => {
+        let token;
+        try {
+            token = await firebase.messaging().getToken();
+            await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token);
 
-    getToken();
+            // Listen to whether the token changes
+            let tokenRefreshListenerUnsubscriber = firebase
+                .messaging()
+                .onTokenRefresh(async fcmToken => {
+                    console.log(tokenRefreshListenerUnsubscriber);
+                    await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, fcmToken);
+                });
+        } catch (e) {
+            try {
+                await firebase.messaging().requestPermission();
+                token = await firebase.messaging().getToken();
+                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token);
+            } catch (error) {
+                throw error;
+            }
+        }
+    };
+    useEffect(() => {
+        getToken();
+    }, []);
 
     return (
         <SafeAreaProvider>
