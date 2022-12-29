@@ -20,6 +20,7 @@ import { StorageKeys } from '../types/storage';
 import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
 import { signIn } from '../store/feature/auth/authSlice';
 import { setUser } from '../store/feature/user/userSlice';
+import { getTokenDevice } from '../helpers/getTokenDevice';
 
 const Container = () => {
     const dispatch = useAppDispatch();
@@ -30,6 +31,7 @@ const Container = () => {
     async function handleValidateToken() {
         setLoading(true);
         const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
+        if (!tokenStorage) await getTokenDevice();
         if (tokenStorage) {
             const data = await validateToken(tokenStorage);
             if (data) {
