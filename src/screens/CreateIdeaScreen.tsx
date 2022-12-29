@@ -87,8 +87,8 @@ export const CreateIdeaScreen = ({ route }: Props) => {
         return undefined;
     }
 
-    async function handleUpdateDraft(id: number): Promise<Message | undefined> {
-        const mensaje = await updateDraft(form.message, id, true);
+    async function handleUpdateDraft(id: number, post: boolean): Promise<Message | undefined> {
+        const mensaje = await updateDraft(form.message, id, post);
         if (mensaje) {
             return generateMessageFromMensaje({
                 ...mensaje,
@@ -104,7 +104,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setLoading(true);
-        const message = idDraft ? await handleUpdateDraft(idDraft) : await handleCreateIdea();
+        const message = idDraft ? await handleUpdateDraft(idDraft, true) : await handleCreateIdea();
         if (message) {
             dispatch(setDraft(false));
             nav.navigate('CommunityScreen');
@@ -122,7 +122,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     async function onPressPenToSquare() {
         setLoading(true);
         if (isDraft) {
-            const message = await handleUpdateDraft(idDraft);
+            const message = await handleUpdateDraft(idDraft, false);
             if (message) {
                 if (draft) {
                     dispatch(updateMessage(message));
