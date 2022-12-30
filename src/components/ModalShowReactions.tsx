@@ -181,7 +181,7 @@ const ReactionComp = ({ reaction, handleClickUser, setModalReactions }: Reaction
     }
 
     return (
-        <Pressable style={stylescom.reactContainer}>
+        <View style={stylescom.reactContainer}>
             <Text style={stylescom.reaction}>{reaction.reaction}</Text>
             <View style={styles.flex}>
                 <Pressable onPress={goToUserProfile}>
@@ -191,7 +191,7 @@ const ReactionComp = ({ reaction, handleClickUser, setModalReactions }: Reaction
                 </Pressable>
                 <UniversityTag id={reaction.user.universityId} fontSize={13} />
             </View>
-        </Pressable>
+        </View>
     );
 };
 
@@ -247,6 +247,7 @@ const stylescom = StyleSheet.create({
         fontSize: 13,
     },
     reaction: {
+        ...styles.text,
         fontSize: 16,
         marginRight: 6,
     },

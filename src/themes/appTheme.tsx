@@ -175,6 +175,6 @@ export const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 0,
-        elevation: 6,
+        elevation: 2,
     },
 });

@@ -227,7 +227,7 @@ export const ChatScreen = ({ route }: Props) => {
     return (
         <BackgroundPaper topDark>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={{
                     width: '100%',
                     alignItems: 'center',

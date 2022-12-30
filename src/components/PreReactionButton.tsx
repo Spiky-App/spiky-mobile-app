@@ -8,6 +8,7 @@ import {
     Modal,
     TouchableWithoutFeedback,
     Text,
+    Platform,
 } from 'react-native';
 import { styles } from '../themes/appTheme';
 import IconGray from './svg/IconGray';
@@ -228,8 +229,13 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
     }, []);
 
     return (
-        <Pressable style={{ padding: 2 }} onPress={() => handleReaction(emoji)}>
-            <Text style={{ fontSize: 20 }}>{emoji}</Text>
+        <Pressable
+            style={{ padding: Platform.OS === 'ios' ? 2 : 0 }}
+            onPress={() => handleReaction(emoji)}
+        >
+            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 20 : 18 }}>
+                {emoji}
+            </Text>
         </Pressable>
     );
 };
@@ -274,6 +280,7 @@ const stylescomp = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
     },
     moreReactions: {
         ...styles.center,

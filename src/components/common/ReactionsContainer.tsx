@@ -32,7 +32,9 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                         (reaction, index) =>
                             index < 4 && (
                                 <View style={stylescomp.subcontainer} key={reaction.reaction}>
-                                    <Text style={{ fontSize: 11 }}>{reaction.reaction}</Text>
+                                    <Text style={{ ...styles.text, fontSize: 11 }}>
+                                        {reaction.reaction}
+                                    </Text>
                                     <Text
                                         style={{
                                             ...stylescomp.number,
