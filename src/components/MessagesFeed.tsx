@@ -1,4 +1,4 @@
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
@@ -11,6 +11,8 @@ import { setUniversitiesFilter } from '../store/feature/messages/messagesSlice';
 import { useDispatch } from 'react-redux';
 import { RefreshControl } from 'react-native';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { styles } from '../themes/appTheme';
+import NetworkErrorFeed from './NetworkErrorFeed';
 
 interface MessageParams {
     alias?: string;
@@ -39,7 +41,7 @@ const MessagesFeed = ({
 }: MessagesFeedProp) => {
     const dispatch = useDispatch();
     const { messages } = useAppSelector((state: RootState) => state.messages);
-    const { fetchMessages, moreMsg, loading } = useMessages(filter, params);
+    const { fetchMessages, moreMsg, loading, networkError } = useMessages(filter, params);
     const [isFetching, setIsFetching] = useState(false);
 
     const onRefresh = async () => {
@@ -57,10 +59,11 @@ const MessagesFeed = ({
     useEffect(() => {
         dispatch(setUniversitiesFilter(undefined));
     }, []);
+
     return (
         <>
             <IdeasHeader title={title} myideas={myideas} icon={icon} profile={profile} />
-            {messages?.length !== 0 ? (
+            {messages?.length !== 0 && !networkError && (
                 <FlatList
                     style={{ width: '100%' }}
                     data={messages}
@@ -77,10 +80,18 @@ const MessagesFeed = ({
                         <RefreshControl refreshing={isFetching} onRefresh={onRefresh} />
                     }
                 />
-            ) : loading ? (
-                <LoadingAnimated />
-            ) : (
+            )}
+
+            {networkError && <NetworkErrorFeed callback={() => fetchMessages(true)} />}
+
+            {!loading && messages?.length === 0 && !networkError && (
                 <EmptyState message={emptyTitle} />
+            )}
+
+            {loading && messages?.length === 0 && (
+                <View style={styles.center}>
+                    <LoadingAnimated />
+                </View>
             )}
         </>
     );

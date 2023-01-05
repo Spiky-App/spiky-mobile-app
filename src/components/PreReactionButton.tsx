@@ -229,10 +229,7 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
     }, []);
 
     return (
-        <Pressable
-            style={{ padding: Platform.OS === 'ios' ? 2 : 0 }}
-            onPress={() => handleReaction(emoji)}
-        >
+        <Pressable onPress={() => handleReaction(emoji)}>
             <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 20 : 18 }}>
                 {emoji}
             </Text>
@@ -277,6 +274,7 @@ const stylescomp = StyleSheet.create({
         overflow: 'hidden',
     },
     containersmall: {
+        paddingLeft: 8,
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',

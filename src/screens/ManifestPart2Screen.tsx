@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Animated, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Text, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
@@ -13,6 +13,7 @@ import { useAppDispatch } from '../store/hooks';
 import useSpikyService from '../hooks/useSpikyService';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
+import { getTokenDevice } from '../helpers/getTokenDevice';
 
 const manifest2 = [
     'Bienvenido spiker',
@@ -38,7 +39,11 @@ export const ManifestPart2Screen = ({ route }: Props) => {
     const { correoValid, password } = route.params;
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
     const logUser = async () => {
-        const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        if (!deviceTokenStorage) {
+            await getTokenDevice();
+            deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        }
         if (deviceTokenStorage) {
             await logInUser(correoValid, password, deviceTokenStorage);
         } else {
@@ -65,7 +70,14 @@ export const ManifestPart2Screen = ({ route }: Props) => {
             fadeIn(900);
             timeRef.current = setTimeout(() => {
                 setAux(false);
-                movingPositionAndScale(0, -320, 1, 0.7, 900, nextManifiesto);
+                movingPositionAndScale(
+                    0,
+                    Dimensions.get('window').height / -2 + 80,
+                    1,
+                    0.7,
+                    900,
+                    nextManifiesto
+                );
             }, 1500);
         } else {
             const delay = state == 0 ? 1000 : 2200;

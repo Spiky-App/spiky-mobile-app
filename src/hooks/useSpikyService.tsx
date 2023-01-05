@@ -55,7 +55,10 @@ function useSpikyService() {
     function handleSpikyServiceToast(error: unknown, defaultMessage: string): Toast {
         if (error instanceof AxiosError) {
             return {
-                message: error.response?.data?.msg,
+                message:
+                    error.message === 'Network Error' || error.message.startsWith('timeout')
+                        ? 'Sin conexión a internet, revisa tu conexión.'
+                        : error.message,
                 type: StatusType.WARNING,
             };
         }
@@ -150,15 +153,28 @@ function useSpikyService() {
         return undefined;
     };
 
-    const getConversations = async (): Promise<Conversation[]> => {
+    const getConversations = async (): Promise<{
+        conversations: Conversation[];
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getConversations();
-            return response.data.convers;
+            return { conversations: response.data.convers, networkError: false };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error al listar conversaciones.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { conversations: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando conexiones.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando conexiones.')));
+            }
         }
-        return [];
+        return { conversations: [] };
     };
 
     const getChatMessages = async (
@@ -166,7 +182,7 @@ function useSpikyService() {
         toUserId?: number,
         lastChatMessageId?: number,
         firstChatMessageId?: number
-    ): Promise<GetChatMessages | undefined> => {
+    ): Promise<{ chatMessagesResponse?: GetChatMessages; networkError?: boolean }> => {
         try {
             const response = await service.getChatMessages(
                 conversationId,
@@ -174,12 +190,22 @@ function useSpikyService() {
                 lastChatMessageId,
                 firstChatMessageId
             );
-            return response.data;
+            return { chatMessagesResponse: response.data };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const createChatMessage = async (
@@ -338,17 +364,25 @@ function useSpikyService() {
         }
     };
 
-    const loadUserInfo = async (): Promise<UserInfo | undefined> => {
+    const getUserInfo = async (): Promise<{ userInfo?: UserInfo; networkError?: boolean }> => {
         try {
             const response = await service.getUserInfo();
-            return response.data.usuario;
+            return { userInfo: response.data.usuario };
         } catch (error) {
             console.log(error);
-            dispatch(
-                addToast(handleSpikyServiceToast(error, 'Error cargando información del usuario.'))
-            );
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const updatePassword = async (
@@ -386,15 +420,23 @@ function useSpikyService() {
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ): Promise<Message[]> => {
+    ): Promise<{ messages: Message[]; networkError?: boolean }> => {
         try {
             const response = await service.getMessages(uid, filter, lastMessageId, parameters);
-            return response.data.mensajes;
+            return { messages: response.data.mensajes };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando mensajes.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { messages: [], networkError: true };
+                } else {
+                    dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando ideas.')));
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando ideas.')));
+            }
         }
-        return [];
+        return { messages: [] };
     };
 
     const getEmailVerification = async (email: string): Promise<string | undefined> => {
@@ -421,15 +463,28 @@ function useSpikyService() {
         return [];
     };
 
-    const getTermsAndConditions = async (): Promise<TermsAndConditions | undefined> => {
+    const getTermsAndConditions = async (): Promise<{
+        termsAndConditions?: TermsAndConditions;
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getTermsAndConditions();
-            return response.data.lists;
+            return { termsAndConditions: response.data.lists };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const registerUser = async (
@@ -546,7 +601,7 @@ function useSpikyService() {
         getUsersSuggestions,
         getHashtagsSuggestions,
         getIdeaWithComments,
-        loadUserInfo,
+        getUserInfo,
         updatePassword,
         updatePasswordUri,
         getIdeas,

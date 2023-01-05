@@ -30,7 +30,7 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                 <View style={stylescomp.container}>
                     {reactionCount.map(
                         (reaction, index) =>
-                            index < 4 && (
+                            index < 3 && (
                                 <View style={stylescomp.subcontainer} key={reaction.reaction}>
                                     <Text style={{ ...styles.text, fontSize: 11 }}>
                                         {reaction.reaction}
@@ -46,7 +46,7 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
                             )
                     )}
                 </View>
-                {reactionCount.length >= 5 && (
+                {reactionCount.length >= 4 && (
                     <View style={stylescomp.moreReaction}>
                         <Text style={{ ...stylescomp.number, fontSize: 10 }}>
                             {countReactions()}

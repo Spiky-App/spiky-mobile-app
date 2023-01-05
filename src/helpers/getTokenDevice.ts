@@ -16,11 +16,13 @@ export const getTokenDevice = async () => {
                 await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, fcmToken);
             });
     } catch (e) {
+        console.log(e);
         try {
             await firebase.messaging().requestPermission();
             token = await firebase.messaging().getToken();
             await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token);
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }

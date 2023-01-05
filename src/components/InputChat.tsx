@@ -36,6 +36,7 @@ interface Props {
     HideKeyboardAfterSumbit?: boolean;
     messageToReply: ChatMessageToReply | null;
     setMessageToReply: (value: ChatMessageToReply | null) => void;
+    networkError: boolean;
 }
 
 const MAX_LENGHT = 200;
@@ -54,6 +55,7 @@ export const InputChat = ({
     HideKeyboardAfterSumbit,
     messageToReply,
     setMessageToReply,
+    networkError,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const [isDisabled, setDisabled] = useState(true);
@@ -69,14 +71,6 @@ export const InputChat = ({
     const heightAnimated = height.interpolate({ inputRange, outputRange });
     const IDEA_MAX_LENGHT = 200;
     const userObj = useAppSelector(selectUserAsObject);
-
-    function invalid() {
-        const { message: mensaje } = form;
-        if (!mensaje || mensaje.length > IDEA_MAX_LENGHT) {
-            return true;
-        }
-        return false;
-    }
 
     async function handleCreateChatMessage() {
         const chatmensaje = await createChatMessage(
@@ -205,7 +199,7 @@ export const InputChat = ({
                         icon={faLocationArrow}
                         style={stylesInputChat.buttonIcon}
                         iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        disabled={isDisabled || invalid()}
+                        disabled={isDisabled && !networkError}
                         onPress={onPress}
                     />
                     {counter <= 40 && (
