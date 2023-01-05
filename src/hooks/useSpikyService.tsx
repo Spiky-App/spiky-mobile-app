@@ -58,7 +58,7 @@ function useSpikyService() {
                 message:
                     error.message === 'Network Error' || error.message.startsWith('timeout')
                         ? 'Sin conexión a internet, revisa tu conexión.'
-                        : error.message,
+                        : error.response?.data?.msg,
                 type: StatusType.WARNING,
             };
         }
