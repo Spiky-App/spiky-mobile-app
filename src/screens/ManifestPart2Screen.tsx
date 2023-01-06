@@ -6,14 +6,10 @@ import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
 import { StorageKeys } from '../types/storage';
-import { useAppDispatch } from '../store/hooks';
 import useSpikyService from '../hooks/useSpikyService';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { getTokenDevice } from '../helpers/getTokenDevice';
 
 const manifest2 = [
     'Bienvenido spiker',
@@ -34,25 +30,21 @@ export const ManifestPart2Screen = ({ route }: Props) => {
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
-    const dispatch = useAppDispatch();
-    const { logInUser } = useSpikyService();
+    const { logInUser, getNetworkConnectionStatus } = useSpikyService();
     const { correoValid, password } = route.params;
+
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
     const logUser = async () => {
         let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
         if (!deviceTokenStorage) {
-            await getTokenDevice();
-            deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            const networkConnectionStatus = await getNetworkConnectionStatus();
+            if (networkConnectionStatus) {
+                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            }
         }
         if (deviceTokenStorage) {
             await logInUser(correoValid, password, deviceTokenStorage);
         } else {
-            dispatch(
-                addToast({
-                    message: 'Error al iniciar sesión.',
-                    type: StatusType.WARNING,
-                })
-            );
             navigation.navigate('LoginScreen');
         }
     };

@@ -581,6 +581,16 @@ function useSpikyService() {
         }
     };
 
+    const getNetworkConnectionStatus = async () => {
+        try {
+            const response = await service.getNetworkConnectionStatus();
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Sin conexión a internet.')));
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -615,6 +625,7 @@ function useSpikyService() {
         logOutFunction,
         setSessionInfo,
         logInUser,
+        getNetworkConnectionStatus,
     };
 }
 

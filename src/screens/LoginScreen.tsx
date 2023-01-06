@@ -14,20 +14,16 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
-import { getTokenDevice } from '../helpers/getTokenDevice';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { HelperMessage, StatusType } from '../types/common';
+import { HelperMessage } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
 export const LoginScreen = () => {
-    const dispatch = useAppDispatch();
     const { form, onChange } = useForm<FormState>({
         email: '',
         password: '',
@@ -36,7 +32,7 @@ export const LoginScreen = () => {
     const [isFormValid, setFormValid] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [passVisible, setPassVisible] = useState(true);
-    const { logInUser } = useSpikyService();
+    const { logInUser, getNetworkConnectionStatus } = useSpikyService();
 
     async function login() {
         setLoading(true);
@@ -44,8 +40,10 @@ export const LoginScreen = () => {
             const { email, password } = form;
             let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             if (!deviceTokenStorage) {
-                await getTokenDevice();
-                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                const networkConnectionStatus = await getNetworkConnectionStatus();
+                if (networkConnectionStatus) {
+                    deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                }
             }
             if (deviceTokenStorage) {
                 const status = await logInUser(email, password, deviceTokenStorage);
@@ -54,10 +52,6 @@ export const LoginScreen = () => {
                 } else {
                     setFormValid(false);
                 }
-            } else {
-                dispatch(
-                    addToast({ message: 'Error al iniciar sesión.', type: StatusType.WARNING })
-                );
             }
         } else {
             setFormValid(false);

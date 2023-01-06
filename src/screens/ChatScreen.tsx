@@ -85,7 +85,10 @@ export const ChatScreen = ({ route }: Props) => {
             route.params?.toUser.id,
             lastChatMessageId
         );
-        if (networkErrorReturn) setNetworkError(true);
+        if (networkErrorReturn) {
+            setNetworkError(true);
+            setIsLoading(false);
+        }
         if (chatMessagesResponse) {
             const { chatmensajes, n_chatmensajes_unseens, toUserIsOnline } = chatMessagesResponse;
             const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>

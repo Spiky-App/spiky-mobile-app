@@ -324,3 +324,7 @@ export interface DeleteDeviceToken {
     ok: boolean;
     msg: string;
 }
+
+export interface GetNetworkConnectionStatus {
+    ok: boolean;
+}
