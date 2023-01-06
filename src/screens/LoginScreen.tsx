@@ -15,6 +15,7 @@ import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
+import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
 import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
@@ -32,7 +33,8 @@ export const LoginScreen = () => {
     const [isFormValid, setFormValid] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [passVisible, setPassVisible] = useState(true);
-    const { logInUser, getNetworkConnectionStatus } = useSpikyService();
+    const { logInUser } = useSpikyService();
+    const { getTokenDevice } = useFirebaseMessaging();
 
     async function login() {
         setLoading(true);
@@ -40,10 +42,8 @@ export const LoginScreen = () => {
             const { email, password } = form;
             let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             if (!deviceTokenStorage) {
-                const networkConnectionStatus = await getNetworkConnectionStatus();
-                if (networkConnectionStatus) {
-                    deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-                }
+                await getTokenDevice();
+                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             }
             if (deviceTokenStorage) {
                 const status = await logInUser(email, password, deviceTokenStorage);

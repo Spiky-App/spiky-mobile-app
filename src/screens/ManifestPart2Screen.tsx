@@ -10,6 +10,7 @@ import { StorageKeys } from '../types/storage';
 import useSpikyService from '../hooks/useSpikyService';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
+import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
 
 const manifest2 = [
     'Bienvenido spiker',
@@ -30,15 +31,16 @@ export const ManifestPart2Screen = ({ route }: Props) => {
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
-    const { logInUser, getNetworkConnectionStatus } = useSpikyService();
+    const { logInUser } = useSpikyService();
+    const { getTokenDevice } = useFirebaseMessaging();
     const { correoValid, password } = route.params;
 
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
     const logUser = async () => {
         let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
         if (!deviceTokenStorage) {
-            const networkConnectionStatus = await getNetworkConnectionStatus();
-            if (networkConnectionStatus) {
+            if (!deviceTokenStorage) {
+                await getTokenDevice();
                 deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             }
         }
