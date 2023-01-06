@@ -9,7 +9,7 @@ import { getTokenDevice } from './helpers/getTokenDevice';
 const App = () => {
     useEffect(() => {
         getTokenDevice();
-    }, []);
+    }, [getTokenDevice]);
 
     return (
         <SafeAreaProvider>

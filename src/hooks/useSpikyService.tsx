@@ -511,11 +511,11 @@ function useSpikyService() {
         correoValid: string,
         password: string,
         deviceTokenStorage: string
-    ): Promise<string | undefined> => {
+    ): Promise<boolean | undefined> => {
         try {
             const response = await service.login(correoValid, password, deviceTokenStorage);
             const { data } = response;
-            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = response.data;
+            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
             await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
             dispatch(updateServiceConfig({ headers: { 'x-token': data.token } }));
             dispatch(signIn(data.token));
@@ -528,12 +528,12 @@ function useSpikyService() {
                     id: uid,
                 })
             );
-            return undefined;
+            return true;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al hacer auto-login.')));
         }
-        return undefined;
+        return false;
     };
 
     const getPendingNotifications = async (): Promise<PendingNotificationsI | undefined> => {

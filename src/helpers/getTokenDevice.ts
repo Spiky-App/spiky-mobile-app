@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firebase } from '@react-native-firebase/messaging';
+import { useCallback } from 'react';
 import { StorageKeys } from '../types/storage';
 
-export const getTokenDevice = async () => {
+export const getTokenDevice = useCallback(async () => {
     let token;
     try {
         token = await firebase.messaging().getToken();
@@ -26,4 +27,4 @@ export const getTokenDevice = async () => {
             throw error;
         }
     }
-};
+}, []);
