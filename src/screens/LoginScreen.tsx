@@ -15,6 +15,7 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
+import { getTokenDevice } from '../helpers/getTokenDevice';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
@@ -48,7 +49,11 @@ export const LoginScreen = () => {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
-            const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            if (!deviceTokenStorage) {
+                await getTokenDevice();
+                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            }
             try {
                 if (deviceTokenStorage) {
                     const response = await spikyService.login(email, password, deviceTokenStorage);
