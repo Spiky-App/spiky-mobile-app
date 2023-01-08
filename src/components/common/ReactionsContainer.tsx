@@ -7,17 +7,18 @@ import { ModalShowReactions } from '../ModalShowReactions';
 interface Props {
     reactionCount: ReactionCount[];
     myReaction?: string;
-    messageId: number;
+    id: number;
     handleClickUser: (goToUser: User) => void;
+    isIdeaReactions?: boolean;
 }
 
-function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props) {
+function ReactionsContainer({ reactionCount, id, handleClickUser, isIdeaReactions }: Props) {
     const [modalReactions, setModalReactions] = useState(false);
 
     function countReactions() {
         let countOtherReact: number = 0;
         reactionCount.forEach((reaction, index) => {
-            if (index > 3) {
+            if (index >= 3) {
                 countOtherReact = reaction.count + countOtherReact;
             }
         });
@@ -58,9 +59,10 @@ function ReactionsContainer({ reactionCount, messageId, handleClickUser }: Props
             <ModalShowReactions
                 setModalReactions={setModalReactions}
                 modalReactions={modalReactions}
-                messageId={messageId}
+                id={id}
                 reactionCount={reactionCount}
                 handleClickUser={handleClickUser}
+                isIdeaReactions={isIdeaReactions}
             />
         </>
     );
@@ -78,7 +80,7 @@ const stylescomp = StyleSheet.create({
         ...styles.shadow_button,
         flexDirection: 'row',
         paddingHorizontal: 4,
-        paddingVertical: 2,
+        paddingVertical: 1,
         backgroundColor: '#D4D4D4',
         marginRight: 5,
         borderRadius: 3,

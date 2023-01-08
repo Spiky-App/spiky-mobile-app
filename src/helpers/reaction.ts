@@ -1,15 +1,26 @@
-import { Reaction as Reaccion } from '../types/services/spiky';
+import { CommentReaction, Reaction as Reaccion } from '../types/services/spiky';
 import { Reaction } from '../types/store';
 
-function generateReactionFromReaccion(reaccion: Reaccion): Reaction {
+function generateReactionFromReaccion(reaction: Reaccion): Reaction {
     return {
-        id: reaccion.id_reaccion,
-        reaction: reaccion.reaccion,
+        id: reaction.id_reaccion,
+        reaction: reaction.reaccion,
         user: {
-            nickname: reaccion.usuario.alias,
-            universityId: reaccion.usuario.id_universidad,
+            nickname: reaction.usuario.alias,
+            universityId: reaction.usuario.id_universidad,
         },
     };
 }
 
-export { generateReactionFromReaccion };
+function generateCommentReactionFromRespReaccion(reaction: CommentReaction): Reaction {
+    return {
+        id: reaction.id_resp_reaccion,
+        reaction: reaction.reaccion,
+        user: {
+            nickname: reaction.usuario.alias,
+            universityId: reaction.usuario.id_universidad,
+        },
+    };
+}
+
+export { generateReactionFromReaccion, generateCommentReactionFromRespReaccion };

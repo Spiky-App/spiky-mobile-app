@@ -141,7 +141,7 @@ export const InputComment = ({
             >
                 <MentionInput
                     inputRef={refInputComment}
-                    placeholder="Perpetua tu idea.."
+                    placeholder="Escribe algo..."
                     placeholderTextColor="#707070"
                     style={{ ...styles.textinput, fontSize: 16 }}
                     multiline={true}

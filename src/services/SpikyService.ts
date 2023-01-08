@@ -9,12 +9,12 @@ import {
     GetHashtagsSuggetionProps,
     CreateTrackingProps,
     DeleteTrackingProps,
-    CreateReactionMsg,
+    CreateIdeaReaction,
     DeleteMessageProps,
     GetNotifications,
     UpdateNotifications,
     GetMessageAndComments,
-    CreateReactionCmt,
+    CreateCommentReaction,
     UpdateDraftResponse,
     CreateReportIdea,
     GetUserInfo,
@@ -34,6 +34,7 @@ import {
     DeleteDeviceToken,
     RegisterUser,
     GetNetworkConnectionStatus,
+    GetCommentReactions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -119,8 +120,8 @@ class SpikyService {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
 
-    createReactionMsg(uid: number, messageId: number, reaction: string[0]) {
-        return this.instance.post<CreateReactionMsg>(`reacc`, {
+    createIdeaReaction(uid: number, messageId: number, reaction: string[0]) {
+        return this.instance.post<CreateIdeaReaction>(`reacc`, {
             uid,
             id_mensaje: messageId,
             reaccion: reaction,
@@ -135,10 +136,10 @@ class SpikyService {
         return this.instance.get<GetMessageAndComments>(`mensajes/msg-resps/${messageId}`);
     }
 
-    createReactionCmt(commentId: number, reactionType: number) {
-        return this.instance.post<CreateReactionCmt>(`reacc/resp`, {
+    createCommentReaction(commentId: number, reaction: string) {
+        return this.instance.post<CreateCommentReaction>(`reacc/resp`, {
             id_respuesta: commentId,
-            tipo: reactionType,
+            reaccion: reaction,
         });
     }
 
@@ -257,8 +258,8 @@ class SpikyService {
         );
     }
 
-    getIdeaReactions(messageId: number) {
-        return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    getIdeaReactions(ideaId: number) {
+        return this.instance.get<GetIdeaReactions>(`reacc/${ideaId}`);
     }
 
     getPendingNotifications() {
@@ -277,6 +278,10 @@ class SpikyService {
 
     getNetworkConnectionStatus() {
         return this.instance.get<GetNetworkConnectionStatus>(`verif/net-connection`);
+    }
+
+    getCommentReactions(commentId: number) {
+        return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
     }
 }
 

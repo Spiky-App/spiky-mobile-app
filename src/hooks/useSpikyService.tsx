@@ -17,6 +17,7 @@ import { MessageRequestData } from '../services/models/spikyService';
 import { AxiosError } from 'axios';
 import {
     ChatMessage,
+    CommentReaction,
     Conversation,
     GetChatMessages,
     HashtagI,
@@ -262,13 +263,13 @@ function useSpikyService() {
         return undefined;
     };
 
-    const createReactionMsg = async (
+    const createIdeaReaction = async (
         messageId: number,
         reaction: string[0],
         uid: number
     ): Promise<boolean> => {
         try {
-            await service.createReactionMsg(uid, messageId, reaction);
+            await service.createIdeaReaction(uid, messageId, reaction);
             return true;
         } catch (error) {
             console.log(error);
@@ -312,12 +313,9 @@ function useSpikyService() {
         return [];
     };
 
-    const createReactionToComment = async (
-        commentId: number,
-        reactionTypeAux: number
-    ): Promise<boolean> => {
+    const createCommentReaction = async (commentId: number, reaction: string): Promise<boolean> => {
         try {
-            await service.createReactionCmt(commentId, reactionTypeAux);
+            await service.createCommentReaction(commentId, reaction);
             return true;
         } catch (error) {
             console.log(error);
@@ -452,9 +450,9 @@ function useSpikyService() {
         return undefined;
     };
 
-    const getIdeaReactiones = async (messageId: number): Promise<Reaction[]> => {
+    const getIdeaReactions = async (ideaId: number): Promise<Reaction[]> => {
         try {
-            const response = await service.getIdeaReactions(messageId);
+            const response = await service.getIdeaReactions(ideaId);
             return response.data.reacciones;
         } catch (error) {
             console.log(error);
@@ -592,6 +590,17 @@ function useSpikyService() {
         }
     };
 
+    const getCommentReactions = async (commentId: number): Promise<CommentReaction[]> => {
+        try {
+            const response = await service.getCommentReactions(commentId);
+            return response.data.reacciones;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
+        }
+        return [];
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -604,11 +613,11 @@ function useSpikyService() {
         createChatMessageSeen,
         createIdea,
         updateDraft,
-        createReactionMsg,
+        createIdeaReaction,
         deleteIdea,
         updateNotifications,
         retrieveNotifications,
-        createReactionToComment,
+        createCommentReaction,
         getUsersSuggestions,
         getHashtagsSuggestions,
         getIdeaWithComments,
@@ -617,7 +626,7 @@ function useSpikyService() {
         updatePasswordUri,
         getIdeas,
         getEmailVerification,
-        getIdeaReactiones,
+        getIdeaReactions,
         getTermsAndConditions,
         getPendingNotifications,
         handleForgotPassword,
@@ -627,6 +636,7 @@ function useSpikyService() {
         setSessionInfo,
         logInUser,
         getNetworkConnectionStatus,
+        getCommentReactions,
     };
 }
 

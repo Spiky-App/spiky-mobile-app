@@ -110,7 +110,7 @@ export interface DeleteTrackingProps {
     ok: boolean;
 }
 
-export interface CreateReactionMsg {
+export interface CreateIdeaReaction {
     ok: boolean;
 }
 
@@ -130,16 +130,12 @@ export interface Comment {
     respuesta: string;
     fecha: string | number;
     id_mensaje: number;
-    id_usuario: number;
-    resp_reaccion_1: number | null;
-    resp_reaccion_2: number | null;
+    resp_reacciones: ReactionCount[];
     usuario: UserI;
-    resp_reacciones: {
-        tipo: number;
-    }[];
+    mi_resp_reaccion?: string;
 }
 
-export interface CreateReactionCmt {
+export interface CreateCommentReaction {
     ok: boolean;
 }
 
@@ -288,8 +284,19 @@ export interface GetIdeaReactions {
     reacciones: Reaction[];
 }
 
+export interface GetCommentReactions {
+    ok: boolean;
+    reacciones: CommentReaction[];
+}
+
 export interface Reaction {
     id_reaccion: number;
+    reaccion: string;
+    usuario: UserI;
+}
+
+export interface CommentReaction {
+    id_resp_reaccion: number;
     reaccion: string;
     usuario: UserI;
 }

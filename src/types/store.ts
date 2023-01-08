@@ -43,12 +43,6 @@ export interface Tracking {
     id: number;
 }
 
-export enum ReactionType {
-    NEUTRAL = 0,
-    FAVOR = 1,
-    AGAINST = 2,
-}
-
 export interface Message {
     id: number;
     message: string;
@@ -86,9 +80,8 @@ export interface Comment {
     date: number;
     messageId: number;
     user: User;
-    favor: number;
-    against: number;
-    reactionCommentType?: ReactionType;
+    reactions: ReactionCount[];
+    myReaction?: string;
 }
 
 export interface Notification {
