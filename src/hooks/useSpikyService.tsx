@@ -21,6 +21,7 @@ import {
     Conversation,
     GetChatMessages,
     HashtagI,
+    LoginResponse,
     Message,
     MessageComment,
     MessageWithReplyContent,
@@ -570,12 +571,27 @@ function useSpikyService() {
         }
     };
 
-    const validateToken = async (tokenStorage: string) => {
+    const validateToken = async (
+        tokenStorage: string
+    ): Promise<{
+        data?: LoginResponse;
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getAuthRenew(tokenStorage);
-            return response.data;
-        } catch {
-            logOutFunction();
+            return { data: response.data };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    logOutFunction();
+                }
+            } else {
+                logOutFunction();
+            }
+            return {};
         }
     };
 
