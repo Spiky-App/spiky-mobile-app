@@ -249,11 +249,11 @@ const stylescomp = StyleSheet.create({
     moreReactions: {
         ...styles.center,
         paddingVertical: 2,
-        paddingRight: 8,
+        paddingRight: 9,
     },
     plusIcon: {
         position: 'absolute',
-        top: 0,
+        top: -3,
         right: 1,
     },
 });
