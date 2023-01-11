@@ -54,6 +54,7 @@ export const Comment = ({
                 id_usuario1: comment.user.id,
                 id_usuario2: uid,
                 id_mensaje: comment.messageId,
+                id_respuesta: comment.id,
                 tipo: 5,
             });
             let isNew = true;

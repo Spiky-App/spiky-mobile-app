@@ -59,6 +59,7 @@ export const InputComment = ({
                 id_usuario1: toUser,
                 id_usuario2: user.id,
                 id_mensaje: messageId,
+                id_respuesta: newComment.id,
                 tipo: 2,
             });
         }
@@ -90,8 +91,7 @@ export const InputComment = ({
                     nickname: user.nickname,
                     universityId: user.universityId,
                 },
-                favor: 0,
-                against: 0,
+                reactions: [],
             };
             handleNewComment(newComment);
         }

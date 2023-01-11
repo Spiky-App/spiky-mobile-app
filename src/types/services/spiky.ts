@@ -147,6 +147,7 @@ export interface GetNotifications {
 export interface Notification {
     id_notificacion: number;
     id_mensaje: number;
+    id_respuesta: number | null;
     tipo: number;
     visto: boolean;
     updatedAt: string | null;
@@ -155,6 +156,9 @@ export interface Notification {
     mensaje: {
         mensaje: string;
     };
+    respuesta: {
+        respuesta: string;
+    } | null;
 }
 
 export interface UpdateNotifications {

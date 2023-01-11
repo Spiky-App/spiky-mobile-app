@@ -87,6 +87,7 @@ export interface Comment {
 export interface Notification {
     id: number;
     messageId: number;
+    commentId: number | null;
     message: string;
     type: NotificationType;
     seen: boolean;

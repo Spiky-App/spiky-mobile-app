@@ -144,7 +144,7 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
 const stylescom = StyleSheet.create({
     container: {
         height: 360,
-        width: 300,
+        width: '85%',
         backgroundColor: '#ffff',
         borderRadius: 5,
     },
