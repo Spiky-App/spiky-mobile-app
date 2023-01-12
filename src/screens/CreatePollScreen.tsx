@@ -1,19 +1,14 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Platform,
-    KeyboardAvoidingView,
-} from 'react-native';
+import { StyleSheet, View, Platform, KeyboardAvoidingView } from 'react-native';
 import { styles } from '../themes/appTheme';
-import { useForm } from '../hooks/useForm';
+// import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 
 export const CreatePollScreen = () => {
-    const { form, onChange } = useForm({
-        question: '',
-        answers: [],
-    });
+    // const { form, onChange } = useForm({
+    //     question: '',
+    //     answers: [],
+    // });
 
     return (
         <BackgroundPaper style={stylecom.container}>
@@ -22,9 +17,7 @@ export const CreatePollScreen = () => {
                 style={stylecom.container}
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
-                    <View style={stylecom.wrap}>
-                        
-                    </View>
+                    <View style={stylecom.wrap}></View>
                 </View>
             </KeyboardAvoidingView>
         </BackgroundPaper>
