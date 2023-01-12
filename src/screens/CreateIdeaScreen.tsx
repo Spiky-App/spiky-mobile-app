@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    TouchableOpacity,
-    Platform,
-    KeyboardAvoidingView,
-} from 'react-native';
+import { StyleSheet, Text, View, Platform, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MentionInput } from 'react-native-controlled-mentions';
-import { faLocationArrow, faPenToSquare } from '../constants/icons/FontAwesome';
+import {
+    faLocationArrow,
+    faPenToSquare,
+    faSquarePollHorizontal,
+    faXmark,
+} from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 import { DrawerParamList } from '../navigator/MenuMain';
@@ -28,8 +26,10 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
 import { Message } from '../types/store';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-type NavigationProp = DrawerNavigationProp<DrawerParamList>;
+type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
+type NavigationStackProp = StackNavigationProp<RootStackParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateIdeaScreen'>;
 
 export const CreateIdeaScreen = ({ route }: Props) => {
@@ -40,7 +40,8 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const { form, onChange } = useForm({
         message: draftedIdea || '',
     });
-    const nav = useNavigation<NavigationProp>();
+    const navDrawer = useNavigation<NavigationDrawerProp>();
+    const navStack = useNavigation<NavigationStackProp>();
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
     const { createIdea, updateDraft } = useSpikyService();
@@ -107,7 +108,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
         const message = idDraft ? await handleUpdateDraft(idDraft, true) : await handleCreateIdea();
         if (message) {
             dispatch(setDraft(false));
-            nav.navigate('CommunityScreen');
+            navDrawer.navigate('CommunityScreen');
             dispatch(addMessage(message));
             dispatch(
                 setModalAlert({
@@ -127,7 +128,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 if (draft) {
                     dispatch(updateMessage(message));
                 }
-                nav.goBack();
+                navDrawer.goBack();
                 dispatch(
                     setModalAlert({
                         isOpen: true,
@@ -142,7 +143,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 if (draft) {
                     dispatch(addMessage(generateMessageFromMensaje(message)));
                 }
-                nav.goBack();
+                navDrawer.goBack();
                 dispatch(
                     setModalAlert({ isOpen: true, text: 'Borrador guardado.', icon: faPenToSquare })
                 );
@@ -167,10 +168,18 @@ export const CreateIdeaScreen = ({ route }: Props) => {
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
                     <View style={stylecom.wrap}>
+                        <View style={{ position: 'absolute', top: 12, right: 12 }}>
+                            <ButtonIcon
+                                disabled={isLoading}
+                                icon={faXmark}
+                                onPress={() => navDrawer.goBack()}
+                                style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
+                            />
+                        </View>
                         <MentionInput
                             placeholder="Perpetua tu idea.."
                             placeholderTextColor="#707070"
-                            style={{ ...styles.textinput, fontSize: 16 }}
+                            style={{ ...styles.textinput, fontSize: 16, marginTop: 10 }}
                             multiline={true}
                             autoFocus
                             value={form.message}
@@ -210,9 +219,11 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             bottom: 20,
                         }}
                     >
-                        <TouchableOpacity onPress={() => nav.goBack()} disabled={isLoading}>
-                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                        </TouchableOpacity>
+                        <ButtonIcon
+                            disabled={isLoading}
+                            icon={faSquarePollHorizontal}
+                            onPress={() => navStack.replace('CreatePollScreen')}
+                        />
                         <View style={stylecom.WrapperMaxCounterNIdea}>
                             <View style={stylecom.ConteMaxCounterNIdea}>
                                 <View style={stylecom.MaxCounterNIdea}></View>

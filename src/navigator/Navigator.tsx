@@ -23,6 +23,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
 import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
+import { CreatePollScreen } from '../screens/CreatePollScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -49,6 +50,7 @@ export type RootStackParamList = {
     ChatScreen: { conversationId: number; toUser: User };
     ChangeForgotPasswordScreen: { token: string; correoValid: string };
     ManifestPart2Screen: { correoValid: string; password: string };
+    CreatePollScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -154,6 +156,7 @@ export const Navigator = () => {
                     <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                    <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />
