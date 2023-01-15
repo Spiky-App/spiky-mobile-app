@@ -8,6 +8,7 @@ import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { UserInfo } from '../types/services/spiky';
 import useSpikyService from '../hooks/useSpikyService';
+import NetworkErrorFeed from '../components/NetworkErrorFeed';
 
 interface UserData {
     email: string;
@@ -23,18 +24,21 @@ function generateDataFromData(data: UserInfo): UserData {
 
 export const ConfigurationScreen = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
-    const { loadUserInfo } = useSpikyService();
+    const { getUserInfo } = useSpikyService();
     const navigation = useNavigation<any>();
     const [loading, setLoading] = useState(true);
+    const [networkError, setNetworkError] = useState(false);
     const [data, setData] = useState<UserData>({
         email: '',
         university: '',
     });
 
     const loadData = async () => {
-        const usuario = await loadUserInfo();
-        if (usuario) {
-            setData(generateDataFromData(usuario));
+        if (networkError) setNetworkError(false);
+        const { userInfo, networkError: networkErrorReturn } = await getUserInfo();
+        if (networkErrorReturn) setNetworkError(true);
+        if (userInfo) {
+            setData(generateDataFromData(userInfo));
             setLoading(false);
         }
     };
@@ -45,49 +49,55 @@ export const ConfigurationScreen = () => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            {!loading ? (
-                <>
-                    <Text style={{ ...styles.text, ...styles.h3, marginTop: 30 }}>
-                        Información
-                        <Text style={styles.orange}>.</Text>
-                    </Text>
+            {!networkError ? (
+                !loading ? (
+                    <>
+                        <Text style={{ ...styles.text, ...styles.h3, marginTop: 30 }}>
+                            Información
+                            <Text style={styles.orange}>.</Text>
+                        </Text>
 
-                    <View style={{ marginVertical: 30 }}>
-                        <View style={stylescom.longContainer}>
-                            <Text style={{ ...styles.text, ...styles.h5 }}>@seudónimo:</Text>
-                            <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
-                                <Text style={{ ...styles.text }}>{nickname}</Text>
+                        <View style={{ marginVertical: 30 }}>
+                            <View style={stylescom.longContainer}>
+                                <Text style={{ ...styles.text, ...styles.h5 }}>@seudónimo:</Text>
+                                <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
+                                    <Text style={{ ...styles.text }}>{nickname}</Text>
+                                </View>
+                            </View>
+
+                            <View style={stylescom.longContainer}>
+                                <Text style={{ ...styles.text, ...styles.h5 }}>Correo:</Text>
+                                <View style={{ ...styles.input, maxWidth: 190, marginLeft: 15 }}>
+                                    <Text style={{ ...styles.text }}>{data.email}</Text>
+                                </View>
+                            </View>
+
+                            <View style={stylescom.longContainer}>
+                                <Text style={{ ...styles.text, ...styles.h5 }}>Institución:</Text>
+                                <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
+                                    <Text style={{ ...styles.text }}>{data.university}</Text>
+                                </View>
                             </View>
                         </View>
 
-                        <View style={stylescom.longContainer}>
-                            <Text style={{ ...styles.text, ...styles.h5 }}>Correo:</Text>
-                            <View style={{ ...styles.input, maxWidth: 190, marginLeft: 15 }}>
-                                <Text style={{ ...styles.text }}>{data.email}</Text>
-                            </View>
+                        <View style={{ marginVertical: 50 }}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => navigation.navigate('ChangePasswordScreen')}
+                            >
+                                <Text style={{ ...styles.text, fontSize: 13 }}>
+                                    Cambiar contraseña
+                                </Text>
+                            </TouchableOpacity>
                         </View>
-
-                        <View style={stylescom.longContainer}>
-                            <Text style={{ ...styles.text, ...styles.h5 }}>Institución:</Text>
-                            <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
-                                <Text style={{ ...styles.text }}>{data.university}</Text>
-                            </View>
-                        </View>
+                    </>
+                ) : (
+                    <View style={{ ...styles.center, flex: 1 }}>
+                        <LoadingAnimated />
                     </View>
-
-                    <View style={{ marginVertical: 50 }}>
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => navigation.navigate('ChangePasswordScreen')}
-                        >
-                            <Text style={{ ...styles.text, fontSize: 13 }}>Cambiar contraseña</Text>
-                        </TouchableOpacity>
-                    </View>
-                </>
+                )
             ) : (
-                <View style={{ ...styles.center, flex: 1 }}>
-                    <LoadingAnimated />
-                </View>
+                <NetworkErrorFeed callback={loadData} />
             )}
         </BackgroundPaper>
     );

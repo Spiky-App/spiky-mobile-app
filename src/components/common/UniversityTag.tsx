@@ -15,7 +15,7 @@ function UniversityTag({ id, fontSize }: Props) {
 
     return (
         <View style={{ ...stylescomp.container, backgroundColor: university?.backgroundColor }}>
-            <Text style={{ ...stylescomp.text, color: university?.color, fontSize: fontSize - 4 }}>
+            <Text style={{ color: university?.color, fontSize: fontSize - 4, ...stylescomp.text }}>
                 {university?.shortname}
             </Text>
         </View>
@@ -34,6 +34,7 @@ const stylescomp = StyleSheet.create({
         opacity: 0.9,
     },
     text: {
-        ...styles.textbold,
+        fontFamily: 'Helvetica-Bold',
+        fontWeight: '600',
     },
 });

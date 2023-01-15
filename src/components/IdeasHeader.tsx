@@ -75,7 +75,6 @@ export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Prop
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
-                            marginLeft: 15,
                         }}
                     >
                         <TouchableOpacity

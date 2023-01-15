@@ -33,6 +33,7 @@ import {
     ForgotPasswordResponse,
     DeleteDeviceToken,
     RegisterUser,
+    GetNetworkConnectionStatus,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -272,6 +273,10 @@ class SpikyService {
         return this.instance.post<DeleteDeviceToken>(`auth/logout`, {
             device_token: deviceTokenStorage,
         });
+    }
+
+    getNetworkConnectionStatus() {
+        return this.instance.get<GetNetworkConnectionStatus>(`verif/net-connection`);
     }
 }
 

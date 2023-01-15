@@ -106,7 +106,7 @@ export const Idea = ({ idea, filter }: Props) => {
     }, []);
 
     return (
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.center}>
             <Animated.View style={{ ...stylescom.wrap, opacity }}>
                 <View style={stylescom.subwrap}>
                     {isOwner && (
@@ -269,7 +269,6 @@ export const Idea = ({ idea, filter }: Props) => {
 const stylescom = StyleSheet.create({
     wrap: {
         width: '90%',
-        // paddingHorizontal: 10,
         backgroundColor: 'white',
         borderRadius: 8,
         marginVertical: 8,

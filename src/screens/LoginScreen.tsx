@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
     Keyboard,
@@ -15,25 +14,17 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
-import { getTokenDevice } from '../helpers/getTokenDevice';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
+import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
 import { useForm } from '../hooks/useForm';
+import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
-import { signIn } from '../store/feature/auth/authSlice';
-import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { setUser } from '../store/feature/user/userSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { HelperMessage, StatusType } from '../types/common';
+import { HelperMessage } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
 export const LoginScreen = () => {
-    const dispatch = useAppDispatch();
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const { form, onChange } = useForm<FormState>({
         email: '',
         password: '',
@@ -42,8 +33,8 @@ export const LoginScreen = () => {
     const [isFormValid, setFormValid] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [passVisible, setPassVisible] = useState(true);
-
-    const spikyService = new SpikyService(config);
+    const { logInUser } = useSpikyService();
+    const { getTokenDevice } = useFirebaseMessaging();
 
     async function login() {
         setLoading(true);
@@ -54,40 +45,13 @@ export const LoginScreen = () => {
                 await getTokenDevice();
                 deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
             }
-            try {
-                if (deviceTokenStorage) {
-                    const response = await spikyService.login(email, password, deviceTokenStorage);
-                    const { data } = response;
-                    const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
-                        data;
-                    await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-                    dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-                    dispatch(signIn(token));
-                    dispatch(
-                        setUser({
-                            nickname: alias,
-                            notificationsNumber: n_notificaciones,
-                            newChatMessagesNumber: n_chatmensajes,
-                            universityId: id_universidad,
-                            id: uid,
-                        })
-                    );
+            if (deviceTokenStorage) {
+                const status = await logInUser(email, password, deviceTokenStorage);
+                if (status) {
                     setFormValid(true);
                 } else {
-                    dispatch(
-                        addToast({ message: 'Error al iniciar sesión.', type: StatusType.WARNING })
-                    );
+                    setFormValid(false);
                 }
-            } catch (e) {
-                if (e instanceof AxiosError) {
-                    dispatch(
-                        addToast({
-                            message: e.response?.data.msg || 'No se pudo conectar al servidor.',
-                            type: StatusType.WARNING,
-                        })
-                    );
-                }
-                setFormValid(false);
             }
         } else {
             setFormValid(false);

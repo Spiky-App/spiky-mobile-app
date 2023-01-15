@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Animated, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Text, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
@@ -40,7 +40,14 @@ export const ManifestPart1Screen = () => {
             fadeIn(900);
             timeRef.current = setTimeout(() => {
                 setAux(false);
-                movingPositionAndScale(0, -320, 1, 0.7, 900, nextManifiesto);
+                movingPositionAndScale(
+                    0,
+                    Dimensions.get('window').height / -2 + 80,
+                    1,
+                    0.7,
+                    900,
+                    nextManifiesto
+                );
             }, 1500);
         } else {
             const delay = state === 0 ? 1000 : 2200;

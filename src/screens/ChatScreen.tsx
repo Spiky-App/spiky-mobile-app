@@ -44,6 +44,7 @@ import SendNudgeButton from '../components/SendNudgeButton';
 import { updateNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
 import { MessageRequestData } from '../services/models/spikyService';
+import NetworkErrorFeed from '../components/NetworkErrorFeed';
 
 const DEFAULT_FORM: FormChat = {
     message: '',
@@ -61,6 +62,7 @@ export const ChatScreen = ({ route }: Props) => {
     const { bottom } = useSafeAreaInsets();
     const refFlatList = useRef<FlatList>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [networkError, setNetworkError] = useState(false);
     const [toUserIsTyping, setToUserIsTyping] = useState(false);
     const timeoutRef = useRef<null | number>(null);
     const [moreChatMsg, setMoreChatMsg] = useState(false);
@@ -74,14 +76,19 @@ export const ChatScreen = ({ route }: Props) => {
     const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
 
     async function loadChatMessages(loadMore?: boolean) {
+        if (networkError) setNetworkError(false);
         setIsLoading(true);
         setMoreChatMsg(false);
         const lastChatMessageId = loadMore ? chatMessages[chatMessages.length - 1].id : undefined;
-        const chatMessagesResponse = await getChatMessages(
+        const { chatMessagesResponse, networkError: networkErrorReturn } = await getChatMessages(
             activeConversationId,
             route.params?.toUser.id,
             lastChatMessageId
         );
+        if (networkErrorReturn) {
+            setNetworkError(true);
+            setIsLoading(false);
+        }
         if (chatMessagesResponse) {
             const { chatmensajes, n_chatmensajes_unseens, toUserIsOnline } = chatMessagesResponse;
             const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
@@ -97,13 +104,15 @@ export const ChatScreen = ({ route }: Props) => {
     }
 
     async function loadFirstChatMessages() {
+        if (networkError) setNetworkError(false);
         const firstChatMessageId = chatMessages[0].id;
-        const chatMessagesResponse = await getChatMessages(
+        const { chatMessagesResponse, networkError: networkErrorReturn } = await getChatMessages(
             activeConversationId,
             route.params?.toUser.id,
             undefined,
             firstChatMessageId
         );
+        if (networkErrorReturn) setNetworkError(true);
         if (chatMessagesResponse) {
             const { chatmensajes, n_chatmensajes_unseens, toUserIsOnline } = chatMessagesResponse;
             const newChatMessages: ChatMessageI[] = chatmensajes.map(chatmsg =>
@@ -227,7 +236,7 @@ export const ChatScreen = ({ route }: Props) => {
     return (
         <BackgroundPaper topDark>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={{
                     width: '100%',
                     alignItems: 'center',
@@ -281,34 +290,38 @@ export const ChatScreen = ({ route }: Props) => {
                         flex: 1,
                     }}
                 >
-                    <FlatList
-                        ref={refFlatList}
-                        style={stylescomp.wrap}
-                        data={chatMessages}
-                        renderItem={({ item }) => (
-                            <ChatMessage
-                                msg={item}
-                                user={item.userId === user.id ? user : toUser}
-                                setMessageToReply={setMessageToReply}
-                            />
-                        )}
-                        keyExtractor={item => item.id + ''}
-                        showsVerticalScrollIndicator={false}
-                        inverted
-                        onEndReached={
-                            moreChatMsg && activeConversationId !== 0
-                                ? () => loadChatMessages(true)
-                                : undefined
-                        }
-                        ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
-                        ListFooterComponent={isLoading ? LoadingAnimated : <></>}
-                        ListFooterComponentStyle={{ marginVertical: 12 }}
-                        contentContainerStyle={{
-                            flexGrow: 1,
-                            justifyContent: 'flex-end',
-                        }}
-                        keyboardShouldPersistTaps={'handled'}
-                    />
+                    {!networkError ? (
+                        <FlatList
+                            ref={refFlatList}
+                            style={stylescomp.wrap}
+                            data={chatMessages}
+                            renderItem={({ item }) => (
+                                <ChatMessage
+                                    msg={item}
+                                    user={item.userId === user.id ? user : toUser}
+                                    setMessageToReply={setMessageToReply}
+                                />
+                            )}
+                            keyExtractor={item => item.id + ''}
+                            showsVerticalScrollIndicator={false}
+                            inverted
+                            onEndReached={
+                                moreChatMsg && activeConversationId !== 0
+                                    ? () => loadChatMessages(true)
+                                    : undefined
+                            }
+                            ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
+                            ListFooterComponent={isLoading ? LoadingAnimated : <></>}
+                            ListFooterComponentStyle={{ marginVertical: 12 }}
+                            contentContainerStyle={{
+                                flexGrow: 1,
+                                justifyContent: 'flex-end',
+                            }}
+                            keyboardShouldPersistTaps={'handled'}
+                        />
+                    ) : (
+                        <NetworkErrorFeed callback={loadChatMessages} />
+                    )}
 
                     <InputChat
                         form={form}
@@ -320,6 +333,7 @@ export const ChatScreen = ({ route }: Props) => {
                         HideKeyboardAfterSumbit
                         messageToReply={messageToReply}
                         setMessageToReply={setMessageToReply}
+                        networkError={networkError}
                     />
                 </View>
             </KeyboardAvoidingView>
