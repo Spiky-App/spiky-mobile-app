@@ -9,28 +9,47 @@ import {
     Keyboard,
     Animated,
     TouchableWithoutFeedback,
+    ScrollView,
 } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import ButtonIcon from '../components/common/ButtonIcon';
-import { faLocationArrow, faXmark } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faXmark, faFlagCheckered } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../navigator/Navigator';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useAnimation } from '../hooks/useAnimation';
+import useSpikyService from '../hooks/useSpikyService';
+import { Message } from '../types/store';
+import { generateMessageFromMensaje } from '../helpers/message';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { RootState } from '../store';
+import { addMessage } from '../store/feature/messages/messagesSlice';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { DrawerParamList } from '../navigator/MenuMain';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 
-type NavigationStackProp = StackNavigationProp<RootStackParamList>;
+type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
+interface Form {
+    question: string;
+    answers: Answer[];
+}
 interface Answer {
     id: number;
     answer: string;
     ref: React.RefObject<TextInput>;
+    duplicated?: boolean;
 }
 
 export const CreatePollScreen = () => {
-    const navigation = useNavigation<NavigationStackProp>();
-    const [isLoading] = useState(false);
-    const { form, onChange } = useForm({
+    const QUESTION_MAX_LENGHT = 220;
+    const ANSWER_MAX_LENGHT = 180;
+    const ANSWER_MAX = 5;
+    const user = useAppSelector((state: RootState) => state.user);
+    const navDrawer = useNavigation<NavigationDrawerProp>();
+    const { createPoll } = useSpikyService();
+    const dispatch = useAppDispatch();
+    const [isLoading, setLoading] = useState(false);
+    const { form, onChange } = useForm<Form>({
         question: '',
         answers: [
             { id: 1, answer: '', ref: createRef<TextInput>() },
@@ -40,29 +59,44 @@ export const CreatePollScreen = () => {
     const { question, answers } = form;
 
     function invalid() {
-        if (question === '' || answers[0].answer === '' || answers[1].answer === '') {
+        const answers_duplicated = answers.filter(a => a.duplicated);
+        if (
+            question === '' ||
+            answers[0].answer === '' ||
+            answers[1].answer === '' ||
+            answers_duplicated.length > 0
+        ) {
             return true;
         }
         return false;
     }
 
     function handleChangeAnswers(answer: Answer) {
+        const answers_duplicated = answers.filter(
+            a => a.answer === answer.answer && a.answer !== ''
+        );
         let newAnswer = answers.map(a => {
             if (answer.id === a.id) {
-                return answer;
+                return { ...answer, duplicated: answers_duplicated.length > 0 };
             } else {
                 return a;
             }
         });
-        if (answers[answers.length - 1].id === answer.id && answer.answer.length > 0) {
-            onChange({
-                answers: [
-                    ...newAnswer,
-                    { id: answers.length + 1, answer: '', ref: createRef<TextInput>() },
-                ],
-            });
-        } else {
-            onChange({ answers: newAnswer });
+        if (answer.answer.length <= ANSWER_MAX_LENGHT) {
+            if (
+                answers[answers.length - 1].id === answer.id &&
+                answer.answer.length > 0 &&
+                answers.length < ANSWER_MAX
+            ) {
+                onChange({
+                    answers: [
+                        ...newAnswer,
+                        { id: answers.length + 1, answer: '', ref: createRef<TextInput>() },
+                    ],
+                });
+            } else {
+                onChange({ answers: newAnswer });
+            }
         }
     }
 
@@ -81,8 +115,44 @@ export const CreatePollScreen = () => {
                     });
                 }
             });
+            if (newAnswer[newAnswer.length - 1].answer.length !== 0)
+                newAnswer.push({
+                    id: newAnswer.length + 1,
+                    answer: '',
+                    ref: createRef<TextInput>(),
+                });
             fadeOut(350, () => onChange({ answers: newAnswer }));
         }
+    }
+
+    async function handleCreatePoll() {
+        setLoading(true);
+        let answers_array: string[] = [];
+        answers.forEach(a => {
+            if (a.answer !== '') answers_array.push(a.answer);
+        });
+        const mensaje = await createPoll(question, answers_array);
+        console.log(mensaje);
+        if (mensaje) {
+            const createdMessage: Message = generateMessageFromMensaje({
+                ...mensaje,
+                usuario: {
+                    alias: user.nickname,
+                    id_universidad: user.universityId,
+                },
+                reacciones: [],
+            });
+            navDrawer.navigate('CommunityScreen');
+            dispatch(addMessage(createdMessage));
+            dispatch(
+                setModalAlert({
+                    isOpen: true,
+                    text: 'Encuesta publicada.',
+                    icon: faFlagCheckered,
+                })
+            );
+        }
+        setLoading(false);
     }
 
     return (
@@ -90,57 +160,60 @@ export const CreatePollScreen = () => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={stylecom.container}
+                    style={[stylecom.container]}
                 >
-                    <View style={{ marginVertical: 10 }}>
-                        <Text style={styles.h4}>Pregunta:</Text>
-                        <View style={{ position: 'absolute', top: -5, right: 5 }}>
-                            <ButtonIcon
-                                disabled={isLoading}
-                                icon={faXmark}
-                                onPress={() => navigation.goBack()}
-                                style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View style={{ marginVertical: 10 }}>
+                            <Text style={styles.h4}>Pregunta:</Text>
+                            <View style={{ position: 'absolute', top: -5, right: 5 }}>
+                                <ButtonIcon
+                                    disabled={isLoading}
+                                    icon={faXmark}
+                                    onPress={() => navDrawer.goBack()}
+                                    style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
+                                />
+                            </View>
+                        </View>
+                        <View style={stylecom.input1}>
+                            <TextInput
+                                placeholder="Haz una pregunta"
+                                placeholderTextColor="#707070"
+                                autoFocus
+                                multiline={true}
+                                style={{
+                                    ...styles.textinput,
+                                    fontSize: 16,
+                                    width: '100%',
+                                }}
+                                value={question}
+                                onChangeText={value => {
+                                    if (value.length < QUESTION_MAX_LENGHT)
+                                        onChange({ question: value });
+                                }}
                             />
                         </View>
-                    </View>
-                    <View style={stylecom.input1}>
-                        <TextInput
-                            placeholder="Haz una pregunta"
-                            placeholderTextColor="#707070"
-                            autoFocus
-                            multiline={true}
-                            style={{
-                                ...styles.textinput,
-                                fontSize: 16,
-                                width: '100%',
-                            }}
-                            value={question}
-                            onChangeText={value => onChange({ question: value })}
-                        />
-                    </View>
 
-                    <View style={{ marginVertical: 10 }}>
-                        <Text style={styles.h4}>Opciones:</Text>
-                    </View>
-                    <View style={stylecom.input2}>
-                        {answers.map(answer => (
-                            <AnswerOption
-                                answer={answer}
-                                key={answer.id}
-                                answers={answers}
-                                handleOnBlurAnswer={handleOnBlurAnswer}
-                                handleChangeAnswers={handleChangeAnswers}
+                        <View style={stylecom.container_buttons}>
+                            <Text style={styles.h4}>Opciones:</Text>
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faLocationArrow}
+                                onPress={handleCreatePoll}
+                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
                             />
-                        ))}
-                    </View>
-                    <View style={stylecom.container_buttons}>
-                        <ButtonIcon
-                            disabled={isLoading || invalid()}
-                            icon={faLocationArrow}
-                            onPress={() => {}}
-                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        />
-                    </View>
+                        </View>
+                        <View style={stylecom.input2}>
+                            {answers.map(answer => (
+                                <AnswerOption
+                                    answer={answer}
+                                    key={answer.id}
+                                    answers={answers}
+                                    handleOnBlurAnswer={handleOnBlurAnswer}
+                                    handleChangeAnswers={handleChangeAnswers}
+                                />
+                            ))}
+                        </View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         </BackgroundPaper>
@@ -202,6 +275,11 @@ const AnswerOption = ({
                     })
                 }
             />
+            {answer.duplicated && (
+                <View style={{ marginTop: 5 }}>
+                    <Text style={[styles.textbold, styles.error]}>Ya existe esta opción</Text>
+                </View>
+            )}
         </Animated.View>
     );
 };
@@ -241,9 +319,10 @@ const stylecom = StyleSheet.create({
         borderRadius: 5,
     },
     container_buttons: {
+        marginVertical: 10,
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        paddingHorizontal: 10,
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
     },
 });

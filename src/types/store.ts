@@ -55,10 +55,18 @@ export interface Message {
     draft: number;
     sequence: number;
     comments?: Comment[];
+    answers: AnswerCount[];
+    myAnswers?: number;
 }
 
 export interface ReactionCount {
     reaction: string;
+    count: number;
+}
+
+export interface AnswerCount {
+    id: number;
+    answer: string;
     count: number;
 }
 

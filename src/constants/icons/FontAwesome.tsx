@@ -37,6 +37,7 @@ import { faFaceSmile } from '@fortawesome/free-solid-svg-icons/faFaceSmile';
 import { faBellConcierge } from '@fortawesome/free-solid-svg-icons';
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePollHorizontal } from '@fortawesome/free-solid-svg-icons/faSquarePollHorizontal';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons/faFlagCheckered';
 
 export {
     faUsers,
@@ -78,4 +79,5 @@ export {
     faBellConcierge,
     faAddressCard,
     faSquarePollHorizontal,
+    faFlagCheckered,
 };

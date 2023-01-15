@@ -617,6 +617,20 @@ function useSpikyService() {
         return [];
     };
 
+    const createPoll = async (
+        question: string,
+        answers: string[]
+    ): Promise<Message | undefined> => {
+        try {
+            const response = await service.createPoll(question, answers);
+            return response.data.mensaje;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando encuesta.')));
+        }
+        return undefined;
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -653,6 +667,7 @@ function useSpikyService() {
         logInUser,
         getNetworkConnectionStatus,
         getCommentReactions,
+        createPoll,
     };
 }
 

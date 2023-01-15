@@ -35,6 +35,7 @@ import {
     RegisterUser,
     GetNetworkConnectionStatus,
     GetCommentReactions,
+    CreatePollResponse,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -282,6 +283,13 @@ class SpikyService {
 
     getCommentReactions(commentId: number) {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
+    }
+
+    createPoll(message: string, answers: string[]) {
+        return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
+            mensaje: message,
+            opciones: answers,
+        });
     }
 }
 

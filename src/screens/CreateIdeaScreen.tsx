@@ -7,6 +7,7 @@ import {
     faPenToSquare,
     faSquarePollHorizontal,
     faXmark,
+    faFlagCheckered,
 } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
@@ -20,7 +21,6 @@ import ButtonIcon from '../components/common/ButtonIcon';
 import { MentionData } from 'react-native-controlled-mentions/dist/types';
 import { RenderSuggetions } from '../components/Suggestions';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
-import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons';
 import useSpikyService from '../hooks/useSpikyService';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { generateMessageFromMensaje } from '../helpers/message';
@@ -72,6 +72,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                     id_universidad: user.universityId,
                 },
                 reacciones: [],
+                encuesta_opciones: [],
             });
             const regexp = /(@\[@\w*\]\(\d*\))/g;
             const mentions: RegExpMatchArray | null = createdMessage.message.match(regexp);
@@ -98,6 +99,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                     id_universidad: user.universityId,
                 },
                 reacciones: [],
+                encuesta_opciones: [],
             });
         }
         return undefined;

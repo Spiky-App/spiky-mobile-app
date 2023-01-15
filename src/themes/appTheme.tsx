@@ -182,4 +182,7 @@ export const styles = StyleSheet.create({
         shadowRadius: 0,
         elevation: 2,
     },
+    error: {
+        color: '#9b0000',
+    },
 });

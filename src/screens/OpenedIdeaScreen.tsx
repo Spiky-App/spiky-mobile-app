@@ -39,13 +39,10 @@ const DEFAULT_FORM: FormComment = {
     comment: '',
 };
 
-const initialMessage = {
+const initialMessage: Message = {
     id: 0,
     message: '',
     date: 0,
-    favor: 0,
-    neutral: 0,
-    against: 0,
     user: {
         id: 0,
         nickname: '',
@@ -55,6 +52,7 @@ const initialMessage = {
     draft: 0,
     sequence: 1,
     reactions: [],
+    answers: [],
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
@@ -345,11 +343,19 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 />
                             </>
                         ) : (
-                            <View style={{ ...stylescom.commentWrap, ...styles.center }}>
-                                <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                    Toma una postura antes de participar
-                                </Text>
-                            </View>
+                            <>
+                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                </View>
+                                <View style={{ ...stylescom.commentWrap, ...styles.center }}>
+                                    <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                        Toma una postura antes de participar
+                                    </Text>
+                                </View>
+                            </>
                         )}
                     </>
                 ) : (
