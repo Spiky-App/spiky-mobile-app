@@ -43,6 +43,11 @@ export const styles = StyleSheet.create({
         color: '#01192E',
         fontWeight: '600',
     },
+    h4: {
+        fontSize: 18,
+        fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
+    },
     h5: {
         fontFamily: 'Helvetica-Bold',
     },
@@ -117,7 +122,7 @@ export const styles = StyleSheet.create({
         paddingVertical: 8,
     },
     textGrayPad: {
-        color: '#707070',
+        color: '#borderTopWidth',
         fontSize: 11,
         fontWeight: '300',
         paddingHorizontal: 15,

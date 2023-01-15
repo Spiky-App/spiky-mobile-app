@@ -168,7 +168,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
                     <View style={stylecom.wrap}>
-                        <View style={{ position: 'absolute', top: 12, right: 12 }}>
+                        <View style={{ position: 'absolute', top: 8, right: 8 }}>
                             <ButtonIcon
                                 disabled={isLoading}
                                 icon={faXmark}
@@ -179,7 +179,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                         <MentionInput
                             placeholder="Perpetua tu idea.."
                             placeholderTextColor="#707070"
-                            style={{ ...styles.textinput, fontSize: 16, marginTop: 10 }}
+                            style={{ ...styles.textinput, fontSize: 16 }}
                             multiline={true}
                             autoFocus
                             value={form.message}
@@ -215,8 +215,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            position: 'absolute',
-                            bottom: 20,
+                            marginTop: 10,
                         }}
                     >
                         <ButtonIcon
