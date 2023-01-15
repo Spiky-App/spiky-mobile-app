@@ -18,7 +18,7 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
 import UniversityTag from './common/UniversityTag';
 import ReactionsContainer from './common/ReactionsContainer';
-import { PreReactionButton } from './PreReactionButton';
+import { IdeaReaction } from './IdeaReaction';
 import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 
 interface Props {
@@ -163,7 +163,7 @@ export const Idea = ({ idea, filter }: Props) => {
                         {!myReaction && !isOwner ? (
                             <>
                                 <View style={{ flex: 1, height: 15 }} />
-                                <PreReactionButton messageId={id} bottom={-15} right={-24} />
+                                <IdeaReaction messageId={id} bottom={-15} right={-24} />
                             </>
                         ) : (
                             <>
@@ -188,8 +188,9 @@ export const Idea = ({ idea, filter }: Props) => {
                                             <ReactionsContainer
                                                 reactionCount={reactions}
                                                 myReaction={myReaction}
-                                                messageId={id}
+                                                id={id}
                                                 handleClickUser={handleClickUser}
+                                                isIdeaReactions
                                             />
                                         )}
 

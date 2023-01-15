@@ -29,7 +29,7 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import UniversityTag from '../components/common/UniversityTag';
 import useSpikyService from '../hooks/useSpikyService';
-import { PreReactionButton } from '../components/PreReactionButton';
+import { IdeaReaction } from '../components/IdeaReaction';
 import ReactionsContainer from '../components/common/ReactionsContainer';
 import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
@@ -235,7 +235,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     {!message.myReaction && !isOwner ? (
                                         <>
                                             <View style={{ flex: 1, height: 15 }} />
-                                            <PreReactionButton
+                                            <IdeaReaction
                                                 messageId={message.id}
                                                 bottom={-15}
                                                 right={-24}
@@ -248,8 +248,9 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     <ReactionsContainer
                                                         reactionCount={message.reactions}
                                                         myReaction={message.myReaction}
-                                                        messageId={message.id}
+                                                        id={message.id}
                                                         handleClickUser={handleClickUser}
+                                                        isIdeaReactions
                                                     />
                                                 )}
 

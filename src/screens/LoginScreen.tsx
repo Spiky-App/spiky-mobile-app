@@ -13,6 +13,7 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
 import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
@@ -96,38 +97,48 @@ export const LoginScreen = () => {
                             onSubmitEditing={login}
                         />
                     </View>
-                    <TouchableOpacity
-                        style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('ForgotPwdScreen')}
-                    >
-                        <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
-                    </TouchableOpacity>
-                    <TouchableHighlight
-                        underlayColor="#01192ebe"
-                        onPress={login}
-                        style={{
-                            ...styles.button,
-                            paddingHorizontal: 30,
-                            ...(isLoading && { borderColor: '#707070' }),
-                        }}
-                        disabled={isLoading}
-                    >
-                        <Text
-                            style={{
-                                ...styles.text,
-                                ...styles.textb,
-                                ...(isLoading && { color: '#707070' }),
-                            }}
-                        >
-                            {!isLoading ? 'Iniciar sesión' : 'Cargando...'}
-                        </Text>
-                    </TouchableHighlight>
-                    <TouchableOpacity
-                        style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('ManifestPart1Screen')}
-                    >
-                        <Text style={styles.linkPad}>Solicitar cuenta</Text>
-                    </TouchableOpacity>
+
+                    {isLoading ? (
+                        <View style={{ ...styles.center, minHeight: 170 }}>
+                            <Text style={{ ...styles.text, ...styles.textb, marginBottom: 10 }}>
+                                Cargando...
+                            </Text>
+                            <LoadingAnimated />
+                        </View>
+                    ) : (
+                        <View style={{ ...styles.center, minHeight: 170 }}>
+                            <TouchableOpacity
+                                style={{ marginBottom: 35 }}
+                                onPress={() => navigation.navigate('ForgotPwdScreen')}
+                            >
+                                <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
+                            </TouchableOpacity>
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={login}
+                                style={{
+                                    ...styles.button,
+                                    paddingHorizontal: 30,
+                                }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Iniciar sesión
+                                </Text>
+                            </TouchableHighlight>
+                            <TouchableOpacity
+                                style={{ marginBottom: 35 }}
+                                onPress={() => navigation.navigate('ManifestPart1Screen')}
+                            >
+                                <Text style={styles.linkPad}>Solicitar cuenta</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
             </TouchableWithoutFeedback>
         </BackgroundPaper>

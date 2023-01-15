@@ -9,7 +9,10 @@ import {
     Pressable,
     Animated,
 } from 'react-native';
-import { generateReactionFromReaccion } from '../helpers/reaction';
+import {
+    generateCommentReactionFromRespReaccion,
+    generateReactionFromReaccion,
+} from '../helpers/reaction';
 import { useAnimation } from '../hooks/useAnimation';
 import useSpikyService from '../hooks/useSpikyService';
 import { styles } from '../themes/appTheme';
@@ -20,23 +23,26 @@ import { LoadingAnimated } from './svg/LoadingAnimated';
 interface Props {
     setModalReactions: (value: boolean) => void;
     modalReactions: boolean;
-    messageId: number;
+    id: number;
     reactionCount: ReactionCount[];
     handleClickUser: (goToUser: User) => void;
+    isIdeaReactions?: boolean;
+    isCommetReactions?: boolean;
 }
 
 export const ModalShowReactions = ({
-    messageId,
+    id,
     modalReactions,
     setModalReactions,
     reactionCount,
     handleClickUser,
+    isIdeaReactions,
 }: Props) => {
     const [loading, setLoading] = useState(false);
     const [selection, setSelection] = useState('');
     const [reactions, setReactions] = useState<Reaction[]>([]);
     const [filteredReactions, setFilteredReactions] = useState<Reaction[]>([]);
-    const { getIdeaReactiones } = useSpikyService();
+    const { getIdeaReactions, getCommentReactions } = useSpikyService();
     const { opacity, position, movingPosition, fadeIn, fadeOut } = useAnimation({
         init_position: 650,
     });
@@ -54,9 +60,17 @@ export const ModalShowReactions = ({
     }
 
     async function loadIdeaReactions() {
-        const reacciones = await getIdeaReactiones(messageId);
-        const reactionList = reacciones.map(reaccion => generateReactionFromReaccion(reaccion));
-        setReactions(reactionList);
+        if (isIdeaReactions) {
+            const reacciones = await getIdeaReactions(id);
+            const reactionList = reacciones.map(reaccion => generateReactionFromReaccion(reaccion));
+            setReactions(reactionList);
+        } else {
+            const reacciones = await getCommentReactions(id);
+            const reactionList = reacciones.map(reaccion =>
+                generateCommentReactionFromRespReaccion(reaccion)
+            );
+            setReactions(reactionList);
+        }
         setSelection('Todos');
         setLoading(false);
     }
