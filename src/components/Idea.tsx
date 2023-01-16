@@ -20,6 +20,7 @@ import UniversityTag from './common/UniversityTag';
 import ReactionsContainer from './common/ReactionsContainer';
 import { IdeaReaction } from './IdeaReaction';
 import { PreModalIdeaOptions } from './PreModalIdeaOptions';
+import { Poll } from './Poll';
 
 interface Props {
     idea: Message;
@@ -45,29 +46,31 @@ export const Idea = ({ idea, filter }: Props) => {
         sequence,
         draft,
         answers,
+        myAnswers,
+        totalAnswers,
     } = idea;
     const isOwner = user.id === uid;
     const isDraft = draft === 1;
-    const isPoll = answers.length > 0;
+    const isPoll = answers && answers.length > 0;
     const fecha = getTime(date.toString());
 
-    const handleDelete = async () => {
+    async function handleDelete() {
         const wasDeleted = await deleteIdea(id);
         if (wasDeleted) {
             const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
             dispatch(setMessages(messagesUpdated));
             dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
         }
-    };
+    }
 
-    const handleOpenIdea = () => {
+    function handleOpenIdea() {
         navigation.navigate('OpenedIdeaScreen', {
             messageId: id,
             filter: filter,
         });
-    };
+    }
 
-    const changeScreen = (screen: string, params?: MessageRequestData) => {
+    function changeScreen(screen: string, params?: MessageRequestData) {
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);
@@ -85,9 +88,9 @@ export const Idea = ({ idea, filter }: Props) => {
                 ],
             })
         );
-    };
+    }
 
-    const handleClickUser = (goToUser: User) => {
+    function handleClickUser(goToUser: User) {
         if (goToUser.nickname === nickname) {
             changeScreen('MyIdeasScreen');
         } else {
@@ -95,13 +98,13 @@ export const Idea = ({ idea, filter }: Props) => {
                 alias: goToUser.nickname,
             });
         }
-    };
+    }
 
-    const handleClickHashtag = (hashtag_text: string) => {
+    function handleClickHashtag(hashtag_text: string) {
         changeScreen('HashTagScreen', {
             hashtag: hashtag_text,
         });
-    };
+    }
 
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
@@ -147,7 +150,7 @@ export const Idea = ({ idea, filter }: Props) => {
 
                     <View style={{ marginTop: 6 }}>
                         <MsgTransform
-                            textStyle={{ ...styles.text, ...stylescom.msg }}
+                            textStyle={stylescom.msg}
                             text={message}
                             handleClickUser={handleClickUser}
                             handleClickHashtag={handleClickHashtag}
@@ -163,13 +166,13 @@ export const Idea = ({ idea, filter }: Props) => {
                         }}
                     >
                         {isPoll && (
-                            <View style={{ flex: 1, marginTop: 12 }}>
-                                {answers.map(answer => (
-                                    <Pressable key={answer.id} style={stylescom.answer_button}>
-                                        <Text>{answer.answer}</Text>
-                                    </Pressable>
-                                ))}
-                            </View>
+                            <Poll
+                                answers={answers}
+                                totalAnswers={totalAnswers}
+                                myAnswers={myAnswers}
+                                messageId={id}
+                                userIdMessageOwner={user.id ? user.id : 0}
+                            />
                         )}
                         {!myReaction && !isOwner && !isPoll && (
                             <>
@@ -362,20 +365,5 @@ const stylescom = StyleSheet.create({
         left: 0,
         right: 0,
         overflow: 'hidden',
-    },
-    answer_button: {
-        shadowColor: '#676767',
-        shadowOffset: {
-            width: 0,
-            height: 0,
-        },
-        shadowOpacity: 0.8,
-        shadowRadius: 1.2,
-        elevation: 5,
-        backgroundColor: 'white',
-        borderRadius: 4,
-        marginBottom: 9,
-        paddingHorizontal: 6,
-        paddingVertical: 5,
     },
 });

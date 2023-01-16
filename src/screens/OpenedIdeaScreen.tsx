@@ -53,6 +53,7 @@ const initialMessage: Message = {
     sequence: 1,
     reactions: [],
     answers: [],
+    totalAnswers: 0,
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;

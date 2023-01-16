@@ -132,7 +132,6 @@ export const CreatePollScreen = () => {
             if (a.answer !== '') answers_array.push(a.answer);
         });
         const mensaje = await createPoll(question, answers_array);
-        console.log(mensaje);
         if (mensaje) {
             const createdMessage: Message = generateMessageFromMensaje({
                 ...mensaje,

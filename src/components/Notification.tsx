@@ -23,6 +23,7 @@ const msg_notif = [
     'te mencionó.',
     'reaccionó a tu comentario.',
     'reacciono en tu tracking.',
+    'contesto tu encuesta.',
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {

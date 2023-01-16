@@ -12,7 +12,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         count: reaction.count,
     }));
 
-    const answersRetrived: AnswerCount[] = mensaje.encuesta_opciones.map(answer => ({
+    const answersRetrived: AnswerCount[] | undefined = mensaje.encuesta_opciones?.map(answer => ({
         id: answer.id_encuesta_opcion,
         answer: answer.encuesta_opcion,
         count: answer.encuesta_respuestas_count,
@@ -40,6 +40,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         comments: commentsRetrived,
         answers: answersRetrived,
         myAnswers: mensaje.mi_encuesta_respuesta,
+        totalAnswers: mensaje.total_encuesta_respuestas,
     };
 }
 

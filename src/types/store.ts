@@ -55,8 +55,9 @@ export interface Message {
     draft: number;
     sequence: number;
     comments?: Comment[];
-    answers: AnswerCount[];
+    answers?: AnswerCount[];
     myAnswers?: number;
+    totalAnswers: number;
 }
 
 export interface ReactionCount {
