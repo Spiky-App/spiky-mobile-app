@@ -48,6 +48,11 @@ export const styles = StyleSheet.create({
         fontFamily: 'Helvetica-Bold',
         color: '#01192E',
     },
+    h6: {
+        fontSize: 16,
+        fontFamily: 'Helvetica-Bold',
+        color: '#01192E',
+    },
     h5: {
         fontFamily: 'Helvetica-Bold',
     },
@@ -184,5 +189,10 @@ export const styles = StyleSheet.create({
     },
     error: {
         color: '#9b0000',
+    },
+    flex_center: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
     },
 });

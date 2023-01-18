@@ -198,6 +198,7 @@ export const CreatePollScreen = () => {
                                 disabled={isLoading || invalid()}
                                 icon={faLocationArrow}
                                 onPress={handleCreatePoll}
+                                style={{ marginRight: 2 }}
                                 iconStyle={{ transform: [{ rotate: '45deg' }] }}
                             />
                         </View>

@@ -172,6 +172,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 myAnswers={myAnswers}
                                 messageId={id}
                                 userIdMessageOwner={user.id ? user.id : 0}
+                                handleClickUser={handleClickUser}
                             />
                         )}
                         {!myReaction && !isOwner && !isPoll && (
@@ -245,8 +246,8 @@ export const Idea = ({ idea, filter }: Props) => {
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                             </View>
                         )}
-                        {(myReaction || isOwner) && !isDraft && !isPoll && (
-                            <View style={stylescom.container}>
+                        {(myReaction || isOwner || myAnswers) && !isDraft && (
+                            <View style={[isPoll && stylescom.container_abs, stylescom.container]}>
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                                 <PreModalIdeaOptions
                                     myIdea={isOwner}
@@ -365,5 +366,10 @@ const stylescom = StyleSheet.create({
         left: 0,
         right: 0,
         overflow: 'hidden',
+    },
+    container_abs: {
+        position: 'absolute',
+        bottom: -2,
+        right: 0,
     },
 });

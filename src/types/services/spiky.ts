@@ -357,3 +357,18 @@ export interface CreatePollResponse {
 export interface CreateAnswerPoll {
     ok: boolean;
 }
+
+export interface GetPollAnswers {
+    ok: boolean;
+    encuesta_opciones: PollAnswer[];
+}
+
+export interface PollAnswer {
+    id_encuesta_opcion: number;
+    encuesta_opcion: string;
+    count: number;
+    encuesta_respuestas: {
+        id_usuario: number;
+        usuario: UserI;
+    }[];
+}

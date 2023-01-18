@@ -37,6 +37,7 @@ import {
     GetCommentReactions,
     CreatePollResponse,
     CreateAnswerPoll,
+    GetPollAnswers,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -293,15 +294,15 @@ class SpikyService {
         });
     }
 
-    createAnswerPoll(answerId: number) {
+    createPollAnswer(answerId: number) {
         return this.instance.post<CreateAnswerPoll>('poll/answer', {
             id_encuesta_opcion: answerId,
         });
     }
 
-    // getAnswersPoll(messageId: number) {
-    //     return this.instance.get<CreatePollResponse>(`poll/answer/${messageId}`);
-    // }
+    getPollAnswers(messageId: number) {
+        return this.instance.get<GetPollAnswers>(`poll/answers/${messageId}`);
+    }
 }
 
 export default SpikyService;

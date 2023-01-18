@@ -156,6 +156,13 @@ export interface Reaction {
     user: User;
 }
 
+export interface Answer {
+    id: number;
+    answer: string;
+    count: number;
+    votes: User[];
+}
+
 export interface ChatMessageToReply {
     messageId: number;
     message: string;
