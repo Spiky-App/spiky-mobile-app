@@ -517,7 +517,11 @@ function useSpikyService() {
             const { data } = response;
             const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
             await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
-            dispatch(updateServiceConfig({ headers: { 'x-token': data.token } }));
+            dispatch(
+                updateServiceConfig({
+                    headers: { 'x-token': data.token, 'Content-Type': 'application/json' },
+                })
+            );
             dispatch(signIn(data.token));
             dispatch(
                 setUser({

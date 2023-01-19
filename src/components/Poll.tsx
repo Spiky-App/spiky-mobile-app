@@ -105,23 +105,22 @@ export const Poll = ({
                 showsVerticalScrollIndicator={false}
             />
             {myAnswers || isOwner ? (
-                <>
-                    <Animated.View style={[{ flex: 1, marginTop: 15, height: heightAnimated }]}>
-                        <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
-                        <Pressable
-                            style={[styles.center, { paddingTop: 5, width: '100%' }]}
-                            onPress={() => setModalAnswers(true)}
-                        >
-                            <Text style={styles.textGray}>Ver votos</Text>
-                        </Pressable>
-                    </Animated.View>
+                <Animated.View style={[{ marginTop: 15, minHeight: heightAnimated }]}>
+                    <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
+                    <Pressable
+                        style={[styles.center, { paddingTop: 5, width: '100%' }]}
+                        onPress={() => setModalAnswers(true)}
+                    >
+                        <Text style={styles.textGray}>Ver votos</Text>
+                    </Pressable>
+
                     <ModalPollVotes
                         messageId={messageId}
                         modalAnswers={modalAnswers}
                         setModalAnswers={setModalAnswers}
                         handleClickUser={handleClickUser}
                     />
-                </>
+                </Animated.View>
             ) : (
                 <View style={{ height: 10 }} />
             )}
@@ -175,7 +174,7 @@ const PollBar = ({
     }, [myAnswers, isOwner]);
 
     return (
-        <View key={answer.id}>
+        <View key={answer.id} style={{ flex: 1 }}>
             <Pressable
                 style={stylescom.answer_button}
                 onPress={
@@ -201,17 +200,19 @@ const PollBar = ({
                     </Animated.View>
                 )}
             </Pressable>
-            <View style={stylescom.background_answer}>
-                {(myAnswers || isOwner) && (
-                    <Animated.View
-                        style={{
-                            borderRadius: 6,
-                            flex: 1,
-                            width: animatedWidth,
-                            backgroundColor: myAnswers === answer.id ? '#FC702A' : '#01192E',
-                        }}
-                    />
-                )}
+            <View style={{ alignItems: 'flex-end' }}>
+                <View style={stylescom.background_answer}>
+                    {(myAnswers || isOwner) && (
+                        <Animated.View
+                            style={{
+                                borderRadius: 6,
+                                flex: 1,
+                                width: animatedWidth,
+                                backgroundColor: myAnswers === answer.id ? '#FC702A' : '#01192E',
+                            }}
+                        />
+                    )}
+                </View>
             </View>
         </View>
     );
@@ -263,7 +264,7 @@ const stylescom = StyleSheet.create({
     background_answer: {
         width: '95%',
         height: 8,
-        marginLeft: 18,
+        // marginLeft: 18,
         backgroundColor: '#D4D4D4',
         borderRadius: 6,
     },

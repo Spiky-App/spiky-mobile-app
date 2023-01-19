@@ -194,13 +194,6 @@ export const CreatePollScreen = () => {
 
                         <View style={stylecom.container_buttons}>
                             <Text style={styles.h4}>Opciones:</Text>
-                            <ButtonIcon
-                                disabled={isLoading || invalid()}
-                                icon={faLocationArrow}
-                                onPress={handleCreatePoll}
-                                style={{ marginRight: 2 }}
-                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                            />
                         </View>
                         <View style={stylecom.input2}>
                             {answers.map(answer => (
@@ -212,6 +205,15 @@ export const CreatePollScreen = () => {
                                     handleChangeAnswers={handleChangeAnswers}
                                 />
                             ))}
+                        </View>
+                        <View style={{ alignItems: 'flex-end' }}>
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faLocationArrow}
+                                onPress={handleCreatePoll}
+                                style={{ marginRight: 2 }}
+                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            />
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
