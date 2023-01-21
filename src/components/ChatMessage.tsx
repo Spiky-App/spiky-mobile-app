@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
@@ -7,11 +7,12 @@ import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 import { ChatMessage as ChatMessageProp, ChatMessageToReply, User } from '../types/store';
 import UniversityTag from './common/UniversityTag';
-import { faReply } from '../constants/icons/FontAwesome';
+import { faClock, faReply } from '../constants/icons/FontAwesome';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigator/Navigator';
+import useSpikyService from '../hooks/useSpikyService';
 
 interface MessageProp {
     msg: ChatMessageProp;
@@ -21,20 +22,24 @@ interface MessageProp {
 
 export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const { createChatMessage } = useSpikyService();
+    const [isLoading, setIsLoading] = useState(msg.isLoading);
+    const refIsLoading = useRef<boolean>(msg.isLoading ? true : false);
+    const refId = useRef<number>(msg.id);
+    const refTime = useRef<string>(getTime(msg.date.toString()));
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { opacity, fadeIn } = useAnimation({ init_opacity: 0 });
     const owner = msg.userId === uid;
-    const time = getTime(msg.date.toString());
     const replyMessage = transformMsg(msg.replyMessage?.message || '');
     const opacityReplyIcon = useRef(new Animated.Value(0)).current;
     const pan = useRef(new Animated.ValueXY()).current;
     const totalMoveToRight = 50;
 
-    const panResponder = useRef(
+    let panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderMove: (evt, gestureState) => {
-                if (gestureState.dx > 0) {
+                if (gestureState.dx > 0 && !refIsLoading.current) {
                     Animated.timing(opacityReplyIcon, {
                         toValue: gestureState.dx / totalMoveToRight,
                         duration: 100,
@@ -47,9 +52,9 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                 }
             },
             onPanResponderRelease: (evt, gestureState) => {
-                if (gestureState.dx > totalMoveToRight) {
+                if (gestureState.dx > totalMoveToRight && !refIsLoading.current) {
                     setMessageToReply({
-                        messageId: msg.id,
+                        messageId: refId.current,
                         user: user,
                         message: msg.message,
                     });
@@ -60,6 +65,16 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
         })
     ).current;
 
+    async function handleCreateChatMessage() {
+        const chatmensaje = await createChatMessage(msg.conversationId, msg.message, msg.reply?.id);
+        if (chatmensaje) {
+            refId.current = chatmensaje.id_chatmensaje;
+            refTime.current = getTime(chatmensaje.fecha);
+            refIsLoading.current = false;
+            setIsLoading(false);
+        }
+    }
+
     function handleGoToReplyMessage(replyMessageId: number) {
         navigation.navigate('OpenedIdeaScreen', {
             messageId: replyMessageId,
@@ -68,6 +83,9 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
 
     useEffect(() => {
         fadeIn(300);
+        if (refIsLoading.current) {
+            handleCreateChatMessage();
+        }
     }, []);
 
     return (
@@ -140,7 +158,13 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                             <Text style={styles.text}>{msg.message}</Text>
                         </View>
                         <View>
-                            <Text style={stylescomp.time}>{time}</Text>
+                            {isLoading ? (
+                                <View style={stylescomp.icon}>
+                                    <FontAwesomeIcon icon={faClock} size={10} color="#c4c3c3" />
+                                </View>
+                            ) : (
+                                <Text style={stylescomp.time}>{refTime.current}</Text>
+                            )}
                         </View>
                     </View>
                 </View>
@@ -193,6 +217,13 @@ const stylescomp = StyleSheet.create({
         textAlign: 'right',
         paddingLeft: 5,
         marginTop: 2,
+        left: 0,
+        width: '100%',
+    },
+    icon: {
+        alignItems: 'flex-end',
+        paddingLeft: 5,
+        marginTop: 6,
         left: 0,
         width: '100%',
     },
