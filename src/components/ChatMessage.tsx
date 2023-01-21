@@ -10,7 +10,8 @@ import UniversityTag from './common/UniversityTag';
 import { faClock, faReply } from '../constants/icons/FontAwesome';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigator/Navigator';
 import useSpikyService from '../hooks/useSpikyService';
 
@@ -27,7 +28,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
     const refIsLoading = useRef<boolean>(msg.isLoading ? true : false);
     const refId = useRef<number>(msg.id);
     const refTime = useRef<string>(getTime(msg.date.toString()));
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const { opacity, fadeIn } = useAnimation({ init_opacity: 0 });
     const owner = msg.userId === uid;
     const replyMessage = transformMsg(msg.replyMessage?.message || '');
@@ -76,7 +77,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
     }
 
     function handleGoToReplyMessage(replyMessageId: number) {
-        navigation.navigate('OpenedIdeaScreen', {
+        navigation.replace('OpenedIdeaScreen', {
             messageId: replyMessageId,
         });
     }
