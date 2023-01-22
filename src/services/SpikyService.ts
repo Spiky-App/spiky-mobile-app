@@ -35,6 +35,7 @@ import {
     RegisterUser,
     GetNetworkConnectionStatus,
     GetCommentReactions,
+    UpdateUserNickname,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -282,6 +283,12 @@ class SpikyService {
 
     getCommentReactions(commentId: number) {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
+    }
+
+    updateUserNickname(nickname: string) {
+        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
+            alias: nickname,
+        });
     }
 }
 

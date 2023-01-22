@@ -363,10 +363,14 @@ function useSpikyService() {
         }
     };
 
-    const getUserInfo = async (): Promise<{ userInfo?: UserInfo; networkError?: boolean }> => {
+    const getUserInfo = async (): Promise<{
+        userInfo?: UserInfo;
+        networkError?: boolean;
+        change_alias?: boolean;
+    }> => {
         try {
             const response = await service.getUserInfo();
-            return { userInfo: response.data.usuario };
+            return { userInfo: response.data.usuario, change_alias: response.data.change_alias };
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError) {
@@ -616,6 +620,16 @@ function useSpikyService() {
         }
         return [];
     };
+    const updateUserNickname = async (nickname: string): Promise<boolean> => {
+        try {
+            const response = await service.updateUserNickname(nickname);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cambiando seudónimo.')));
+            return false;
+        }
+    };
 
     return {
         createMessageComment,
@@ -653,6 +667,7 @@ function useSpikyService() {
         logInUser,
         getNetworkConnectionStatus,
         getCommentReactions,
+        updateUserNickname,
     };
 }
 
