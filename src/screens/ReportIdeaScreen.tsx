@@ -1,18 +1,10 @@
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import {
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { faFlag } from '../constants/icons/FontAwesome';
+import ButtonIcon from '../components/common/ButtonIcon';
+import { faFlag, faXmark } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
@@ -28,6 +20,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [buttonState, setButtonState] = useState(false);
     const { createReportIdea } = useSpikyService();
     const { form, onChange } = useForm({
@@ -37,13 +30,13 @@ export const ReportIdeaScreen = ({ route }: Props) => {
 
     const { reportReason } = form;
 
-    const handleCreateReportIdea = async () => {
+    const handleCreateReportIdea = () => {
+        setIsLoading(true);
         setButtonState(false);
-        const report = await createReportIdea(messageId, reportReason, uid);
-        if (report) {
-            dispatch(setModalAlert({ isOpen: true, text: report, icon: faFlag }));
-        }
+        createReportIdea(messageId, reportReason, uid);
+        dispatch(setModalAlert({ isOpen: true, text: 'Mensaje reportado.', icon: faFlag }));
         onChange({ reportReason: '' });
+        setIsLoading(true);
         navigation.goBack();
     };
 
@@ -82,14 +75,15 @@ export const ReportIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            position: 'absolute',
-                            bottom: 20,
+                            marginTop: 10,
                         }}
                     >
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                        </TouchableOpacity>
-
+                        <ButtonIcon
+                            disabled={isLoading}
+                            icon={faXmark}
+                            onPress={() => navigation.goBack()}
+                            style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
+                        />
                         <View style={stylecom.WrapperMaxCounterNIdea}>
                             <View style={stylecom.ConteMaxCounterNIdea}>
                                 <View style={stylecom.MaxCounterNIdea}></View>
@@ -120,26 +114,11 @@ export const ReportIdeaScreen = ({ route }: Props) => {
                                 ></View>
                             </View>
                         </View>
-
-                        <TouchableOpacity
-                            style={{
-                                ...stylecom.circleButton,
-                                borderColor: !buttonState ? '#d4d4d4d3' : '#01192E',
-                            }}
-                            onPress={buttonState ? handleCreateReportIdea : undefined}
-                        >
-                            <View
-                                style={{
-                                    transform: [{ rotate: '45deg' }],
-                                }}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faFlag}
-                                    size={16}
-                                    color={!buttonState ? '#d4d4d4d3' : '#01192E'}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                        <ButtonIcon
+                            disabled={!buttonState}
+                            icon={faFlag}
+                            onPress={handleCreateReportIdea}
+                        />
                     </View>
                 </View>
             </KeyboardAvoidingView>

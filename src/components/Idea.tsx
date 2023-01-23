@@ -20,6 +20,7 @@ import UniversityTag from './common/UniversityTag';
 import ReactionsContainer from './common/ReactionsContainer';
 import { IdeaReaction } from './IdeaReaction';
 import { PreModalIdeaOptions } from './PreModalIdeaOptions';
+import { Poll } from './Poll';
 
 interface Props {
     idea: Message;
@@ -44,28 +45,32 @@ export const Idea = ({ idea, filter }: Props) => {
         reactions,
         sequence,
         draft,
+        answers,
+        myAnswers,
+        totalAnswers,
     } = idea;
     const isOwner = user.id === uid;
     const isDraft = draft === 1;
+    const isPoll = answers && answers.length > 0;
     const fecha = getTime(date.toString());
 
-    const handleDelete = async () => {
+    async function handleDelete() {
         const wasDeleted = await deleteIdea(id);
         if (wasDeleted) {
             const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
             dispatch(setMessages(messagesUpdated));
             dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
         }
-    };
+    }
 
-    const handleOpenIdea = () => {
+    function handleOpenIdea() {
         navigation.navigate('OpenedIdeaScreen', {
             messageId: id,
             filter: filter,
         });
-    };
+    }
 
-    const changeScreen = (screen: string, params?: MessageRequestData) => {
+    function changeScreen(screen: string, params?: MessageRequestData) {
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);
@@ -83,9 +88,9 @@ export const Idea = ({ idea, filter }: Props) => {
                 ],
             })
         );
-    };
+    }
 
-    const handleClickUser = (goToUser: User) => {
+    function handleClickUser(goToUser: User) {
         if (goToUser.nickname === nickname) {
             changeScreen('MyIdeasScreen');
         } else {
@@ -93,13 +98,13 @@ export const Idea = ({ idea, filter }: Props) => {
                 alias: goToUser.nickname,
             });
         }
-    };
+    }
 
-    const handleClickHashtag = (hashtag_text: string) => {
+    function handleClickHashtag(hashtag_text: string) {
         changeScreen('HashTagScreen', {
             hashtag: hashtag_text,
         });
-    };
+    }
 
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
@@ -145,7 +150,7 @@ export const Idea = ({ idea, filter }: Props) => {
 
                     <View style={{ marginTop: 6 }}>
                         <MsgTransform
-                            textStyle={{ ...styles.text, ...stylescom.msg }}
+                            textStyle={stylescom.msg}
                             text={message}
                             handleClickUser={handleClickUser}
                             handleClickHashtag={handleClickHashtag}
@@ -160,105 +165,102 @@ export const Idea = ({ idea, filter }: Props) => {
                             position: 'relative',
                         }}
                     >
-                        {!myReaction && !isOwner ? (
+                        {isPoll && (
+                            <Poll
+                                answers={answers}
+                                totalAnswers={totalAnswers}
+                                myAnswers={myAnswers}
+                                messageId={id}
+                                userIdMessageOwner={user.id ? user.id : 0}
+                                handleClickUser={handleClickUser}
+                            />
+                        )}
+                        {!myReaction && !isOwner && !isPoll && (
                             <>
                                 <View style={{ flex: 1, height: 15 }} />
                                 <IdeaReaction messageId={id} bottom={-15} right={-24} />
                             </>
-                        ) : (
-                            <>
-                                {isDraft ? (
-                                    <Pressable style={stylescom.eraseDraft} onPress={handleDelete}>
-                                        <FontAwesomeIcon
-                                            icon={faTrash}
-                                            color="#bebebe"
-                                            size={16}
-                                            style={{
-                                                ...styles.shadow_button,
-                                                shadowOffset: {
-                                                    width: 1.5,
-                                                    height: 2,
-                                                },
-                                            }}
-                                        />
-                                    </Pressable>
-                                ) : (
-                                    <View style={stylescom.container}>
-                                        {reactions.length > 0 && (
-                                            <ReactionsContainer
-                                                reactionCount={reactions}
-                                                myReaction={myReaction}
-                                                id={id}
-                                                handleClickUser={handleClickUser}
-                                                isIdeaReactions
-                                            />
-                                        )}
-
-                                        <Pressable
-                                            style={stylescom.reaction}
-                                            onPress={handleOpenIdea}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faMessage}
-                                                color={'#D4D4D4'}
-                                                size={16}
-                                                style={{
-                                                    ...styles.shadow_button,
-                                                    shadowOffset: {
-                                                        width: 1.5,
-                                                        height: 2,
-                                                    },
-                                                }}
-                                            />
-                                            <Text style={{ ...styles.text, ...stylescom.number }}>
-                                                {answersNumber === 0 ? '' : answersNumber}
-                                            </Text>
-                                        </Pressable>
-                                    </View>
+                        )}
+                        {isDraft && (
+                            <Pressable style={stylescom.eraseDraft} onPress={handleDelete}>
+                                <FontAwesomeIcon
+                                    icon={faTrash}
+                                    color="#bebebe"
+                                    size={16}
+                                    style={{
+                                        ...styles.shadow_button,
+                                        shadowOffset: {
+                                            width: 1.5,
+                                            height: 2,
+                                        },
+                                    }}
+                                />
+                            </Pressable>
+                        )}
+                        {(myReaction || isOwner) && !isPoll && (
+                            <View style={stylescom.container}>
+                                {reactions.length > 0 && (
+                                    <ReactionsContainer
+                                        reactionCount={reactions}
+                                        myReaction={myReaction}
+                                        id={id}
+                                        handleClickUser={handleClickUser}
+                                        isIdeaReactions
+                                    />
                                 )}
 
-                                <View style={stylescom.container}>
-                                    {isDraft ? (
-                                        <>
-                                            <Pressable
-                                                style={stylescom.publishDraft}
-                                                onPress={() =>
-                                                    navigation.navigate('CreateIdeaScreen', {
-                                                        draftedIdea: message,
-                                                        draftID: id,
-                                                    })
-                                                }
-                                            >
-                                                <View style={stylescom.publishContainer}>
-                                                    <Text style={stylescom.publish}>
-                                                        {'editar / publicar'}
-                                                    </Text>
-                                                </View>
-                                            </Pressable>
-                                            <Text style={{ ...styles.text, ...stylescom.number }}>
-                                                {fecha}
-                                            </Text>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Text style={{ ...styles.text, ...stylescom.number }}>
-                                                {fecha}
-                                            </Text>
-                                            <PreModalIdeaOptions
-                                                myIdea={isOwner}
-                                                message={{
-                                                    messageId: id,
-                                                    message,
-                                                    user,
-                                                    messageTrackingId,
-                                                    date,
-                                                }}
-                                                filter={filter}
-                                            />
-                                        </>
-                                    )}
-                                </View>
-                            </>
+                                <Pressable style={stylescom.reaction} onPress={handleOpenIdea}>
+                                    <FontAwesomeIcon
+                                        icon={faMessage}
+                                        color={'#D4D4D4'}
+                                        size={16}
+                                        style={{
+                                            ...styles.shadow_button,
+                                            shadowOffset: {
+                                                width: 1.5,
+                                                height: 2,
+                                            },
+                                        }}
+                                    />
+                                    <Text style={{ ...styles.text, ...stylescom.number }}>
+                                        {answersNumber === 0 ? '' : answersNumber}
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        )}
+                        {isDraft && (
+                            <View style={stylescom.container}>
+                                <Pressable
+                                    style={stylescom.publishDraft}
+                                    onPress={() =>
+                                        navigation.navigate('CreateIdeaScreen', {
+                                            draftedIdea: message,
+                                            draftID: id,
+                                        })
+                                    }
+                                >
+                                    <View style={stylescom.publishContainer}>
+                                        <Text style={stylescom.publish}>{'editar / publicar'}</Text>
+                                    </View>
+                                </Pressable>
+                                <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
+                            </View>
+                        )}
+                        {(myReaction || isOwner || myAnswers) && !isDraft && (
+                            <View style={[isPoll && stylescom.container_abs, stylescom.container]}>
+                                <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
+                                <PreModalIdeaOptions
+                                    myIdea={isOwner}
+                                    message={{
+                                        messageId: id,
+                                        message,
+                                        user,
+                                        messageTrackingId,
+                                        date,
+                                    }}
+                                    filter={filter}
+                                />
+                            </View>
                         )}
                     </View>
                 </View>
@@ -364,5 +366,10 @@ const stylescom = StyleSheet.create({
         left: 0,
         right: 0,
         overflow: 'hidden',
+    },
+    container_abs: {
+        position: 'absolute',
+        bottom: -2,
+        right: 0,
     },
 });

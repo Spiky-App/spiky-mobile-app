@@ -43,7 +43,11 @@ const Container = () => {
                     n_chatmensajes,
                 } = data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token_return);
-                dispatch(updateServiceConfig({ headers: { 'x-token': token_return } }));
+                dispatch(
+                    updateServiceConfig({
+                        headers: { 'x-token': token_return, 'Content-Type': 'application/json' },
+                    })
+                );
                 dispatch(signIn(token_return));
                 dispatch(
                     setUser({

@@ -61,6 +61,9 @@ export interface Message {
     trackings?: [{ id_tracking: number }];
     usuario: UserI;
     respuestas?: Comment[];
+    encuesta_opciones?: AnswerCount[];
+    mi_encuesta_respuesta?: number;
+    total_encuesta_respuestas: number;
 }
 
 export interface UserI {
@@ -73,6 +76,12 @@ export interface UserI {
 interface ReactionCount {
     reaccion: string;
     count: number;
+}
+
+interface AnswerCount {
+    id_encuesta_opcion: number;
+    encuesta_opcion: string;
+    encuesta_respuestas_count: number;
 }
 
 export interface CreateMessageResponse {
@@ -338,4 +347,28 @@ export interface DeleteDeviceToken {
 
 export interface GetNetworkConnectionStatus {
     ok: boolean;
+}
+
+export interface CreatePollResponse {
+    ok: boolean;
+    mensaje: Message;
+}
+
+export interface CreateAnswerPoll {
+    ok: boolean;
+}
+
+export interface GetPollAnswers {
+    ok: boolean;
+    encuesta_opciones: PollAnswer[];
+}
+
+export interface PollAnswer {
+    id_encuesta_opcion: number;
+    encuesta_opcion: string;
+    count: number;
+    encuesta_respuestas: {
+        id_usuario: number;
+        usuario: UserI;
+    }[];
 }
