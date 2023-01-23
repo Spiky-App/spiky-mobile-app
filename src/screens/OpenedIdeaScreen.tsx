@@ -84,6 +84,8 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
             setAnswersNumber(messageRetrived.comments?.length || 0);
+        } else {
+            navigation.goBack();
         }
         setLoading(false);
     };

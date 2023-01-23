@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef } from 'react';
-import { Animated, PanResponder, StyleSheet, Text, View, Keyboard } from 'react-native';
+import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { useAnimation } from '../hooks/useAnimation';
@@ -10,6 +10,8 @@ import UniversityTag from './common/UniversityTag';
 import { faReply } from '../constants/icons/FontAwesome';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../navigator/Navigator';
 
 interface MessageProp {
     msg: ChatMessageProp;
@@ -19,6 +21,7 @@ interface MessageProp {
 
 export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { opacity, fadeIn } = useAnimation({ init_opacity: 0 });
     const owner = msg.userId === uid;
     const time = getTime(msg.date.toString());
@@ -57,6 +60,12 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
         })
     ).current;
 
+    function handleGoToReplyMessage(replyMessageId: number) {
+        navigation.navigate('OpenedIdeaScreen', {
+            messageId: replyMessageId,
+        });
+    }
+
     useEffect(() => {
         fadeIn(300);
     }, []);
@@ -81,7 +90,14 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                 </Animated.View>
                 <View>
                     {msg.replyMessage && (
-                        <View style={stylescomp.containerReplyMsg}>
+                        <Pressable
+                            style={stylescomp.containerReplyMsg}
+                            onPress={
+                                msg.replyMessage
+                                    ? () => handleGoToReplyMessage(msg.replyMessage?.id || 0)
+                                    : undefined
+                            }
+                        >
                             <View style={{ flexDirection: 'row', marginBottom: 3 }}>
                                 <Text style={{ ...styles.textbold, fontSize: 12 }}>
                                     @{msg.replyMessage.user.nickname}
@@ -96,7 +112,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                                     ? replyMessage.substring(0, 73) + '...'
                                     : replyMessage}
                             </Text>
-                        </View>
+                        </Pressable>
                     )}
                     {msg.reply && (
                         <View style={stylescomp.containerReplyMsg}>
