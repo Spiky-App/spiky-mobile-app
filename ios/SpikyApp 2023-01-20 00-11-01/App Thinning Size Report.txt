@@ -1,0 +1,36 @@
+
+App Thinning Size Report for All Variants of SpikyApp
+
+Variant: SpikyApp-1783685A-7A9F-490A-9E3D-BF98BEE8964B.ipa
+Supported variant descriptors: [device: iPhone12,1, os-version: 15.0] and [device: iPhone11,8, os-version: 15.0]
+App + On Demand Resources size: 4.4 MB compressed, 12.8 MB uncompressed
+App size: 4.4 MB compressed, 12.8 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: SpikyApp-22D91D6E-096F-4303-B5A7-37D9AE274D90.ipa
+Supported variant descriptors: [device: iPhone10,1, os-version: 15.0], [device: iPod9,1, os-version: 15.0], [device: iPhone9,3, os-version: 15.0], [device: iPhone8,1, os-version: 15.0], [device: iPhone9,1, os-version: 15.0], [device: iPhone8,4, os-version: 15.0], [device: iPhone10,4, os-version: 15.0], and [device: iPhone12,8, os-version: 15.0]
+App + On Demand Resources size: 4.3 MB compressed, 12.8 MB uncompressed
+App size: 4.3 MB compressed, 12.8 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: SpikyApp-F4B3521F-FA93-44AF-90D2-0347242DB89B.ipa
+Supported variant descriptors: [device: iPhone13,4, os-version: 15.0], [device: iPhone10,3, os-version: 15.0], [device: iPhone11,4, os-version: 15.0], [device: iPhone11,6, os-version: 15.0], [device: iPhone10,2, os-version: 15.0], [device: iPhone13,3, os-version: 15.0], [device: iPhone13,2, os-version: 15.0], [device: iPhone10,5, os-version: 15.0], [device: iPhone9,2, os-version: 15.0], [device: iPhone8,2, os-version: 15.0], [device: iPhone11,2, os-version: 15.0], [device: iPhone13,1, os-version: 15.0], [device: iPhone10,6, os-version: 15.0], [device: iPhone14,3, os-version: 15.0], [device: iPhone14,2, os-version: 15.0], [device: iPhone9,4, os-version: 15.0], [device: iPhone12,3, os-version: 15.0], [device: iPhone14,5, os-version: 15.0], [device: iPhone12,5, os-version: 15.0], and [device: iPhone14,4, os-version: 15.0]
+App + On Demand Resources size: 4.4 MB compressed, 12.8 MB uncompressed
+App size: 4.4 MB compressed, 12.8 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: SpikyApp-FD71E34A-15EF-4697-A370-3E5E7CA6AA6F.ipa
+Supported variant descriptors: [device: iPad8,2, os-version: 15.0], [device: iPad7,2, os-version: 15.0], [device: iPad6,3, os-version: 15.0], [device: iPad5,4, os-version: 15.0], [device: iPad7,5, os-version: 15.0], [device: MacFamily20,1, os-version: 15.0], [device: iPad7,11, os-version: 15.0], [device: iPad11,3, os-version: 15.0], [device: iPad13,8, os-version: 15.0], [device: iPad7,1, os-version: 15.0], [device: iPad11,1, os-version: 15.0], [device: iPad7,4, os-version: 15.0], [device: iPad8,5, os-version: 15.0], [device: iPad8,8, os-version: 15.0], [device: iPad13,5, os-version: 15.0], [device: iPad8,9, os-version: 15.0], [device: iPad13,1, os-version: 15.0], [device: iPad11,7, os-version: 15.0], [device: iPad11,6, os-version: 15.0], [device: iPad13,11, os-version: 15.0], [device: iPad7,6, os-version: 15.0], [device: iPad14,2, os-version: 15.0], [device: iPad12,2, os-version: 15.0], [device: iPad13,10, os-version: 15.0], [device: iPad8,11, os-version: 15.0], [device: iPad13,2, os-version: 15.0], [device: iPad8,3, os-version: 15.0], [device: iPad12,1, os-version: 15.0], [device: iPad8,6, os-version: 15.0], [device: iPad7,3, os-version: 15.0], [device: iPad11,2, os-version: 15.0], [device: iPad7,12, os-version: 15.0], [device: iPad5,2, os-version: 15.0], [device: iPad11,4, os-version: 15.0], [device: iPad13,7, os-version: 15.0], [device: iPad8,7, os-version: 15.0], [device: iPad8,10, os-version: 15.0], [device: iPad13,6, os-version: 15.0], [device: iPad6,11, os-version: 15.0], [device: iPad13,4, os-version: 15.0], [device: iPad6,12, os-version: 15.0], [device: iPad6,8, os-version: 15.0], [device: iPad13,9, os-version: 15.0], [device: iPad5,3, os-version: 15.0], [device: iPad8,1, os-version: 15.0], [device: iPad6,4, os-version: 15.0], [device: iPad5,1, os-version: 15.0], [device: iPad14,1, os-version: 15.0], [device: iPad6,7, os-version: 15.0], [device: iPad8,12, os-version: 15.0], and [device: iPad8,4, os-version: 15.0]
+App + On Demand Resources size: 4.3 MB compressed, 12.8 MB uncompressed
+App size: 4.3 MB compressed, 12.8 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
+
+
+Variant: SpikyApp.ipa
+Supported variant descriptors: Universal
+App + On Demand Resources size: 5.3 MB compressed, 13.8 MB uncompressed
+App size: 5.3 MB compressed, 13.8 MB uncompressed
+On Demand Resources size: Zero KB compressed, Zero KB uncompressed
