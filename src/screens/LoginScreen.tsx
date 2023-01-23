@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+    Alert,
     Keyboard,
     Text,
     TouchableHighlight,
@@ -41,18 +42,23 @@ export const LoginScreen = () => {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
-            let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-            if (!deviceTokenStorage) {
-                await getTokenDevice();
-                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-            }
-            if (deviceTokenStorage) {
-                const status = await logInUser(email, password, deviceTokenStorage);
-                if (status) {
-                    setFormValid(true);
-                } else {
-                    setFormValid(false);
+            try {
+                let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                if (!deviceTokenStorage) {
+                    await getTokenDevice();
+                    deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
                 }
+                if (deviceTokenStorage) {
+                    const status = await logInUser(email, password, deviceTokenStorage);
+                    if (status) {
+                        setFormValid(true);
+                    } else {
+                        setFormValid(false);
+                    }
+                }
+            } catch (error) {
+                let err = `Error: ${error}`;
+                Alert.alert(err);
             }
         } else {
             setFormValid(false);
