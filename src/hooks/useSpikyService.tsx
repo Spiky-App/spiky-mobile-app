@@ -510,19 +510,25 @@ function useSpikyService() {
     const logInUser = async (
         correoValid: string,
         password: string,
-        deviceTokenStorage: string
+        deviceTokenStorage: string,
+        setBarStatus: (status: string) => void
     ): Promise<boolean | undefined> => {
         try {
+            setBarStatus('calling login endpoint.');
             const response = await service.login(correoValid, password, deviceTokenStorage);
             const { data } = response;
             const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
+            setBarStatus('saving token devive in storage (3).');
             await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
+            setBarStatus('set service configurations.');
             dispatch(
                 updateServiceConfig({
                     headers: { 'x-token': data.token, 'Content-Type': 'application/json' },
                 })
             );
+            setBarStatus('dispatch sign in.');
             dispatch(signIn(data.token));
+            setBarStatus('set user information.');
             dispatch(
                 setUser({
                     nickname: alias,

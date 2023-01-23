@@ -34,22 +34,35 @@ export const LoginScreen = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [isFormValid, setFormValid] = useState(true);
     const [isLoading, setLoading] = useState(false);
+    const [barStatus, setBarStatus] = useState<string>('');
     const [passVisible, setPassVisible] = useState(true);
     const { logInUser } = useSpikyService();
-    const { getTokenDevice } = useFirebaseMessaging();
+    const { getTokenDevice } = useFirebaseMessaging(setBarStatus);
 
     async function login() {
         setLoading(true);
+        setBarStatus('set loading state.');
         if (validateForm(form)) {
+            setBarStatus('form validated.');
             const { email, password } = form;
             try {
+                setBarStatus('getting device token from storage (1).');
                 let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
                 if (!deviceTokenStorage) {
+                    setBarStatus('device token not found');
                     await getTokenDevice();
+                    setBarStatus('getting device token from storage (2).');
                     deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
                 }
                 if (deviceTokenStorage) {
-                    const status = await logInUser(email, password, deviceTokenStorage);
+                    setBarStatus('starting login process.');
+                    const status = await logInUser(
+                        email,
+                        password,
+                        deviceTokenStorage,
+                        setBarStatus
+                    );
+                    setBarStatus('finish login process.');
                     if (status) {
                         setFormValid(true);
                     } else {
@@ -147,6 +160,22 @@ export const LoginScreen = () => {
                     )}
                 </View>
             </TouchableWithoutFeedback>
+            {isLoading && (
+                <View
+                    style={{
+                        backgroundColor: '#c6c5c5',
+                        width: '90%',
+                        position: 'absolute',
+                        bottom: 30,
+                        borderRadius: 10,
+                        paddingVertical: 2,
+                    }}
+                >
+                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'white' }}>
+                        {`Status: ${barStatus}`}
+                    </Text>
+                </View>
+            )}
         </BackgroundPaper>
     );
 };

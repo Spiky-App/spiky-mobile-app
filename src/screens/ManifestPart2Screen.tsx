@@ -32,11 +32,14 @@ export const ManifestPart2Screen = ({ route }: Props) => {
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
     const { logInUser } = useSpikyService();
-    const { getTokenDevice } = useFirebaseMessaging();
+    const [isLoading, setLoading] = useState(false);
+    const [barStatus, setBarStatus] = useState<string>('');
+    const { getTokenDevice } = useFirebaseMessaging(setBarStatus);
     const { correoValid, password } = route.params;
 
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
     const logUser = async () => {
+        setLoading(true);
         let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
         if (!deviceTokenStorage) {
             if (!deviceTokenStorage) {
@@ -45,10 +48,11 @@ export const ManifestPart2Screen = ({ route }: Props) => {
             }
         }
         if (deviceTokenStorage) {
-            await logInUser(correoValid, password, deviceTokenStorage);
+            await logInUser(correoValid, password, deviceTokenStorage, setBarStatus);
         } else {
             navigation.navigate('LoginScreen');
         }
+        setLoading(false);
     };
 
     const handleForceNextManifiesto = () => {
@@ -145,6 +149,22 @@ export const ManifestPart2Screen = ({ route }: Props) => {
                     </Animated.View>
                 </View>
             </TouchableWithoutFeedback>
+            {isLoading && (
+                <View
+                    style={{
+                        backgroundColor: '#c6c5c5',
+                        width: '90%',
+                        position: 'absolute',
+                        bottom: 30,
+                        borderRadius: 10,
+                        paddingVertical: 2,
+                    }}
+                >
+                    <Text style={{ textAlign: 'center', fontSize: 11, color: 'white' }}>
+                        {`Status: ${barStatus}`}
+                    </Text>
+                </View>
+            )}
         </BackgroundPaper>
     );
 };
