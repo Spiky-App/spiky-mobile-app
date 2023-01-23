@@ -131,6 +131,7 @@ export interface ChatMessage {
     reply?: Reply;
     seens?: Seen[];
     newMsg: boolean;
+    isLoading?: boolean;
 }
 
 export interface Seen {

@@ -11,8 +11,6 @@ import {
 } from 'react-native';
 import { faLocationArrow, faXmark } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
-import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
-import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
@@ -60,7 +58,6 @@ export const InputChat = ({
     const user = useAppSelector((state: RootState) => state.user);
     const [isDisabled, setDisabled] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
-    const { createChatMessage } = useSpikyService();
     const { socket } = useContext(SocketContext);
     const { message } = form;
     const [counter, setCounter] = useState(0);
@@ -73,27 +70,37 @@ export const InputChat = ({
     const userObj = useAppSelector(selectUserAsObject);
 
     async function handleCreateChatMessage() {
-        const chatmensaje = await createChatMessage(
-            conversationId,
-            message,
-            messageToReply?.messageId
-        );
-        if (chatmensaje) {
-            const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                setIsTyping(false);
-            }
-            updateChatMessages(newChatMessages);
-            if (userObj) {
-                socket?.emit('newChatMsg', {
-                    chatmsg: newChatMessages,
-                    userto: toUser.id,
-                    isOnline: toUser.online,
-                    sender: userObj,
-                });
-            }
+        const newChatMessages: ChatMessage = {
+            id: -Date.now(),
+            conversationId: conversationId,
+            userId: user.id,
+            message: message,
+            date: Date.now(),
+            seens: [],
+            newMsg: false,
+            reply: messageToReply
+                ? {
+                      id: messageToReply.messageId,
+                      message: messageToReply.message,
+                      user: messageToReply.user,
+                  }
+                : undefined,
+            isLoading: true,
+        };
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            setIsTyping(false);
         }
+        updateChatMessages(newChatMessages);
+        if (userObj) {
+            socket?.emit('newChatMsg', {
+                chatmsg: newChatMessages,
+                userto: toUser.id,
+                isOnline: toUser.online,
+                sender: userObj,
+            });
+        }
+        // }
     }
 
     function onPress() {

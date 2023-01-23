@@ -39,6 +39,7 @@ import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePollHorizontal } from '@fortawesome/free-solid-svg-icons/faSquarePollHorizontal';
 import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons/faFlagCheckered';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons/faTrophy';
+import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 
 export {
     faUsers,
@@ -82,4 +83,5 @@ export {
     faSquarePollHorizontal,
     faFlagCheckered,
     faTrophy,
+    faClock,
 };

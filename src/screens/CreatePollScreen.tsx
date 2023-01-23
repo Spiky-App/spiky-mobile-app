@@ -240,7 +240,7 @@ const AnswerOption = ({
 }: AnswerOptionProp) => {
     const { opacity, fadeIn, fadeOut } = useAnimation({ init_opacity: 0 });
     function handleSubmit(a: Answer) {
-        if (a.id === answers[answers.length - 1].id && a.answer.length === 0) {
+        if (a.id === answers[answers.length - 1].id || a.answer.length === 0) {
             Keyboard.dismiss();
         } else {
             answers[a.id].ref.current?.focus();
