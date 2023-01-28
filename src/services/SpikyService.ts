@@ -38,6 +38,7 @@ import {
     CreatePollResponse,
     CreateAnswerPoll,
     GetPollAnswers,
+    UpdateUserNickname,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -302,6 +303,12 @@ class SpikyService {
 
     getPollAnswers(messageId: number) {
         return this.instance.get<GetPollAnswers>(`poll/answers/${messageId}`);
+    }
+
+    updateUserNickname(nickname: string) {
+        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
+            alias: nickname,
+        });
     }
 }
 

@@ -177,6 +177,7 @@ export interface UpdateNotifications {
 export interface GetUserInfo {
     ok: boolean;
     usuario: UserInfo;
+    change_alias?: boolean;
 }
 
 export interface UserInfo {
@@ -371,4 +372,8 @@ export interface PollAnswer {
         id_usuario: number;
         usuario: UserI;
     }[];
+}
+
+export interface UpdateUserNickname {
+    ok: boolean;
 }
