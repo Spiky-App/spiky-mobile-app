@@ -30,6 +30,7 @@ interface Props {
 export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const { deleteIdea } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
@@ -114,7 +115,7 @@ export const Idea = ({ idea, filter }: Props) => {
         <View style={styles.center}>
             <Animated.View style={{ ...stylescom.wrap, opacity }}>
                 <View style={stylescom.subwrap}>
-                    {isOwner && (
+                    {isOwner && !spectatorMode && (
                         <View style={stylescom.corner_container}>
                             <View style={stylescom.corner}>
                                 <View style={{ transform: [{ rotate: '-45deg' }] }}>

@@ -40,6 +40,7 @@ import { faSquarePollHorizontal } from '@fortawesome/free-solid-svg-icons/faSqua
 import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons/faFlagCheckered';
 import { faTrophy } from '@fortawesome/free-solid-svg-icons/faTrophy';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
+import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons/faUserAstronaut';
 
 export {
     faUsers,
@@ -84,4 +85,5 @@ export {
     faFlagCheckered,
     faTrophy,
     faClock,
+    faUserAstronaut,
 };

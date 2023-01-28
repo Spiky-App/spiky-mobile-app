@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
-import { faBars, faUser } from '../constants/icons/FontAwesome';
+import { faBars, faUser, faUserAstronaut } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
@@ -12,6 +12,7 @@ import { styles } from '../themes/appTheme';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
+    const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
@@ -85,8 +86,14 @@ export const Header = () => {
                         style={{ ...stylescom.flexConte, marginRight: 20 }}
                         onPress={() => setProfileOption(true)}
                     >
-                        <FontAwesomeIcon icon={faUser} size={18} color="#ffff" />
-                        <Text style={stylescom.text}>{`@${nickname}`}</Text>
+                        <FontAwesomeIcon
+                            icon={spectatorMode ? faUserAstronaut : faUser}
+                            size={18}
+                            color="#ffff"
+                        />
+                        <Text style={stylescom.text}>
+                            {spectatorMode ? '@spiker' : `@${nickname}`}
+                        </Text>
                     </TouchableOpacity>
 
                     <ModalProfile

@@ -28,6 +28,7 @@ export const Poll = ({
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const { socket } = useContext(SocketContext);
     const { createPollAnswer } = useSpikyService();
     const dispatch = useAppDispatch();
@@ -99,6 +100,7 @@ export const Poll = ({
                         totalAnswers={totalAnswers}
                         isLoading={isLoading}
                         handleAnswerPoll={handleAnswerPoll}
+                        spectatorMode={spectatorMode}
                     />
                 )}
                 keyExtractor={item => item.answer}
@@ -135,6 +137,7 @@ interface PollBarProps {
     totalAnswers: number;
     isLoading: boolean;
     handleAnswerPoll: (answerId: number) => void;
+    spectatorMode: boolean;
 }
 
 const PollBar = ({
@@ -144,6 +147,7 @@ const PollBar = ({
     totalAnswers,
     isLoading,
     handleAnswerPoll,
+    spectatorMode,
 }: PollBarProps) => {
     const width = useRef(new Animated.Value(0)).current;
     const opacity = useRef(new Animated.Value(0)).current;
@@ -208,7 +212,10 @@ const PollBar = ({
                                 borderRadius: 6,
                                 flex: 1,
                                 width: animatedWidth,
-                                backgroundColor: myAnswers === answer.id ? '#FC702A' : '#01192E',
+                                backgroundColor:
+                                    myAnswers === answer.id && !spectatorMode
+                                        ? '#FC702A'
+                                        : '#01192E',
                             }}
                         />
                     )}
