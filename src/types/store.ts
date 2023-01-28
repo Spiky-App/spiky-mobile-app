@@ -55,10 +55,19 @@ export interface Message {
     draft: number;
     sequence: number;
     comments?: Comment[];
+    answers?: AnswerCount[];
+    myAnswers?: number;
+    totalAnswers: number;
 }
 
 export interface ReactionCount {
     reaction: string;
+    count: number;
+}
+
+export interface AnswerCount {
+    id: number;
+    answer: string;
     count: number;
 }
 
@@ -122,6 +131,7 @@ export interface ChatMessage {
     reply?: Reply;
     seens?: Seen[];
     newMsg: boolean;
+    isLoading?: boolean;
 }
 
 export interface Seen {
@@ -145,6 +155,13 @@ export interface Reaction {
     id: number;
     reaction: string;
     user: User;
+}
+
+export interface Answer {
+    id: number;
+    answer: string;
+    count: number;
+    votes: User[];
 }
 
 export interface ChatMessageToReply {

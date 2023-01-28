@@ -3,7 +3,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import Container from './navigator/Container';
 import { store } from './store';
-import '@react-native-firebase/messaging';
 
 const App = () => {
     return (

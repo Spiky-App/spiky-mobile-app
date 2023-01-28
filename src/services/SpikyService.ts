@@ -36,6 +36,9 @@ import {
     GetNetworkConnectionStatus,
     GetCommentReactions,
     UpdateUserNickname,
+    CreatePollResponse,
+    CreateAnswerPoll,
+    GetPollAnswers,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -289,6 +292,23 @@ class SpikyService {
         return this.instance.put<UpdateUserNickname>(`auth/alias`, {
             alias: nickname,
         });
+    }
+
+    createPoll(message: string, answers: string[]) {
+        return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
+            mensaje: message,
+            opciones: answers,
+        });
+    }
+
+    createPollAnswer(answerId: number) {
+        return this.instance.post<CreateAnswerPoll>('poll/answer', {
+            id_encuesta_opcion: answerId,
+        });
+    }
+
+    getPollAnswers(messageId: number) {
+        return this.instance.get<GetPollAnswers>(`poll/answers/${messageId}`);
     }
 }
 

@@ -27,6 +27,7 @@ import {
     MessageWithReplyContent,
     Notification,
     PendingNotificationsI,
+    PollAnswer,
     Reaction,
     TermsAndConditions,
     UserI,
@@ -520,7 +521,11 @@ function useSpikyService() {
             const { data } = response;
             const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
             await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
-            dispatch(updateServiceConfig({ headers: { 'x-token': data.token } }));
+            dispatch(
+                updateServiceConfig({
+                    headers: { 'x-token': data.token, 'Content-Type': 'application/json' },
+                })
+            );
             dispatch(signIn(data.token));
             dispatch(
                 setUser({
@@ -620,6 +625,57 @@ function useSpikyService() {
         }
         return [];
     };
+
+    const createPoll = async (
+        question: string,
+        answers: string[]
+    ): Promise<Message | undefined> => {
+        try {
+            const response = await service.createPoll(question, answers);
+            return response.data.mensaje;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando encuesta.')));
+        }
+        return undefined;
+    };
+
+    const createPollAnswer = async (answerId: number): Promise<boolean> => {
+        try {
+            const response = await service.createPollAnswer(answerId);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando respuesta.')));
+        }
+        return false;
+    };
+
+    const getPollAnswers = async (
+        messageId: number
+    ): Promise<{
+        data: PollAnswer[];
+        networkError?: boolean;
+    }> => {
+        try {
+            const response = await service.getPollAnswers(messageId);
+            return { data: response.data.encuesta_opciones };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { data: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
+            return { data: [] };
+        }
+    };
     const updateUserNickname = async (nickname: string): Promise<boolean> => {
         try {
             const response = await service.updateUserNickname(nickname);
@@ -668,6 +724,9 @@ function useSpikyService() {
         getNetworkConnectionStatus,
         getCommentReactions,
         updateUserNickname,
+        createPoll,
+        createPollAnswer,
+        getPollAnswers,
     };
 }
 
