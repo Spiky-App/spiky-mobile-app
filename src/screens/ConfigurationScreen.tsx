@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -44,7 +44,9 @@ export const ConfigurationScreen = () => {
     };
 
     useFocusEffect(() => {
-        loadData();
+        useCallback(() => {
+            loadData();
+        }, []);
     });
 
     return (
