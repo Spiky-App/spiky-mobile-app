@@ -35,6 +35,7 @@ import {
     RegisterUser,
     GetNetworkConnectionStatus,
     GetCommentReactions,
+    UpdateUserNickname,
     CreatePollResponse,
     CreateAnswerPoll,
     GetPollAnswers,
@@ -285,6 +286,12 @@ class SpikyService {
 
     getCommentReactions(commentId: number) {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
+    }
+
+    updateUserNickname(nickname: string) {
+        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
+            alias: nickname,
+        });
     }
 
     createPoll(message: string, answers: string[]) {

@@ -177,6 +177,7 @@ export interface UpdateNotifications {
 export interface GetUserInfo {
     ok: boolean;
     usuario: UserInfo;
+    change_alias?: boolean;
 }
 
 export interface UserInfo {
@@ -346,6 +347,10 @@ export interface DeleteDeviceToken {
 }
 
 export interface GetNetworkConnectionStatus {
+    ok: boolean;
+}
+
+export interface UpdateUserNickname {
     ok: boolean;
 }
 

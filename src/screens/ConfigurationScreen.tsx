@@ -9,6 +9,10 @@ import { RootState } from '../store';
 import { UserInfo } from '../types/services/spiky';
 import useSpikyService from '../hooks/useSpikyService';
 import NetworkErrorFeed from '../components/NetworkErrorFeed';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { DrawerParamList } from '../navigator/MenuMain';
+
+type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 
 interface UserData {
     email: string;
@@ -25,9 +29,10 @@ function generateDataFromData(data: UserInfo): UserData {
 export const ConfigurationScreen = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
     const { getUserInfo } = useSpikyService();
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NavigationProp>();
     const [loading, setLoading] = useState(true);
     const [networkError, setNetworkError] = useState(false);
+    const [allowChangeAlias, setAllowChangeAlias] = useState(false);
     const [data, setData] = useState<UserData>({
         email: '',
         university: '',
@@ -35,7 +40,12 @@ export const ConfigurationScreen = () => {
 
     const loadData = async () => {
         if (networkError) setNetworkError(false);
-        const { userInfo, networkError: networkErrorReturn } = await getUserInfo();
+        const {
+            userInfo,
+            networkError: networkErrorReturn,
+            change_alias: changeAliasReturn,
+        } = await getUserInfo();
+        if (changeAliasReturn) setAllowChangeAlias(true);
         if (networkErrorReturn) setNetworkError(true);
         if (userInfo) {
             setData(generateDataFromData(userInfo));
@@ -80,7 +90,7 @@ export const ConfigurationScreen = () => {
                             </View>
                         </View>
 
-                        <View style={{ marginVertical: 50 }}>
+                        <View style={{ marginTop: 50 }}>
                             <TouchableOpacity
                                 style={styles.button}
                                 onPress={() => navigation.navigate('ChangePasswordScreen')}
@@ -89,6 +99,21 @@ export const ConfigurationScreen = () => {
                                     Cambiar contraseña
                                 </Text>
                             </TouchableOpacity>
+                            {allowChangeAlias && (
+                                <>
+                                    <TouchableOpacity
+                                        style={{ ...styles.button, marginTop: 30 }}
+                                        onPress={() => navigation.navigate('ChangeAliasScreen')}
+                                    >
+                                        <Text style={{ ...styles.text, fontSize: 13 }}>
+                                            Cambiar seudónimo
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <View style={{ alignItems: 'center', marginTop: 10 }}>
+                                        <Text style={stylescom.textGray}>Opción temporal.</Text>
+                                    </View>
+                                </>
+                            )}
                         </View>
                     </>
                 ) : (
@@ -116,5 +141,10 @@ const stylescom = StyleSheet.create({
         ...styles.center,
         marginBottom: 20,
         justifyContent: 'flex-end',
+    },
+    textGray: {
+        ...styles.textGray,
+        fontSize: 12,
+        textAlign: 'center',
     },
 });
