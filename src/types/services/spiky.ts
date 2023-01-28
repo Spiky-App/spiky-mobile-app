@@ -71,6 +71,7 @@ export interface UserI {
     id_universidad: number;
     id_usuario?: number;
     online?: boolean;
+    disable?: boolean;
 }
 
 interface ReactionCount {
@@ -375,5 +376,9 @@ export interface PollAnswer {
 }
 
 export interface UpdateUserNickname {
+    ok: boolean;
+}
+
+export interface DeleteAccount {
     ok: boolean;
 }

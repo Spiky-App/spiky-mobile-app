@@ -206,7 +206,7 @@ export const InputChat = ({
                         icon={faLocationArrow}
                         style={stylesInputChat.buttonIcon}
                         iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        disabled={isDisabled || networkError}
+                        disabled={isDisabled || networkError || toUser.disable}
                         onPress={onPress}
                     />
                     {counter <= 40 && (

@@ -39,6 +39,7 @@ import {
     CreateAnswerPoll,
     GetPollAnswers,
     UpdateUserNickname,
+    DeleteAccount,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -309,6 +310,10 @@ class SpikyService {
         return this.instance.put<UpdateUserNickname>(`auth/alias`, {
             alias: nickname,
         });
+    }
+
+    deleteAccount() {
+        return this.instance.put<DeleteAccount>(`auth/delete-account`);
     }
 }
 

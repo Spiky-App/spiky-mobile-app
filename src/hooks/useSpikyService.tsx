@@ -687,6 +687,17 @@ function useSpikyService() {
         }
     };
 
+    const deleteAccount = async (): Promise<boolean> => {
+        try {
+            const response = await service.deleteAccount();
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al eliminar cuenta.')));
+            return false;
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -727,6 +738,7 @@ function useSpikyService() {
         createPollAnswer,
         getPollAnswers,
         updateUserNickname,
+        deleteAccount,
     };
 }
 

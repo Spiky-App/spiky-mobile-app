@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '../constants/icons/FontAwesome';
+import { faArrowLeftLong, faUser } from '../constants/icons/FontAwesome';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 import { useAppDispatch } from '../store/hooks';
 import useSpikyService from '../hooks/useSpikyService';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { updateUserNickName } from '../store/feature/user/userSlice';
 import { ModalConfirmation } from '../components/ModalConfirmation';
 
@@ -37,7 +36,7 @@ export const ChangeAliasScreen = () => {
                 setModalAlert({
                     isOpen: true,
                     text: 'Seudónimo actualizado',
-                    icon: faLock,
+                    icon: faUser,
                 })
             );
             onChange(initialState);
@@ -111,6 +110,7 @@ export const ChangeAliasScreen = () => {
                 callback={changePassword}
                 setIsOpen={setIsOpenConfirmation}
                 text={'¿Estás seguro de tu nuevo seudónimo?'}
+                confirmationText={'Cambiar'}
             />
         </BackgroundPaper>
     );
