@@ -1,6 +1,15 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
+import React, { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+    Animated,
+    PanResponder,
+    StyleSheet,
+    Text,
+    View,
+    Keyboard,
+    Pressable,
+    FlatList,
+} from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { useAnimation } from '../hooks/useAnimation';
@@ -19,9 +28,23 @@ interface MessageProp {
     msg: ChatMessageProp;
     user: User;
     setMessageToReply: (value: ChatMessageToReply) => void;
+    handleGoToReplyChatMessage(replyChatMessageId: number): void;
+    goToReplyChatMessageId: number | null;
+    setGoToReplyChatMessageId: (value: number | null) => void;
+    index: number;
+    refFlatList: RefObject<FlatList<any>>;
 }
 
-export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
+export const ChatMessage = ({
+    msg,
+    user,
+    setMessageToReply,
+    handleGoToReplyChatMessage,
+    goToReplyChatMessageId,
+    setGoToReplyChatMessageId,
+    index,
+    refFlatList,
+}: MessageProp) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { createChatMessage } = useSpikyService();
     const [isLoading, setIsLoading] = useState(msg.isLoading);
@@ -89,6 +112,17 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
         }
     }, []);
 
+    useLayoutEffect(() => {
+        if (goToReplyChatMessageId === msg.id) {
+            refFlatList.current?.scrollToIndex({
+                index: index,
+                animated: true,
+                viewOffset: 150,
+            });
+            setGoToReplyChatMessageId(null);
+        }
+    }, [goToReplyChatMessageId]);
+
     return (
         <Animated.View
             style={[
@@ -134,7 +168,10 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                         </Pressable>
                     )}
                     {msg.reply && (
-                        <View style={stylescomp.containerReplyMsg}>
+                        <Pressable
+                            style={stylescomp.containerReplyMsg}
+                            onPress={() => handleGoToReplyChatMessage(msg.reply?.id || -1)}
+                        >
                             <View style={{ flexDirection: 'row', marginBottom: 3 }}>
                                 <Text style={{ ...styles.textbold, fontSize: 12 }}>
                                     @{msg.reply.user.nickname}
@@ -146,7 +183,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                                     ? msg.reply.message.substring(0, 73) + '...'
                                     : msg.reply.message}
                             </Text>
-                        </View>
+                        </Pressable>
                     )}
                     <View
                         style={{

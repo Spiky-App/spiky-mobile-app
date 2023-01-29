@@ -216,12 +216,14 @@ class SpikyService {
         conversationId: number,
         toUserId?: number,
         lastChatMessageId?: number,
-        firstChatMessageId?: number
+        firstChatMessageId?: number,
+        replyChatMessageId?: number
     ) {
         const params = {
             conver: conversationId,
             id_ultimoChatmensaje: lastChatMessageId,
             id_primerChatmensaje: firstChatMessageId,
+            id_replyChatmensaje: replyChatMessageId,
             toUserId,
         };
         return this.instance.get<GetChatMessages>(`conver/chatmsg`, { params });

@@ -66,6 +66,7 @@ export const ChatScreen = ({ route }: Props) => {
     const [toUserIsTyping, setToUserIsTyping] = useState(false);
     const timeoutRef = useRef<null | number>(null);
     const [moreChatMsg, setMoreChatMsg] = useState(false);
+    const [goToReplyChatMessageId, setGoToReplyChatMessageId] = useState<null | number>(null);
     const [chatMessages, setChatMessages] = useState<ChatMessageProp[]>([]);
     const { form, onChange } = useForm<FormChat>(DEFAULT_FORM);
     const { getChatMessages, createChatMessageSeen } = useSpikyService();
@@ -75,7 +76,7 @@ export const ChatScreen = ({ route }: Props) => {
     const [messageToReply, setMessageToReply] = useState<ChatMessageToReply | null>(null);
     const { fadeOut: fadeOut_Typing } = useAnimation({ init_opacity: 0 });
 
-    async function loadChatMessages(loadMore?: boolean) {
+    async function loadChatMessages(loadMore?: boolean, replyChatMessageId?: number) {
         if (networkError) setNetworkError(false);
         setIsLoading(true);
         setMoreChatMsg(false);
@@ -83,7 +84,9 @@ export const ChatScreen = ({ route }: Props) => {
         const { chatMessagesResponse, networkError: networkErrorReturn } = await getChatMessages(
             activeConversationId,
             route.params?.toUser.id,
-            lastChatMessageId
+            lastChatMessageId,
+            undefined,
+            replyChatMessageId
         );
         if (networkErrorReturn) {
             setNetworkError(true);
@@ -97,6 +100,7 @@ export const ChatScreen = ({ route }: Props) => {
             dispatch(updateNewChatMessagesNumber(-n_chatmensajes_unseens));
             setToUser({ ...route.params?.toUser, online: toUserIsOnline });
             setChatMessages(loadMore ? [...chatMessages, ...newChatMessages] : newChatMessages);
+            replyChatMessageId && setGoToReplyChatMessageId(replyChatMessageId);
             setIsLoading(false);
             if (newChatMessages.length === 25) setMoreChatMsg(true);
             if (n_chatmensajes_unseens > 0) dispatch(openNewMsgConversation(activeConversationId));
@@ -138,6 +142,17 @@ export const ChatScreen = ({ route }: Props) => {
             clearTimeout(timeoutRef.current);
             timeoutRef.current = null;
             setToUserIsTyping(false);
+        }
+    }
+
+    async function handleGoToReplyChatMessage(replyChatMessageId: number) {
+        const indexToGo = chatMessages.findIndex(
+            chatMessage => chatMessage.id === replyChatMessageId
+        );
+        if (indexToGo >= 0) {
+            setGoToReplyChatMessageId(replyChatMessageId);
+        } else {
+            await loadChatMessages(true, replyChatMessageId);
         }
     }
 
@@ -295,11 +310,16 @@ export const ChatScreen = ({ route }: Props) => {
                             ref={refFlatList}
                             style={stylescomp.wrap}
                             data={chatMessages}
-                            renderItem={({ item }) => (
+                            renderItem={({ item, index }) => (
                                 <ChatMessage
                                     msg={item}
                                     user={item.userId === user.id ? user : toUser}
                                     setMessageToReply={setMessageToReply}
+                                    handleGoToReplyChatMessage={handleGoToReplyChatMessage}
+                                    goToReplyChatMessageId={goToReplyChatMessageId}
+                                    setGoToReplyChatMessageId={setGoToReplyChatMessageId}
+                                    index={index}
+                                    refFlatList={refFlatList}
                                 />
                             )}
                             keyExtractor={item => item.id + ''}
@@ -312,7 +332,7 @@ export const ChatScreen = ({ route }: Props) => {
                             }
                             ListHeaderComponent={
                                 toUser.disable ? (
-                                    <View style={{ alignItems: 'center', flex: 1, marginTop: 30 }}>
+                                    <View style={{ alignItems: 'center', flex: 1, marginTop: 20 }}>
                                         <Text style={styles.textGray}>
                                             {`La cuenta de @${toUser.nickname} está deshabilitada.`}
                                         </Text>
