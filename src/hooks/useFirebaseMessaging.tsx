@@ -10,24 +10,20 @@ export const useFirebaseMessaging = () => {
     const { getNetworkConnectionStatus } = useSpikyService();
 
     const getToken = () => {
-        let token;
         Messaging()
             .getToken()
             .then(async tokenDevice => {
-                token = tokenDevice;
-                console.log(token);
+                await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, tokenDevice);
             })
             .catch(error => {
                 let err = `FCm token get error${error}`;
                 Alert.alert(err);
                 console.log(err);
             });
-        return token;
     };
     const getTokenDevice = useCallback(async () => {
         const networkConnectionStatus = await getNetworkConnectionStatus();
         if (networkConnectionStatus) {
-            let token;
             if (Platform.OS === 'ios') {
                 Messaging()
                     .requestPermission()
@@ -36,14 +32,12 @@ export const useFirebaseMessaging = () => {
                             status === Messaging.AuthorizationStatus.AUTHORIZED ||
                             status === Messaging.AuthorizationStatus.PROVISIONAL;
                         if (enabled) {
-                            token = getToken();
+                            getToken();
                         }
                     });
             } else if (Platform.OS === 'android') {
-                token = getToken();
+                getToken();
             }
-            if (token) await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, token);
-            // Listen to whether the token changes
             Messaging().onTokenRefresh(async fcmToken => {
                 await AsyncStorage.setItem(StorageKeys.DEVICE_TOKEN, fcmToken);
             });
