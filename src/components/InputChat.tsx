@@ -94,7 +94,7 @@ export const InputChat = ({
         updateChatMessages(newChatMessages);
         if (userObj) {
             socket?.emit('newChatMsg', {
-                chatmsg: newChatMessages,
+                chatmsg: { ...newChatMessages, isLoading: false },
                 userto: toUser.id,
                 isOnline: toUser.online,
                 sender: userObj,
