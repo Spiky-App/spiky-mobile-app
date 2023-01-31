@@ -8,7 +8,14 @@ import {
     StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBan, faEraser, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
+import {
+    faBan,
+    faEraser,
+    faReply,
+    faThumbsDown,
+    faThumbtack,
+    faTrashCan,
+} from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -52,7 +59,7 @@ export const ModalIdeaOptions = ({
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const { deleteIdea } = useSpikyService();
+    const { deleteIdea, createReportIdea } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
     const { messageId, messageTrackingId } = message;
 
@@ -118,6 +125,15 @@ export const ModalIdeaOptions = ({
         }
         setIdeaOptions(false);
     }
+    async function handleIdeaRemoveFromFeed() {
+        setIdeaOptions(false);
+        await createReportIdea(messageId, '', uid, true);
+        dispatch(
+            setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
+        );
+        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        dispatch(setMessages(messagesUpdated));
+    }
 
     const handleDelete = () => {
         deleteIdea(messageId);
@@ -169,7 +185,19 @@ export const ModalIdeaOptions = ({
                                         }
                                     >
                                         <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
-                                        <Text style={stylescomp.text}> Replicar en priv</Text>
+                                        <Text style={stylescomp.text}>Replicar en priv</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={stylescomp.button}
+                                        onPress={handleIdeaRemoveFromFeed}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faThumbsDown}
+                                            color="#01192E"
+                                            size={12}
+                                        />
+                                        <Text style={stylescomp.text}>No me gusta</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity

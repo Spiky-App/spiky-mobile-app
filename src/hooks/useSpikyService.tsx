@@ -105,10 +105,16 @@ function useSpikyService() {
     const createReportIdea = async (
         messageId: number,
         reportReason: string,
-        uid: number
+        uid: number,
+        updatePreferences?: boolean
     ): Promise<string | undefined> => {
         try {
-            const response = await service.createReportIdea(uid, messageId, reportReason);
+            const response = await service.createReportIdea(
+                uid,
+                messageId,
+                reportReason,
+                updatePreferences
+            );
             return response.data.msg;
         } catch (error) {
             console.log(error);

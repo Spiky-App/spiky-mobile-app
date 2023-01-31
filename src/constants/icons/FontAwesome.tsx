@@ -42,7 +42,9 @@ import { faTrophy } from '@fortawesome/free-solid-svg-icons/faTrophy';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faUserSlash } from '@fortawesome/free-solid-svg-icons/faUserSlash';
 
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 export {
+    faThumbsDown,
     faUsers,
     faChevronLeft,
     faThumbtack,

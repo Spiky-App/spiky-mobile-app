@@ -192,11 +192,17 @@ class SpikyService {
         });
     }
 
-    createReportIdea(uid: number, messageId: number, reportReason: string) {
+    createReportIdea(
+        uid: number,
+        messageId: number,
+        reportReason: string,
+        updatePreferences?: boolean
+    ) {
         return this.instance.post<CreateReportIdea>(`report`, {
             id_usuario: uid,
             id_mensaje: messageId,
             motivo_reporte: reportReason,
+            update_preferences: updatePreferences,
         });
     }
 
