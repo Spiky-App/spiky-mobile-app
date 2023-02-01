@@ -43,6 +43,7 @@ interface Props {
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
+    isOpenedIdeaScreen?: boolean;
 }
 
 export const ModalIdeaOptions = ({
@@ -53,6 +54,7 @@ export const ModalIdeaOptions = ({
     message,
     setMessageTrackingId,
     filter,
+    isOpenedIdeaScreen,
 }: Props) => {
     const { top, left } = position;
     const uid = useAppSelector((state: RootState) => state.user.id);
@@ -68,6 +70,7 @@ export const ModalIdeaOptions = ({
         params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
     ) => {
         setIdeaOptions(false);
+        if (screen === 'ReportIdeaScreen') navigation.pop();
         navigation.navigate(screen, params);
     };
 
@@ -133,6 +136,7 @@ export const ModalIdeaOptions = ({
         );
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
+        if (isOpenedIdeaScreen) navigation.goBack();
     }
 
     const handleDelete = () => {
@@ -141,7 +145,7 @@ export const ModalIdeaOptions = ({
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
-        if (setMessageTrackingId) navigation.goBack();
+        if (isOpenedIdeaScreen) navigation.goBack();
     };
 
     return (
