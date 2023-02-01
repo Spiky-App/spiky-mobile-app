@@ -184,16 +184,14 @@ function useSpikyService() {
         conversationId: number,
         toUserId?: number,
         lastChatMessageId?: number,
-        firstChatMessageId?: number,
-        replyChatMessageId?: number
+        firstChatMessageId?: number
     ): Promise<{ chatMessagesResponse?: GetChatMessages; networkError?: boolean }> => {
         try {
             const response = await service.getChatMessages(
                 conversationId,
                 toUserId,
                 lastChatMessageId,
-                firstChatMessageId,
-                replyChatMessageId
+                firstChatMessageId
             );
             return { chatMessagesResponse: response.data };
         } catch (error) {

@@ -1,15 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import {
-    Animated,
-    PanResponder,
-    StyleSheet,
-    Text,
-    View,
-    Keyboard,
-    Pressable,
-    FlatList,
-} from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { useAnimation } from '../hooks/useAnimation';
@@ -23,29 +14,21 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigator/Navigator';
 import useSpikyService from '../hooks/useSpikyService';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
+import SocketContext from '../context/Socket/Context';
+import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
 
 interface MessageProp {
     msg: ChatMessageProp;
     user: User;
     setMessageToReply: (value: ChatMessageToReply) => void;
-    handleGoToReplyChatMessage(replyChatMessageId: number): void;
-    goToReplyChatMessageId: number | null;
-    setGoToReplyChatMessageId: (value: number | null) => void;
-    index: number;
-    refFlatList: RefObject<FlatList<any>>;
+    toUser: User;
 }
 
-export const ChatMessage = ({
-    msg,
-    user,
-    setMessageToReply,
-    handleGoToReplyChatMessage,
-    goToReplyChatMessageId,
-    setGoToReplyChatMessageId,
-    index,
-    refFlatList,
-}: MessageProp) => {
+export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessageProp) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const userObj = useAppSelector(selectUserAsObject);
+    const { socket } = useContext(SocketContext);
     const { createChatMessage } = useSpikyService();
     const [isLoading, setIsLoading] = useState(msg.isLoading);
     const refIsLoading = useRef<boolean>(msg.isLoading ? true : false);
@@ -92,10 +75,19 @@ export const ChatMessage = ({
     async function handleCreateChatMessage() {
         const chatmensaje = await createChatMessage(msg.conversationId, msg.message, msg.reply?.id);
         if (chatmensaje) {
+            const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, uid);
             refId.current = chatmensaje.id_chatmensaje;
             refTime.current = getTime(chatmensaje.fecha);
             refIsLoading.current = false;
             setIsLoading(false);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    isOnline: toUser.online,
+                    sender: userObj,
+                });
+            }
         }
     }
 
@@ -107,21 +99,11 @@ export const ChatMessage = ({
 
     useEffect(() => {
         fadeIn(300);
+        console.log(msg.message, refIsLoading.current, isLoading);
         if (refIsLoading.current) {
             handleCreateChatMessage();
         }
     }, []);
-
-    useLayoutEffect(() => {
-        if (goToReplyChatMessageId === msg.id) {
-            refFlatList.current?.scrollToIndex({
-                index: index,
-                animated: true,
-                viewOffset: 150,
-            });
-            setGoToReplyChatMessageId(null);
-        }
-    }, [goToReplyChatMessageId]);
 
     return (
         <Animated.View
@@ -168,10 +150,7 @@ export const ChatMessage = ({
                         </Pressable>
                     )}
                     {msg.reply && (
-                        <Pressable
-                            style={stylescomp.containerReplyMsg}
-                            onPress={() => handleGoToReplyChatMessage(msg.reply?.id || -1)}
-                        >
+                        <Pressable style={stylescomp.containerReplyMsg}>
                             <View style={{ flexDirection: 'row', marginBottom: 3 }}>
                                 <Text style={{ ...styles.textbold, fontSize: 12 }}>
                                     @{msg.reply.user.nickname}
