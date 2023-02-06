@@ -300,6 +300,7 @@ export const ChatScreen = ({ route }: Props) => {
                                     msg={item}
                                     user={item.userId === user.id ? user : toUser}
                                     setMessageToReply={setMessageToReply}
+                                    toUser={toUser}
                                 />
                             )}
                             keyExtractor={item => item.id + ''}
@@ -312,7 +313,7 @@ export const ChatScreen = ({ route }: Props) => {
                             }
                             ListHeaderComponent={
                                 toUser.disable ? (
-                                    <View style={{ alignItems: 'center', flex: 1, marginTop: 30 }}>
+                                    <View style={{ alignItems: 'center', flex: 1, marginTop: 20 }}>
                                         <Text style={styles.textGray}>
                                             {`La cuenta de @${toUser.nickname} está deshabilitada.`}
                                         </Text>
