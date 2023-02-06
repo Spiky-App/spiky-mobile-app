@@ -7,9 +7,16 @@ interface Props {
     text: string;
     callback: () => void;
     setIsOpen: (state: boolean) => void;
+    confirmationText: string;
 }
 
-export const ModalConfirmation = ({ isOpen, text, setIsOpen, callback }: Props) => {
+export const ModalConfirmation = ({
+    isOpen,
+    text,
+    setIsOpen,
+    callback,
+    confirmationText,
+}: Props) => {
     function handleConfirmation() {
         setIsOpen(false);
         callback();
@@ -34,7 +41,7 @@ export const ModalConfirmation = ({ isOpen, text, setIsOpen, callback }: Props) 
                             style={stylescom.button_confirm}
                             onPress={handleConfirmation}
                         >
-                            <Text style={stylescom.confirm}>Cambiar</Text>
+                            <Text style={stylescom.confirm}>{confirmationText}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

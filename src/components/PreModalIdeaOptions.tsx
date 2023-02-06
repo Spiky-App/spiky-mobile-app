@@ -20,9 +20,10 @@ interface Props {
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
+    isOpenedIdeaScreen?: boolean;
 }
 
-export const PreModalIdeaOptions = ({ myIdea, message, filter }: Props) => {
+export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScreen }: Props) => {
     const reactContainerRef = useRef<View>(null);
     const [position, setPosition] = useState<Positions>({ top: 0, left: 0 });
     const [ideaOptions, setIdeaOptions] = useState(false);
@@ -55,6 +56,7 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter }: Props) => {
                 myIdea={myIdea}
                 message={message}
                 filter={filter}
+                isOpenedIdeaScreen={isOpenedIdeaScreen}
             />
         </>
     );

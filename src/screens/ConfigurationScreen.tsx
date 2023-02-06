@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { styles } from '../themes/appTheme';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { UserInfo } from '../types/services/spiky';
 import useSpikyService from '../hooks/useSpikyService';
 import NetworkErrorFeed from '../components/NetworkErrorFeed';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerParamList } from '../navigator/MenuMain';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { ModalConfirmation } from '../components/ModalConfirmation';
+import { faUserSlash } from '../constants/icons/FontAwesome';
 
 type NavigationProp = DrawerNavigationProp<DrawerParamList>;
 
@@ -28,17 +31,19 @@ function generateDataFromData(data: UserInfo): UserData {
 
 export const ConfigurationScreen = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
-    const { getUserInfo } = useSpikyService();
+    const { getUserInfo, logOutFunction, deleteAccount } = useSpikyService();
     const navigation = useNavigation<NavigationProp>();
     const [loading, setLoading] = useState(true);
     const [networkError, setNetworkError] = useState(false);
     const [allowChangeAlias, setAllowChangeAlias] = useState(false);
+    const [isOpenConfirmation, setIsOpenConfirmation] = useState(false);
+    const dispatch = useAppDispatch();
     const [data, setData] = useState<UserData>({
         email: '',
         university: '',
     });
 
-    const loadData = async () => {
+    async function loadData() {
         if (networkError) setNetworkError(false);
         const {
             userInfo,
@@ -51,11 +56,23 @@ export const ConfigurationScreen = () => {
             setData(generateDataFromData(userInfo));
             setLoading(false);
         }
-    };
+    }
 
-    useFocusEffect(() => {
+    async function handleDeleteAccount() {
+        await deleteAccount();
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: 'Cuenta eliminada',
+                icon: faUserSlash,
+            })
+        );
+        logOutFunction();
+    }
+
+    useEffect(() => {
         loadData();
-    });
+    }, []);
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
@@ -110,11 +127,29 @@ export const ConfigurationScreen = () => {
                                         </Text>
                                     </TouchableOpacity>
                                     <View style={{ alignItems: 'center', marginTop: 10 }}>
-                                        <Text style={stylescom.textGray}>Opción temporal.</Text>
+                                        <Text style={stylescom.textGray}>Opción temporal</Text>
                                     </View>
                                 </>
                             )}
                         </View>
+
+                        <TouchableOpacity
+                            style={{ ...styles.button, ...stylescom.delete }}
+                            onPress={() => setIsOpenConfirmation(true)}
+                        >
+                            <Text style={{ ...styles.text, fontSize: 13, ...styles.error }}>
+                                Eliminar cuenta
+                            </Text>
+                        </TouchableOpacity>
+                        <ModalConfirmation
+                            isOpen={isOpenConfirmation}
+                            callback={handleDeleteAccount}
+                            setIsOpen={setIsOpenConfirmation}
+                            text={
+                                '¿Estás seguro de eliminar tu cuenta? Esta acción es irreversible.'
+                            }
+                            confirmationText={'Eliminar'}
+                        />
                     </>
                 ) : (
                     <View style={{ ...styles.center, flex: 1 }}>
@@ -146,5 +181,10 @@ const stylescom = StyleSheet.create({
         ...styles.textGray,
         fontSize: 12,
         textAlign: 'center',
+    },
+    delete: {
+        borderColor: styles.error.color,
+        position: 'absolute',
+        bottom: 70,
     },
 });

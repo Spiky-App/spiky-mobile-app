@@ -71,6 +71,7 @@ export interface UserI {
     id_universidad: number;
     id_usuario?: number;
     online?: boolean;
+    disable?: boolean;
 }
 
 interface ReactionCount {
@@ -350,10 +351,6 @@ export interface GetNetworkConnectionStatus {
     ok: boolean;
 }
 
-export interface UpdateUserNickname {
-    ok: boolean;
-}
-
 export interface CreatePollResponse {
     ok: boolean;
     mensaje: Message;
@@ -376,4 +373,12 @@ export interface PollAnswer {
         id_usuario: number;
         usuario: UserI;
     }[];
+}
+
+export interface UpdateUserNickname {
+    ok: boolean;
+}
+
+export interface DeleteAccount {
+    ok: boolean;
 }

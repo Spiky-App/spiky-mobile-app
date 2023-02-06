@@ -312,6 +312,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                 }}
                                                 filter={filter}
                                                 setMessageTrackingId={setMessageTrackingId}
+                                                isOpenedIdeaScreen
                                             />
                                         </View>
                                     )}
