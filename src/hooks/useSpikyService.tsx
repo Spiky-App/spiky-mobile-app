@@ -107,7 +107,7 @@ function useSpikyService() {
         reportReason: string,
         uid: number,
         updatePreferences?: boolean
-    ): Promise<string | undefined> => {
+    ): Promise<boolean> => {
         try {
             const response = await service.createReportIdea(
                 uid,
@@ -115,12 +115,12 @@ function useSpikyService() {
                 reportReason,
                 updatePreferences
             );
-            return response.data.msg;
+            return response.data.ok;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al reportar mensaje.')));
         }
-        return undefined;
+        return false;
     };
 
     const createTracking = async (messageId: number, uid: number): Promise<number | undefined> => {
@@ -143,6 +143,16 @@ function useSpikyService() {
             dispatch(
                 addToast(handleSpikyServiceToast(error, 'Error dejando de siguiendo mensaje.'))
             );
+        }
+        return false;
+    };
+    const blockUser = async (userId: number, blockedUser: string): Promise<boolean> => {
+        try {
+            const response = await service.blockUser(userId, blockedUser);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al bloquear usuario.')));
         }
         return false;
     };
@@ -745,6 +755,7 @@ function useSpikyService() {
         getPollAnswers,
         updateUserNickname,
         deleteAccount,
+        blockUser,
     };
 }
 
