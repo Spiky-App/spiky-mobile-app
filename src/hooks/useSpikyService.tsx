@@ -146,15 +146,31 @@ function useSpikyService() {
         }
         return false;
     };
-    const blockUser = async (userId: number, blockedUser: string): Promise<boolean> => {
+
+    const blockUser = async (
+        userId: number,
+        blockedUser: string,
+        remove: boolean
+    ): Promise<boolean> => {
         try {
-            const response = await service.blockUser(userId, blockedUser);
+            const response = await service.blockUser(userId, blockedUser, remove);
             return response.data.ok;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al bloquear usuario.')));
         }
         return false;
+    };
+
+    const getBlockedUsers = async (userId: number): Promise<UserI[]> => {
+        try {
+            const response = await service.getBlockedUsers(userId);
+            return response.data.usuarios;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al obtener blacklist')));
+        }
+        return [];
     };
 
     const createChatMsgWithReply = async (
@@ -756,6 +772,7 @@ function useSpikyService() {
         updateUserNickname,
         deleteAccount,
         blockUser,
+        getBlockedUsers,
     };
 }
 

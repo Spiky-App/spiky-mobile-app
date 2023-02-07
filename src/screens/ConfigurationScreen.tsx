@@ -132,7 +132,14 @@ export const ConfigurationScreen = () => {
                                 </>
                             )}
                         </View>
-
+                        <TouchableOpacity
+                            style={{ ...styles.button, marginTop: 30 }}
+                            onPress={() => navigation.navigate('BlacklistScreen')}
+                        >
+                            <Text style={{ ...styles.text, fontSize: 13 }}>
+                                Usuarios bloqueados
+                            </Text>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             style={{ ...styles.button, ...stylescom.delete }}
                             onPress={() => setIsOpenConfirmation(true)}
@@ -141,6 +148,7 @@ export const ConfigurationScreen = () => {
                                 Eliminar cuenta
                             </Text>
                         </TouchableOpacity>
+
                         <ModalConfirmation
                             isOpen={isOpenConfirmation}
                             callback={handleDeleteAccount}

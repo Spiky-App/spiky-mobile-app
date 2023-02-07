@@ -56,7 +56,7 @@ export const IdeasHeader = ({
     };
     const handleBlockUser = async () => {
         if (blocked_user != '') {
-            const ok = await blockUser(uid, blocked_user);
+            const ok = await blockUser(uid, blocked_user, false);
             if (ok) {
                 dispatch(setModalAlert({ isOpen: true, text: 'Usuario bloqueado', icon: faBan }));
                 navigation.navigate('CommunityScreen');
@@ -89,15 +89,9 @@ export const IdeasHeader = ({
                 <SafeAreaView style={styles.container}>
                     <ActionSheet
                         ref={actionSheet}
-                        // Title of the Bottom Sheet
                         title={'Preferencias de visualización'}
-                        // Options Array to show in bottom sheet
                         options={profileOptionArray}
-                        // Define cancel button index in the option array
-                        // This will take the cancel option in bottom
-                        // and will highlight it
                         cancelButtonIndex={1}
-                        // Highlight any specific option
                         destructiveButtonIndex={1}
                         onPress={index => {
                             if (index == 0) {
@@ -107,7 +101,7 @@ export const IdeasHeader = ({
                                     [
                                         {
                                             text: 'Cancelar',
-                                            onPress: () => console.log('Cancel Pressed'),
+                                            onPress: () => {},
                                             style: 'cancel',
                                         },
                                         {
@@ -116,8 +110,6 @@ export const IdeasHeader = ({
                                         },
                                     ]
                                 );
-                            } else {
-                                console.log('cancel option');
                             }
                         }}
                     />
