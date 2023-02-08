@@ -99,7 +99,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessagePro
 
     useEffect(() => {
         fadeIn(300);
-        console.log(msg.message, refIsLoading.current, isLoading);
+        // console.log(msg.message, refIsLoading.current, isLoading);
         if (refIsLoading.current) {
             handleCreateChatMessage();
         }
