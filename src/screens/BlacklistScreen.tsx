@@ -81,7 +81,7 @@ export const BlacklistScreen = () => {
                                     style={{ ...styles.center }}
                                     onPress={() => {
                                         Alert.alert(
-                                            '¿Estas seguro que quieres desbloquear a ' +
+                                            '¿Estás seguro que quieres desbloquear a ' +
                                                 item.alias +
                                                 '?',
                                             'Su contenido se volverá a mostrar en el feed.',
@@ -92,7 +92,7 @@ export const BlacklistScreen = () => {
                                                     style: 'cancel',
                                                 },
                                                 {
-                                                    text: 'Si, desbloquear usuario.',
+                                                    text: 'Sí, desbloquear usuario.',
                                                     onPress: () => handleUnblockUser(item),
                                                 },
                                             ]

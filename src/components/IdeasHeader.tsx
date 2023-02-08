@@ -96,7 +96,7 @@ export const IdeasHeader = ({
                         onPress={index => {
                             if (index == 0) {
                                 Alert.alert(
-                                    '¿Estas seguro que quieres bloquear a ' + title + '?',
+                                    '¿Estás seguro que quieres bloquear a ' + title + '?',
                                     'Ya no verás el contenido de este usuario.',
                                     [
                                         {
@@ -105,7 +105,7 @@ export const IdeasHeader = ({
                                             style: 'cancel',
                                         },
                                         {
-                                            text: 'Si, bloquear usuario.',
+                                            text: 'Sí, bloquear usuario.',
                                             onPress: handleBlockUser,
                                         },
                                     ]
