@@ -165,7 +165,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     return (
         <BackgroundPaper style={stylecom.container}>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={stylecom.container}
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
@@ -280,6 +280,7 @@ const stylecom = StyleSheet.create({
         width: '95%',
         flex: 1,
         marginTop: 15,
+        marginBottom: 10,
         marginHorizontal: 20,
     },
     wrap: {
