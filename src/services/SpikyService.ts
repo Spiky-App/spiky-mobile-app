@@ -124,6 +124,12 @@ class SpikyService {
     deleteTracking(messageTrackingId: number) {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
+    blockUser(uid: number, blocked_user: string, remove: boolean) {
+        return this.instance.post(`report/block-user`, { uid, blocked_user, remove });
+    }
+    getBlockedUsers(uid: number) {
+        return this.instance.post(`report/get-blocked-users`, { uid });
+    }
 
     createIdeaReaction(uid: number, messageId: number, reaction: string[0]) {
         return this.instance.post<CreateIdeaReaction>(`reacc`, {
