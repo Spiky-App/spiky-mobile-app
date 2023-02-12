@@ -158,7 +158,7 @@ export const CreatePollScreen = () => {
         <BackgroundPaper style={stylecom.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                     style={[stylecom.container]}
                 >
                     <ScrollView showsVerticalScrollIndicator={false}>

@@ -62,7 +62,13 @@ const MessagesFeed = ({
 
     return (
         <>
-            <IdeasHeader title={title} myideas={myideas} icon={icon} profile={profile} />
+            <IdeasHeader
+                title={title}
+                myideas={myideas}
+                icon={icon}
+                profile={profile}
+                blocked_user={params.alias ? params.alias : ''}
+            />
             {messages?.length !== 0 && !networkError && (
                 <FlatList
                     style={{ width: '100%' }}
