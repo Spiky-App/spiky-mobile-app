@@ -89,10 +89,16 @@ export const Header = () => {
                         <FontAwesomeIcon
                             icon={spectatorMode ? faUserAstronaut : faUser}
                             size={18}
-                            color="#ffff"
+                            color={'#ffff'}
                         />
                         <Text style={stylescom.text}>
-                            {spectatorMode ? '@spiker' : `@${nickname}`}
+                            {spectatorMode ? (
+                                <>
+                                    <Text style={[styles.textbold, styles.orange]}>@</Text>spiker
+                                </>
+                            ) : (
+                                `@${nickname}`
+                            )}
                         </Text>
                     </TouchableOpacity>
 

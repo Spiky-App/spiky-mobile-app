@@ -61,6 +61,7 @@ type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 
 export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
+    const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const messageId = routeSC.params?.messageId;
     const filter = routeSC.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
@@ -169,7 +170,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     />
                                 </TouchableOpacity>
 
-                                {isOwner && (
+                                {isOwner && !spectatorMode && (
                                     <View style={stylescom.corner_container}>
                                         <View style={stylescom.corner}>
                                             <View style={{ transform: [{ rotate: '-45deg' }] }}>
