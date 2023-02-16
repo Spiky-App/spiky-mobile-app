@@ -42,7 +42,8 @@ import { faTrophy } from '@fortawesome/free-solid-svg-icons/faTrophy';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faUserSlash } from '@fortawesome/free-solid-svg-icons/faUserSlash';
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
-import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons/faUserAstronaut';
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons/faUserAstronaut';
 
 export {
     faSliders,
