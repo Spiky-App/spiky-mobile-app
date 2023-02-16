@@ -13,6 +13,7 @@ export interface User {
     nickname: string;
     universityId: number;
     online?: boolean;
+    disable?: boolean;
 }
 interface Response {
     fecha: string;

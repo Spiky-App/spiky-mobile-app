@@ -69,6 +69,7 @@ export const styles = StyleSheet.create({
         borderRadius: 3,
         paddingHorizontal: 16,
         paddingVertical: 8,
+        alignItems: 'center',
     },
     input: {
         backgroundColor: 'white',

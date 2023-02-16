@@ -8,7 +8,14 @@ import {
     StyleSheet,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBan, faEraser, faReply, faThumbtack, faTrashCan } from '../constants/icons/FontAwesome';
+import {
+    faBan,
+    faEraser,
+    faReply,
+    faThumbsDown,
+    faThumbtack,
+    faTrashCan,
+} from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -36,6 +43,7 @@ interface Props {
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
+    isOpenedIdeaScreen?: boolean;
 }
 
 export const ModalIdeaOptions = ({
@@ -46,13 +54,14 @@ export const ModalIdeaOptions = ({
     message,
     setMessageTrackingId,
     filter,
+    isOpenedIdeaScreen,
 }: Props) => {
     const { top, left } = position;
     const uid = useAppSelector((state: RootState) => state.user.id);
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const { deleteIdea } = useSpikyService();
+    const { deleteIdea, createReportIdea } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
     const { messageId, messageTrackingId } = message;
 
@@ -61,6 +70,7 @@ export const ModalIdeaOptions = ({
         params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
     ) => {
         setIdeaOptions(false);
+        if (screen === 'ReportIdeaScreen') navigation.pop();
         navigation.navigate(screen, params);
     };
 
@@ -118,6 +128,16 @@ export const ModalIdeaOptions = ({
         }
         setIdeaOptions(false);
     }
+    async function handleIdeaRemoveFromFeed() {
+        setIdeaOptions(false);
+        await createReportIdea(messageId, '', uid, true);
+        dispatch(
+            setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
+        );
+        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        dispatch(setMessages(messagesUpdated));
+        if (isOpenedIdeaScreen) navigation.goBack();
+    }
 
     const handleDelete = () => {
         deleteIdea(messageId);
@@ -125,7 +145,7 @@ export const ModalIdeaOptions = ({
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
-        if (setMessageTrackingId) navigation.goBack();
+        if (isOpenedIdeaScreen) navigation.goBack();
     };
 
     return (
@@ -169,7 +189,19 @@ export const ModalIdeaOptions = ({
                                         }
                                     >
                                         <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
-                                        <Text style={stylescomp.text}> Replicar en priv</Text>
+                                        <Text style={stylescomp.text}>Replicar en priv</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={stylescomp.button}
+                                        onPress={handleIdeaRemoveFromFeed}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faThumbsDown}
+                                            color="#01192E"
+                                            size={12}
+                                        />
+                                        <Text style={stylescomp.text}>No me gusta</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity

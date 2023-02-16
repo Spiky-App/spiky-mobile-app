@@ -300,6 +300,7 @@ export const ChatScreen = ({ route }: Props) => {
                                     msg={item}
                                     user={item.userId === user.id ? user : toUser}
                                     setMessageToReply={setMessageToReply}
+                                    toUser={toUser}
                                 />
                             )}
                             keyExtractor={item => item.id + ''}
@@ -310,7 +311,17 @@ export const ChatScreen = ({ route }: Props) => {
                                     ? () => loadChatMessages(true)
                                     : undefined
                             }
-                            ListHeaderComponent={<TypingBubble toUserIsTyping={toUserIsTyping} />}
+                            ListHeaderComponent={
+                                toUser.disable ? (
+                                    <View style={{ alignItems: 'center', flex: 1, marginTop: 20 }}>
+                                        <Text style={styles.textGray}>
+                                            {`La cuenta de @${toUser.nickname} está deshabilitada.`}
+                                        </Text>
+                                    </View>
+                                ) : (
+                                    <TypingBubble toUserIsTyping={toUserIsTyping} />
+                                )
+                            }
                             ListFooterComponent={isLoading ? LoadingAnimated : <></>}
                             ListFooterComponentStyle={{ marginVertical: 12 }}
                             contentContainerStyle={{

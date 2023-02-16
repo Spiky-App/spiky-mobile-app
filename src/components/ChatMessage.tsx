@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
@@ -14,15 +14,21 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigator/Navigator';
 import useSpikyService from '../hooks/useSpikyService';
+import { selectUserAsObject } from '../store/feature/user/userSlice';
+import SocketContext from '../context/Socket/Context';
+import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
 
 interface MessageProp {
     msg: ChatMessageProp;
     user: User;
     setMessageToReply: (value: ChatMessageToReply) => void;
+    toUser: User;
 }
 
-export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
+export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessageProp) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
+    const userObj = useAppSelector(selectUserAsObject);
+    const { socket } = useContext(SocketContext);
     const { createChatMessage } = useSpikyService();
     const [isLoading, setIsLoading] = useState(msg.isLoading);
     const refIsLoading = useRef<boolean>(msg.isLoading ? true : false);
@@ -69,10 +75,19 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
     async function handleCreateChatMessage() {
         const chatmensaje = await createChatMessage(msg.conversationId, msg.message, msg.reply?.id);
         if (chatmensaje) {
+            const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, uid);
             refId.current = chatmensaje.id_chatmensaje;
             refTime.current = getTime(chatmensaje.fecha);
             refIsLoading.current = false;
             setIsLoading(false);
+            if (userObj) {
+                socket?.emit('newChatMsg', {
+                    chatmsg: newChatMessages,
+                    userto: toUser.id,
+                    isOnline: toUser.online,
+                    sender: userObj,
+                });
+            }
         }
     }
 
@@ -84,6 +99,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
 
     useEffect(() => {
         fadeIn(300);
+        // console.log(msg.message, refIsLoading.current, isLoading);
         if (refIsLoading.current) {
             handleCreateChatMessage();
         }
@@ -134,7 +150,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                         </Pressable>
                     )}
                     {msg.reply && (
-                        <View style={stylescomp.containerReplyMsg}>
+                        <Pressable style={stylescomp.containerReplyMsg}>
                             <View style={{ flexDirection: 'row', marginBottom: 3 }}>
                                 <Text style={{ ...styles.textbold, fontSize: 12 }}>
                                     @{msg.reply.user.nickname}
@@ -146,7 +162,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply }: MessageProp) => {
                                     ? msg.reply.message.substring(0, 73) + '...'
                                     : msg.reply.message}
                             </Text>
-                        </View>
+                        </Pressable>
                     )}
                     <View
                         style={{

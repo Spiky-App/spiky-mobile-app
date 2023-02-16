@@ -11,6 +11,7 @@ import { RootStackParamList } from '../navigator/Navigator';
 import { RootState } from '../store';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setMessages } from '../store/feature/messages/messagesSlice';
 import { styles } from '../themes/appTheme';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReportIdeaScreen'>;
@@ -27,6 +28,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
         reportReason: '',
     });
     const messageId = route.params?.messageId;
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
 
     const { reportReason } = form;
 
@@ -35,6 +37,8 @@ export const ReportIdeaScreen = ({ route }: Props) => {
         setButtonState(false);
         createReportIdea(messageId, reportReason, uid);
         dispatch(setModalAlert({ isOpen: true, text: 'Mensaje reportado.', icon: faFlag }));
+        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        dispatch(setMessages(messagesUpdated));
         onChange({ reportReason: '' });
         setIsLoading(true);
         navigation.goBack();

@@ -35,10 +35,11 @@ import {
     RegisterUser,
     GetNetworkConnectionStatus,
     GetCommentReactions,
-    UpdateUserNickname,
     CreatePollResponse,
     CreateAnswerPoll,
     GetPollAnswers,
+    UpdateUserNickname,
+    DeleteAccount,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -123,6 +124,12 @@ class SpikyService {
     deleteTracking(messageTrackingId: number) {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
+    blockUser(uid: number, blocked_user: string, remove: boolean) {
+        return this.instance.post(`report/block-user`, { uid, blocked_user, remove });
+    }
+    getBlockedUsers(uid: number) {
+        return this.instance.post(`report/get-blocked-users`, { uid });
+    }
 
     createIdeaReaction(uid: number, messageId: number, reaction: string[0]) {
         return this.instance.post<CreateIdeaReaction>(`reacc`, {
@@ -191,11 +198,17 @@ class SpikyService {
         });
     }
 
-    createReportIdea(uid: number, messageId: number, reportReason: string) {
+    createReportIdea(
+        uid: number,
+        messageId: number,
+        reportReason: string,
+        updatePreferences?: boolean
+    ) {
         return this.instance.post<CreateReportIdea>(`report`, {
             id_usuario: uid,
             id_mensaje: messageId,
             motivo_reporte: reportReason,
+            update_preferences: updatePreferences,
         });
     }
 
@@ -288,12 +301,6 @@ class SpikyService {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
     }
 
-    updateUserNickname(nickname: string) {
-        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
-            alias: nickname,
-        });
-    }
-
     createPoll(message: string, answers: string[]) {
         return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
             mensaje: message,
@@ -309,6 +316,16 @@ class SpikyService {
 
     getPollAnswers(messageId: number) {
         return this.instance.get<GetPollAnswers>(`poll/answers/${messageId}`);
+    }
+
+    updateUserNickname(nickname: string) {
+        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
+            alias: nickname,
+        });
+    }
+
+    deleteAccount() {
+        return this.instance.put<DeleteAccount>(`auth/delete-account`);
     }
 }
 

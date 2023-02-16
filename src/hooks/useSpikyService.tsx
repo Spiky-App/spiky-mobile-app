@@ -105,16 +105,22 @@ function useSpikyService() {
     const createReportIdea = async (
         messageId: number,
         reportReason: string,
-        uid: number
-    ): Promise<string | undefined> => {
+        uid: number,
+        updatePreferences?: boolean
+    ): Promise<boolean> => {
         try {
-            const response = await service.createReportIdea(uid, messageId, reportReason);
-            return response.data.msg;
+            const response = await service.createReportIdea(
+                uid,
+                messageId,
+                reportReason,
+                updatePreferences
+            );
+            return response.data.ok;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al reportar mensaje.')));
         }
-        return undefined;
+        return false;
     };
 
     const createTracking = async (messageId: number, uid: number): Promise<number | undefined> => {
@@ -139,6 +145,32 @@ function useSpikyService() {
             );
         }
         return false;
+    };
+
+    const blockUser = async (
+        userId: number,
+        blockedUser: string,
+        remove: boolean
+    ): Promise<boolean> => {
+        try {
+            const response = await service.blockUser(userId, blockedUser, remove);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al bloquear usuario.')));
+        }
+        return false;
+    };
+
+    const getBlockedUsers = async (userId: number): Promise<UserI[]> => {
+        try {
+            const response = await service.getBlockedUsers(userId);
+            return response.data.usuarios;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al obtener blacklist')));
+        }
+        return [];
     };
 
     const createChatMsgWithReply = async (
@@ -687,6 +719,17 @@ function useSpikyService() {
         }
     };
 
+    const deleteAccount = async (): Promise<boolean> => {
+        try {
+            const response = await service.deleteAccount();
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al eliminar cuenta.')));
+            return false;
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -723,10 +766,13 @@ function useSpikyService() {
         logInUser,
         getNetworkConnectionStatus,
         getCommentReactions,
-        updateUserNickname,
         createPoll,
         createPollAnswer,
         getPollAnswers,
+        updateUserNickname,
+        deleteAccount,
+        blockUser,
+        getBlockedUsers,
     };
 }
 

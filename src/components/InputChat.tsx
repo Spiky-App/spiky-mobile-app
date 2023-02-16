@@ -16,7 +16,6 @@ import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, ChatMessageToReply, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
-import { selectUserAsObject } from '../store/feature/user/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import UniversityTag from './common/UniversityTag';
 
@@ -67,7 +66,6 @@ export const InputChat = ({
     const outputRange = [0, 100];
     const heightAnimated = height.interpolate({ inputRange, outputRange });
     const IDEA_MAX_LENGHT = 200;
-    const userObj = useAppSelector(selectUserAsObject);
 
     async function handleCreateChatMessage() {
         const newChatMessages: ChatMessage = {
@@ -92,15 +90,6 @@ export const InputChat = ({
             setIsTyping(false);
         }
         updateChatMessages(newChatMessages);
-        if (userObj) {
-            socket?.emit('newChatMsg', {
-                chatmsg: newChatMessages,
-                userto: toUser.id,
-                isOnline: toUser.online,
-                sender: userObj,
-            });
-        }
-        // }
     }
 
     function onPress() {
@@ -206,7 +195,7 @@ export const InputChat = ({
                         icon={faLocationArrow}
                         style={stylesInputChat.buttonIcon}
                         iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        disabled={isDisabled || networkError}
+                        disabled={isDisabled || networkError || toUser.disable}
                         onPress={onPress}
                     />
                     {counter <= 40 && (
