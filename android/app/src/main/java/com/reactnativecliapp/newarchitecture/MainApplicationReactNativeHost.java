@@ -1,4 +1,4 @@
-package com.reactnativecliapp.newarchitecture;
+package com.spikyapp.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.reactnativecliapp.BuildConfig;
-import com.reactnativecliapp.newarchitecture.components.MainComponentsRegistry;
-import com.reactnativecliapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.spikyapp.BuildConfig;
+import com.spikyapp.newarchitecture.components.MainComponentsRegistry;
+import com.spikyapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
