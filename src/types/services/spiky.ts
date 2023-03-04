@@ -208,7 +208,7 @@ export interface MessageComment {
     usuario?: UserI;
 }
 
-export interface CreateReportIdea {
+export interface CreateReport {
     ok: boolean;
     msg: string;
 }

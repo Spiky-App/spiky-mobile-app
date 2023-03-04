@@ -61,16 +61,16 @@ export const ModalIdeaOptions = ({
     const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const { deleteIdea, createReportIdea } = useSpikyService();
+    const { deleteIdea, createReport } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
     const { messageId, messageTrackingId } = message;
 
     const goToScreen = (
         screen: string,
-        params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
+        params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportScreen']
     ) => {
         setIdeaOptions(false);
-        if (screen === 'ReportIdeaScreen') navigation.pop();
+        if (screen === 'ReportScreen') navigation.pop();
         navigation.navigate(screen, params);
     };
 
@@ -130,7 +130,7 @@ export const ModalIdeaOptions = ({
     }
     async function handleIdeaRemoveFromFeed() {
         setIdeaOptions(false);
-        await createReportIdea(messageId, '', uid, true);
+        await createReport('', messageId, undefined, true);
         dispatch(
             setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
         );
@@ -207,7 +207,7 @@ export const ModalIdeaOptions = ({
                                     <TouchableOpacity
                                         style={stylescomp.button}
                                         onPress={() =>
-                                            goToScreen('ReportIdeaScreen', {
+                                            goToScreen('ReportScreen', {
                                                 messageId: message.messageId,
                                             })
                                         }
