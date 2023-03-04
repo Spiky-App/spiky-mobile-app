@@ -32,7 +32,7 @@ export const ReportScreen = ({ route }: Props) => {
 
     const { reportReason } = form;
 
-    const handleCreateReportIdea = () => {
+    const handleCreateReport = () => {
         setIsLoading(true);
         setButtonState(false);
         createReport(reportReason, messageId, reportedUser);
@@ -127,7 +127,7 @@ export const ReportScreen = ({ route }: Props) => {
                         <ButtonIcon
                             disabled={!buttonState}
                             icon={faFlag}
-                            onPress={handleCreateReportIdea}
+                            onPress={handleCreateReport}
                         />
                     </View>
                 </View>
