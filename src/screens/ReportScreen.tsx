@@ -36,7 +36,13 @@ export const ReportScreen = ({ route }: Props) => {
         setIsLoading(true);
         setButtonState(false);
         createReport(reportReason, messageId, reportedUser);
-        dispatch(setModalAlert({ isOpen: true, text: 'Mensaje reportado.', icon: faFlag }));
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: messageId ? 'Mensaje reportado.' : 'Usuario reportado',
+                icon: faFlag,
+            })
+        );
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
         onChange({ reportReason: '' });
