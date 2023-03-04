@@ -710,8 +710,25 @@ function useSpikyService() {
     };
     const updateUserNickname = async (nickname: string): Promise<boolean> => {
         try {
-            const response = await service.updateUserNickname(nickname);
-            return response.data.ok;
+            const { data } = await service.updateUserNickname(nickname);
+            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
+            await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
+            dispatch(
+                updateServiceConfig({
+                    headers: { 'x-token': data.token, 'Content-Type': 'application/json' },
+                })
+            );
+            dispatch(signIn(data.token));
+            dispatch(
+                setUser({
+                    nickname: alias,
+                    notificationsNumber: n_notificaciones,
+                    newChatMessagesNumber: n_chatmensajes,
+                    universityId: id_universidad,
+                    id: uid,
+                })
+            );
+            return true;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error cambiando seudónimo.')));
