@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import { faLightbulb, faMessage, faPen } from '../constants/icons/FontAwesome';
+import { faLightbulb, faPen } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
@@ -21,6 +21,7 @@ import ReactionsContainer from './common/ReactionsContainer';
 import { IdeaReaction } from './IdeaReaction';
 import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 import { Poll } from './Poll';
+import CommetsButton from './common/CommetsButton';
 
 interface Props {
     idea: Message;
@@ -52,6 +53,7 @@ export const Idea = ({ idea, filter }: Props) => {
     const isOwner = user.id === uid;
     const isDraft = draft === 1;
     const isPoll = answers && answers.length > 0;
+    const isNormal = !isPoll && !isDraft;
     const fecha = getTime(date.toString());
 
     async function handleDelete() {
@@ -144,11 +146,11 @@ export const Idea = ({ idea, filter }: Props) => {
                     >
                         <View style={styles.button_user}>
                             <Text style={styles.user}>@{user.nickname}</Text>
-                            <UniversityTag id={user.universityId} fontSize={13} />
+                            <UniversityTag id={user.universityId} fontSize={14} />
                         </View>
                     </Pressable>
 
-                    <View style={{ marginTop: 6 }}>
+                    <View style={{ paddingVertical: 14 }}>
                         <MsgTransform
                             textStyle={stylescom.msg}
                             text={message}
@@ -160,9 +162,7 @@ export const Idea = ({ idea, filter }: Props) => {
                     <View
                         style={{
                             ...stylescom.container,
-                            marginTop: 2,
                             justifyContent: 'space-between',
-                            position: 'relative',
                         }}
                     >
                         {isPoll && (
@@ -175,17 +175,17 @@ export const Idea = ({ idea, filter }: Props) => {
                                 handleClickUser={handleClickUser}
                             />
                         )}
-                        {!myReaction && !isOwner && !isPoll && (
+                        {!myReaction && !isOwner && isNormal && (
                             <>
                                 <View style={{ flex: 1, height: 15 }} />
                                 <IdeaReaction messageId={id} bottom={-15} right={-24} />
                             </>
                         )}
                         {isDraft && (
-                            <Pressable style={stylescom.eraseDraft} onPress={handleDelete}>
+                            <Pressable style={styles.button_container} onPress={handleDelete}>
                                 <FontAwesomeIcon
                                     icon={faTrash}
-                                    color="#bebebe"
+                                    color="#01192e5a"
                                     size={16}
                                     style={{
                                         ...styles.shadow_button,
@@ -197,7 +197,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 />
                             </Pressable>
                         )}
-                        {(myReaction || isOwner) && !isPoll && (
+                        {(myReaction || isOwner) && isNormal && (
                             <View style={stylescom.container}>
                                 {reactions.length > 0 && (
                                     <ReactionsContainer
@@ -208,24 +208,10 @@ export const Idea = ({ idea, filter }: Props) => {
                                         isIdeaReactions
                                     />
                                 )}
-
-                                <Pressable style={stylescom.reaction} onPress={handleOpenIdea}>
-                                    <FontAwesomeIcon
-                                        icon={faMessage}
-                                        color={'#D4D4D4'}
-                                        size={16}
-                                        style={{
-                                            ...styles.shadow_button,
-                                            shadowOffset: {
-                                                width: 1.5,
-                                                height: 2,
-                                            },
-                                        }}
-                                    />
-                                    <Text style={{ ...styles.text, ...stylescom.number }}>
-                                        {answersNumber === 0 ? '' : answersNumber}
-                                    </Text>
-                                </Pressable>
+                                <CommetsButton
+                                    callback={handleOpenIdea}
+                                    answersNumber={answersNumber}
+                                />
                             </View>
                         )}
                         {isDraft && (
@@ -239,7 +225,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                         })
                                     }
                                 >
-                                    <View style={stylescom.publishContainer}>
+                                    <View style={styles.button_container}>
                                         <Text style={stylescom.publish}>{'editar / publicar'}</Text>
                                     </View>
                                 </Pressable>
@@ -301,12 +287,6 @@ const stylescom = StyleSheet.create({
         textAlign: 'left',
         flexShrink: 1,
     },
-    reaction: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 10,
-    },
     publishDraft: {
         flexDirection: 'row',
         marginLeft: 25,
@@ -322,10 +302,10 @@ const stylescom = StyleSheet.create({
         marginBottom: 5,
     },
     number: {
-        fontWeight: '300',
+        ...styles.text,
         fontSize: 12,
-        color: '#bebebe',
-        marginLeft: 5,
+        color: '#01192e5a',
+        marginLeft: 1,
     },
     publishContainer: {
         ...styles.shadow_button,
@@ -340,8 +320,8 @@ const stylescom = StyleSheet.create({
     },
     publish: {
         ...styles.h5,
-        fontSize: 13,
-        color: 'white',
+        fontSize: 12,
+        color: '#01192e5a',
     },
     erase: {
         fontWeight: '300',

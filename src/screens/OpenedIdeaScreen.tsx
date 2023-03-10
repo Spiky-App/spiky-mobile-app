@@ -12,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import { Comment } from '../components/Comment';
-import { faChevronLeft, faLightbulb, faMessage, faThumbtack } from '../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faThumbtack } from '../constants/icons/FontAwesome';
 import { getTime } from '../helpers/getTime';
 import { styles } from '../themes/appTheme';
 
@@ -35,6 +35,7 @@ import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { Poll } from '../components/Poll';
+import CommetsButton from '../components/common/CommetsButton';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -216,12 +217,11 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     </TouchableOpacity>
                                 </View>
 
-                                <View style={{ marginVertical: 8 }}>
+                                <View style={{ marginVertical: 14 }}>
                                     <MsgTransform
                                         textStyle={{
                                             ...styles.text,
                                             ...stylescom.msg,
-                                            fontSize: 14,
                                         }}
                                         text={message.message}
                                         handleClickUser={handleClickUser}
@@ -269,24 +269,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                         isIdeaReactions
                                                     />
                                                 )}
-
-                                                <View style={stylescom.reaction}>
-                                                    <FontAwesomeIcon
-                                                        icon={faMessage}
-                                                        color={'#D4D4D4'}
-                                                        size={16}
-                                                        style={{
-                                                            ...styles.shadow_button,
-                                                            shadowOffset: {
-                                                                width: 1.5,
-                                                                height: 2,
-                                                            },
-                                                        }}
-                                                    />
-                                                    <Text style={styles.numberGray}>
-                                                        {answersNumber === 0 ? ' ' : answersNumber}
-                                                    </Text>
-                                                </View>
+                                                <CommetsButton answersNumber={answersNumber} />
                                             </View>
                                         </>
                                     )}
@@ -440,7 +423,6 @@ const stylescom = StyleSheet.create({
         paddingLeft: 32,
     },
     msg: {
-        fontSize: 13,
         textAlign: 'left',
         flexShrink: 1,
         width: '100%',

@@ -27,32 +27,35 @@ function ReactionsContainer({ reactionCount, id, handleClickUser, isIdeaReaction
 
     return (
         <>
-            <Pressable style={stylescomp.wrap} onPress={() => setModalReactions(true)}>
-                <View style={stylescomp.container}>
-                    {reactionCount.map(
-                        (reaction, index) =>
-                            index < 3 && (
-                                <View style={stylescomp.subcontainer} key={reaction.reaction}>
-                                    <Text style={{ ...styles.text, fontSize: 11 }}>
-                                        {reaction.reaction}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            ...stylescomp.number,
-                                        }}
-                                    >
-                                        {reaction.count}
-                                    </Text>
-                                </View>
-                            )
-                    )}
-                </View>
+            <Pressable
+                style={{ ...styles.button_container, paddingHorizontal: 6 }}
+                onPress={() => setModalReactions(true)}
+            >
+                {reactionCount.map(
+                    (reaction, index) =>
+                        index < 3 && (
+                            <View style={stylescomp.subcontainer} key={reaction.reaction}>
+                                <Text style={{ ...styles.text, fontSize: 12 }}>
+                                    {reaction.reaction}
+                                </Text>
+                                <Text
+                                    style={{
+                                        ...stylescomp.number,
+                                    }}
+                                >
+                                    {reaction.count}
+                                </Text>
+                            </View>
+                        )
+                )}
                 {reactionCount.length >= 4 && (
-                    <View style={stylescomp.moreReaction}>
-                        <Text style={{ ...stylescomp.number, fontSize: 10 }}>
+                    <View style={stylescomp.subcontainer}>
+                        <Text style={{ ...styles.textbold, color: '#01192e5a', fontSize: 14 }}>
+                            +
+                        </Text>
+                        <Text style={{ ...stylescomp.number, fontSize: 12 }}>
                             {countReactions()}
                         </Text>
-                        <Text style={{ ...stylescomp.text, fontSize: 10 }}> Más</Text>
                     </View>
                 )}
             </Pressable>
@@ -76,15 +79,6 @@ const stylescomp = StyleSheet.create({
         flexDirection: 'row',
         ...styles.center,
     },
-    container: {
-        ...styles.shadow_button,
-        flexDirection: 'row',
-        paddingHorizontal: 4,
-        paddingVertical: 1,
-        backgroundColor: '#D4D4D4',
-        marginRight: 5,
-        borderRadius: 3,
-    },
     subcontainer: {
         ...styles.center,
         flexDirection: 'row',
@@ -92,7 +86,7 @@ const stylescomp = StyleSheet.create({
     },
     number: {
         ...styles.text,
-        fontSize: 11,
+        fontSize: 12,
         color: '#01192e5a',
         marginLeft: 1,
     },
@@ -100,14 +94,5 @@ const stylescomp = StyleSheet.create({
         ...styles.text,
         fontSize: 11,
         color: '#01192e5a',
-    },
-    moreReaction: {
-        ...styles.center,
-        ...styles.shadow_button,
-        paddingHorizontal: 4,
-        backgroundColor: '#D4D4D4',
-        paddingVertical: 3,
-        borderRadius: 4,
-        flexDirection: 'row',
     },
 });

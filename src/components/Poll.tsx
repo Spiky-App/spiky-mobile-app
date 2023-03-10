@@ -225,9 +225,8 @@ const stylescom = StyleSheet.create({
         flexShrink: 1,
     },
     answer_button: {
-        backgroundColor: 'white',
         borderRadius: 4,
-        paddingVertical: 4,
+        paddingVertical: 5,
         flexDirection: 'row',
     },
     suboption: {

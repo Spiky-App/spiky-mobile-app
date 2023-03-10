@@ -42,13 +42,13 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScree
 
     return (
         <>
-            <Pressable onPress={handleOpendModal}>
-                <View>
+            <View style={{ position: 'relative' }}>
+                <Pressable onPress={handleOpendModal}>
                     <Text ref={reactContainerRef} style={{ ...styles.textbold, ...stylescom.dots }}>
                         ...
                     </Text>
-                </View>
-            </Pressable>
+                </Pressable>
+            </View>
             <ModalIdeaOptions
                 setIdeaOptions={setIdeaOptions}
                 ideaOptions={ideaOptions}
@@ -65,10 +65,10 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScree
 const stylescom = StyleSheet.create({
     dots: {
         fontWeight: '600',
-        color: '#bebebe',
-        fontSize: 24,
-        marginLeft: 5,
-        paddingHorizontal: 8,
-        top: -4,
+        color: '#01192e5a',
+        fontSize: 28,
+        paddingLeft: 5,
+        top: -1,
+        right: -4,
     },
 });
