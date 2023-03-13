@@ -203,7 +203,7 @@ const ReactionComp = ({ reaction, handleClickUser, setModalReactions }: Reaction
                         @{reaction.user.nickname}
                     </Text>
                 </Pressable>
-                <UniversityTag id={reaction.user.universityId} fontSize={13} />
+                <UniversityTag id={reaction.user.universityId} fontSize={14} />
             </View>
         </View>
     );
@@ -258,16 +258,16 @@ const stylescom = StyleSheet.create({
     user: {
         ...styles.textbold,
         fontWeight: '600',
-        fontSize: 13,
+        fontSize: 14,
     },
     reaction: {
         ...styles.text,
-        fontSize: 16,
+        fontSize: 25,
         marginRight: 6,
     },
     text: {
         ...styles.numberGray,
-        fontSize: 15,
+        fontSize: 16,
         paddingVertical: 3,
     },
     flatListCount: {
