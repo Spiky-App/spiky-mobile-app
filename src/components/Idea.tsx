@@ -175,17 +175,11 @@ export const Idea = ({ idea, filter }: Props) => {
                                 handleClickUser={handleClickUser}
                             />
                         )}
-                        {!myReaction && !isOwner && isNormal && (
-                            <>
-                                <View style={{ flex: 1, height: 15 }} />
-                                <IdeaReaction messageId={id} bottom={-15} right={-24} />
-                            </>
-                        )}
                         {isDraft && (
                             <Pressable style={styles.button_container} onPress={handleDelete}>
                                 <FontAwesomeIcon
                                     icon={faTrash}
-                                    color="#01192e5a"
+                                    color="#67737D"
                                     size={16}
                                     style={{
                                         ...styles.shadow_button,
@@ -197,7 +191,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 />
                             </Pressable>
                         )}
-                        {(myReaction || isOwner) && isNormal && (
+                        {isNormal && (
                             <View style={stylescom.container}>
                                 {reactions.length > 0 && (
                                     <ReactionsContainer
@@ -232,7 +226,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                             </View>
                         )}
-                        {(myReaction || isOwner || myAnswers) && !isDraft && (
+                        {(isNormal || myAnswers) && !isDraft && (
                             <View style={[isPoll && stylescom.container_abs, stylescom.container]}>
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                                 <PreModalIdeaOptions
@@ -249,6 +243,11 @@ export const Idea = ({ idea, filter }: Props) => {
                             </View>
                         )}
                     </View>
+                    {!myReaction && !isOwner && isNormal && (
+                        <>
+                            <IdeaReaction messageId={id} bottom={-15} right={-24} />
+                        </>
+                    )}
                 </View>
             </Animated.View>
         </View>
@@ -257,9 +256,9 @@ export const Idea = ({ idea, filter }: Props) => {
 
 const stylescom = StyleSheet.create({
     wrap: {
-        width: '90%',
+        width: '92%',
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 14,
         marginVertical: 8,
         shadowColor: '#4d4d4d',
         shadowOffset: {
@@ -272,9 +271,9 @@ const stylescom = StyleSheet.create({
     },
     subwrap: {
         paddingTop: 15,
-        paddingBottom: 8,
+        paddingBottom: 6,
         paddingHorizontal: 25,
-        borderRadius: 8,
+        borderRadius: 14,
     },
     container: {
         flexDirection: 'row',
@@ -331,8 +330,8 @@ const stylescom = StyleSheet.create({
     },
     corner: {
         position: 'absolute',
-        top: -4,
-        right: -28,
+        top: -2,
+        right: -26,
         transform: [{ rotate: '45deg' }],
         backgroundColor: '#01192E',
         paddingTop: 8,
@@ -340,7 +339,7 @@ const stylescom = StyleSheet.create({
         paddingHorizontal: 30,
     },
     corner_container: {
-        borderRadius: 8,
+        borderTopRightRadius: 14,
         position: 'absolute',
         height: 40,
         left: 0,

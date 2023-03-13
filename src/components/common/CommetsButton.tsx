@@ -12,7 +12,7 @@ interface Props extends TouchableOpacityProps {
 function CommetsButton({ callback, answersNumber }: Props) {
     return (
         <Pressable style={styles.button_container} onPress={callback}>
-            <FontAwesomeIcon icon={faMessage} color={'#01192e5a'} size={14} />
+            <FontAwesomeIcon icon={faMessage} color={'#67737D'} size={14} />
             <Text style={{ ...stylescomp.number, marginLeft: 4 }}>{`${answersNumber}`}</Text>
         </Pressable>
     );
@@ -24,7 +24,7 @@ const stylescomp = StyleSheet.create({
     number: {
         ...styles.text,
         fontSize: 12,
-        color: '#01192e5a',
+        color: '#67737D',
         marginLeft: 1,
     },
 });

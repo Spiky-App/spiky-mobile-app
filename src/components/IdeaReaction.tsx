@@ -6,13 +6,15 @@ import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import ReactionButton from './common/ReactionButton';
+import { BlurView } from '@react-native-community/blur';
+import { View } from 'react-native';
 
 interface Props {
     bottom: number;
     right: number;
     messageId: number;
 }
-export const IdeaReaction = ({ bottom, right, messageId }: Props) => {
+export const IdeaReaction = ({ messageId }: Props) => {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
@@ -59,9 +61,48 @@ export const IdeaReaction = ({ bottom, right, messageId }: Props) => {
     }
 
     return (
-        <ReactionButton
-            styleCircleButton={{ position: 'absolute', bottom, right, alignItems: 'flex-end' }}
-            handleReaction={handleReaction}
-        />
+        <View
+            style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                left: 0,
+                minHeight: 40,
+            }}
+        >
+            <View
+                style={{
+                    position: 'absolute',
+                    width: '100%',
+                    minHeight: 40,
+                    borderColor: '#01192e26',
+                    borderWidth: 4,
+                    borderRadius: 14,
+                }}
+            />
+            <BlurView
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    backgroundColor: '#01192e24',
+                    borderRadius: 14,
+                }}
+                blurType="light"
+                blurAmount={5}
+                reducedTransparencyFallbackColor="white"
+            />
+            <View
+                style={{
+                    alignItems: 'flex-end',
+                    justifyContent: 'center',
+                    flex: 1,
+                }}
+            >
+                <ReactionButton handleReaction={handleReaction} />
+            </View>
+        </View>
     );
 };

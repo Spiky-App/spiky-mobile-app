@@ -49,11 +49,9 @@ function ReactionsContainer({ reactionCount, id, handleClickUser, isIdeaReaction
                         )
                 )}
                 {reactionCount.length >= 4 && (
-                    <View style={stylescomp.subcontainer}>
-                        <Text style={{ ...styles.textbold, color: '#01192e5a', fontSize: 14 }}>
-                            +
-                        </Text>
-                        <Text style={{ ...stylescomp.number, fontSize: 12 }}>
+                    <View style={{ ...stylescomp.subcontainer, ...stylescomp.plusNumber }}>
+                        <Text style={{ ...styles.text, color: '#D4D4D4', fontSize: 12 }}>+</Text>
+                        <Text style={{ ...stylescomp.number, fontSize: 11, color: '#D4D4D4' }}>
                             {countReactions()}
                         </Text>
                     </View>
@@ -87,12 +85,19 @@ const stylescomp = StyleSheet.create({
     number: {
         ...styles.text,
         fontSize: 12,
-        color: '#01192e5a',
+        color: '#67737D',
         marginLeft: 1,
     },
     text: {
         ...styles.text,
         fontSize: 11,
-        color: '#01192e5a',
+        color: '#67737D',
+    },
+    plusNumber: {
+        backgroundColor: '#67737D',
+        borderRadius: 8,
+        padding: 2,
+        paddingRight: 4,
+        marginRight: 0,
     },
 });
