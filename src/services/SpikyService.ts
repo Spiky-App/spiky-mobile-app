@@ -3,7 +3,6 @@ import {
     LoginResponse,
     GetMessagesResponse,
     UniversityResponse,
-    MessageRequestParams,
     CreateMessageResponse,
     GetUsersSuggetionProps,
     GetHashtagsSuggetionProps,
@@ -84,10 +83,10 @@ class SpikyService {
         });
     }
 
-    createMessage(message: string, draft: number) {
+    createMessage(message: string, type: number = 1) {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
-            draft,
+            type,
         });
     }
     updateDraft(message: string, id: number, post: boolean) {
@@ -95,17 +94,6 @@ class SpikyService {
             id_mensaje: id,
             mensaje: message,
             post,
-        });
-    }
-
-    //Este servicio parece que no lo usan
-    getUserMessages(uid: number, parameters?: MessageRequestParams) {
-        const params = {
-            uid,
-            ...parameters,
-        };
-        return this.instance.get<GetMessagesResponse>(`mensajes/user`, {
-            params,
         });
     }
 

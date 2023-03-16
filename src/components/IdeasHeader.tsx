@@ -70,109 +70,106 @@ export const IdeasHeader = ({
     }, [activeDraft, myideas]);
 
     return (
-        <Animated.View
-            style={{
-                ...stylecom.filterWrap,
-                opacity,
-            }}
-        >
-            <View style={{ alignItems: 'center' }}>
-                <Text style={{ ...styles.text, ...styles.h3, flexDirection: 'row' }}>
-                    <Text style={{ paddingRight: 50 }}>
-                        <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
+        <Animated.View style={{ opacity, width: '90%', alignItems: 'center' }}>
+            <View style={stylecom.filterWrap}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ ...styles.text, ...styles.h3, flexDirection: 'row' }}>
+                        <Text style={{ paddingRight: 50 }}>
+                            <FontAwesomeIcon icon={icon} color={'#01192E'} size={23} />
+                        </Text>
+                        {` ${title}`}
+                        <Text style={styles.orange}>.</Text>
                     </Text>
-                    {` ${title}`}
-                    <Text style={styles.orange}>.</Text>
-                </Text>
+                </View>
+                {profile && (
+                    <SafeAreaView style={styles.container}>
+                        <ActionSheet
+                            ref={actionSheet}
+                            title={'Preferencias de visualización'}
+                            options={profileOptionArray}
+                            cancelButtonIndex={1}
+                            destructiveButtonIndex={1}
+                            onPress={index => {
+                                if (index == 0) {
+                                    Alert.alert(
+                                        '¿Estás seguro que quieres bloquear a ' + title + '?',
+                                        'Ya no verás el contenido de este usuario.',
+                                        [
+                                            {
+                                                text: 'Cancelar',
+                                                onPress: () => {},
+                                                style: 'cancel',
+                                            },
+                                            {
+                                                text: 'Sí, bloquear usuario.',
+                                                onPress: handleBlockUser,
+                                            },
+                                        ]
+                                    );
+                                }
+                            }}
+                        />
+                    </SafeAreaView>
+                )}
+                {profile && (
+                    <TouchableHighlight style={stylecom.dots} onPress={showActionSheet}>
+                        <FontAwesomeIcon icon={faSliders} color={'#01192E'} size={23} />
+                    </TouchableHighlight>
+                )}
+
+                {!connections &&
+                    !profile &&
+                    (!myideas ? (
+                        <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
+                            <TouchableHighlight
+                                style={stylecom.filterContainer}
+                                underlayColor="#01192E"
+                                onPress={() => setModalFilter(true)}
+                            >
+                                <View style={stylecom.flexCenter}>
+                                    <FontAwesomeIcon icon={faFilter} color="white" size={17} />
+                                    <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
+                                </View>
+                            </TouchableHighlight>
+                        </View>
+                    ) : (
+                        <View
+                            style={{
+                                ...styles.center,
+                                ...styles.shadow_button,
+                                flexDirection: 'row',
+                                backgroundColor: '#D4D4D4',
+                                borderRadius: 5,
+                            }}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    ...stylecom.buttonDraft,
+                                    backgroundColor: activeDraft ? '#D4D4D4' : '#01192E',
+                                }}
+                                onPress={() => setActiveDraft(false)}
+                            >
+                                <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                    Publicadas.
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    ...stylecom.buttonDraft,
+                                    backgroundColor: activeDraft ? '#01192E' : '#D4D4D4',
+                                }}
+                                onPress={() => setActiveDraft(true)}
+                            >
+                                <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                    Borradores.
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+
+                <ModalFilters setModalFilter={setModalFilter} modalFilter={modalFilter} />
             </View>
-            {profile && (
-                <SafeAreaView style={styles.container}>
-                    <ActionSheet
-                        ref={actionSheet}
-                        title={'Preferencias de visualización'}
-                        options={profileOptionArray}
-                        cancelButtonIndex={1}
-                        destructiveButtonIndex={1}
-                        onPress={index => {
-                            if (index == 0) {
-                                Alert.alert(
-                                    '¿Estás seguro que quieres bloquear a ' + title + '?',
-                                    'Ya no verás el contenido de este usuario.',
-                                    [
-                                        {
-                                            text: 'Cancelar',
-                                            onPress: () => {},
-                                            style: 'cancel',
-                                        },
-                                        {
-                                            text: 'Sí, bloquear usuario.',
-                                            onPress: handleBlockUser,
-                                        },
-                                    ]
-                                );
-                            }
-                        }}
-                    />
-                </SafeAreaView>
-            )}
-            {profile && (
-                <TouchableHighlight style={stylecom.dots} onPress={showActionSheet}>
-                    <FontAwesomeIcon icon={faSliders} color={'#01192E'} size={23} />
-                </TouchableHighlight>
-            )}
-
-            {!connections &&
-                !profile &&
-                (!myideas ? (
-                    <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
-                        <TouchableHighlight
-                            style={stylecom.filterContainer}
-                            underlayColor="#01192E"
-                            onPress={() => setModalFilter(true)}
-                        >
-                            <View style={stylecom.flexCenter}>
-                                <FontAwesomeIcon icon={faFilter} color="white" size={17} />
-                                <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                ) : (
-                    <View
-                        style={{
-                            ...styles.center,
-                            ...styles.shadow_button,
-                            flexDirection: 'row',
-                            backgroundColor: '#D4D4D4',
-                            borderRadius: 5,
-                        }}
-                    >
-                        <TouchableOpacity
-                            style={{
-                                ...stylecom.buttonDraft,
-                                backgroundColor: activeDraft ? '#D4D4D4' : '#01192E',
-                            }}
-                            onPress={() => setActiveDraft(false)}
-                        >
-                            <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
-                                Publicadas.
-                            </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={{
-                                ...stylecom.buttonDraft,
-                                backgroundColor: activeDraft ? '#01192E' : '#D4D4D4',
-                            }}
-                            onPress={() => setActiveDraft(true)}
-                        >
-                            <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
-                                Borradores.
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                ))}
-
-            <ModalFilters setModalFilter={setModalFilter} modalFilter={modalFilter} />
         </Animated.View>
     );
 };
@@ -183,7 +180,7 @@ const stylecom = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 15,
         marginBottom: 6,
-        width: '90%',
+        width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
     },

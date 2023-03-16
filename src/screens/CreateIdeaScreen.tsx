@@ -140,7 +140,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 );
             }
         } else {
-            const message = await createIdea(form.message, true);
+            const message = await createIdea(form.message, 1);
             if (message) {
                 if (draft) {
                     dispatch(addMessage(generateMessageFromMensaje(message)));

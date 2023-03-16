@@ -35,7 +35,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         reactions: reactionsRetrived,
         messageTrackingId,
         answersNumber: mensaje.num_respuestas ?? 0,
-        draft: mensaje.draft,
+        type: mensaje.type,
         sequence: msgIndex,
         comments: commentsRetrived,
         answers: answersRetrived,

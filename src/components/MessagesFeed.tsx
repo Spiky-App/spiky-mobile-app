@@ -80,6 +80,39 @@ const MessagesFeed = ({
                     onEndReached={() => {
                         !loading && loadMore();
                     }}
+                    // ListHeaderComponent={
+                    //     <View style={{ width: '100%', alignItems: 'center' }}>
+                    //         <View
+                    //             style={{
+                    //                 alignItems: 'flex-start',
+                    //                 justifyContent: 'flex-start',
+                    //                 width: '90%',
+                    //                 marginVertical: 8,
+                    //             }}
+                    //         >
+                    //             <Text style={{ ...styles.textbold, fontSize: 14, marginBottom: 5 }}>Estado:</Text>
+                    //             <View
+                    //                 style={{
+                    //                     flexDirection: 'row',
+                    //                     alignItems: 'center',
+                    //                     justifyContent: 'flex-start',
+                    //                     // borderColor: '#01192E',
+                    //                     // borderWidth: 1,
+                    //                     // borderRadius: 10,
+                    //                     // paddingVertical: 6,
+                    //                 }}
+                    //             >
+                    //                 <Text style={{ fontSize: 26, marginHorizontal: 8 }}>🤩</Text>
+                    //                 <View style={{ flexShrink: 1, alignSelf: 'flex-start'  }}>
+                    //                     <Text style={{ ...styles.text, textAlign: 'left', flexShrink: 1 }}>
+                    //                         Hola como estas todos me cago en todo jajajaj ajajs. fffffHola como
+                    //                         estas todos me cago en todo jajajaj ajajs. fffff
+                    //                 </Text>
+                    //                 </View>
+                    //             </View>
+                    //         </View>
+                    //     </View>
+                    // }
                     ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                     refreshControl={

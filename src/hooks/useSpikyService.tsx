@@ -271,9 +271,9 @@ function useSpikyService() {
         }
     };
 
-    const createIdea = async (message: string, draft?: boolean): Promise<Message | undefined> => {
+    const createIdea = async (message: string, type: number = 0): Promise<Message | undefined> => {
         try {
-            const response = await service.createMessage(message, draft ? 1 : 0);
+            const response = await service.createMessage(message, type);
             return response.data.mensaje;
         } catch (error) {
             console.log(error);

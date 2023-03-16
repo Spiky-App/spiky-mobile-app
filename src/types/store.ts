@@ -53,7 +53,7 @@ export interface Message {
     reactions: ReactionCount[];
     messageTrackingId?: number;
     answersNumber: number;
-    draft: number;
+    type: number;
     sequence: number;
     comments?: Comment[];
     answers?: AnswerCount[];

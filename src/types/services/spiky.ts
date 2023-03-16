@@ -34,15 +34,6 @@ interface University {
     background_color: string;
 }
 
-export interface MessageRequestParams {
-    alias?: string;
-    search?: string;
-    hashtag?: string;
-    univer?: number;
-    draft?: boolean;
-    lastMessageId?: number;
-}
-
 export interface GetMessagesResponse {
     ok: boolean;
     mensajes: Message[];
@@ -50,7 +41,7 @@ export interface GetMessagesResponse {
 
 export interface Message {
     banned?: number;
-    draft: number;
+    type: number;
     fecha: string | number;
     id_mensaje: number;
     id_usuario: number;

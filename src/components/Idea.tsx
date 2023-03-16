@@ -45,13 +45,13 @@ export const Idea = ({ idea, filter }: Props) => {
         myReaction,
         reactions,
         sequence,
-        draft,
+        type,
         answers,
         myAnswers,
         totalAnswers,
     } = idea;
     const isOwner = user.id === uid;
-    const isDraft = draft === 1;
+    const isDraft = type === 1;
     const isPoll = answers && answers.length > 0;
     const isNormal = !isPoll && !isDraft;
     const fecha = getTime(date.toString());

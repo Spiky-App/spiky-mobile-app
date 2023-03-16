@@ -28,7 +28,7 @@ const stylescom = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#01192E',
-        marginHorizontal: 20,
+        marginHorizontal: 15,
         marginVertical: 25,
         borderWidth: 0,
         borderRadius: 100,
