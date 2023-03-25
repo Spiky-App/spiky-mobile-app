@@ -52,7 +52,29 @@ export interface Message {
     myReaction?: string;
     reactions: ReactionCount[];
     messageTrackingId?: number;
-    answersNumber: number;
+    totalComments: number;
+    totalX2: number;
+    myX2: boolean;
+    type: number;
+    sequence: number;
+    comments?: Comment[];
+    answers?: AnswerCount[];
+    myAnswers?: number;
+    totalAnswers: number;
+    childMessage?: ChildMessage;
+}
+
+export interface ChildMessage {
+    id: number;
+    message: string;
+    date: number;
+    user: User;
+    myReaction?: string;
+    reactions: ReactionCount[];
+    messageTrackingId?: number;
+    totalComments: number;
+    totalX2: number;
+    myX2: boolean;
     type: number;
     sequence: number;
     comments?: Comment[];
@@ -158,6 +180,12 @@ export interface Reaction {
     user: User;
 }
 
+export interface X2Reaction {
+    messageID: number;
+    user: User;
+    xNummber: number;
+}
+
 export interface Answer {
     id: number;
     answer: string;
@@ -169,4 +197,13 @@ export interface ChatMessageToReply {
     messageId: number;
     message: string;
     user: User;
+}
+
+export enum MessageType {
+    NORMAL,
+    DRAFT,
+    POLL,
+    X2,
+    QUOTE,
+    MOOD,
 }

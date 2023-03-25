@@ -13,7 +13,7 @@ import UniversityTag from './common/UniversityTag';
 import ReactionButton from './common/ReactionButton';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
-import ReactionsContainer from './common/ReactionsContainer';
+import ReactionsContainer from './common/ReactionsContainers';
 
 interface Props {
     comment: CommentProps;
@@ -96,20 +96,23 @@ export const Comment = ({
                         >
                             <FontAwesomeIcon
                                 icon={faReply}
-                                color="#E6E6E6"
+                                color="#D4D4D4"
                                 style={{
                                     ...styles.shadow_button,
-                                    shadowColor: '#484848b9',
+                                    shadowOffset: {
+                                        width: 1,
+                                        height: 2,
+                                    },
                                 }}
                             />
                         </TouchableOpacity>
                         {myReaction === undefined && (
                             <ReactionButton
                                 changeColorOnPress
-                                styleCircleButton={{ marginLeft: 10 }}
-                                scale={0.5}
-                                offsetPosition={{ offset_x: -15, offset_y: -44 }}
+                                styleCircleButton={{ marginLeft: 15 }}
+                                offsetPosition={{ offset_x: 0, offset_y: -44 }}
                                 handleReaction={handleReaction}
+                                isComment
                             />
                         )}
                     </>
@@ -133,57 +136,6 @@ export const Comment = ({
                     />
                 )}
             </View>
-            {/* <View style={{ flexDirection: 'row' }}>
-                <View
-                    style={{
-                        ...styles.shadow_button,
-                        flexDirection: 'row',
-                        paddingVertical: 2,
-                        borderRadius: 4,
-                        backgroundColor: '#D4D4D4',
-                        marginTop: 3,
-                    }}
-                >
-                    {against > 0 && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                paddingHorizontal: 4,
-                                ...styles.center,
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faXmark}
-                                color={
-                                    reactionCommentType === ReactionType.AGAINST
-                                        ? '#01192E'
-                                        : 'white'
-                                }
-                                size={14}
-                            />
-                            <Text style={{ ...styles.text, ...stylescom.text }}>{against}</Text>
-                        </View>
-                    )}
-                    {favor > 0 && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                paddingHorizontal: 4,
-                                ...styles.center,
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faCheck}
-                                color={
-                                    reactionCommentType === ReactionType.FAVOR ? '#01192E' : 'white'
-                                }
-                                size={14}
-                            />
-                            <Text style={{ ...styles.text, ...stylescom.text }}>{favor}</Text>
-                        </View>
-                    )}
-                </View>
-            </View> */}
         </View>
     );
 };

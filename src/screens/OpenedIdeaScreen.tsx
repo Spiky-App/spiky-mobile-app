@@ -30,12 +30,12 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import UniversityTag from '../components/common/UniversityTag';
 import useSpikyService from '../hooks/useSpikyService';
 import { IdeaReaction } from '../components/IdeaReaction';
-import ReactionsContainer from '../components/common/ReactionsContainer';
+import ReactionsContainer from '../components/common/ReactionsContainers';
 import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { Poll } from '../components/Poll';
-import CommetsButton from '../components/common/CommetsButton';
+import { CommentsButton } from '../components/common/CommentsButton';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -50,12 +50,14 @@ const initialMessage: Message = {
         nickname: '',
         universityId: 0,
     },
-    answersNumber: 0,
-    draft: 0,
+    totalComments: 0,
     sequence: 1,
     reactions: [],
     answers: [],
     totalAnswers: 0,
+    type: 0,
+    totalX2: 0,
+    myX2: false,
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
@@ -67,7 +69,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<Message>(initialMessage);
-    const [answersNumber, setAnswersNumber] = useState<number>(message.answersNumber);
+    const [totalComments, settotalComments] = useState<number>(message.totalComments);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
@@ -85,7 +87,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setMessage(messageRetrived);
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
-            setAnswersNumber(messageRetrived.comments?.length || 0);
+            settotalComments(messageRetrived.comments?.length || 0);
         } else {
             navigation.goBack();
         }
@@ -95,7 +97,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const updateComments = (comment: CommentState) => {
         if (comments) {
             setComments([comment, ...comments]);
-            setAnswersNumber(comments.length + 1);
+            settotalComments(comments.length + 1);
         }
     };
 
@@ -141,6 +143,10 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             handleOpenIdea();
         }
     }, [messageId]);
+
+    useEffect(() => {
+        console.log(message.totalX2);
+    }, [message]);
 
     return (
         <BackgroundPaper>
@@ -247,33 +253,26 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             handleClickUser={handleClickUser}
                                         />
                                     )}
-                                    {!message.myReaction && !isOwner && !isPoll && (
-                                        <>
-                                            <View style={{ flex: 1, height: 15 }} />
-                                            <IdeaReaction
-                                                messageId={message.id}
-                                                bottom={-15}
-                                                right={-24}
-                                            />
-                                        </>
-                                    )}
-                                    {(message.myReaction || isOwner) && !isPoll && (
+                                    {(message.myX2 || message.myReaction || isOwner) && !isPoll && (
                                         <>
                                             <View style={stylescom.container}>
-                                                {message.reactions.length > 0 && (
-                                                    <ReactionsContainer
-                                                        reactionCount={message.reactions}
-                                                        myReaction={message.myReaction}
-                                                        id={message.id}
-                                                        handleClickUser={handleClickUser}
-                                                        isIdeaReactions
-                                                    />
-                                                )}
-                                                <CommetsButton answersNumber={answersNumber} />
+                                                <ReactionsContainer
+                                                    reactionCount={message.reactions}
+                                                    myReaction={message.myReaction}
+                                                    id={message.id}
+                                                    handleClickUser={handleClickUser}
+                                                    isIdea
+                                                    totalX2={message.totalX2}
+                                                    myX2={message.myX2}
+                                                />
+                                                <CommentsButton totalComments={totalComments} />
                                             </View>
                                         </>
                                     )}
-                                    {(message.myReaction || isOwner || message.myAnswers) && (
+                                    {(message.myX2 ||
+                                        message.myReaction ||
+                                        isOwner ||
+                                        message.myAnswers) && (
                                         <View
                                             style={[
                                                 isPoll && stylescom.container_abs,
@@ -292,6 +291,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     user: message.user,
                                                     messageTrackingId,
                                                     date: message.date,
+                                                    messageType: message.type,
                                                 }}
                                                 filter={filter}
                                                 setMessageTrackingId={setMessageTrackingId}
@@ -300,10 +300,13 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         </View>
                                     )}
                                 </View>
+                                {!message.myX2 && !message.myReaction && !isOwner && !isPoll && (
+                                    <IdeaReaction messageId={message.id} bottom={-15} right={-24} />
+                                )}
                             </View>
                         </View>
                         {!isPoll &&
-                            (message.myReaction !== undefined || isOwner ? (
+                            (message.myX2 || message.myReaction || isOwner ? (
                                 <>
                                     <View
                                         style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
@@ -405,7 +408,7 @@ const stylescom = StyleSheet.create({
     wrap: {
         width: '90%',
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 14,
         marginVertical: 8,
         shadowColor: '#4d4d4d',
         shadowOffset: {
@@ -469,7 +472,7 @@ const stylescom = StyleSheet.create({
         paddingHorizontal: 30,
     },
     corner_container: {
-        borderRadius: 8,
+        borderRadius: 14,
         position: 'absolute',
         height: 40,
         left: 0,

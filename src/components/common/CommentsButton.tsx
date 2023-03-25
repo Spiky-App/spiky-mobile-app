@@ -6,19 +6,19 @@ import { styles } from '../../themes/appTheme';
 
 interface Props extends TouchableOpacityProps {
     callback?: () => void;
-    answersNumber: number;
+    totalComments: number;
 }
 
-function CommetsButton({ callback, answersNumber }: Props) {
+export function CommentsButton({ callback, totalComments }: Props) {
     return (
-        <Pressable style={styles.button_container} onPress={callback}>
-            <FontAwesomeIcon icon={faMessage} color={'#67737D'} size={14} />
-            <Text style={{ ...stylescomp.number, marginLeft: 4 }}>{`${answersNumber}`}</Text>
-        </Pressable>
+        <>
+            <Pressable style={styles.button_container} onPress={callback}>
+                <FontAwesomeIcon icon={faMessage} color={'#67737D'} size={14} />
+                <Text style={{ ...stylescomp.number, marginLeft: 4 }}>{`${totalComments}`}</Text>
+            </Pressable>
+        </>
     );
 }
-
-export default CommetsButton;
 
 const stylescomp = StyleSheet.create({
     number: {

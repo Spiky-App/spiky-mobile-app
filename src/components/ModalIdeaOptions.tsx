@@ -23,7 +23,7 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message, User } from '../types/store';
+import { Message, User, MessageType } from '../types/store';
 import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
@@ -44,6 +44,7 @@ interface Props {
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
     isOpenedIdeaScreen?: boolean;
+    messageType: MessageType;
 }
 
 export const ModalIdeaOptions = ({
@@ -55,6 +56,7 @@ export const ModalIdeaOptions = ({
     setMessageTrackingId,
     filter,
     isOpenedIdeaScreen,
+    messageType,
 }: Props) => {
     const { top, left } = position;
     const uid = useAppSelector((state: RootState) => state.user.id);
@@ -163,34 +165,43 @@ export const ModalIdeaOptions = ({
                         <View style={{ ...stylescomp.container, top: top + 20, left: left - 100 }}>
                             {!myIdea ? (
                                 <>
-                                    <TouchableOpacity
-                                        style={stylescomp.button}
-                                        onPress={handleTracking}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faThumbtack}
-                                            color="#01192E"
-                                            size={13}
-                                        />
-                                        <Text style={stylescomp.text}>Tracking</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        style={stylescomp.button}
-                                        onPress={() =>
-                                            goToScreen('ReplyIdeaScreen', {
-                                                message: {
-                                                    messageId: message.messageId,
-                                                    message: message.message,
-                                                    user: message.user,
-                                                    date: message.date,
-                                                },
-                                            })
-                                        }
-                                    >
-                                        <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
-                                        <Text style={stylescomp.text}>Replicar en priv</Text>
-                                    </TouchableOpacity>
+                                    {messageType !== MessageType.X2 && (
+                                        <>
+                                            <TouchableOpacity
+                                                style={stylescomp.button}
+                                                onPress={handleTracking}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faThumbtack}
+                                                    color="#01192E"
+                                                    size={13}
+                                                />
+                                                <Text style={stylescomp.text}>Tracking</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                style={stylescomp.button}
+                                                onPress={() =>
+                                                    goToScreen('ReplyIdeaScreen', {
+                                                        message: {
+                                                            messageId: message.messageId,
+                                                            message: message.message,
+                                                            user: message.user,
+                                                            date: message.date,
+                                                        },
+                                                    })
+                                                }
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faReply}
+                                                    color="#01192E"
+                                                    size={13}
+                                                />
+                                                <Text style={stylescomp.text}>
+                                                    Replicar en priv
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    )}
 
                                     <TouchableOpacity
                                         style={stylescomp.button}

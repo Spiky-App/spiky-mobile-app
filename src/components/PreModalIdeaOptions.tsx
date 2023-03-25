@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../themes/appTheme';
-import { User } from '../types/store';
+import { User, MessageType } from '../types/store';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
 
 interface Positions {
@@ -17,6 +17,7 @@ interface Props {
         user: User;
         date: number;
         messageTrackingId?: number;
+        messageType: MessageType;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
@@ -57,6 +58,7 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScree
                 message={message}
                 filter={filter}
                 isOpenedIdeaScreen={isOpenedIdeaScreen}
+                messageType={message.messageType}
             />
         </>
     );

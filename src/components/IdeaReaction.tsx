@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message } from '../types/store';
+import { Message, MessageType } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
@@ -19,9 +19,11 @@ export const IdeaReaction = ({ messageId }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
     const { socket } = useContext(SocketContext);
-    const { createIdeaReaction } = useSpikyService();
+    const { createIdeaReaction, createIdea } = useSpikyService();
+    const [isLoading, setIsLoading] = useState(false);
 
     async function handleReaction(reaction: string[0]) {
+        setIsLoading(true);
         const wasCreated = await createIdeaReaction(messageId, reaction, user.id);
         if (wasCreated) {
             const messagesUpdated = messages.map((msg: Message) => {
@@ -58,6 +60,33 @@ export const IdeaReaction = ({ messageId }: Props) => {
             });
             dispatch(setMessages(messagesUpdated));
         }
+        setIsLoading(false);
+    }
+
+    async function handleCreateIdeaX2() {
+        setIsLoading(true);
+        const wasCreated = await createIdea('', MessageType.X2, messageId);
+        if (wasCreated) {
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === messageId) {
+                    socket?.emit('notify', {
+                        id_usuario1: msg.user.id,
+                        id_usuario2: user.id,
+                        id_mensaje: msg.id,
+                        tipo: 9,
+                    });
+                    return {
+                        ...msg,
+                        totalX2: msg.totalX2 + 1,
+                        myX2: true,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -101,7 +130,10 @@ export const IdeaReaction = ({ messageId }: Props) => {
                     flex: 1,
                 }}
             >
-                <ReactionButton handleReaction={handleReaction} />
+                <ReactionButton
+                    handleReaction={!isLoading ? handleReaction : () => {}}
+                    handleCreateIdeaX2={!isLoading ? handleCreateIdeaX2 : () => {}}
+                />
             </View>
         </View>
     );

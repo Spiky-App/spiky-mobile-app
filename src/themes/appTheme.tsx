@@ -146,6 +146,12 @@ export const styles = StyleSheet.create({
         color: '#01192E',
         fontSize: 16,
     },
+    user_reply: {
+        fontFamily: 'Helvetica-Bold',
+        fontWeight: '600',
+        color: '#67737D',
+        fontSize: 13,
+    },
     msg: {
         fontSize: 14,
         textAlign: 'left',

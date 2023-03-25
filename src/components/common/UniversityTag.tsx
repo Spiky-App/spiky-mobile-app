@@ -7,15 +7,27 @@ import { styles } from '../../themes/appTheme';
 interface Props {
     id: number;
     fontSize: number;
+    noColor?: boolean;
 }
 
-function UniversityTag({ id, fontSize }: Props) {
+function UniversityTag({ id, fontSize, noColor }: Props) {
     const universities = useAppSelector((state: RootState) => state.ui.universities);
     const university = universities?.find(u => u.id === id);
 
     return (
-        <View style={{ ...stylescomp.container, backgroundColor: university?.backgroundColor }}>
-            <Text style={{ color: university?.color, fontSize: fontSize - 4, ...stylescomp.text }}>
+        <View
+            style={{
+                ...stylescomp.container,
+                backgroundColor: noColor ? '#67737D' : university?.backgroundColor,
+            }}
+        >
+            <Text
+                style={{
+                    color: noColor ? 'white' : university?.color,
+                    fontSize: fontSize - 4,
+                    ...stylescomp.text,
+                }}
+            >
                 {university?.shortname}
             </Text>
         </View>

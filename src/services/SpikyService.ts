@@ -39,6 +39,7 @@ import {
     GetPollAnswers,
     UpdateUserNickname,
     DeleteAccount,
+    GetX2Reactions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -83,10 +84,11 @@ class SpikyService {
         });
     }
 
-    createMessage(message: string, type: number = 1) {
+    createMessage(message: string, type: number = 1, childMessageId?: number) {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
             type,
+            id_mensaje_child: childMessageId,
         });
     }
     updateDraft(message: string, id: number, post: boolean) {
@@ -314,6 +316,10 @@ class SpikyService {
 
     deleteAccount() {
         return this.instance.put<DeleteAccount>(`auth/delete-account`);
+    }
+
+    getX2Reactions(messageId: number) {
+        return this.instance.get<GetX2Reactions>(`reacc/x2/${messageId}`);
     }
 }
 

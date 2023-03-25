@@ -17,11 +17,11 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
 import UniversityTag from './common/UniversityTag';
-import ReactionsContainer from './common/ReactionsContainer';
+import ReactionsContainers from './common/ReactionsContainers';
 import { IdeaReaction } from './IdeaReaction';
 import { PreModalIdeaOptions } from './PreModalIdeaOptions';
 import { Poll } from './Poll';
-import CommetsButton from './common/CommetsButton';
+import { CommentsButton } from './common/CommentsButton';
 
 interface Props {
     idea: Message;
@@ -40,7 +40,7 @@ export const Idea = ({ idea, filter }: Props) => {
         message,
         date,
         user,
-        answersNumber,
+        totalComments,
         messageTrackingId,
         myReaction,
         reactions,
@@ -49,7 +49,9 @@ export const Idea = ({ idea, filter }: Props) => {
         answers,
         myAnswers,
         totalAnswers,
-    } = idea;
+        totalX2,
+        myX2,
+    } = idea.type === 3 && idea.childMessage ? { ...idea.childMessage, type: 3 } : idea;
     const isOwner = user.id === uid;
     const isDraft = type === 1;
     const isPoll = answers && answers.length > 0;
@@ -139,6 +141,19 @@ export const Idea = ({ idea, filter }: Props) => {
                             </View>
                         </View>
                     )}
+                    {type === 3 && (
+                        <View style={{ marginBottom: 10 }}>
+                            <View style={styles.button_user}>
+                                <Text style={styles.user_reply}>@{idea.user.nickname}</Text>
+                                <UniversityTag
+                                    id={idea.user.universityId}
+                                    fontSize={11.8}
+                                    noColor
+                                />
+                                <Text style={styles.user_reply}>X2</Text>
+                            </View>
+                        </View>
+                    )}
 
                     <Pressable
                         onPress={() => handleClickUser(user)}
@@ -193,18 +208,18 @@ export const Idea = ({ idea, filter }: Props) => {
                         )}
                         {isNormal && (
                             <View style={stylescom.container}>
-                                {reactions.length > 0 && (
-                                    <ReactionsContainer
-                                        reactionCount={reactions}
-                                        myReaction={myReaction}
-                                        id={id}
-                                        handleClickUser={handleClickUser}
-                                        isIdeaReactions
-                                    />
-                                )}
-                                <CommetsButton
+                                <ReactionsContainers
+                                    reactionCount={reactions}
+                                    myReaction={myReaction}
+                                    id={id}
+                                    handleClickUser={handleClickUser}
+                                    isIdea
+                                    totalX2={totalX2}
+                                    myX2={myX2}
+                                />
+                                <CommentsButton
                                     callback={handleOpenIdea}
-                                    answersNumber={answersNumber}
+                                    totalComments={totalComments}
                                 />
                             </View>
                         )}
@@ -237,16 +252,15 @@ export const Idea = ({ idea, filter }: Props) => {
                                         user,
                                         messageTrackingId,
                                         date,
+                                        messageType: type,
                                     }}
                                     filter={filter}
                                 />
                             </View>
                         )}
                     </View>
-                    {!myReaction && !isOwner && isNormal && (
-                        <>
-                            <IdeaReaction messageId={id} bottom={-15} right={-24} />
-                        </>
+                    {!myX2 && !myReaction && !isOwner && isNormal && (
+                        <IdeaReaction messageId={id} bottom={-15} right={-24} />
                     )}
                 </View>
             </Animated.View>

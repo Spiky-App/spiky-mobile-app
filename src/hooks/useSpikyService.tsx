@@ -32,6 +32,7 @@ import {
     TermsAndConditions,
     UserI,
     UserInfo,
+    X2Reaction,
 } from '../types/services/spiky';
 import { Toast } from '../types/store';
 
@@ -271,9 +272,13 @@ function useSpikyService() {
         }
     };
 
-    const createIdea = async (message: string, type: number = 0): Promise<Message | undefined> => {
+    const createIdea = async (
+        message: string,
+        type: number = 0,
+        childMessageId?: number
+    ): Promise<Message | undefined> => {
         try {
-            const response = await service.createMessage(message, type);
+            const response = await service.createMessage(message, type, childMessageId);
             return response.data.mensaje;
         } catch (error) {
             console.log(error);
@@ -730,6 +735,17 @@ function useSpikyService() {
         }
     };
 
+    const getX2Rections = async (messageId: number): Promise<X2Reaction[]> => {
+        try {
+            const response = await service.getX2Reactions(messageId);
+            return response.data.X2s;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando cuenta.')));
+            return [];
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -773,6 +789,7 @@ function useSpikyService() {
         deleteAccount,
         blockUser,
         getBlockedUsers,
+        getX2Rections,
     };
 }
 

@@ -52,7 +52,7 @@ export const InputComment = ({
 
     async function handleNewComment(newComment: Comment) {
         const messagesUpdated = messages.map(msg =>
-            msg.id === messageId ? { ...msg, answersNumber: msg.answersNumber + 1 } : msg
+            msg.id === messageId ? { ...msg, totalComments: msg.totalComments + 1 } : msg
         );
         if (toUser !== user.id) {
             socket?.emit('notify', {
