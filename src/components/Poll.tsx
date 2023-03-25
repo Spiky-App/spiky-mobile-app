@@ -7,7 +7,10 @@ import { setMessages } from '../store/feature/messages/messagesSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { AnswerCount, Message, User } from '../types/store';
+import { CommentsButton } from './common/CommentsButton';
 import { ModalPollVotes } from './ModalPollVotes';
+import { faSquarePollHorizontal } from '../constants/icons/FontAwesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 interface Props {
     messageId: number;
@@ -15,6 +18,8 @@ interface Props {
     answers: AnswerCount[];
     myAnswers?: number;
     totalAnswers: number;
+    totalComments: number;
+    handleOpenIdea?: () => void;
     handleClickUser: (goToUser: User) => void;
 }
 
@@ -24,6 +29,8 @@ export const Poll = ({
     totalAnswers,
     messageId,
     userIdMessageOwner,
+    handleOpenIdea,
+    totalComments,
     handleClickUser,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
@@ -107,12 +114,21 @@ export const Poll = ({
             {myAnswers || isOwner ? (
                 <Animated.View style={[{ marginTop: 15, minHeight: heightAnimated }]}>
                     <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
-                    <Pressable
-                        style={[styles.center, { paddingTop: 5, width: '100%' }]}
-                        onPress={() => setModalAnswers(true)}
-                    >
-                        <Text style={styles.textGray}>Ver votos</Text>
-                    </Pressable>
+
+                    <View style={stylescom.container}>
+                        <Pressable
+                            style={styles.button_container}
+                            onPress={() => setModalAnswers(true)}
+                        >
+                            <FontAwesomeIcon
+                                icon={faSquarePollHorizontal}
+                                color={'#67737D'}
+                                size={14}
+                            />
+                            <Text style={{ ...stylescom.number, marginLeft: 4 }}>Votos</Text>
+                        </Pressable>
+                        <CommentsButton callback={handleOpenIdea} totalComments={totalComments} />
+                    </View>
 
                     <ModalPollVotes
                         messageId={messageId}
@@ -263,12 +279,24 @@ const stylescom = StyleSheet.create({
     background_answer: {
         width: '95%',
         height: 8,
-        // marginLeft: 18,
         backgroundColor: '#D4D4D4',
         borderRadius: 6,
     },
     text_button: {
         ...styles.text,
         color: '#01192e5a',
+    },
+    container: {
+        marginTop: 10,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    number: {
+        ...styles.text,
+        fontSize: 12,
+        color: '#67737D',
+        marginLeft: 1,
     },
 });

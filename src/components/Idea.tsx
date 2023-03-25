@@ -53,9 +53,10 @@ export const Idea = ({ idea, filter }: Props) => {
         myX2,
     } = idea.type === 3 && idea.childMessage ? { ...idea.childMessage, type: 3 } : idea;
     const isOwner = user.id === uid;
+    const isNormal = type === 0;
     const isDraft = type === 1;
-    const isPoll = answers && answers.length > 0;
-    const isNormal = !isPoll && !isDraft;
+    const isPoll = type === 2;
+    const isX2 = type === 3;
     const fecha = getTime(date.toString());
 
     async function handleDelete() {
@@ -141,7 +142,7 @@ export const Idea = ({ idea, filter }: Props) => {
                             </View>
                         </View>
                     )}
-                    {type === 3 && (
+                    {isX2 && (
                         <View style={{ marginBottom: 10 }}>
                             <View style={styles.button_user}>
                                 <Text style={styles.user_reply}>@{idea.user.nickname}</Text>
@@ -188,6 +189,8 @@ export const Idea = ({ idea, filter }: Props) => {
                                 messageId={id}
                                 userIdMessageOwner={user.id ? user.id : 0}
                                 handleClickUser={handleClickUser}
+                                totalComments={totalComments}
+                                handleOpenIdea={handleOpenIdea}
                             />
                         )}
                         {isDraft && (

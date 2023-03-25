@@ -69,7 +69,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<Message>(initialMessage);
-    const [totalComments, settotalComments] = useState<number>(message.totalComments);
+    const [totalComments, setTotalComments] = useState<number>(message.totalComments);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
@@ -87,7 +87,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setMessage(messageRetrived);
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
-            settotalComments(messageRetrived.comments?.length || 0);
+            setTotalComments(messageRetrived.comments?.length || 0);
         } else {
             navigation.goBack();
         }
@@ -97,7 +97,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const updateComments = (comment: CommentState) => {
         if (comments) {
             setComments([comment, ...comments]);
-            settotalComments(comments.length + 1);
+            setTotalComments(comments.length + 1);
         }
     };
 
@@ -243,7 +243,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 >
                                     {isPoll && (
                                         <Poll
-                                            answers={message?.answers || []}
+                                            answers={message.answers}
                                             totalAnswers={message.totalAnswers}
                                             myAnswers={message.myAnswers}
                                             messageId={message.id}
@@ -251,6 +251,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                 message.user.id ? message.user.id : 0
                                             }
                                             handleClickUser={handleClickUser}
+                                            totalComments={message.totalComments}
                                         />
                                     )}
                                     {(message.myX2 || message.myReaction || isOwner) && !isPoll && (
@@ -305,79 +306,66 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 )}
                             </View>
                         </View>
-                        {!isPoll &&
-                            (message.myX2 || message.myReaction || isOwner ? (
-                                <>
-                                    <View
-                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
-                                    >
-                                        <Text
-                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
-                                        >
-                                            Comentarios
-                                            <Text style={styles.orange}>.</Text>
-                                        </Text>
+                        {message.myAnswers || message.myX2 || message.myReaction || isOwner ? (
+                            <>
+                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                </View>
+                                {comments && comments.length > 0 ? (
+                                    <View style={stylescom.commentWrap}>
+                                        <FlatList
+                                            style={{
+                                                width: '100%',
+                                            }}
+                                            data={comments}
+                                            renderItem={({ item }) => (
+                                                <Comment
+                                                    comment={item}
+                                                    formComment={form}
+                                                    onChangeComment={onChange}
+                                                    refInputComment={refInputComment}
+                                                    handleClickUser={handleClickUser}
+                                                    handleClickHashtag={handleClickHashtag}
+                                                />
+                                            )}
+                                            keyExtractor={item => item.id + ''}
+                                            showsVerticalScrollIndicator={false}
+                                        />
                                     </View>
-                                    {comments && comments.length > 0 ? (
-                                        <View style={stylescom.commentWrap}>
-                                            <FlatList
-                                                style={{
-                                                    width: '100%',
-                                                }}
-                                                data={comments}
-                                                renderItem={({ item }) => (
-                                                    <Comment
-                                                        comment={item}
-                                                        formComment={form}
-                                                        onChangeComment={onChange}
-                                                        refInputComment={refInputComment}
-                                                        handleClickUser={handleClickUser}
-                                                        handleClickHashtag={handleClickHashtag}
-                                                    />
-                                                )}
-                                                keyExtractor={item => item.id + ''}
-                                                showsVerticalScrollIndicator={false}
-                                            />
-                                        </View>
-                                    ) : (
-                                        <View
-                                            style={{ ...stylescom.commentWrap, ...styles.center }}
-                                        >
-                                            <Text
-                                                style={{ ...styles.text, ...stylescom.textGrayPad }}
-                                            >
-                                                Se el primero en contribuir a esta idea.
-                                            </Text>
-                                        </View>
-                                    )}
-                                    <InputComment
-                                        messageId={messageId}
-                                        toUser={message.user.id ? message.user.id : 0}
-                                        updateComments={updateComments}
-                                        form={form}
-                                        onChange={onChange}
-                                        refInputComment={refInputComment}
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <View
-                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
-                                    >
-                                        <Text
-                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
-                                        >
-                                            Comentarios
-                                            <Text style={styles.orange}>.</Text>
-                                        </Text>
-                                    </View>
+                                ) : (
                                     <View style={{ ...stylescom.commentWrap, ...styles.center }}>
                                         <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                            Toma una postura antes de participar
+                                            Se el primero en contribuir a esta idea.
                                         </Text>
                                     </View>
-                                </>
-                            ))}
+                                )}
+                                <InputComment
+                                    messageId={messageId}
+                                    toUser={message.user.id ? message.user.id : 0}
+                                    updateComments={updateComments}
+                                    form={form}
+                                    onChange={onChange}
+                                    refInputComment={refInputComment}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                </View>
+                                <View style={{ ...stylescom.commentWrap, ...styles.center }}>
+                                    <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                        Toma una postura antes de participar
+                                    </Text>
+                                </View>
+                            </>
+                        )}
                     </>
                 ) : (
                     <View style={{ ...styles.center, flex: 1 }}>
@@ -406,7 +394,7 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
     },
     wrap: {
-        width: '90%',
+        width: '92%',
         backgroundColor: 'white',
         borderRadius: 14,
         marginVertical: 8,
@@ -483,8 +471,8 @@ const stylescom = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginBottom: 15,
-        width: '90%',
-        borderRadius: 8,
+        width: '92%',
+        borderRadius: 14,
         backgroundColor: 'white',
         shadowColor: '#4d4d4d',
         shadowOffset: {

@@ -48,8 +48,8 @@ function reactionsRetrived(reacciones: ReaccionesCount[]) {
     return reactions;
 }
 
-function answersRetrived(encuesta_opciones?: RespuestasCount[]) {
-    const answers: AnswerCount[] | undefined = encuesta_opciones?.map(answer => ({
+function answersRetrived(encuesta_opciones: RespuestasCount[]) {
+    const answers: AnswerCount[] = encuesta_opciones.map(answer => ({
         id: answer.id_encuesta_opcion,
         answer: answer.encuesta_opcion,
         count: answer.encuesta_respuestas_count,

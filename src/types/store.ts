@@ -58,7 +58,7 @@ export interface Message {
     type: number;
     sequence: number;
     comments?: Comment[];
-    answers?: AnswerCount[];
+    answers: AnswerCount[];
     myAnswers?: number;
     totalAnswers: number;
     childMessage?: ChildMessage;
@@ -78,7 +78,7 @@ export interface ChildMessage {
     type: number;
     sequence: number;
     comments?: Comment[];
-    answers?: AnswerCount[];
+    answers: AnswerCount[];
     myAnswers?: number;
     totalAnswers: number;
 }
