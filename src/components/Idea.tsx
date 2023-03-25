@@ -244,7 +244,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                             </View>
                         )}
-                        {(isNormal || myAnswers) && !isDraft && (
+                        {(isNormal || myAnswers || isX2) && !isDraft && (
                             <View style={[isPoll && stylescom.container_abs, stylescom.container]}>
                                 <Text style={{ ...styles.text, ...stylescom.number }}>{fecha}</Text>
                                 <PreModalIdeaOptions
