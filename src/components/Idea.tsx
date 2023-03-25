@@ -209,7 +209,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 />
                             </Pressable>
                         )}
-                        {isNormal && (
+                        {(isNormal || isX2) && (
                             <View style={stylescom.container}>
                                 <ReactionsContainers
                                     reactionCount={reactions}
