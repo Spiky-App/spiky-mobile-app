@@ -62,10 +62,6 @@ export const ModalShowX2Reactions = ({
         return () => setX2Reactions([]);
     }, [modalX2Reactions]);
 
-    useEffect(() => {
-        console.log(x2Reactions);
-    }, [x2Reactions]);
-
     const Reactions = () =>
         x2Reactions?.length !== 0 ? (
             <Animated.View style={{ opacity }}>

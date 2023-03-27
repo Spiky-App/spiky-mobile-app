@@ -27,6 +27,7 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
 import { Message } from '../types/store';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { ModalConfirmation } from '../components/ModalConfirmation';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 type NavigationStackProp = StackNavigationProp<RootStackParamList>;
@@ -44,6 +45,10 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const navStack = useNavigation<NavigationStackProp>();
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
+    const [activeConfirmation, setActiveConfirmation] = useState(false);
+    const [isOpenDrafConfirmation, setIsOpenDrafConfirmation] = useState(false);
+    const [callbackDrafConfirmation, setCallbackDrafConfirmation] = useState(() => () => {});
+    const [callbackDrafCancel, setCallbackDrafCancel] = useState(() => () => {});
     const { createIdea, updateDraft } = useSpikyService();
     const IDEA_MAX_LENGHT = 220;
     const { draft } = useAppSelector((state: RootState) => state.messages);
@@ -122,7 +127,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
         }
         setLoading(false);
     }
-    async function onPressPenToSquare() {
+    async function onPressPenToSquare(callbackAfter: Function) {
         setLoading(true);
         if (isDraft) {
             const message = await handleUpdateDraft(idDraft, false);
@@ -130,7 +135,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 if (draft) {
                     dispatch(updateMessage(message));
                 }
-                navDrawer.goBack();
+                callbackAfter();
                 dispatch(
                     setModalAlert({
                         isOpen: true,
@@ -140,25 +145,55 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 );
             }
         } else {
-            const message = await createIdea(form.message, 1);
-            if (message) {
+            const mensaje = await createIdea(form.message, 1);
+            if (mensaje) {
                 if (draft) {
-                    dispatch(addMessage(generateMessageFromMensaje(message)));
+                    dispatch(
+                        addMessage(
+                            generateMessageFromMensaje({
+                                ...mensaje,
+                                usuario: {
+                                    alias: user.nickname,
+                                    id_universidad: user.universityId,
+                                },
+                                reacciones: [],
+                                encuesta_opciones: [],
+                            })
+                        )
+                    );
                 }
-                navDrawer.goBack();
+                callbackAfter();
                 dispatch(
                     setModalAlert({ isOpen: true, text: 'Borrador guardado.', icon: faPenToSquare })
                 );
             }
         }
-
         setLoading(false);
     }
 
     useEffect(() => {
         const { message: mensaje } = form;
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
-    }, [form]);
+        if (mensaje.length > 0 && draftedIdea !== mensaje && !activeConfirmation)
+            setActiveConfirmation(true);
+        if (mensaje.length === 0 && activeConfirmation) setActiveConfirmation(false);
+    }, [form, activeConfirmation, draftedIdea]);
+
+    useEffect(() => {
+        const unsubscribe = navStack.addListener('beforeRemove', e => {
+            if (!activeConfirmation || isLoading) {
+                return;
+            }
+            e.preventDefault();
+            setCallbackDrafConfirmation(
+                () => () => onPressPenToSquare(() => navStack.dispatch(e.data.action))
+            );
+            setCallbackDrafCancel(() => () => navStack.dispatch(e.data.action));
+            setIsOpenDrafConfirmation(true);
+        });
+
+        return unsubscribe;
+    }, [navStack, activeConfirmation, form, isLoading]);
 
     const messageLenght = form.message.length;
 
@@ -260,7 +295,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                         <ButtonIcon
                             disabled={isLoading || invalid()}
                             icon={faPenToSquare}
-                            onPress={onPressPenToSquare}
+                            onPress={() => onPressPenToSquare(() => navDrawer.goBack())}
                         />
                         <ButtonIcon
                             disabled={isLoading || invalid()}
@@ -270,6 +305,14 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                         />
                     </View>
                 </View>
+                <ModalConfirmation
+                    isOpen={isOpenDrafConfirmation}
+                    callback={callbackDrafConfirmation}
+                    callbackCancel={callbackDrafCancel}
+                    setIsOpen={setIsOpenDrafConfirmation}
+                    text={'¿Quieres guardar como borrador tu idea incompleta?'}
+                    confirmationText={'Sí, guardar'}
+                />
             </KeyboardAvoidingView>
         </BackgroundPaper>
     );

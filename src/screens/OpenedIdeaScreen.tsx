@@ -144,10 +144,6 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         }
     }, [messageId]);
 
-    useEffect(() => {
-        console.log(message.totalX2);
-    }, [message]);
-
     return (
         <BackgroundPaper>
             <KeyboardAvoidingView
