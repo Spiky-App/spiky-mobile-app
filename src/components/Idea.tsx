@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View, Linking, Alert } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { faLightbulb, faPen } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
@@ -111,6 +111,15 @@ export const Idea = ({ idea, filter }: Props) => {
         });
     }
 
+    async function handleClickLink(url: string) {
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('URL no soportado.');
+        }
+    }
+
     useEffect(() => {
         fadeIn(150, () => {}, sequence * 150);
     }, []);
@@ -172,6 +181,7 @@ export const Idea = ({ idea, filter }: Props) => {
                             text={message}
                             handleClickUser={handleClickUser}
                             handleClickHashtag={handleClickHashtag}
+                            handleClickLink={handleClickLink}
                         />
                     </View>
 

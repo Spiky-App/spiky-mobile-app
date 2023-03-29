@@ -22,6 +22,7 @@ interface Props {
     refInputComment: React.RefObject<TextInput>;
     handleClickUser: (goToUser: User) => void;
     handleClickHashtag: (hashtag_text: string) => void;
+    handleClickLink: (url: string) => Promise<void>;
 }
 
 export const Comment = ({
@@ -31,6 +32,7 @@ export const Comment = ({
     refInputComment,
     handleClickUser,
     handleClickHashtag,
+    handleClickLink,
 }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
     const { socket } = useContext(SocketContext);
@@ -125,6 +127,7 @@ export const Comment = ({
                     text={comment.comment}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}
+                    handleClickLink={handleClickLink}
                 />
             </View>
             <View style={{ flexDirection: 'row', marginTop: 8 }}>
@@ -133,6 +136,8 @@ export const Comment = ({
                         reactionCount={reactions}
                         id={comment.id}
                         handleClickUser={handleClickUser}
+                        totalX2={0}
+                        myX2={false}
                     />
                 )}
             </View>

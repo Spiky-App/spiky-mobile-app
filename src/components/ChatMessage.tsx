@@ -1,6 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, Text, View, Keyboard, Pressable } from 'react-native';
+import {
+    Animated,
+    PanResponder,
+    StyleSheet,
+    Text,
+    View,
+    Keyboard,
+    Pressable,
+    Linking,
+    Alert,
+} from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import { useAnimation } from '../hooks/useAnimation';
@@ -17,6 +27,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { selectUserAsObject } from '../store/feature/user/userSlice';
 import SocketContext from '../context/Socket/Context';
 import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
+import MsgTransform from './MsgTransform';
 
 interface MessageProp {
     msg: ChatMessageProp;
@@ -97,6 +108,15 @@ export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessagePro
         });
     }
 
+    async function handleClickLink(url: string) {
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('URL no soportado.');
+        }
+    }
+
     useEffect(() => {
         fadeIn(300);
         if (refIsLoading.current) {
@@ -171,7 +191,13 @@ export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessagePro
                         }}
                     >
                         <View>
-                            <Text style={styles.text}>{msg.message}</Text>
+                            <MsgTransform
+                                textStyle={styles.text}
+                                text={msg.message}
+                                handleClickUser={() => {}}
+                                handleClickHashtag={() => {}}
+                                handleClickLink={handleClickLink}
+                            />
                         </View>
                         <View>
                             {isLoading ? (

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+    Alert,
     FlatList,
     KeyboardAvoidingView,
+    Linking,
     Platform,
     StyleSheet,
     Text,
@@ -138,6 +140,15 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         });
     };
 
+    async function handleClickLink(url: string) {
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('URL no soportado.');
+        }
+    }
+
     useEffect(() => {
         if (messageId) {
             handleOpenIdea();
@@ -228,6 +239,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         text={message.message}
                                         handleClickUser={handleClickUser}
                                         handleClickHashtag={handleClickHashtag}
+                                        handleClickLink={handleClickLink}
                                     />
                                 </View>
 
@@ -325,6 +337,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     refInputComment={refInputComment}
                                                     handleClickUser={handleClickUser}
                                                     handleClickHashtag={handleClickHashtag}
+                                                    handleClickLink={handleClickLink}
                                                 />
                                             )}
                                             keyExtractor={item => item.id + ''}
