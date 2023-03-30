@@ -275,10 +275,16 @@ function useSpikyService() {
     const createIdea = async (
         message: string,
         type: number = 0,
-        childMessageId?: number
+        childMessageId?: number,
+        isSuperAnonymous?: boolean
     ): Promise<Message | undefined> => {
         try {
-            const response = await service.createMessage(message, type, childMessageId);
+            const response = await service.createMessage(
+                message,
+                type,
+                childMessageId,
+                isSuperAnonymous
+            );
             return response.data.mensaje;
         } catch (error) {
             console.log(error);
@@ -665,10 +671,11 @@ function useSpikyService() {
 
     const createPoll = async (
         question: string,
-        answers: string[]
+        answers: string[],
+        isSuperAnonymous: boolean
     ): Promise<Message | undefined> => {
         try {
-            const response = await service.createPoll(question, answers);
+            const response = await service.createPoll(question, answers, isSuperAnonymous);
             return response.data.mensaje;
         } catch (error) {
             console.log(error);

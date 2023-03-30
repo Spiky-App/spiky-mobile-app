@@ -84,11 +84,17 @@ class SpikyService {
         });
     }
 
-    createMessage(message: string, type: number = 1, childMessageId?: number) {
+    createMessage(
+        message: string,
+        type: number = 1,
+        childMessageId?: number,
+        isSuperAnonymous?: boolean
+    ) {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
             type,
             id_mensaje_child: childMessageId,
+            anonymous: isSuperAnonymous,
         });
     }
     updateDraft(message: string, id: number, post: boolean) {
@@ -291,10 +297,11 @@ class SpikyService {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
     }
 
-    createPoll(message: string, answers: string[]) {
+    createPoll(message: string, answers: string[], isSuperAnonymous: boolean) {
         return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
             mensaje: message,
             opciones: answers,
+            anonymous: isSuperAnonymous,
         });
     }
 

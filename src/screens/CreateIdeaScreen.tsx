@@ -28,6 +28,7 @@ import SocketContext from '../context/Socket/Context';
 import { Message } from '../types/store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ModalConfirmation } from '../components/ModalConfirmation';
+import ToggleButton from '../components/common/ToggleButton';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 type NavigationStackProp = StackNavigationProp<RootStackParamList>;
@@ -46,6 +47,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
     const [activeConfirmation, setActiveConfirmation] = useState(false);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(false);
     const [isOpenDrafConfirmation, setIsOpenDrafConfirmation] = useState(false);
     const [callbackDrafConfirmation, setCallbackDrafConfirmation] = useState(() => () => {});
     const [callbackDrafCancel, setCallbackDrafCancel] = useState(() => () => {});
@@ -68,7 +70,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     }
 
     async function handleCreateIdea(): Promise<Message | undefined> {
-        const mensaje = await createIdea(form.message);
+        const mensaje = await createIdea(form.message, 0, undefined, isSuperAnonymous);
         if (mensaje) {
             const createdMessage: Message = generateMessageFromMensaje({
                 ...mensaje,
@@ -244,6 +246,40 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                                 },
                             ]}
                         />
+                        <View style={stylecom.WrapAbsoluteCenter}>
+                            <View style={stylecom.WrapperMaxCounterNIdea}>
+                                <View style={stylecom.ConteMaxCounterNIdea}>
+                                    <View style={stylecom.MaxCounterNIdea}></View>
+                                    {counter <= 40 && (
+                                        <Text
+                                            style={
+                                                counter < 0
+                                                    ? stylecom.MaxCounterTextNIdeaRed
+                                                    : stylecom.MaxCounterTextNIdea
+                                            }
+                                        >
+                                            {counter}
+                                        </Text>
+                                    )}
+                                    <View
+                                        style={[
+                                            counter < 0
+                                                ? stylecom.MaxCounterNIdeaColorRed
+                                                : stylecom.MaxCounterNIdeaColor,
+                                            {
+                                                width:
+                                                    getPercentage(
+                                                        messageLenght < IDEA_MAX_LENGHT
+                                                            ? messageLenght
+                                                            : IDEA_MAX_LENGHT,
+                                                        IDEA_MAX_LENGHT
+                                                    ) + '%',
+                                            },
+                                        ]}
+                                    />
+                                </View>
+                            </View>
+                        </View>
                     </View>
                     <View
                         style={{
@@ -260,37 +296,12 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             icon={faSquarePollHorizontal}
                             onPress={() => navStack.replace('CreatePollScreen')}
                         />
-                        <View style={stylecom.WrapperMaxCounterNIdea}>
-                            <View style={stylecom.ConteMaxCounterNIdea}>
-                                <View style={stylecom.MaxCounterNIdea}></View>
-                                {counter <= 40 && (
-                                    <Text
-                                        style={
-                                            counter < 0
-                                                ? stylecom.MaxCounterTextNIdeaRed
-                                                : stylecom.MaxCounterTextNIdea
-                                        }
-                                    >
-                                        {counter}
-                                    </Text>
-                                )}
-                                <View
-                                    style={[
-                                        counter < 0
-                                            ? stylecom.MaxCounterNIdeaColorRed
-                                            : stylecom.MaxCounterNIdeaColor,
-                                        {
-                                            width:
-                                                getPercentage(
-                                                    messageLenght < IDEA_MAX_LENGHT
-                                                        ? messageLenght
-                                                        : IDEA_MAX_LENGHT,
-                                                    IDEA_MAX_LENGHT
-                                                ) + '%',
-                                        },
-                                    ]}
-                                />
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <ToggleButton
+                                isActive={isSuperAnonymous}
+                                setIsActive={setIsSuperAnonymous}
+                                text={['Super', 'anónimo']}
+                            />
                         </View>
                         <ButtonIcon
                             disabled={isLoading || invalid()}
@@ -342,6 +353,12 @@ const stylecom = StyleSheet.create({
         height: 45,
         borderWidth: 1,
         borderRadius: 30,
+    },
+    WrapAbsoluteCenter: {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        marginHorizontal: 25,
     },
     WrapperMaxCounterNIdea: {
         // flex: 1,

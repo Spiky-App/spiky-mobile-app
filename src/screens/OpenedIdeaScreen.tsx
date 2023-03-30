@@ -60,6 +60,7 @@ const initialMessage: Message = {
     type: 0,
     totalX2: 0,
     myX2: false,
+    anonymous: false,
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
@@ -216,7 +217,35 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     </View>
                                 )}
 
-                                <View style={stylescom.flex}>
+                                {message.anonymous ? (
+                                    <View style={styles.button_user}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={styles.user}>
+                                                @{message.user.nickname}
+                                            </Text>
+                                            <UniversityTag
+                                                id={message.user.universityId}
+                                                fontSize={14}
+                                            />
+                                            <View
+                                                style={{
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                }}
+                                            >
+                                                <View
+                                                    style={{
+                                                        flexGrow: 1,
+                                                        flexDirection: 'row',
+                                                        backgroundColor: '#01192E',
+                                                        borderRadius: 3,
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                    </View>
+                                ) : (
                                     <TouchableOpacity onPress={() => handleClickUser(message.user)}>
                                         <View style={styles.button_user}>
                                             <Text style={{ ...styles.user, fontSize: 15 }}>
@@ -228,7 +257,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             />
                                         </View>
                                     </TouchableOpacity>
-                                </View>
+                                )}
 
                                 <View style={{ marginVertical: 14 }}>
                                     <MsgTransform
@@ -301,6 +330,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     messageTrackingId,
                                                     date: message.date,
                                                     messageType: message.type,
+                                                    anonymous: message.anonymous,
                                                 }}
                                                 filter={filter}
                                                 setMessageTrackingId={setMessageTrackingId}

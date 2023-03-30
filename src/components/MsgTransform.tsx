@@ -42,7 +42,7 @@ const MsgTransform = ({
                         );
                         return (
                             <Pressable
-                                key={index}
+                                key={`${index}`}
                                 style={stylescomp.text_wrap}
                                 onPress={() =>
                                     handleClickUser({
@@ -62,7 +62,7 @@ const MsgTransform = ({
                         const hashtag_text = hashtag.replace('#', '');
                         return (
                             <Pressable
-                                key={index}
+                                key={`${index}`}
                                 style={stylescomp.text_wrap}
                                 onPress={() => handleClickHashtag(hashtag_text)}
                             >
@@ -86,7 +86,7 @@ const MsgTransform = ({
                         );
                         return (
                             <TouchableWithoutFeedback
-                                key={index}
+                                key={`${index}`}
                                 style={{ alignItems: 'flex-end' }}
                                 onPress={() => handleClickLink(linkOfficial)}
                             >
@@ -112,10 +112,8 @@ const MsgTransform = ({
                         );
                     } else {
                         return (
-                            <View style={stylescomp.text_wrap}>
-                                <Text style={textStyle} key={index}>
-                                    {string}
-                                </Text>
+                            <View style={stylescomp.text_wrap} key={`${index}`}>
+                                <Text style={textStyle}>{string}</Text>
                             </View>
                         );
                     }

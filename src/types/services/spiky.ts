@@ -58,6 +58,7 @@ export interface Message {
     mi_encuesta_respuesta?: number;
     total_encuesta_respuestas: number;
     mensaje_child?: ChildMessage;
+    anonymous: boolean;
 }
 
 export interface ChildMessage {
@@ -78,6 +79,7 @@ export interface ChildMessage {
     encuesta_opciones: AnswerCount[];
     mi_encuesta_respuesta?: number;
     total_encuesta_respuestas: number;
+    anonymous: boolean;
 }
 
 export interface UserI {

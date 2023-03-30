@@ -62,6 +62,7 @@ export interface Message {
     myAnswers?: number;
     totalAnswers: number;
     childMessage?: ChildMessage;
+    anonymous: boolean;
 }
 
 export interface ChildMessage {
@@ -81,6 +82,7 @@ export interface ChildMessage {
     answers: AnswerCount[];
     myAnswers?: number;
     totalAnswers: number;
+    anonymous: boolean;
 }
 
 export interface ReactionCount {

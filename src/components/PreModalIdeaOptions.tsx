@@ -18,6 +18,7 @@ interface Props {
         date: number;
         messageTrackingId?: number;
         messageType: MessageType;
+        anonymous: boolean;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;

@@ -40,6 +40,7 @@ interface Props {
         user: User;
         date: number;
         messageTrackingId?: number;
+        anonymous: boolean;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
@@ -178,28 +179,30 @@ export const ModalIdeaOptions = ({
                                                 />
                                                 <Text style={stylescomp.text}>Tracking</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={stylescomp.button}
-                                                onPress={() =>
-                                                    goToScreen('ReplyIdeaScreen', {
-                                                        message: {
-                                                            messageId: message.messageId,
-                                                            message: message.message,
-                                                            user: message.user,
-                                                            date: message.date,
-                                                        },
-                                                    })
-                                                }
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faReply}
-                                                    color="#01192E"
-                                                    size={13}
-                                                />
-                                                <Text style={stylescomp.text}>
-                                                    Replicar en priv
-                                                </Text>
-                                            </TouchableOpacity>
+                                            {!message.anonymous && (
+                                                <TouchableOpacity
+                                                    style={stylescomp.button}
+                                                    onPress={() =>
+                                                        goToScreen('ReplyIdeaScreen', {
+                                                            message: {
+                                                                messageId: message.messageId,
+                                                                message: message.message,
+                                                                user: message.user,
+                                                                date: message.date,
+                                                            },
+                                                        })
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faReply}
+                                                        color="#01192E"
+                                                        size={13}
+                                                    />
+                                                    <Text style={stylescomp.text}>
+                                                        Replicar en priv
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
                                         </>
                                     )}
 

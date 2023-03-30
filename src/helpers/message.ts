@@ -37,6 +37,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         myAnswers: mensaje.mi_encuesta_respuesta,
         totalAnswers: mensaje.total_encuesta_respuestas,
         childMessage: mensaje_child,
+        anonymous: mensaje.anonymous,
     };
 }
 
@@ -86,6 +87,7 @@ function childMessageRetrived(msgIndex: number, mensaje_child?: MensajeChild) {
             answers: answersRetrived(mensaje_child.encuesta_opciones),
             myAnswers: mensaje_child.mi_encuesta_respuesta,
             totalAnswers: mensaje_child.total_encuesta_respuestas,
+            anonymous: mensaje_child.anonymous,
         };
     } else {
         return undefined;

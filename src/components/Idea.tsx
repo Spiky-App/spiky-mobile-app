@@ -51,6 +51,7 @@ export const Idea = ({ idea, filter }: Props) => {
         totalAnswers,
         totalX2,
         myX2,
+        anonymous,
     } = idea.type === 3 && idea.childMessage ? { ...idea.childMessage, type: 3 } : idea;
     const isOwner = user.id === uid;
     const isNormal = type === 0;
@@ -165,15 +166,40 @@ export const Idea = ({ idea, filter }: Props) => {
                         </View>
                     )}
 
-                    <Pressable
-                        onPress={() => handleClickUser(user)}
-                        style={{ alignSelf: 'flex-start' }}
-                    >
+                    {anonymous ? (
                         <View style={styles.button_user}>
-                            <Text style={styles.user}>@{user.nickname}</Text>
-                            <UniversityTag id={user.universityId} fontSize={14} />
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.user}>@{user.nickname}</Text>
+                                <UniversityTag id={user.universityId} fontSize={14} />
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        height: '100%',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            flexGrow: 1,
+                                            flexDirection: 'row',
+                                            backgroundColor: '#01192E',
+                                            borderRadius: 3,
+                                        }}
+                                    />
+                                </View>
+                            </View>
                         </View>
-                    </Pressable>
+                    ) : (
+                        <Pressable
+                            onPress={() => handleClickUser(user)}
+                            style={{ alignSelf: 'flex-start' }}
+                        >
+                            <View style={styles.button_user}>
+                                <Text style={styles.user}>@{user.nickname}</Text>
+                                <UniversityTag id={user.universityId} fontSize={14} />
+                            </View>
+                        </Pressable>
+                    )}
 
                     <View style={{ paddingVertical: 14 }}>
                         <MsgTransform
@@ -266,6 +292,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                         messageTrackingId,
                                         date,
                                         messageType: type,
+                                        anonymous,
                                     }}
                                     filter={filter}
                                 />
