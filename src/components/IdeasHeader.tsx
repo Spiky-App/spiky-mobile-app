@@ -46,7 +46,7 @@ export const IdeasHeader = ({
     const { opacity, fadeIn } = useAnimation({});
     const dispatch = useDispatch();
     let actionSheet = useRef();
-    var profileOptionArray = ['Bloquear contenido de ' + title, 'Cancelar'];
+    var profileOptionArray = ['Reportar usuario', 'Bloquear contenido de ' + title, 'Cancelar'];
     const { blockUser } = useSpikyService();
     const { id: uid } = useAppSelector((state: RootState) => state.user);
     const navigation = useNavigation<any>();
@@ -94,7 +94,7 @@ export const IdeasHeader = ({
                         cancelButtonIndex={1}
                         destructiveButtonIndex={1}
                         onPress={index => {
-                            if (index == 0) {
+                            if (index == 1) {
                                 Alert.alert(
                                     '¿Estás seguro que quieres bloquear a ' + title + '?',
                                     'Ya no verás el contenido de este usuario.',
@@ -110,6 +110,10 @@ export const IdeasHeader = ({
                                         },
                                     ]
                                 );
+                            } else if (index == 0) {
+                                navigation.navigate('ReportScreen', {
+                                    reportedUser: blocked_user,
+                                });
                             }
                         }}
                     />

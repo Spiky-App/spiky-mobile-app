@@ -102,17 +102,17 @@ function useSpikyService() {
         return undefined;
     };
 
-    const createReportIdea = async (
-        messageId: number,
+    const createReport = async (
         reportReason: string,
-        uid: number,
+        messageId?: number,
+        reportedUser?: string,
         updatePreferences?: boolean
     ): Promise<boolean> => {
         try {
-            const response = await service.createReportIdea(
-                uid,
-                messageId,
+            const response = await service.createReport(
                 reportReason,
+                messageId,
+                reportedUser,
                 updatePreferences
             );
             return response.data.ok;
@@ -732,7 +732,7 @@ function useSpikyService() {
 
     return {
         createMessageComment,
-        createReportIdea,
+        createReport,
         createTracking,
         deleteTracking,
         createChatMsgWithReply,

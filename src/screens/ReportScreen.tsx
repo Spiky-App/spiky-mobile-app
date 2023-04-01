@@ -14,29 +14,35 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { styles } from '../themes/appTheme';
 
-type Props = DrawerScreenProps<RootStackParamList, 'ReportIdeaScreen'>;
+type Props = DrawerScreenProps<RootStackParamList, 'ReportScreen'>;
 
-export const ReportIdeaScreen = ({ route }: Props) => {
-    const uid = useAppSelector((state: RootState) => state.user.id);
+export const ReportScreen = ({ route }: Props) => {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const [counter, setCounter] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [buttonState, setButtonState] = useState(false);
-    const { createReportIdea } = useSpikyService();
+    const { createReport } = useSpikyService();
     const { form, onChange } = useForm({
         reportReason: '',
     });
     const messageId = route.params?.messageId;
+    const reportedUser = route.params?.reportedUser;
     const messages = useAppSelector((state: RootState) => state.messages.messages);
 
     const { reportReason } = form;
 
-    const handleCreateReportIdea = () => {
+    const handleCreateReport = () => {
         setIsLoading(true);
         setButtonState(false);
-        createReportIdea(messageId, reportReason, uid);
-        dispatch(setModalAlert({ isOpen: true, text: 'Mensaje reportado.', icon: faFlag }));
+        createReport(reportReason, messageId, reportedUser);
+        dispatch(
+            setModalAlert({
+                isOpen: true,
+                text: messageId ? 'Mensaje reportado.' : 'Usuario reportado',
+                icon: faFlag,
+            })
+        );
         const messagesUpdated = messages.filter(msg => msg.id !== messageId);
         dispatch(setMessages(messagesUpdated));
         onChange({ reportReason: '' });
@@ -121,7 +127,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
                         <ButtonIcon
                             disabled={!buttonState}
                             icon={faFlag}
-                            onPress={handleCreateReportIdea}
+                            onPress={handleCreateReport}
                         />
                     </View>
                 </View>

@@ -16,7 +16,7 @@ import {
     GetMessageAndComments,
     CreateCommentReaction,
     UpdateDraftResponse,
-    CreateReportIdea,
+    CreateReport,
     GetUserInfo,
     UpdatePassword,
     UpdatePasswordUri,
@@ -198,15 +198,15 @@ class SpikyService {
         });
     }
 
-    createReportIdea(
-        uid: number,
-        messageId: number,
+    createReport(
         reportReason: string,
+        messageId?: number,
+        reportedUser?: string,
         updatePreferences?: boolean
     ) {
-        return this.instance.post<CreateReportIdea>(`report`, {
-            id_usuario: uid,
+        return this.instance.post<CreateReport>(`report`, {
             id_mensaje: messageId,
+            usuario_reportado: reportedUser,
             motivo_reporte: reportReason,
             update_preferences: updatePreferences,
         });
