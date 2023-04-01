@@ -9,14 +9,14 @@ import {
     GetHashtagsSuggetionProps,
     CreateTrackingProps,
     DeleteTrackingProps,
-    CreateReactionMsg,
+    CreateIdeaReaction,
     DeleteMessageProps,
     GetNotifications,
     UpdateNotifications,
     GetMessageAndComments,
-    CreateReactionCmt,
+    CreateCommentReaction,
     UpdateDraftResponse,
-    CreateReportIdea,
+    CreateReport,
     GetUserInfo,
     UpdatePassword,
     UpdatePasswordUri,
@@ -33,6 +33,13 @@ import {
     ForgotPasswordResponse,
     DeleteDeviceToken,
     RegisterUser,
+    GetNetworkConnectionStatus,
+    GetCommentReactions,
+    CreatePollResponse,
+    CreateAnswerPoll,
+    GetPollAnswers,
+    UpdateUserNickname,
+    DeleteAccount,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -117,9 +124,15 @@ class SpikyService {
     deleteTracking(messageTrackingId: number) {
         return this.instance.delete<DeleteTrackingProps>(`track/${messageTrackingId}`);
     }
+    blockUser(uid: number, blocked_user: string, remove: boolean) {
+        return this.instance.post(`report/block-user`, { uid, blocked_user, remove });
+    }
+    getBlockedUsers(uid: number) {
+        return this.instance.post(`report/get-blocked-users`, { uid });
+    }
 
-    createReactionMsg(uid: number, messageId: number, reaction: string[0]) {
-        return this.instance.post<CreateReactionMsg>(`reacc`, {
+    createIdeaReaction(uid: number, messageId: number, reaction: string[0]) {
+        return this.instance.post<CreateIdeaReaction>(`reacc`, {
             uid,
             id_mensaje: messageId,
             reaccion: reaction,
@@ -134,10 +147,10 @@ class SpikyService {
         return this.instance.get<GetMessageAndComments>(`mensajes/msg-resps/${messageId}`);
     }
 
-    createReactionCmt(commentId: number, reactionType: number) {
-        return this.instance.post<CreateReactionCmt>(`reacc/resp`, {
+    createCommentReaction(commentId: number, reaction: string) {
+        return this.instance.post<CreateCommentReaction>(`reacc/resp`, {
             id_respuesta: commentId,
-            tipo: reactionType,
+            reaccion: reaction,
         });
     }
 
@@ -185,11 +198,17 @@ class SpikyService {
         });
     }
 
-    createReportIdea(uid: number, messageId: number, reportReason: string) {
-        return this.instance.post<CreateReportIdea>(`report`, {
-            id_usuario: uid,
+    createReport(
+        reportReason: string,
+        messageId?: number,
+        reportedUser?: string,
+        updatePreferences?: boolean
+    ) {
+        return this.instance.post<CreateReport>(`report`, {
             id_mensaje: messageId,
+            usuario_reportado: reportedUser,
             motivo_reporte: reportReason,
+            update_preferences: updatePreferences,
         });
     }
 
@@ -256,8 +275,8 @@ class SpikyService {
         );
     }
 
-    getIdeaReactions(messageId: number) {
-        return this.instance.get<GetIdeaReactions>(`reacc/${messageId}`);
+    getIdeaReactions(ideaId: number) {
+        return this.instance.get<GetIdeaReactions>(`reacc/${ideaId}`);
     }
 
     getPendingNotifications() {
@@ -272,6 +291,41 @@ class SpikyService {
         return this.instance.post<DeleteDeviceToken>(`auth/logout`, {
             device_token: deviceTokenStorage,
         });
+    }
+
+    getNetworkConnectionStatus() {
+        return this.instance.get<GetNetworkConnectionStatus>(`verif/net-connection`);
+    }
+
+    getCommentReactions(commentId: number) {
+        return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
+    }
+
+    createPoll(message: string, answers: string[]) {
+        return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
+            mensaje: message,
+            opciones: answers,
+        });
+    }
+
+    createPollAnswer(answerId: number) {
+        return this.instance.post<CreateAnswerPoll>('poll/answer', {
+            id_encuesta_opcion: answerId,
+        });
+    }
+
+    getPollAnswers(messageId: number) {
+        return this.instance.get<GetPollAnswers>(`poll/answers/${messageId}`);
+    }
+
+    updateUserNickname(nickname: string) {
+        return this.instance.put<UpdateUserNickname>(`auth/alias`, {
+            alias: nickname,
+        });
+    }
+
+    deleteAccount() {
+        return this.instance.put<DeleteAccount>(`auth/delete-account`);
     }
 }
 

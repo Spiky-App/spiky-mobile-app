@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Animated, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Text, View, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
 import LogoAndIconSvg from '../components/svg/LogoAndIconSvg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { StatusType } from '../types/common';
 import { StorageKeys } from '../types/storage';
-import { useAppDispatch } from '../store/hooks';
 import useSpikyService from '../hooks/useSpikyService';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
+import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
 
 const manifest2 = [
     'Bienvenido spiker',
@@ -33,21 +31,22 @@ export const ManifestPart2Screen = ({ route }: Props) => {
     const [aux, setAux] = useState(true);
     const timeRef = useRef<number>(0);
     const navigation = useNavigation<any>();
-    const dispatch = useAppDispatch();
     const { logInUser } = useSpikyService();
+    const { getTokenDevice } = useFirebaseMessaging();
     const { correoValid, password } = route.params;
+
     const nextManifiesto = () => fadeOut(1000, () => setState(state + 1));
     const logUser = async () => {
-        const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+        if (!deviceTokenStorage) {
+            if (!deviceTokenStorage) {
+                await getTokenDevice();
+                deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+            }
+        }
         if (deviceTokenStorage) {
             await logInUser(correoValid, password, deviceTokenStorage);
         } else {
-            dispatch(
-                addToast({
-                    message: 'Error al iniciar sesíon',
-                    type: StatusType.WARNING,
-                })
-            );
             navigation.navigate('LoginScreen');
         }
     };
@@ -65,7 +64,14 @@ export const ManifestPart2Screen = ({ route }: Props) => {
             fadeIn(900);
             timeRef.current = setTimeout(() => {
                 setAux(false);
-                movingPositionAndScale(0, -320, 1, 0.7, 900, nextManifiesto);
+                movingPositionAndScale(
+                    0,
+                    Dimensions.get('window').height / -2 + 80,
+                    1,
+                    0.7,
+                    900,
+                    nextManifiesto
+                );
             }, 1500);
         } else {
             const delay = state == 0 ? 1000 : 2200;

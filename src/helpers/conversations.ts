@@ -21,12 +21,14 @@ function generateConversationFromConversacion(
             nickname: conversacion.usuario1.alias,
             universityId: conversacion.usuario1.id_universidad,
             online: conversacion.usuario1.online,
+            disable: conversacion.usuario1.disable,
         },
         user_2: {
             id: conversacion.usuario2.id_usuario,
             nickname: conversacion.usuario2.alias,
             universityId: conversacion.usuario2.id_universidad,
             online: conversacion.usuario2.online,
+            disable: conversacion.usuario2.disable,
         },
         chatmessage: chatsMsgRetrived,
     };

@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { faReply, faXmark } from '../constants/icons/FontAwesome';
+import { faReply } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
-import { ModalReactComment } from './ModalReactComment';
-import { faCheck } from '../constants/icons/FontAwesome';
-import IconGray from './svg/IconGray';
-import { Comment as CommentProps, ReactionType, User } from '../types/store';
+import { Comment as CommentProps, User } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
 import { FormComment } from './InputComment';
 import UniversityTag from './common/UniversityTag';
+import ReactionButton from './common/ReactionButton';
+import SocketContext from '../context/Socket/Context';
+import useSpikyService from '../hooks/useSpikyService';
+import ReactionsContainer from './common/ReactionsContainer';
 
 interface Props {
     comment: CommentProps;
@@ -32,15 +33,11 @@ export const Comment = ({
     handleClickHashtag,
 }: Props) => {
     const uid = useAppSelector((state: RootState) => state.user.id);
-    const [reactComment, setReactComment] = useState({
-        against: comment.against,
-        favor: comment.favor,
-        reactionCommentType: comment.reactionCommentType,
-    });
-    const [modalReact, setModalReact] = useState(false);
-    const [position, setPosition] = useState({ top: 0 });
+    const { socket } = useContext(SocketContext);
+    const { createCommentReaction } = useSpikyService();
+    const [reactions, setReactions] = useState(comment.reactions);
+    const [myReaction, setMyReaction] = useState(comment.myReaction);
     const date = getTime(comment.date.toString());
-    const { against, favor, reactionCommentType } = reactComment;
 
     const handleReply = () => {
         const commentMsg = formComment.comment + ' ';
@@ -50,11 +47,35 @@ export const Comment = ({
         refInputComment.current?.focus();
     };
 
-    useEffect(() => {
-        if (position.top !== 0) {
-            setModalReact(true);
+    const handleReaction = async (reaction: string) => {
+        const wasCreated = await createCommentReaction(comment.id, reaction);
+        if (wasCreated) {
+            socket?.emit('notify', {
+                id_usuario1: comment.user.id,
+                id_usuario2: uid,
+                id_mensaje: comment.messageId,
+                id_respuesta: comment.id,
+                tipo: 5,
+            });
+            let isNew = true;
+            let new_reactions = comment.reactions.map(r => {
+                if (r.reaction === reaction) {
+                    isNew = false;
+                    return {
+                        reaction: r.reaction,
+                        count: r.count + 1,
+                    };
+                } else {
+                    return r;
+                }
+            });
+            if (isNew) {
+                new_reactions = [...reactions, { reaction, count: 1 }];
+            }
+            setReactions(new_reactions);
+            setMyReaction(reaction);
         }
-    }, [position]);
+    };
 
     return (
         <View style={stylescom.wrap}>
@@ -82,23 +103,14 @@ export const Comment = ({
                                 }}
                             />
                         </TouchableOpacity>
-                        {reactionCommentType === undefined && (
-                            <TouchableOpacity
-                                style={{ width: 18, marginLeft: 6 }}
-                                onPress={event => {
-                                    setPosition({ top: event.nativeEvent.pageY });
-                                }}
-                            >
-                                <IconGray
-                                    color="#E6E6E6"
-                                    underlayColor={'#01192ebe'}
-                                    pressed={modalReact}
-                                    style={{
-                                        ...styles.shadow_button,
-                                        shadowColor: '#484848b9',
-                                    }}
-                                />
-                            </TouchableOpacity>
+                        {myReaction === undefined && (
+                            <ReactionButton
+                                changeColorOnPress
+                                styleCircleButton={{ marginLeft: 10 }}
+                                scale={0.5}
+                                offsetPosition={{ offset_x: -15, offset_y: -44 }}
+                                handleReaction={handleReaction}
+                            />
                         )}
                     </>
                 )}
@@ -112,8 +124,16 @@ export const Comment = ({
                     handleClickHashtag={handleClickHashtag}
                 />
             </View>
-
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                {reactions.length > 0 && (
+                    <ReactionsContainer
+                        reactionCount={reactions}
+                        id={comment.id}
+                        handleClickUser={handleClickUser}
+                    />
+                )}
+            </View>
+            {/* <View style={{ flexDirection: 'row' }}>
                 <View
                     style={{
                         ...styles.shadow_button,
@@ -163,17 +183,7 @@ export const Comment = ({
                         </View>
                     )}
                 </View>
-            </View>
-
-            <ModalReactComment
-                setModalReact={setModalReact}
-                modalReact={modalReact}
-                position={position}
-                commentId={comment.id}
-                messageId={comment.messageId}
-                userId={comment.user.id ? comment.user.id : 0}
-                setReactComment={setReactComment}
-            />
+            </View> */}
         </View>
     );
 };

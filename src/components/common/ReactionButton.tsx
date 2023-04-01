@@ -1,25 +1,22 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+    Modal,
+    Text,
+    Platform,
     StyleSheet,
     View,
-    Pressable,
+    StyleProp,
+    ViewStyle,
     Animated,
-    Modal,
     TouchableWithoutFeedback,
-    Text,
 } from 'react-native';
-import { styles } from '../themes/appTheme';
-import IconGray from './svg/IconGray';
-import { faPlus, faFaceSmile } from '../constants/icons/FontAwesome';
-import { emojis1, emojis2 } from '../constants/emojis/emojis';
-import useSpikyService from '../hooks/useSpikyService';
-import EmojisKeyboard from './EmojisKeyboard';
-import { Message } from '../types/store';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { RootState } from '../store';
-import SocketContext from '../context/Socket/Context';
-import { setMessages } from '../store/feature/messages/messagesSlice';
+import { styles } from '../../themes/appTheme';
+import { Pressable } from 'react-native';
+import IconGray from '../svg/IconGray';
+import { faFaceSmile, faPlus } from '../../constants/icons/FontAwesome';
+import EmojisKeyboard from '../EmojisKeyboard';
+import { emojis1, emojis2 } from '../../constants/emojis/emojis';
 
 interface Positions {
     x: number;
@@ -27,30 +24,35 @@ interface Positions {
 }
 
 interface Props {
-    bottom: number;
-    right: number;
-    messageId: number;
+    scale?: number;
+    styleCircleButton?: StyleProp<ViewStyle>;
+    handleReaction: (emoji: string) => void;
+    offsetPosition?: { offset_x: number; offset_y: number };
+    changeColorOnPress?: boolean;
 }
-export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
-    const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const user = useAppSelector((state: RootState) => state.user);
-    const dispatch = useAppDispatch();
-    const { socket } = useContext(SocketContext);
+
+function ReactionButton({
+    scale = 1,
+    styleCircleButton = {},
+    handleReaction,
+    offsetPosition = { offset_x: 0, offset_y: 0 },
+    changeColorOnPress,
+}: Props) {
+    const reactContainerRef = useRef<View>(null);
     const width = useRef(new Animated.Value(20)).current;
     const opacity = useRef(new Animated.Value(0)).current;
     const inputRange = [0, 100];
     const outputRange = ['0%', '100%'];
     const animatedWidth = width.interpolate({ inputRange, outputRange });
-    const reactContainerRef = useRef<View>(null);
     const [modalReactions, setModalReactions] = useState(false);
     const [emojiKerboard, setEmojiKerboard] = useState(false);
-    const { createReactionMsg } = useSpikyService();
     const [position, setPosition] = useState<Positions>({ x: 0, y: 0 });
     const { x, y } = position;
+    const { offset_x, offset_y } = offsetPosition;
 
     function handleStateReactions() {
         reactContainerRef.current?.measure((px, py, pwidth, height, pageX, pageY) => {
-            setPosition({ x: pageX, y: pageY });
+            setPosition({ x: pageX + offset_x, y: pageY + offset_y });
         });
     }
 
@@ -69,45 +71,6 @@ export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
         ]).start(() => {
             setModalReactions(false);
         });
-    }
-
-    async function handleReaction(reaction: string[0]) {
-        const wasCreated = await createReactionMsg(messageId, reaction, user.id);
-        if (wasCreated) {
-            const messagesUpdated = messages.map((msg: Message) => {
-                if (msg.id === messageId) {
-                    socket?.emit('notify', {
-                        id_usuario1: msg.user.id,
-                        id_usuario2: user.id,
-                        id_mensaje: msg.id,
-                        tipo: 1,
-                    });
-                    let isNew = true;
-                    let reactions = msg.reactions.map(r => {
-                        if (r.reaction === reaction) {
-                            isNew = false;
-                            return {
-                                reaction: r.reaction,
-                                count: r.count + 1,
-                            };
-                        } else {
-                            return r;
-                        }
-                    });
-                    if (isNew) {
-                        reactions = [...reactions, { reaction, count: 1 }];
-                    }
-                    return {
-                        ...msg,
-                        reactions,
-                        myReaction: reaction,
-                    };
-                } else {
-                    return msg;
-                }
-            });
-            dispatch(setMessages(messagesUpdated));
-        }
     }
 
     useEffect(() => {
@@ -130,20 +93,28 @@ export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
 
     return (
         <>
-            <View style={{ position: 'absolute', bottom, right, alignItems: 'flex-end' }}>
-                <View
-                    style={{
-                        ...stylescomp.container,
-                        width: 42,
-                    }}
-                    ref={reactContainerRef}
-                >
-                    <Pressable onPress={handleStateReactions}>
-                        <View style={{ position: 'absolute', top: 1, left: -3 }}>
-                            <FontAwesomeIcon icon={faPlus} color={'white'} size={11} />
-                        </View>
-                        <IconGray color="#ffffff" underlayColor={'#01192ebe'} />
-                    </Pressable>
+            <View style={styleCircleButton}>
+                <View style={{ alignItems: 'flex-end' }}>
+                    <View
+                        style={{
+                            ...stylescomp.container,
+                            minWidth: 42 * scale,
+                            height: 42 * scale,
+                            padding: 7 * scale,
+                            backgroundColor:
+                                changeColorOnPress && modalReactions ? '#01192E' : '#D4D4D4',
+                        }}
+                        ref={reactContainerRef}
+                    >
+                        <Pressable onPress={handleStateReactions}>
+                            <View
+                                style={{ position: 'absolute', top: 3 * scale, left: -2 * scale }}
+                            >
+                                <FontAwesomeIcon icon={faPlus} color={'white'} size={11 * scale} />
+                            </View>
+                            <IconGray color="#ffffff" underlayColor={'#01192ebe'} />
+                        </Pressable>
+                    </View>
                 </View>
             </View>
 
@@ -183,9 +154,7 @@ export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
                                                 color={'white'}
                                                 size={17}
                                             />
-                                            <View
-                                                style={{ position: 'absolute', top: 0, right: 1 }}
-                                            >
+                                            <View style={stylescomp.plusIcon}>
                                                 <FontAwesomeIcon
                                                     icon={faPlus}
                                                     color={'white'}
@@ -207,7 +176,7 @@ export const PreReactionButton = ({ bottom, right, messageId }: Props) => {
             </Modal>
         </>
     );
-};
+}
 
 interface EmojiReactionProps {
     fixedEmoji?: string;
@@ -228,21 +197,21 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
     }, []);
 
     return (
-        <Pressable style={{ padding: 2 }} onPress={() => handleReaction(emoji)}>
-            <Text style={{ fontSize: 20 }}>{emoji}</Text>
+        <Pressable onPress={() => handleReaction(emoji)}>
+            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 20 : 18 }}>
+                {emoji}
+            </Text>
         </Pressable>
     );
 };
+
+export default ReactionButton;
 
 const stylescomp = StyleSheet.create({
     container: {
         ...styles.center,
         ...styles.shadow_button,
-        height: 42,
-        minWidth: 42,
         borderRadius: 20,
-        backgroundColor: '#D4D4D4',
-        padding: 7,
     },
     wrapModal: {
         flex: 1,
@@ -271,13 +240,20 @@ const stylescomp = StyleSheet.create({
         overflow: 'hidden',
     },
     containersmall: {
+        paddingLeft: 8,
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
     },
     moreReactions: {
         ...styles.center,
         paddingVertical: 2,
-        paddingRight: 8,
+        paddingRight: 9,
+    },
+    plusIcon: {
+        position: 'absolute',
+        top: -3,
+        right: 1,
     },
 });

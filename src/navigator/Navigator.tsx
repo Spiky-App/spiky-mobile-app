@@ -12,7 +12,7 @@ import { ManifestPart1Screen } from '../screens/ManifestPart1Screen';
 import { RootState } from '../store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { TermAndConditionsScreen } from '../screens/TermAndConditionsScreen';
-import { ReportIdeaScreen } from '../screens/ReportIdeaScreen';
+import { ReportScreen } from '../screens/ReportScreen';
 import { ReplyIdeaScreen } from '../screens/ReplyIdeaScreen';
 import { ChatScreen } from '../screens/ChatScreen';
 import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
@@ -23,6 +23,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
 import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
+import { CreatePollScreen } from '../screens/CreatePollScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -37,7 +38,7 @@ export type RootStackParamList = {
     OpenedIdeaScreen: { messageId: number; filter?: string };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
-    ReportIdeaScreen: { messageId: number };
+    ReportScreen: { messageId?: number; reportedUser?: string };
     ReplyIdeaScreen: {
         message: {
             messageId: number;
@@ -49,6 +50,7 @@ export type RootStackParamList = {
     ChatScreen: { conversationId: number; toUser: User };
     ChangeForgotPasswordScreen: { token: string; correoValid: string };
     ManifestPart2Screen: { correoValid: string; password: string };
+    CreatePollScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -151,9 +153,10 @@ export const Navigator = () => {
                     <Stack.Screen name="MenuMain" component={MenuMain} />
                     <Stack.Screen name="CreateIdeaScreen" component={CreateIdeaScreen} />
                     <Stack.Screen name="OpenedIdeaScreen" component={OpenedIdeaScreen} />
-                    <Stack.Screen name="ReportIdeaScreen" component={ReportIdeaScreen} />
+                    <Stack.Screen name="ReportScreen" component={ReportScreen} />
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                    <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />

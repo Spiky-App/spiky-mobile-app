@@ -1,12 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { LogoFadeIn } from '../components/common/LogoFadeIn';
 import { faTriangleExclamation } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 
-const NoConnectionScreen = () => {
+interface Props {
+    callback: () => void;
+    retryButton: boolean;
+}
+const NoConnectionScreen = ({ callback, retryButton }: Props) => {
     return (
         <BackgroundPaper>
             <View style={styles.center}>
@@ -21,6 +25,15 @@ const NoConnectionScreen = () => {
                     <Text style={stylescomp.text}>Sin conexión a internet.</Text>
                     <Text style={stylescomp.text}>Revisa tu conexión.</Text>
                 </View>
+                {retryButton && (
+                    <TouchableHighlight
+                        underlayColor="#01192ebe"
+                        style={{ ...styles.button, marginTop: 20 }}
+                        onPress={callback}
+                    >
+                        <Text style={styles.text}>Presiona para volver a intentarlo</Text>
+                    </TouchableHighlight>
+                )}
             </View>
             <LogoFadeIn />
         </BackgroundPaper>

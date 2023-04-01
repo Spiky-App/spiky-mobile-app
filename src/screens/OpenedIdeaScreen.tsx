@@ -29,23 +29,21 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import UniversityTag from '../components/common/UniversityTag';
 import useSpikyService from '../hooks/useSpikyService';
-import { PreReactionButton } from '../components/PreReactionButton';
+import { IdeaReaction } from '../components/IdeaReaction';
 import ReactionsContainer from '../components/common/ReactionsContainer';
 import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
+import { Poll } from '../components/Poll';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
 };
 
-const initialMessage = {
+const initialMessage: Message = {
     id: 0,
     message: '',
     date: 0,
-    favor: 0,
-    neutral: 0,
-    against: 0,
     user: {
         id: 0,
         nickname: '',
@@ -55,6 +53,8 @@ const initialMessage = {
     draft: 0,
     sequence: 1,
     reactions: [],
+    answers: [],
+    totalAnswers: 0,
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
@@ -74,6 +74,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const [comments, setComments] = useState<CommentState[]>();
     const date = getTime(message.date.toString());
     const isOwner = message.user.id === uid;
+    const isPoll = message.answers && message.answers.length > 0;
     const { getIdeaWithComments } = useSpikyService();
 
     const handleOpenIdea = async () => {
@@ -84,6 +85,8 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
             setAnswersNumber(messageRetrived.comments?.length || 0);
+        } else {
+            navigation.goBack();
         }
         setLoading(false);
     };
@@ -232,24 +235,38 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    {!message.myReaction && !isOwner ? (
+                                    {isPoll && (
+                                        <Poll
+                                            answers={message?.answers || []}
+                                            totalAnswers={message.totalAnswers}
+                                            myAnswers={message.myAnswers}
+                                            messageId={message.id}
+                                            userIdMessageOwner={
+                                                message.user.id ? message.user.id : 0
+                                            }
+                                            handleClickUser={handleClickUser}
+                                        />
+                                    )}
+                                    {!message.myReaction && !isOwner && !isPoll && (
                                         <>
                                             <View style={{ flex: 1, height: 15 }} />
-                                            <PreReactionButton
+                                            <IdeaReaction
                                                 messageId={message.id}
                                                 bottom={-15}
                                                 right={-24}
                                             />
                                         </>
-                                    ) : (
+                                    )}
+                                    {(message.myReaction || isOwner) && !isPoll && (
                                         <>
                                             <View style={stylescom.container}>
                                                 {message.reactions.length > 0 && (
                                                     <ReactionsContainer
                                                         reactionCount={message.reactions}
                                                         myReaction={message.myReaction}
-                                                        messageId={message.id}
+                                                        id={message.id}
                                                         handleClickUser={handleClickUser}
+                                                        isIdeaReactions
                                                     />
                                                 )}
 
@@ -271,85 +288,110 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                                     </Text>
                                                 </View>
                                             </View>
-
-                                            <View style={stylescom.container}>
-                                                <Text
-                                                    style={{ ...styles.text, ...styles.numberGray }}
-                                                >
-                                                    {date}
-                                                </Text>
-
-                                                <PreModalIdeaOptions
-                                                    myIdea={isOwner}
-                                                    message={{
-                                                        messageId: message.id,
-                                                        message: message.message,
-                                                        user: message.user,
-                                                        messageTrackingId,
-                                                        date: message.date,
-                                                    }}
-                                                    filter={filter}
-                                                    setMessageTrackingId={setMessageTrackingId}
-                                                />
-                                            </View>
                                         </>
+                                    )}
+                                    {(message.myReaction || isOwner || message.myAnswers) && (
+                                        <View
+                                            style={[
+                                                isPoll && stylescom.container_abs,
+                                                stylescom.container,
+                                            ]}
+                                        >
+                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
+                                                {date}
+                                            </Text>
+
+                                            <PreModalIdeaOptions
+                                                myIdea={isOwner}
+                                                message={{
+                                                    messageId: message.id,
+                                                    message: message.message,
+                                                    user: message.user,
+                                                    messageTrackingId,
+                                                    date: message.date,
+                                                }}
+                                                filter={filter}
+                                                setMessageTrackingId={setMessageTrackingId}
+                                                isOpenedIdeaScreen
+                                            />
+                                        </View>
                                     )}
                                 </View>
                             </View>
                         </View>
-
-                        {message.myReaction !== undefined || isOwner ? (
-                            <>
-                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
-                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
-                                        Comentarios
-                                        <Text style={styles.orange}>.</Text>
-                                    </Text>
-                                </View>
-                                {comments && comments.length > 0 ? (
-                                    <View style={stylescom.commentWrap}>
-                                        <FlatList
-                                            style={{
-                                                width: '100%',
-                                            }}
-                                            data={comments}
-                                            renderItem={({ item }) => (
-                                                <Comment
-                                                    comment={item}
-                                                    formComment={form}
-                                                    onChangeComment={onChange}
-                                                    refInputComment={refInputComment}
-                                                    handleClickUser={handleClickUser}
-                                                    handleClickHashtag={handleClickHashtag}
-                                                />
-                                            )}
-                                            keyExtractor={item => item.id + ''}
-                                            showsVerticalScrollIndicator={false}
-                                        />
-                                    </View>
-                                ) : (
-                                    <View style={{ ...stylescom.commentWrap, ...styles.center }}>
-                                        <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                            Se el primero en contribuir a esta idea.
+                        {!isPoll &&
+                            (message.myReaction !== undefined || isOwner ? (
+                                <>
+                                    <View
+                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
+                                    >
+                                        <Text
+                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
+                                        >
+                                            Comentarios
+                                            <Text style={styles.orange}>.</Text>
                                         </Text>
                                     </View>
-                                )}
-                                <InputComment
-                                    messageId={messageId}
-                                    toUser={message.user.id ? message.user.id : 0}
-                                    updateComments={updateComments}
-                                    form={form}
-                                    onChange={onChange}
-                                    refInputComment={refInputComment}
-                                />
-                            </>
-                        ) : (
-                            <View style={{ ...stylescom.commentWrap, ...styles.center }}>
-                                <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                    Toma una postura antes de participar
-                                </Text>
-                            </View>
-                        )}
+                                    {comments && comments.length > 0 ? (
+                                        <View style={stylescom.commentWrap}>
+                                            <FlatList
+                                                style={{
+                                                    width: '100%',
+                                                }}
+                                                data={comments}
+                                                renderItem={({ item }) => (
+                                                    <Comment
+                                                        comment={item}
+                                                        formComment={form}
+                                                        onChangeComment={onChange}
+                                                        refInputComment={refInputComment}
+                                                        handleClickUser={handleClickUser}
+                                                        handleClickHashtag={handleClickHashtag}
+                                                    />
+                                                )}
+                                                keyExtractor={item => item.id + ''}
+                                                showsVerticalScrollIndicator={false}
+                                            />
+                                        </View>
+                                    ) : (
+                                        <View
+                                            style={{ ...stylescom.commentWrap, ...styles.center }}
+                                        >
+                                            <Text
+                                                style={{ ...styles.text, ...stylescom.textGrayPad }}
+                                            >
+                                                Se el primero en contribuir a esta idea.
+                                            </Text>
+                                        </View>
+                                    )}
+                                    <InputComment
+                                        messageId={messageId}
+                                        toUser={message.user.id ? message.user.id : 0}
+                                        updateComments={updateComments}
+                                        form={form}
+                                        onChange={onChange}
+                                        refInputComment={refInputComment}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <View
+                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
+                                    >
+                                        <Text
+                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
+                                        >
+                                            Comentarios
+                                            <Text style={styles.orange}>.</Text>
+                                        </Text>
+                                    </View>
+                                    <View style={{ ...stylescom.commentWrap, ...styles.center }}>
+                                        <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                            Toma una postura antes de participar
+                                        </Text>
+                                    </View>
+                                </>
+                            ))}
                     </>
                 ) : (
                     <View style={{ ...styles.center, flex: 1 }}>
@@ -396,7 +438,6 @@ const stylescom = StyleSheet.create({
         paddingBottom: 8,
         paddingRight: 25,
         paddingLeft: 32,
-        borderRadius: 8,
     },
     msg: {
         fontSize: 13,
@@ -477,5 +518,10 @@ const stylescom = StyleSheet.create({
         top: 0,
         bottom: 0,
         left: -16,
+    },
+    container_abs: {
+        position: 'absolute',
+        bottom: -2,
+        right: 0,
     },
 });

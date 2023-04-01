@@ -1,5 +1,5 @@
 import { Message as Mensaje } from '../types/services/spiky';
-import { Comment, Message, ReactionCount } from '../types/store';
+import { AnswerCount, Comment, Message, ReactionCount } from '../types/store';
 import { generateCommentFromComentario } from './comment';
 
 function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Message {
@@ -10,6 +10,12 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
     const reactionsRetrived: ReactionCount[] = mensaje.reacciones.map(reaction => ({
         reaction: reaction.reaccion,
         count: reaction.count,
+    }));
+
+    const answersRetrived: AnswerCount[] | undefined = mensaje.encuesta_opciones?.map(answer => ({
+        id: answer.id_encuesta_opcion,
+        answer: answer.encuesta_opcion,
+        count: answer.encuesta_respuestas_count,
     }));
 
     const commentsRetrived: Comment[] | undefined = mensaje.respuestas?.map(respuesta => {
@@ -32,6 +38,9 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         draft: mensaje.draft,
         sequence: msgIndex,
         comments: commentsRetrived,
+        answers: answersRetrived,
+        myAnswers: mensaje.mi_encuesta_respuesta,
+        totalAnswers: mensaje.total_encuesta_respuestas,
     };
 }
 

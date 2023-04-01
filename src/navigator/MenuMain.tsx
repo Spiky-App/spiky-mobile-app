@@ -24,6 +24,8 @@ import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { menuInfo } from '../constants/navigator';
 import { ConnectionsScreen } from '../screens/ConnectionsScreen';
+import { ChangeAliasScreen } from '../screens/ChangeAliasScreen';
+import { BlacklistScreen } from '../screens/BlacklistScreen';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
@@ -38,6 +40,8 @@ export type DrawerParamList = {
     ChangePasswordScreen: undefined;
     HashTagScreen: { hashtag: string };
     ConnectionsScreen: undefined;
+    ChangeAliasScreen: undefined;
+    BlacklistScreen: undefined;
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -72,6 +76,8 @@ export const MenuMain = () => {
             <Drawer.Screen name="ConfigurationScreen" component={ConfigurationScreen} />
             <Drawer.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
             <Drawer.Screen name="HashTagScreen" component={HashTagScreen} />
+            <Drawer.Screen name="ChangeAliasScreen" component={ChangeAliasScreen} />
+            <Drawer.Screen name="BlacklistScreen" component={BlacklistScreen} />
         </Drawer.Navigator>
     );
 };

@@ -17,17 +17,21 @@ import { MessageRequestData } from '../services/models/spikyService';
 import { AxiosError } from 'axios';
 import {
     ChatMessage,
+    CommentReaction,
     Conversation,
     GetChatMessages,
     HashtagI,
+    LoginResponse,
     Message,
     MessageComment,
     MessageWithReplyContent,
     Notification,
     PendingNotificationsI,
+    PollAnswer,
     Reaction,
     TermsAndConditions,
     UserI,
+    UserInfo,
 } from '../types/services/spiky';
 import { Toast } from '../types/store';
 
@@ -54,7 +58,10 @@ function useSpikyService() {
     function handleSpikyServiceToast(error: unknown, defaultMessage: string): Toast {
         if (error instanceof AxiosError) {
             return {
-                message: error.response?.data?.msg,
+                message:
+                    error.message === 'Network Error' || error.message.startsWith('timeout')
+                        ? 'Sin conexión a internet, revisa tu conexión.'
+                        : error.response?.data?.msg,
                 type: StatusType.WARNING,
             };
         }
@@ -95,19 +102,25 @@ function useSpikyService() {
         return undefined;
     };
 
-    const createReportIdea = async (
-        messageId: number,
+    const createReport = async (
         reportReason: string,
-        uid: number
-    ): Promise<string | undefined> => {
+        messageId?: number,
+        reportedUser?: string,
+        updatePreferences?: boolean
+    ): Promise<boolean> => {
         try {
-            const response = await service.createReportIdea(uid, messageId, reportReason);
-            return response.data.msg;
+            const response = await service.createReport(
+                reportReason,
+                messageId,
+                reportedUser,
+                updatePreferences
+            );
+            return response.data.ok;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al reportar mensaje.')));
         }
-        return undefined;
+        return false;
     };
 
     const createTracking = async (messageId: number, uid: number): Promise<number | undefined> => {
@@ -134,6 +147,32 @@ function useSpikyService() {
         return false;
     };
 
+    const blockUser = async (
+        userId: number,
+        blockedUser: string,
+        remove: boolean
+    ): Promise<boolean> => {
+        try {
+            const response = await service.blockUser(userId, blockedUser, remove);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al bloquear usuario.')));
+        }
+        return false;
+    };
+
+    const getBlockedUsers = async (userId: number): Promise<UserI[]> => {
+        try {
+            const response = await service.getBlockedUsers(userId);
+            return response.data.usuarios;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al obtener blacklist')));
+        }
+        return [];
+    };
+
     const createChatMsgWithReply = async (
         userId: number,
         messageId: number,
@@ -149,15 +188,28 @@ function useSpikyService() {
         return undefined;
     };
 
-    const getConversations = async (): Promise<Conversation[]> => {
+    const getConversations = async (): Promise<{
+        conversations: Conversation[];
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getConversations();
-            return response.data.convers;
+            return { conversations: response.data.convers, networkError: false };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error al listar conversaciones.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { conversations: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando conexiones.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando conexiones.')));
+            }
         }
-        return [];
+        return { conversations: [] };
     };
 
     const getChatMessages = async (
@@ -165,7 +217,7 @@ function useSpikyService() {
         toUserId?: number,
         lastChatMessageId?: number,
         firstChatMessageId?: number
-    ): Promise<GetChatMessages | undefined> => {
+    ): Promise<{ chatMessagesResponse?: GetChatMessages; networkError?: boolean }> => {
         try {
             const response = await service.getChatMessages(
                 conversationId,
@@ -173,12 +225,22 @@ function useSpikyService() {
                 lastChatMessageId,
                 firstChatMessageId
             );
-            return response.data;
+            return { chatMessagesResponse: response.data };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error al cargar los mensajes.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const createChatMessage = async (
@@ -235,13 +297,13 @@ function useSpikyService() {
         return undefined;
     };
 
-    const createReactionMsg = async (
+    const createIdeaReaction = async (
         messageId: number,
         reaction: string[0],
         uid: number
     ): Promise<boolean> => {
         try {
-            await service.createReactionMsg(uid, messageId, reaction);
+            await service.createIdeaReaction(uid, messageId, reaction);
             return true;
         } catch (error) {
             console.log(error);
@@ -285,12 +347,9 @@ function useSpikyService() {
         return [];
     };
 
-    const createReactionToComment = async (
-        commentId: number,
-        reactionTypeAux: number
-    ): Promise<boolean> => {
+    const createCommentReaction = async (commentId: number, reaction: string): Promise<boolean> => {
         try {
-            await service.createReactionCmt(commentId, reactionTypeAux);
+            await service.createCommentReaction(commentId, reaction);
             return true;
         } catch (error) {
             console.log(error);
@@ -337,17 +396,29 @@ function useSpikyService() {
         }
     };
 
-    const loadUserInfo = async (): Promise<UserI | undefined> => {
+    const getUserInfo = async (): Promise<{
+        userInfo?: UserInfo;
+        networkError?: boolean;
+        change_alias?: boolean;
+    }> => {
         try {
             const response = await service.getUserInfo();
-            return response.data.usuario;
+            return { userInfo: response.data.usuario, change_alias: response.data.change_alias };
         } catch (error) {
             console.log(error);
-            dispatch(
-                addToast(handleSpikyServiceToast(error, 'Error cargando información del usuario.'))
-            );
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const updatePassword = async (
@@ -385,15 +456,23 @@ function useSpikyService() {
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ): Promise<Message[]> => {
+    ): Promise<{ messages: Message[]; networkError?: boolean }> => {
         try {
             const response = await service.getMessages(uid, filter, lastMessageId, parameters);
-            return response.data.mensajes;
+            return { messages: response.data.mensajes };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando mensajes.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { messages: [], networkError: true };
+                } else {
+                    dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando ideas.')));
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando ideas.')));
+            }
         }
-        return [];
+        return { messages: [] };
     };
 
     const getEmailVerification = async (email: string): Promise<string | undefined> => {
@@ -409,9 +488,9 @@ function useSpikyService() {
         return undefined;
     };
 
-    const getIdeaReactiones = async (messageId: number): Promise<Reaction[]> => {
+    const getIdeaReactions = async (ideaId: number): Promise<Reaction[]> => {
         try {
-            const response = await service.getIdeaReactions(messageId);
+            const response = await service.getIdeaReactions(ideaId);
             return response.data.reacciones;
         } catch (error) {
             console.log(error);
@@ -420,15 +499,28 @@ function useSpikyService() {
         return [];
     };
 
-    const getTermsAndConditions = async (): Promise<TermsAndConditions | undefined> => {
+    const getTermsAndConditions = async (): Promise<{
+        termsAndConditions?: TermsAndConditions;
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getTermsAndConditions();
-            return response.data.lists;
+            return { termsAndConditions: response.data.lists };
         } catch (error) {
             console.log(error);
-            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
         }
-        return undefined;
+        return {};
     };
 
     const registerUser = async (
@@ -455,13 +547,17 @@ function useSpikyService() {
         correoValid: string,
         password: string,
         deviceTokenStorage: string
-    ): Promise<string | undefined> => {
+    ): Promise<boolean | undefined> => {
         try {
             const response = await service.login(correoValid, password, deviceTokenStorage);
             const { data } = response;
-            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = response.data;
+            const { alias, n_notificaciones, id_universidad, uid, n_chatmensajes } = data;
             await AsyncStorage.setItem(StorageKeys.TOKEN, data.token);
-            dispatch(updateServiceConfig({ headers: { 'x-token': data.token } }));
+            dispatch(
+                updateServiceConfig({
+                    headers: { 'x-token': data.token, 'Content-Type': 'application/json' },
+                })
+            );
             dispatch(signIn(data.token));
             dispatch(
                 setUser({
@@ -472,12 +568,12 @@ function useSpikyService() {
                     id: uid,
                 })
             );
-            return undefined;
+            return true;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al hacer auto-login.')));
         }
-        return undefined;
+        return false;
     };
 
     const getPendingNotifications = async (): Promise<PendingNotificationsI | undefined> => {
@@ -516,18 +612,127 @@ function useSpikyService() {
         }
     };
 
-    const validateToken = async (tokenStorage: string) => {
+    const validateToken = async (
+        tokenStorage: string
+    ): Promise<{
+        data?: LoginResponse;
+        networkError?: boolean;
+    }> => {
         try {
             const response = await service.getAuthRenew(tokenStorage);
-            return response.data;
-        } catch {
-            logOutFunction();
+            return { data: response.data };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    logOutFunction();
+                }
+            } else {
+                logOutFunction();
+            }
+            return {};
+        }
+    };
+
+    const getNetworkConnectionStatus = async (): Promise<boolean> => {
+        try {
+            const response = await service.getNetworkConnectionStatus();
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Sin conexión a internet.')));
+            return false;
+        }
+    };
+
+    const getCommentReactions = async (commentId: number): Promise<CommentReaction[]> => {
+        try {
+            const response = await service.getCommentReactions(commentId);
+            return response.data.reacciones;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando reacciones.')));
+        }
+        return [];
+    };
+
+    const createPoll = async (
+        question: string,
+        answers: string[]
+    ): Promise<Message | undefined> => {
+        try {
+            const response = await service.createPoll(question, answers);
+            return response.data.mensaje;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando encuesta.')));
+        }
+        return undefined;
+    };
+
+    const createPollAnswer = async (answerId: number): Promise<boolean> => {
+        try {
+            const response = await service.createPollAnswer(answerId);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando respuesta.')));
+        }
+        return false;
+    };
+
+    const getPollAnswers = async (
+        messageId: number
+    ): Promise<{
+        data: PollAnswer[];
+        networkError?: boolean;
+    }> => {
+        try {
+            const response = await service.getPollAnswers(messageId);
+            return { data: response.data.encuesta_opciones };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { data: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
+            return { data: [] };
+        }
+    };
+    const updateUserNickname = async (nickname: string): Promise<boolean> => {
+        try {
+            const response = await service.updateUserNickname(nickname);
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error cambiando seudónimo.')));
+            return false;
+        }
+    };
+
+    const deleteAccount = async (): Promise<boolean> => {
+        try {
+            const response = await service.deleteAccount();
+            return response.data.ok;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error al eliminar cuenta.')));
+            return false;
         }
     };
 
     return {
         createMessageComment,
-        createReportIdea,
+        createReport,
         createTracking,
         deleteTracking,
         createChatMsgWithReply,
@@ -537,20 +742,20 @@ function useSpikyService() {
         createChatMessageSeen,
         createIdea,
         updateDraft,
-        createReactionMsg,
+        createIdeaReaction,
         deleteIdea,
         updateNotifications,
         retrieveNotifications,
-        createReactionToComment,
+        createCommentReaction,
         getUsersSuggestions,
         getHashtagsSuggestions,
         getIdeaWithComments,
-        loadUserInfo,
+        getUserInfo,
         updatePassword,
         updatePasswordUri,
         getIdeas,
         getEmailVerification,
-        getIdeaReactiones,
+        getIdeaReactions,
         getTermsAndConditions,
         getPendingNotifications,
         handleForgotPassword,
@@ -559,6 +764,15 @@ function useSpikyService() {
         logOutFunction,
         setSessionInfo,
         logInUser,
+        getNetworkConnectionStatus,
+        getCommentReactions,
+        createPoll,
+        createPollAnswer,
+        getPollAnswers,
+        updateUserNickname,
+        deleteAccount,
+        blockUser,
+        getBlockedUsers,
     };
 }
 

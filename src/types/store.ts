@@ -13,6 +13,7 @@ export interface User {
     nickname: string;
     universityId: number;
     online?: boolean;
+    disable?: boolean;
 }
 interface Response {
     fecha: string;
@@ -43,12 +44,6 @@ export interface Tracking {
     id: number;
 }
 
-export enum ReactionType {
-    NEUTRAL = 0,
-    FAVOR = 1,
-    AGAINST = 2,
-}
-
 export interface Message {
     id: number;
     message: string;
@@ -61,10 +56,19 @@ export interface Message {
     draft: number;
     sequence: number;
     comments?: Comment[];
+    answers?: AnswerCount[];
+    myAnswers?: number;
+    totalAnswers: number;
 }
 
 export interface ReactionCount {
     reaction: string;
+    count: number;
+}
+
+export interface AnswerCount {
+    id: number;
+    answer: string;
     count: number;
 }
 
@@ -86,14 +90,14 @@ export interface Comment {
     date: number;
     messageId: number;
     user: User;
-    favor: number;
-    against: number;
-    reactionCommentType?: ReactionType;
+    reactions: ReactionCount[];
+    myReaction?: string;
 }
 
 export interface Notification {
     id: number;
     messageId: number;
+    commentId: number | null;
     message: string;
     type: NotificationType;
     seen: boolean;
@@ -128,6 +132,7 @@ export interface ChatMessage {
     reply?: Reply;
     seens?: Seen[];
     newMsg: boolean;
+    isLoading?: boolean;
 }
 
 export interface Seen {
@@ -151,6 +156,13 @@ export interface Reaction {
     id: number;
     reaction: string;
     user: User;
+}
+
+export interface Answer {
+    id: number;
+    answer: string;
+    count: number;
+    votes: User[];
 }
 
 export interface ChatMessageToReply {

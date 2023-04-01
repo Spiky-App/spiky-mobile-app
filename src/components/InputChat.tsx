@@ -11,14 +11,11 @@ import {
 } from 'react-native';
 import { faLocationArrow, faXmark } from '../constants/icons/FontAwesome';
 import SocketContext from '../context/Socket/Context';
-import { generateChatMsgFromChatMensaje } from '../helpers/conversations';
-import useSpikyService from '../hooks/useSpikyService';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, ChatMessageToReply, User } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
-import { selectUserAsObject } from '../store/feature/user/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import UniversityTag from './common/UniversityTag';
 
@@ -36,6 +33,7 @@ interface Props {
     HideKeyboardAfterSumbit?: boolean;
     messageToReply: ChatMessageToReply | null;
     setMessageToReply: (value: ChatMessageToReply | null) => void;
+    networkError: boolean;
 }
 
 const MAX_LENGHT = 200;
@@ -54,11 +52,11 @@ export const InputChat = ({
     HideKeyboardAfterSumbit,
     messageToReply,
     setMessageToReply,
+    networkError,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const [isDisabled, setDisabled] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
-    const { createChatMessage } = useSpikyService();
     const { socket } = useContext(SocketContext);
     const { message } = form;
     const [counter, setCounter] = useState(0);
@@ -68,38 +66,30 @@ export const InputChat = ({
     const outputRange = [0, 100];
     const heightAnimated = height.interpolate({ inputRange, outputRange });
     const IDEA_MAX_LENGHT = 200;
-    const userObj = useAppSelector(selectUserAsObject);
-
-    function invalid() {
-        const { message: mensaje } = form;
-        if (!mensaje || mensaje.length > IDEA_MAX_LENGHT) {
-            return true;
-        }
-        return false;
-    }
 
     async function handleCreateChatMessage() {
-        const chatmensaje = await createChatMessage(
-            conversationId,
-            message,
-            messageToReply?.messageId
-        );
-        if (chatmensaje) {
-            const newChatMessages = generateChatMsgFromChatMensaje(chatmensaje, user.id);
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                setIsTyping(false);
-            }
-            updateChatMessages(newChatMessages);
-            if (userObj) {
-                socket?.emit('newChatMsg', {
-                    chatmsg: newChatMessages,
-                    userto: toUser.id,
-                    isOnline: toUser.online,
-                    sender: userObj,
-                });
-            }
+        const newChatMessages: ChatMessage = {
+            id: -Date.now(),
+            conversationId: conversationId,
+            userId: user.id,
+            message: message,
+            date: Date.now(),
+            seens: [],
+            newMsg: false,
+            reply: messageToReply
+                ? {
+                      id: messageToReply.messageId,
+                      message: messageToReply.message,
+                      user: messageToReply.user,
+                  }
+                : undefined,
+            isLoading: true,
+        };
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            setIsTyping(false);
         }
+        updateChatMessages(newChatMessages);
     }
 
     function onPress() {
@@ -205,7 +195,7 @@ export const InputChat = ({
                         icon={faLocationArrow}
                         style={stylesInputChat.buttonIcon}
                         iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        disabled={isDisabled || invalid()}
+                        disabled={isDisabled || networkError || toUser.disable}
                         onPress={onPress}
                     />
                     {counter <= 40 && (

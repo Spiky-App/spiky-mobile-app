@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { faLocationArrow, faReply, faChevronLeft } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faReply, faChevronLeft, faXmark } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
@@ -132,13 +132,15 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            position: 'absolute',
-                            bottom: 20,
+                            marginTop: 10,
                         }}
                     >
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Text style={{ ...styles.text, ...styles.linkPad }}>Cancelar</Text>
-                        </TouchableOpacity>
+                        <ButtonIcon
+                            disabled={isDisabled}
+                            icon={faXmark}
+                            onPress={() => navigation.goBack()}
+                            style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
+                        />
 
                         <View style={stylecom.WrapperMaxCounterNIdea}>
                             <View style={stylecom.ConteMaxCounterNIdea}>

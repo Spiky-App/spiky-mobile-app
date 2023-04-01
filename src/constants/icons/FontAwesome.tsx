@@ -36,8 +36,16 @@ import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
 import { faFaceSmile } from '@fortawesome/free-solid-svg-icons/faFaceSmile';
 import { faBellConcierge } from '@fortawesome/free-solid-svg-icons';
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
-
+import { faSquarePollHorizontal } from '@fortawesome/free-solid-svg-icons/faSquarePollHorizontal';
+import { faFlagCheckered } from '@fortawesome/free-solid-svg-icons/faFlagCheckered';
+import { faTrophy } from '@fortawesome/free-solid-svg-icons/faTrophy';
+import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
+import { faUserSlash } from '@fortawesome/free-solid-svg-icons/faUserSlash';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 export {
+    faSliders,
+    faThumbsDown,
     faUsers,
     faChevronLeft,
     faThumbtack,
@@ -76,4 +84,9 @@ export {
     faFaceSmile,
     faBellConcierge,
     faAddressCard,
+    faSquarePollHorizontal,
+    faFlagCheckered,
+    faTrophy,
+    faClock,
+    faUserSlash,
 };

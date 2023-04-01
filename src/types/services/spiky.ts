@@ -61,6 +61,9 @@ export interface Message {
     trackings?: [{ id_tracking: number }];
     usuario: UserI;
     respuestas?: Comment[];
+    encuesta_opciones?: AnswerCount[];
+    mi_encuesta_respuesta?: number;
+    total_encuesta_respuestas: number;
 }
 
 export interface UserI {
@@ -68,11 +71,18 @@ export interface UserI {
     id_universidad: number;
     id_usuario?: number;
     online?: boolean;
+    disable?: boolean;
 }
 
 interface ReactionCount {
     reaccion: string;
     count: number;
+}
+
+interface AnswerCount {
+    id_encuesta_opcion: number;
+    encuesta_opcion: string;
+    encuesta_respuestas_count: number;
 }
 
 export interface CreateMessageResponse {
@@ -110,7 +120,7 @@ export interface DeleteTrackingProps {
     ok: boolean;
 }
 
-export interface CreateReactionMsg {
+export interface CreateIdeaReaction {
     ok: boolean;
 }
 
@@ -130,16 +140,12 @@ export interface Comment {
     respuesta: string;
     fecha: string | number;
     id_mensaje: number;
-    id_usuario: number;
-    resp_reaccion_1: number | null;
-    resp_reaccion_2: number | null;
+    resp_reacciones: ReactionCount[];
     usuario: UserI;
-    resp_reacciones: {
-        tipo: number;
-    }[];
+    mi_resp_reaccion?: string;
 }
 
-export interface CreateReactionCmt {
+export interface CreateCommentReaction {
     ok: boolean;
 }
 
@@ -151,6 +157,7 @@ export interface GetNotifications {
 export interface Notification {
     id_notificacion: number;
     id_mensaje: number;
+    id_respuesta: number | null;
     tipo: number;
     visto: boolean;
     updatedAt: string | null;
@@ -159,6 +166,9 @@ export interface Notification {
     mensaje: {
         mensaje: string;
     };
+    respuesta: {
+        respuesta: string;
+    } | null;
 }
 
 export interface UpdateNotifications {
@@ -167,10 +177,11 @@ export interface UpdateNotifications {
 
 export interface GetUserInfo {
     ok: boolean;
-    usuario: UserI;
+    usuario: UserInfo;
+    change_alias?: boolean;
 }
 
-export interface UserI {
+export interface UserInfo {
     correo: string;
     universidad: string;
 }
@@ -197,7 +208,7 @@ export interface MessageComment {
     usuario?: UserI;
 }
 
-export interface CreateReportIdea {
+export interface CreateReport {
     ok: boolean;
     msg: string;
 }
@@ -288,8 +299,19 @@ export interface GetIdeaReactions {
     reacciones: Reaction[];
 }
 
+export interface GetCommentReactions {
+    ok: boolean;
+    reacciones: CommentReaction[];
+}
+
 export interface Reaction {
     id_reaccion: number;
+    reaccion: string;
+    usuario: UserI;
+}
+
+export interface CommentReaction {
+    id_resp_reaccion: number;
     reaccion: string;
     usuario: UserI;
 }
@@ -323,4 +345,40 @@ export interface TermsAndConditions {
 export interface DeleteDeviceToken {
     ok: boolean;
     msg: string;
+}
+
+export interface GetNetworkConnectionStatus {
+    ok: boolean;
+}
+
+export interface CreatePollResponse {
+    ok: boolean;
+    mensaje: Message;
+}
+
+export interface CreateAnswerPoll {
+    ok: boolean;
+}
+
+export interface GetPollAnswers {
+    ok: boolean;
+    encuesta_opciones: PollAnswer[];
+}
+
+export interface PollAnswer {
+    id_encuesta_opcion: number;
+    encuesta_opcion: string;
+    count: number;
+    encuesta_respuestas: {
+        id_usuario: number;
+        usuario: UserI;
+    }[];
+}
+
+export interface UpdateUserNickname {
+    ok: boolean;
+}
+
+export interface DeleteAccount {
+    ok: boolean;
 }

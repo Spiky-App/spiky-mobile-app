@@ -22,9 +22,11 @@ import { styles } from '../themes/appTheme';
 import { ChatMessage, Conversation, User } from '../types/store';
 import { faCircleNodes } from '../constants/icons/FontAwesome';
 import { generateConversationFromConversacion } from '../helpers/conversations';
+import NetworkErrorFeed from '../components/NetworkErrorFeed';
 
 export const ConnectionsScreen = () => {
     const [loading, setLoading] = useState(true);
+    const [networkError, setNetworkError] = useState(false);
     const [first, setFirst] = useState(true);
     const { conversations, activeConversationId } = useAppSelector(
         (state: RootState) => state.chats
@@ -37,8 +39,11 @@ export const ConnectionsScreen = () => {
     const { socket } = useContext(SocketContext);
 
     async function loadConversations() {
+        if (networkError) setNetworkError(false);
         setLoading(true);
-        const conversationsList = await getConversations();
+        const { conversations: conversationsList, networkError: networkErrorReturn } =
+            await getConversations();
+        if (networkErrorReturn) setNetworkError(true);
         const newConversations = conversationsList.map(conver =>
             generateConversationFromConversacion(conver, uid)
         );
@@ -115,7 +120,9 @@ export const ConnectionsScreen = () => {
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
-            {conversations?.length !== 0 ? (
+            {networkError ? (
+                <NetworkErrorFeed callback={loadConversations} />
+            ) : conversations?.length !== 0 ? (
                 <FlatList
                     style={{ width: '90%' }}
                     data={conversations}

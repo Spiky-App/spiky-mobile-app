@@ -1,23 +1,23 @@
 import { Comment as Comentario } from '../types/services/spiky';
-import { Comment, ReactionType } from '../types/store';
+import { Comment, ReactionCount } from '../types/store';
 
 function generateCommentFromComentario(comentario: Comentario): Comment {
-    const reactionCommentType: ReactionType | undefined = comentario?.resp_reacciones?.find(
-        (reaccion, index) => index === 0
-    )?.tipo;
+    const reactionsRetrived: ReactionCount[] = comentario.resp_reacciones.map(reaction => ({
+        reaction: reaction.reaccion,
+        count: reaction.count,
+    }));
     return {
         id: comentario.id_respuesta,
         comment: comentario.respuesta,
         date: Number(comentario.fecha),
         messageId: comentario.id_mensaje,
-        favor: comentario.resp_reaccion_1 || 0,
-        against: comentario.resp_reaccion_2 || 0,
+        reactions: reactionsRetrived,
         user: {
-            id: comentario.id_usuario,
+            id: comentario.usuario.id_usuario,
             nickname: comentario.usuario.alias,
             universityId: comentario.usuario.id_universidad,
         },
-        reactionCommentType,
+        myReaction: comentario.mi_resp_reaccion,
     };
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     Text,
@@ -7,14 +7,22 @@ import {
     TouchableOpacity,
     StyleSheet,
     Animated,
+    SafeAreaView,
+    Alert,
 } from 'react-native';
-import { faFilter } from '../constants/icons/FontAwesome';
+import { faBan, faFilter, faSliders } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { ModalFilters } from './ModalFilters';
 import { useAnimation } from '../hooks/useAnimation';
 import { setDraft } from '../store/feature/messages/messagesSlice';
 import { useDispatch } from 'react-redux';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import ActionSheet from 'react-native-actionsheet';
+import useSpikyService from '../hooks/useSpikyService';
+import { setModalAlert } from '../store/feature/ui/uiSlice';
+import { RootState } from '../store';
+import { useAppSelector } from '../store/hooks';
+import { useNavigation } from '@react-navigation/native';
 
 interface Props {
     title: string;
@@ -22,13 +30,39 @@ interface Props {
     connections?: boolean;
     profile?: boolean;
     icon: IconDefinition;
+    blocked_user: string;
 }
 
-export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Props) => {
+export const IdeasHeader = ({
+    title,
+    myideas,
+    connections,
+    icon,
+    profile,
+    blocked_user,
+}: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
     const { opacity, fadeIn } = useAnimation({});
     const dispatch = useDispatch();
+    let actionSheet = useRef();
+    var profileOptionArray = ['Reportar usuario', 'Bloquear contenido de ' + title, 'Cancelar'];
+    const { blockUser } = useSpikyService();
+    const { id: uid } = useAppSelector((state: RootState) => state.user);
+    const navigation = useNavigation<any>();
+
+    const showActionSheet = () => {
+        actionSheet.current.show();
+    };
+    const handleBlockUser = async () => {
+        if (blocked_user != '') {
+            const ok = await blockUser(uid, blocked_user, false);
+            if (ok) {
+                dispatch(setModalAlert({ isOpen: true, text: 'Usuario bloqueado', icon: faBan }));
+                navigation.navigate('CommunityScreen');
+            }
+        }
+    };
 
     useEffect(() => {
         dispatch(setDraft(activeDraft));
@@ -51,6 +85,45 @@ export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Prop
                     <Text style={styles.orange}>.</Text>
                 </Text>
             </View>
+            {profile && (
+                <SafeAreaView style={styles.container}>
+                    <ActionSheet
+                        ref={actionSheet}
+                        title={'Preferencias de visualización'}
+                        options={profileOptionArray}
+                        cancelButtonIndex={1}
+                        destructiveButtonIndex={1}
+                        onPress={index => {
+                            if (index == 1) {
+                                Alert.alert(
+                                    '¿Estás seguro que quieres bloquear a ' + title + '?',
+                                    'Ya no verás el contenido de este usuario.',
+                                    [
+                                        {
+                                            text: 'Cancelar',
+                                            onPress: () => {},
+                                            style: 'cancel',
+                                        },
+                                        {
+                                            text: 'Sí, bloquear usuario.',
+                                            onPress: handleBlockUser,
+                                        },
+                                    ]
+                                );
+                            } else if (index == 0) {
+                                navigation.navigate('ReportScreen', {
+                                    reportedUser: blocked_user,
+                                });
+                            }
+                        }}
+                    />
+                </SafeAreaView>
+            )}
+            {profile && (
+                <TouchableHighlight style={stylecom.dots} onPress={showActionSheet}>
+                    <FontAwesomeIcon icon={faSliders} color={'#01192E'} size={23} />
+                </TouchableHighlight>
+            )}
 
             {!connections &&
                 !profile &&
@@ -75,7 +148,6 @@ export const IdeasHeader = ({ title, myideas, connections, icon, profile }: Prop
                             flexDirection: 'row',
                             backgroundColor: '#D4D4D4',
                             borderRadius: 5,
-                            marginLeft: 15,
                         }}
                     >
                         <TouchableOpacity
@@ -147,5 +219,13 @@ const stylecom = StyleSheet.create({
         paddingHorizontal: 8,
         paddingVertical: 5,
         borderRadius: 5,
+    },
+    dots: {
+        fontWeight: '600',
+        color: '#bebebe',
+        fontSize: 24,
+        marginLeft: 5,
+        paddingHorizontal: 8,
+        top: -4,
     },
 });

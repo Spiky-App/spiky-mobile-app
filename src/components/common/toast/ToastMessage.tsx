@@ -111,7 +111,8 @@ const stylescom = StyleSheet.create({
         borderRadius: 6,
         marginVertical: 6,
         padding: 15,
-        width: '100%',
+        minWidth: 300,
+        maxWidth: '80%',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -129,16 +130,16 @@ const stylescom = StyleSheet.create({
     notificationContainer: {},
     text: {
         ...styles.text,
+        textAlign: 'center',
         fontSize: 13,
         letterSpacing: 0.26,
         marginHorizontal: 10,
-        marginLeft: 10,
     },
     xmark: {
         position: 'absolute',
         justifyContent: 'center',
         top: 0,
         bottom: 0,
-        right: 12,
+        right: 6,
     },
 });

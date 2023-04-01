@@ -11,12 +11,20 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
     const { messages, draft, univers } = useAppSelector((state: RootState) => state.messages);
     const [loading, setLoading] = useState(false);
     const [moreMsg, setMoreMsg] = useState(true);
+    const [networkError, setNetworkError] = useState(false);
     const { getIdeas } = useSpikyService();
 
     const dispatch = useAppDispatch();
 
     async function handleGetIdeas(newLoad: boolean, lastMessageId: number | undefined) {
-        const mensajes = await getIdeas(uid, filter, lastMessageId, params);
+        if (networkError) setNetworkError(false);
+        const { messages: mensajes, networkError: networkErrorReturn } = await getIdeas(
+            uid,
+            filter,
+            lastMessageId,
+            params
+        );
+        if (networkErrorReturn) setNetworkError(true);
         const messagesRetrived = mensajes.map((mensaje, index) =>
             generateMessageFromMensaje(mensaje, index)
         );
@@ -63,5 +71,6 @@ export const useMessages = (filter: string, params: MessageRequestData) => {
         fetchMessages,
         moreMsg,
         loading,
+        networkError,
     };
 };

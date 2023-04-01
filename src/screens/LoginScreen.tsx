@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import {
+    Alert,
     Keyboard,
     Text,
     TouchableHighlight,
@@ -14,25 +14,19 @@ import { ArrowBack } from '../components/ArrowBack';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { BigTitle } from '../components/BigTitle';
 import TextInputCustom from '../components/common/TextInput';
+import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { faEye, faEyeSlash } from '../constants/icons/FontAwesome';
 import { getFormHelperMessage, validateForm } from '../helpers/login.herlpers';
+import { useFirebaseMessaging } from '../hooks/useFirebaseMessaging';
 import { useForm } from '../hooks/useForm';
+import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
-import SpikyService from '../services/SpikyService';
-import { RootState } from '../store';
-import { signIn } from '../store/feature/auth/authSlice';
-import { updateServiceConfig } from '../store/feature/serviceConfig/serviceConfigSlice';
-import { addToast } from '../store/feature/toast/toastSlice';
-import { setUser } from '../store/feature/user/userSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { HelperMessage, StatusType } from '../types/common';
+import { HelperMessage } from '../types/common';
 import { FormState } from '../types/login';
 import { StorageKeys } from '../types/storage';
 
 export const LoginScreen = () => {
-    const dispatch = useAppDispatch();
-    const config = useAppSelector((state: RootState) => state.serviceConfig.config);
     const { form, onChange } = useForm<FormState>({
         email: '',
         password: '',
@@ -41,45 +35,30 @@ export const LoginScreen = () => {
     const [isFormValid, setFormValid] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [passVisible, setPassVisible] = useState(true);
-
-    const spikyService = new SpikyService(config);
+    const { logInUser } = useSpikyService();
+    const { getTokenDevice } = useFirebaseMessaging();
 
     async function login() {
         setLoading(true);
         if (validateForm(form)) {
             const { email, password } = form;
             try {
-                const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                let deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                if (!deviceTokenStorage) {
+                    await getTokenDevice();
+                    deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
+                }
                 if (deviceTokenStorage) {
-                    const response = await spikyService.login(email, password, deviceTokenStorage);
-                    const { data } = response;
-                    const { token, alias, n_notificaciones, id_universidad, uid, n_chatmensajes } =
-                        data;
-                    await AsyncStorage.setItem(StorageKeys.TOKEN, token);
-                    dispatch(updateServiceConfig({ headers: { 'x-token': token } }));
-                    dispatch(signIn(token));
-                    dispatch(
-                        setUser({
-                            nickname: alias,
-                            notificationsNumber: n_notificaciones,
-                            newChatMessagesNumber: n_chatmensajes,
-                            universityId: id_universidad,
-                            id: uid,
-                        })
-                    );
-                    setFormValid(true);
-                } else {
-                    dispatch(
-                        addToast({ message: 'Error al iniciar sesíon', type: StatusType.WARNING })
-                    );
+                    const status = await logInUser(email, password, deviceTokenStorage);
+                    if (status) {
+                        setFormValid(true);
+                    } else {
+                        setFormValid(false);
+                    }
                 }
-            } catch (e) {
-                if (e instanceof AxiosError) {
-                    dispatch(
-                        addToast({ message: e.response?.data.msg || '', type: StatusType.WARNING })
-                    );
-                }
-                setFormValid(false);
+            } catch (error) {
+                let err = `Error: ${error}`;
+                Alert.alert(err);
             }
         } else {
             setFormValid(false);
@@ -124,38 +103,48 @@ export const LoginScreen = () => {
                             onSubmitEditing={login}
                         />
                     </View>
-                    <TouchableOpacity
-                        style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('ForgotPwdScreen')}
-                    >
-                        <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
-                    </TouchableOpacity>
-                    <TouchableHighlight
-                        underlayColor="#01192ebe"
-                        onPress={login}
-                        style={{
-                            ...styles.button,
-                            paddingHorizontal: 30,
-                            ...(isLoading && { borderColor: '#707070' }),
-                        }}
-                        disabled={isLoading}
-                    >
-                        <Text
-                            style={{
-                                ...styles.text,
-                                ...styles.textb,
-                                ...(isLoading && { color: '#707070' }),
-                            }}
-                        >
-                            {!isLoading ? 'Iniciar sesión' : 'Cargando...'}
-                        </Text>
-                    </TouchableHighlight>
-                    <TouchableOpacity
-                        style={{ marginBottom: 35 }}
-                        onPress={() => navigation.navigate('ManifestPart1Screen')}
-                    >
-                        <Text style={styles.linkPad}>Solicitar cuenta</Text>
-                    </TouchableOpacity>
+
+                    {isLoading ? (
+                        <View style={{ ...styles.center, minHeight: 170 }}>
+                            <Text style={{ ...styles.text, ...styles.textb, marginBottom: 10 }}>
+                                Cargando...
+                            </Text>
+                            <LoadingAnimated />
+                        </View>
+                    ) : (
+                        <View style={{ ...styles.center, minHeight: 170 }}>
+                            <TouchableOpacity
+                                style={{ marginBottom: 35 }}
+                                onPress={() => navigation.navigate('ForgotPwdScreen')}
+                            >
+                                <Text style={styles.linkPad}>¿Olvidaste tu contraseña?</Text>
+                            </TouchableOpacity>
+                            <TouchableHighlight
+                                underlayColor="#01192ebe"
+                                onPress={login}
+                                style={{
+                                    ...styles.button,
+                                    paddingHorizontal: 30,
+                                }}
+                                disabled={isLoading}
+                            >
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.textb,
+                                    }}
+                                >
+                                    Iniciar sesión
+                                </Text>
+                            </TouchableHighlight>
+                            <TouchableOpacity
+                                style={{ marginBottom: 35 }}
+                                onPress={() => navigation.navigate('ManifestPart1Screen')}
+                            >
+                                <Text style={styles.linkPad}>Solicitar cuenta</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
             </TouchableWithoutFeedback>
         </BackgroundPaper>

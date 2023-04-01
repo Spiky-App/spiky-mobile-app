@@ -25,13 +25,14 @@ const Container = () => {
     const dispatch = useAppDispatch();
     const [isLoading, setLoading] = useState<boolean>(false);
     const [hasInternetConnection, setInternetConnection] = useState<boolean>(true);
+    const [hasSlowInternetConnection, setSlowInternetConnection] = useState<boolean>(false);
     const { validateToken } = useSpikyService();
 
     async function handleValidateToken() {
         setLoading(true);
         const tokenStorage = await AsyncStorage.getItem(StorageKeys.TOKEN);
         if (tokenStorage) {
-            const data = await validateToken(tokenStorage);
+            const { data, networkError } = await validateToken(tokenStorage);
             if (data) {
                 const {
                     token: token_return,
@@ -42,7 +43,11 @@ const Container = () => {
                     n_chatmensajes,
                 } = data;
                 await AsyncStorage.setItem(StorageKeys.TOKEN, token_return);
-                dispatch(updateServiceConfig({ headers: { 'x-token': token_return } }));
+                dispatch(
+                    updateServiceConfig({
+                        headers: { 'x-token': token_return, 'Content-Type': 'application/json' },
+                    })
+                );
                 dispatch(signIn(token_return));
                 dispatch(
                     setUser({
@@ -54,6 +59,7 @@ const Container = () => {
                     })
                 );
             }
+            if (networkError) setSlowInternetConnection(true);
         }
         setLoading(false);
     }
@@ -86,8 +92,16 @@ const Container = () => {
         };
     }, [hasInternetConnection]);
 
-    if (!hasInternetConnection) {
-        return <NoConnectionScreen />;
+    if (!hasInternetConnection || hasSlowInternetConnection) {
+        return (
+            <NoConnectionScreen
+                callback={() => {
+                    setSlowInternetConnection(false);
+                    handleValidateToken();
+                }}
+                retryButton={hasSlowInternetConnection && hasInternetConnection}
+            />
+        );
     }
 
     if (isLoading) {

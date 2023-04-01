@@ -14,9 +14,10 @@ import { styles } from '../../themes/appTheme';
 interface Props extends TouchableOpacityProps {
     icon: IconDefinition;
     iconStyle?: StyleProp<ViewStyle>;
+    iconColor?: string;
 }
 
-function ButtonIcon({ disabled, icon, onPress, iconStyle, style }: Props) {
+function ButtonIcon({ disabled, icon, onPress, iconStyle, style, iconColor }: Props) {
     return (
         <TouchableOpacity
             style={[
@@ -29,7 +30,7 @@ function ButtonIcon({ disabled, icon, onPress, iconStyle, style }: Props) {
             disabled={disabled}
         >
             <View style={iconStyle}>
-                <FontAwesomeIcon icon={icon} size={16} color={disabled ? 'white' : 'white'} />
+                <FontAwesomeIcon icon={icon} size={16} color={iconColor ? iconColor : 'white'} />
             </View>
         </TouchableOpacity>
     );
