@@ -29,6 +29,7 @@ interface Props {
     offsetPosition?: { offset_x: number; offset_y: number };
     changeColorOnPress?: boolean;
     isComment?: boolean;
+    isOwnerAndAnonymous: boolean;
 }
 
 function ReactionButton({
@@ -37,6 +38,7 @@ function ReactionButton({
     handleCreateIdeaX2,
     offsetPosition = { offset_x: 0, offset_y: 0 },
     isComment,
+    isOwnerAndAnonymous,
 }: Props) {
     const reactContainerRef = useRef<View>(null);
     const width = useRef(new Animated.Value(6)).current;
@@ -188,7 +190,7 @@ function ReactionButton({
                                                 </View>
                                             </View>
                                         </Pressable>
-                                        {handleCreateIdeaX2 && (
+                                        {handleCreateIdeaX2 && !isOwnerAndAnonymous && (
                                             <>
                                                 <View
                                                     style={{
@@ -201,7 +203,7 @@ function ReactionButton({
                                                     style={stylescomp.moreReactions}
                                                     onPress={handleCreateIdeaX2}
                                                 >
-                                                    <Text style={stylescomp.textX2}>X2</Text>
+                                                    <Text style={stylescomp.textX2}>x2</Text>
                                                 </Pressable>
                                             </>
                                         )}

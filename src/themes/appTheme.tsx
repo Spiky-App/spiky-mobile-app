@@ -203,22 +203,19 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     button_container: {
-        shadowColor: '#bcbcbc',
-        shadowOffset: {
-            width: 2,
-            height: 2,
-        },
-        shadowOpacity: 1,
-        shadowRadius: 0,
-        elevation: 2,
         flexDirection: 'row',
         paddingHorizontal: 8,
         paddingVertical: 2,
-        backgroundColor: '#D4D4D4',
+        backgroundColor: '#E8E8E8',
         marginRight: 10,
         borderRadius: 3,
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: 23,
+    },
+    text_button: {
+        fontFamily: 'Helvetica',
+        fontSize: 12,
+        color: '#67737D',
     },
 });

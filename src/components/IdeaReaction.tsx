@@ -10,11 +10,10 @@ import { BlurView } from '@react-native-community/blur';
 import { View } from 'react-native';
 
 interface Props {
-    bottom: number;
-    right: number;
     messageId: number;
+    isOwnerAndAnonymous: boolean;
 }
-export const IdeaReaction = ({ messageId }: Props) => {
+export const IdeaReaction = ({ messageId, isOwnerAndAnonymous }: Props) => {
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
@@ -133,6 +132,7 @@ export const IdeaReaction = ({ messageId }: Props) => {
                 <ReactionButton
                     handleReaction={!isLoading ? handleReaction : () => {}}
                     handleCreateIdeaX2={!isLoading ? handleCreateIdeaX2 : () => {}}
+                    isOwnerAndAnonymous={isOwnerAndAnonymous}
                 />
             </View>
         </View>

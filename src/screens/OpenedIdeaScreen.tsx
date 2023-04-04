@@ -12,6 +12,7 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    Pressable,
 } from 'react-native';
 import { Comment } from '../components/Comment';
 import { faChevronLeft, faLightbulb, faThumbtack } from '../constants/icons/FontAwesome';
@@ -38,6 +39,7 @@ import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { Poll } from '../components/Poll';
 import { CommentsButton } from '../components/common/CommentsButton';
+import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -220,29 +222,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 {message.anonymous ? (
                                     <View style={styles.button_user}>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <Text style={styles.user}>
-                                                @{message.user.nickname}
-                                            </Text>
-                                            <UniversityTag
-                                                id={message.user.universityId}
-                                                fontSize={14}
-                                            />
-                                            <View
-                                                style={{
-                                                    position: 'absolute',
-                                                    height: '100%',
-                                                    width: '100%',
-                                                }}
-                                            >
-                                                <View
-                                                    style={{
-                                                        flexGrow: 1,
-                                                        flexDirection: 'row',
-                                                        backgroundColor: '#01192E',
-                                                        borderRadius: 3,
-                                                    }}
-                                                />
-                                            </View>
+                                            <Text style={styles.user}>@_______</Text>
                                         </View>
                                     </View>
                                 ) : (
@@ -259,12 +239,9 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     </TouchableOpacity>
                                 )}
 
-                                <View style={{ marginVertical: 14 }}>
+                                <View style={{ paddingVertical: 14 }}>
                                     <MsgTransform
-                                        textStyle={{
-                                            ...styles.text,
-                                            ...stylescom.msg,
-                                        }}
+                                        textStyle={stylescom.msg}
                                         text={message.message}
                                         handleClickUser={handleClickUser}
                                         handleClickHashtag={handleClickHashtag}
@@ -289,6 +266,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             }
                                             handleClickUser={handleClickUser}
                                             totalComments={message.totalComments}
+                                            isAnonymous={message.anonymous}
                                         />
                                     )}
                                     {(message.myX2 || message.myReaction || isOwner) && !isPoll && (
@@ -340,17 +318,44 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     )}
                                 </View>
                                 {!message.myX2 && !message.myReaction && !isOwner && !isPoll && (
-                                    <IdeaReaction messageId={message.id} bottom={-15} right={-24} />
+                                    <IdeaReaction
+                                        messageId={message.id}
+                                        isOwnerAndAnonymous={isOwner && message.anonymous}
+                                    />
                                 )}
                             </View>
                         </View>
                         {message.myAnswers || message.myX2 || message.myReaction || isOwner ? (
                             <>
-                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                <View style={stylescom.container_replyPriv}>
                                     <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
                                         Comentarios
                                         <Text style={styles.orange}>.</Text>
                                     </Text>
+                                    {!message.anonymous && !isOwner && (
+                                        <Pressable
+                                            style={styles.button_container}
+                                            onPress={() =>
+                                                navigation.navigate('ReplyIdeaScreen', {
+                                                    message: {
+                                                        messageId: message.id,
+                                                        message: message.message,
+                                                        user: message.user,
+                                                        date: message.date,
+                                                    },
+                                                })
+                                            }
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faReply}
+                                                color={styles.text_button.color}
+                                                size={14}
+                                            />
+                                            <Text style={{ ...styles.text_button, marginLeft: 5 }}>
+                                                Replicar en priv
+                                            </Text>
+                                        </Pressable>
+                                    )}
                                 </View>
                                 {comments && comments.length > 0 ? (
                                     <View style={stylescom.commentWrap}>
@@ -453,9 +458,10 @@ const stylescom = StyleSheet.create({
         paddingLeft: 32,
     },
     msg: {
+        // width: '100%',
+        ...styles.text,
         textAlign: 'left',
         flexShrink: 1,
-        width: '100%',
     },
     reactButton: {
         backgroundColor: '#D4D4D4',
@@ -535,5 +541,12 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         bottom: -2,
         right: 0,
+    },
+    container_replyPriv: {
+        width: '90%',
+        marginBottom: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
 });

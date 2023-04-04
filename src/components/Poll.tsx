@@ -21,6 +21,7 @@ interface Props {
     totalComments: number;
     handleOpenIdea?: () => void;
     handleClickUser: (goToUser: User) => void;
+    isAnonymous: boolean;
 }
 
 export const Poll = ({
@@ -32,6 +33,7 @@ export const Poll = ({
     handleOpenIdea,
     totalComments,
     handleClickUser,
+    isAnonymous,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
@@ -106,12 +108,13 @@ export const Poll = ({
                         totalAnswers={totalAnswers}
                         isLoading={isLoading}
                         handleAnswerPoll={handleAnswerPoll}
+                        isOwnerAndAnonymous={isOwner && isAnonymous}
                     />
                 )}
                 keyExtractor={item => item.answer}
                 showsVerticalScrollIndicator={false}
             />
-            {myAnswers || isOwner ? (
+            {myAnswers || (isOwner && !isAnonymous) ? (
                 <Animated.View style={[{ marginTop: 15, minHeight: heightAnimated }]}>
                     <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
 
@@ -151,6 +154,7 @@ interface PollBarProps {
     totalAnswers: number;
     isLoading: boolean;
     handleAnswerPoll: (answerId: number) => void;
+    isOwnerAndAnonymous: boolean;
 }
 
 const PollBar = ({
@@ -160,6 +164,7 @@ const PollBar = ({
     totalAnswers,
     isLoading,
     handleAnswerPoll,
+    isOwnerAndAnonymous,
 }: PollBarProps) => {
     const width = useRef(new Animated.Value(0)).current;
     const opacity = useRef(new Animated.Value(0)).current;
@@ -194,7 +199,7 @@ const PollBar = ({
             <Pressable
                 style={stylescom.answer_button}
                 onPress={
-                    !isOwner && !myAnswers && !isLoading
+                    (!isOwner || isOwnerAndAnonymous) && !myAnswers && !isLoading
                         ? () => handleAnswerPoll(answer.id)
                         : undefined
                 }
@@ -202,7 +207,9 @@ const PollBar = ({
                 <View
                     style={[
                         stylescom.circleBorder,
-                        myAnswers || isOwner ? { borderColor: '#D4D4D4' } : {},
+                        myAnswers || (isOwner && !isOwnerAndAnonymous)
+                            ? { borderColor: '#D4D4D4' }
+                            : {},
                     ]}
                 >
                     {myAnswers === answer.id && <View style={stylescom.circleInside} />}
@@ -210,7 +217,7 @@ const PollBar = ({
                 <View style={{ flexGrow: 1, flex: 1 }}>
                     <Text style={[styles.text, stylescom.msg]}>{answer.answer}</Text>
                 </View>
-                {(myAnswers || isOwner) && (
+                {(myAnswers || (isOwner && !isOwnerAndAnonymous)) && (
                     <Animated.View style={{ ...styles.center, marginLeft: 5, opacity }}>
                         <Text style={styles.textGray}>{answer.count}</Text>
                     </Animated.View>

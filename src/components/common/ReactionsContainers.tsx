@@ -83,7 +83,7 @@ function ReactionsContainers({ reactionCount, id, handleClickUser, isIdea, myX2,
                         style={[styles.button_container, myX2 && { backgroundColor: '#67737D' }]}
                         onPress={() => setModalX2Reactions(true)}
                     >
-                        <Text style={[stylescomp.x2, myX2 && { color: 'white' }]}>{`X${
+                        <Text style={[stylescomp.x2, myX2 && { color: 'white' }]}>{`x${
                             totalX2 + 1
                         }`}</Text>
                     </Pressable>

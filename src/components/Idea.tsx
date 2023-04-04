@@ -169,24 +169,7 @@ export const Idea = ({ idea, filter }: Props) => {
                     {anonymous ? (
                         <View style={styles.button_user}>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={styles.user}>@{user.nickname}</Text>
-                                <UniversityTag id={user.universityId} fontSize={14} />
-                                <View
-                                    style={{
-                                        position: 'absolute',
-                                        height: '100%',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            flexGrow: 1,
-                                            flexDirection: 'row',
-                                            backgroundColor: '#01192E',
-                                            borderRadius: 3,
-                                        }}
-                                    />
-                                </View>
+                                <Text style={styles.user}>@_______</Text>
                             </View>
                         </View>
                     ) : (
@@ -227,6 +210,7 @@ export const Idea = ({ idea, filter }: Props) => {
                                 handleClickUser={handleClickUser}
                                 totalComments={totalComments}
                                 handleOpenIdea={handleOpenIdea}
+                                isAnonymous={anonymous}
                             />
                         )}
                         {isDraft && (
@@ -299,8 +283,8 @@ export const Idea = ({ idea, filter }: Props) => {
                             </View>
                         )}
                     </View>
-                    {!myX2 && !myReaction && !isOwner && isNormal && (
-                        <IdeaReaction messageId={id} bottom={-15} right={-24} />
+                    {!myX2 && !myReaction && (!isOwner || anonymous) && isNormal && (
+                        <IdeaReaction messageId={id} isOwnerAndAnonymous={isOwner && anonymous} />
                     )}
                 </View>
             </Animated.View>

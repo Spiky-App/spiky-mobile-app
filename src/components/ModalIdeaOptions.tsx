@@ -70,7 +70,10 @@ export const ModalIdeaOptions = ({
 
     const goToScreen = (
         screen: string,
-        params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
+        params?:
+            | RootStackParamList['ReplyIdeaScreen']
+            | RootStackParamList['ReportIdeaScreen']
+            | RootStackParamList['OpenedIdeaScreen']
     ) => {
         setIdeaOptions(false);
         if (screen === 'ReportIdeaScreen') navigation.pop();
@@ -244,6 +247,20 @@ export const ModalIdeaOptions = ({
                                         <Text style={stylescomp.text}>Eliminar</Text>
                                     </TouchableOpacity>
                                 </>
+                            )}
+                            {!isOpenedIdeaScreen && messageType === MessageType.X2 && (
+                                <TouchableOpacity
+                                    style={stylescomp.button}
+                                    onPress={() =>
+                                        goToScreen('OpenedIdeaScreen', {
+                                            messageId: message.messageId,
+                                            filter: filter,
+                                        })
+                                    }
+                                >
+                                    <FontAwesomeIcon icon={faTrashCan} color="#01192E" size={13} />
+                                    <Text style={stylescomp.text}>Ver idea original</Text>
+                                </TouchableOpacity>
                             )}
                         </View>
                     </TouchableWithoutFeedback>

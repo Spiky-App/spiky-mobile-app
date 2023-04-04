@@ -106,7 +106,7 @@ export const ModalShowX2Reactions = ({
                         >
                             <View style={stylescom.containerCount}>
                                 <Text style={{ ...stylescom.x2, fontSize: 23 }}>
-                                    X{totalX2 + 1}
+                                    x{totalX2 + 1}
                                 </Text>
                             </View>
                             <View style={stylescom.subContainer}>
@@ -143,7 +143,7 @@ const X2ReactionComp = ({
 
     return (
         <View style={stylescom.reactContainer}>
-            <Text style={stylescom.x2}>{`X${reaction.xNummber + 1}`}</Text>
+            <Text style={stylescom.x2}>{`x${reaction.xNummber + 1}`}</Text>
             <View style={styles.flex}>
                 <Pressable onPress={goToUserProfile}>
                     <Text style={{ ...stylescom.user, ...styles.textbold }}>
