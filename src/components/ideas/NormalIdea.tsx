@@ -16,6 +16,7 @@ interface Props {
     idea: Message;
     filter: string;
     isOwner: boolean;
+    spectatorMode: boolean;
     handleClickUser: (goToUser: User) => void;
     handleClickHashtag: (hashtag_text: string) => void;
     handleClickLink: (url: string) => Promise<void>;
@@ -28,6 +29,7 @@ export const NormalIdea = ({
     filter,
     idea,
     isOwner,
+    spectatorMode,
     handleClickUser,
     handleClickHashtag,
     handleClickLink,
@@ -38,7 +40,7 @@ export const NormalIdea = ({
     const fecha = getTime(idea.date.toString());
     return (
         <>
-            {isOwner && (
+            {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>
                         <View style={{ transform: [{ rotate: '-45deg' }] }}>

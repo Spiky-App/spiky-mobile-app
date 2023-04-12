@@ -39,12 +39,13 @@ export const IdeaTypes = ({
                 <NormalIdea
                     idea={idea}
                     filter={filter}
-                    isOwner={isOwner && !spectatorMode}
+                    isOwner={isOwner}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}
                     handleClickLink={handleClickLink}
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
+                    spectatorMode={spectatorMode}
                 />
             );
         case IdeaType.DRAFT:
@@ -62,12 +63,13 @@ export const IdeaTypes = ({
                 <PollIdea
                     idea={idea}
                     filter={filter}
-                    isOwner={isOwner && !spectatorMode}
+                    isOwner={isOwner}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}
                     handleClickLink={handleClickLink}
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
+                    spectatorMode={spectatorMode}
                 />
             );
         case IdeaType.X2:
@@ -88,12 +90,13 @@ export const IdeaTypes = ({
                 <MoodIdea
                     idea={idea}
                     filter={filter}
-                    isOwner={isOwner && !spectatorMode}
+                    isOwner={isOwner}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}
                     handleClickLink={handleClickLink}
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
+                    spectatorMode={spectatorMode}
                 />
             );
         default:

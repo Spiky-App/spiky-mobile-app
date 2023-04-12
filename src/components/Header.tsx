@@ -9,6 +9,7 @@ import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
+import { BlurView } from '@react-native-community/blur';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -44,7 +45,6 @@ export const Header = () => {
                     style={{
                         ...stylescom.container,
                         marginTop: top > 0 ? 0 : 15,
-                        justifyContent: 'space-between',
                     }}
                     onLayout={({ nativeEvent }) => {
                         setPosition({
@@ -91,15 +91,24 @@ export const Header = () => {
                             size={18}
                             color={'#ffff'}
                         />
-                        <Text style={stylescom.text}>
-                            {spectatorMode ? (
-                                <>
-                                    <Text style={[styles.textbold, styles.orange]}>@</Text>spiker
-                                </>
-                            ) : (
-                                `@${nickname}`
+                        <View style={{ ...styles.center, marginLeft: 3 }}>
+                            <Text
+                                style={[
+                                    stylescom.text,
+                                    { paddingHorizontal: spectatorMode ? 8 : 0 },
+                                ]}
+                            >
+                                @{nickname}
+                            </Text>
+                            {spectatorMode && (
+                                <BlurView
+                                    style={stylescom.blur_user}
+                                    blurType="light"
+                                    blurAmount={5}
+                                    reducedTransparencyFallbackColor="white"
+                                />
                             )}
-                        </Text>
+                        </View>
                     </TouchableOpacity>
 
                     <ModalProfile
@@ -116,12 +125,14 @@ export const Header = () => {
 const stylescom = StyleSheet.create({
     container: {
         backgroundColor: '#01192E',
-        height: 45,
         marginHorizontal: 15,
         borderRadius: 5,
         alignItems: 'center',
         flexDirection: 'row',
         flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingTop: 6,
+        paddingBottom: 8,
     },
     imageback: {
         backgroundColor: '#F8F8F8',
@@ -133,13 +144,13 @@ const stylescom = StyleSheet.create({
         fontFamily: 'Helvetica',
         fontWeight: '400',
         fontSize: 16,
-        marginLeft: 3,
+        paddingVertical: 6,
     },
     flexConte: {
+        ...styles.center,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 45,
     },
     notif: {
         ...styles.center,
@@ -166,5 +177,11 @@ const stylescom = StyleSheet.create({
         ...styles.h3,
         color: '#ffff',
         fontSize: 10,
+    },
+    blur_user: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
     },
 });

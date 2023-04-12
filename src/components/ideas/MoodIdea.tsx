@@ -16,6 +16,7 @@ interface Props {
     idea: Message;
     filter: string;
     isOwner: boolean;
+    spectatorMode: boolean;
     handleClickUser: (goToUser: User) => void;
     handleClickHashtag: (hashtag_text: string) => void;
     handleClickLink: (url: string) => Promise<void>;
@@ -28,6 +29,7 @@ export const MoodIdea = ({
     filter,
     idea,
     isOwner,
+    spectatorMode,
     handleClickUser,
     handleClickHashtag,
     handleClickLink,
@@ -38,7 +40,7 @@ export const MoodIdea = ({
     const fecha = getTime(idea.date.toString());
     return (
         <>
-            {isOwner && (
+            {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>
                         <View style={{ transform: [{ rotate: '-45deg' }] }}>
@@ -62,9 +64,11 @@ export const MoodIdea = ({
                     <View style={stylescom.mood_label}>
                         <Text style={{ ...styles.text_button, fontSize: 10 }}>Estado</Text>
                     </View>
-                    <Text style={{ fontSize: 38 }}>
-                        {idea.message.substring(0, idea.message.indexOf('|'))}
-                    </Text>
+                    <View style={[styles.center, { flexGrow: 1 }]}>
+                        <Text style={{ fontSize: 38 }}>
+                            {idea.message.substring(0, idea.message.indexOf('|'))}
+                        </Text>
+                    </View>
                 </View>
                 <View style={{ flexShrink: 1, alignSelf: 'flex-start' }}>
                     <Pressable
