@@ -17,7 +17,10 @@ const EmojisKeyboard = ({ isOpend, setEmojiKerboard, afterSelection }: Props) =>
     }
 
     function handleSelection(emoji: string) {
-        movingPosition(0, 650, 400, () => afterSelection(emoji));
+        movingPosition(0, 650, 400, () => {
+            setEmojiKerboard(false);
+            afterSelection(emoji);
+        });
     }
 
     useEffect(() => {

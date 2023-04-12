@@ -25,6 +25,7 @@ import {
     Message,
     MessageComment,
     MessageWithReplyContent,
+    Mood,
     Notification,
     PendingNotificationsI,
     PollAnswer,
@@ -463,14 +464,13 @@ function useSpikyService() {
     };
 
     const getIdeas = async (
-        uid: number,
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ): Promise<{ messages: Message[]; networkError?: boolean }> => {
+    ): Promise<{ messages: Message[]; networkError?: boolean; mood?: string }> => {
         try {
-            const response = await service.getMessages(uid, filter, lastMessageId, parameters);
-            return { messages: response.data.mensajes };
+            const response = await service.getMessages(filter, lastMessageId, parameters);
+            return { messages: response.data.mensajes, mood: response.data.mood };
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError) {
@@ -753,6 +753,41 @@ function useSpikyService() {
         }
     };
 
+    const updateMood = async (emoji: string, mood: string): Promise<Message | undefined> => {
+        try {
+            const response = await service.updateMood(emoji, mood);
+            return response.data.mensaje;
+        } catch (error) {
+            console.log(error);
+            dispatch(addToast(handleSpikyServiceToast(error, 'Error creando encuesta.')));
+        }
+        return undefined;
+    };
+
+    const getMoodHistory = async (): Promise<{
+        data: Mood[];
+        networkError?: boolean;
+    }> => {
+        try {
+            const response = await service.getMoodHistory();
+            return { data: response.data.mensajes };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { data: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
+            return { data: [] };
+        }
+    };
+
     return {
         createMessageComment,
         createReportIdea,
@@ -797,6 +832,8 @@ function useSpikyService() {
         blockUser,
         getBlockedUsers,
         getX2Rections,
+        updateMood,
+        getMoodHistory,
     };
 }
 

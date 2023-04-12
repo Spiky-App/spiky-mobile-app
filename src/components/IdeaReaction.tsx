@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message, MessageType } from '../types/store';
+import { Message, IdeaType } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import SocketContext from '../context/Socket/Context';
@@ -64,7 +64,7 @@ export const IdeaReaction = ({ messageId, isOwnerAndAnonymous }: Props) => {
 
     async function handleCreateIdeaX2() {
         setIsLoading(true);
-        const wasCreated = await createIdea('', MessageType.X2, messageId);
+        const wasCreated = await createIdea('', IdeaType.X2, messageId);
         if (wasCreated) {
             const messagesUpdated = messages.map((msg: Message) => {
                 if (msg.id === messageId) {

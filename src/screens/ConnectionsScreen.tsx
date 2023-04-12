@@ -119,7 +119,12 @@ export const ConnectionsScreen = () => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            <IdeasHeader title={'Conexiones'} connections={true} icon={faCircleNodes} />
+            <IdeasHeader
+                title={'Conexiones'}
+                connections={true}
+                icon={faCircleNodes}
+                blocked_user={''}
+            />
             {networkError ? (
                 <NetworkErrorFeed callback={loadConversations} />
             ) : conversations?.length !== 0 ? (
@@ -197,10 +202,10 @@ const stylescomp = StyleSheet.create({
     converContainer: {
         ...styles.shadow,
         backgroundColor: 'white',
-        height: 80,
+        minHeight: 80,
         borderRadius: 6,
         paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingVertical: 20,
         flex: 1,
     },
     newChatMsg: {

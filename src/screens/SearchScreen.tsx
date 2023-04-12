@@ -12,7 +12,7 @@ import { styles } from '../themes/appTheme';
 import { faMagnifyingGlass } from '../constants/icons/FontAwesome';
 import { FloatButton } from '../components/FloatButton';
 import { useAnimation } from '../hooks/useAnimation';
-import MessagesFeed from '../components/MessagesFeed';
+import { MessagesFeed } from '../components/MessagesFeed';
 
 export const SearchScreen = () => {
     const { position, movingPosition } = useAnimation({});

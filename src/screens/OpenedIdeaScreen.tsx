@@ -15,8 +15,7 @@ import {
     Pressable,
 } from 'react-native';
 import { Comment } from '../components/Comment';
-import { faChevronLeft, faLightbulb, faThumbtack } from '../constants/icons/FontAwesome';
-import { getTime } from '../helpers/getTime';
+import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 
 import { FormComment, InputComment } from '../components/InputComment';
@@ -25,21 +24,15 @@ import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
 import { Comment as CommentState, Message, User } from '../types/store';
-import MsgTransform from '../components/MsgTransform';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import UniversityTag from '../components/common/UniversityTag';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
-import { IdeaReaction } from '../components/IdeaReaction';
-import ReactionsContainer from '../components/common/ReactionsContainers';
-import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
-import { Poll } from '../components/Poll';
-import { CommentsButton } from '../components/common/CommentsButton';
 import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
+import { IdeaTypes } from '../components/ideas/IdeaTypes';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -69,30 +62,28 @@ type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 
 export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
-    const messageId = routeSC.params?.messageId;
+    const ideaId = routeSC.params?.ideaId;
     const filter = routeSC.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState<Message>(initialMessage);
-    const [totalComments, setTotalComments] = useState<number>(message.totalComments);
+    const [idea, setIdea] = useState<Message>(initialMessage);
+    const [totalComments, setTotalComments] = useState<number>(idea.totalComments);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [comments, setComments] = useState<CommentState[]>();
-    const date = getTime(message.date.toString());
-    const isOwner = message.user.id === uid;
-    const isPoll = message.answers && message.answers.length > 0;
+    const isOwner = idea.user.id === uid;
     const { getIdeaWithComments } = useSpikyService();
 
     const handleOpenIdea = async () => {
-        const mensaje = await getIdeaWithComments(messageId);
-        if (mensaje) {
-            const messageRetrived = generateMessageFromMensaje(mensaje);
-            setMessage(messageRetrived);
+        const ideaRetrieved = await getIdeaWithComments(ideaId);
+        if (ideaRetrieved) {
+            const messageRetrived = generateMessageFromMensaje(ideaRetrieved);
+            setIdea(messageRetrived);
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
-            setTotalComments(messageRetrived.comments?.length || 0);
+            setTotalComments(messageRetrived.totalComments);
         } else {
             navigation.goBack();
         }
@@ -107,7 +98,6 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     };
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
-        navigation.pop();
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);
@@ -153,10 +143,10 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     }
 
     useEffect(() => {
-        if (messageId) {
+        if (ideaId) {
             handleOpenIdea();
         }
-    }, [messageId]);
+    }, [ideaId]);
 
     return (
         <BackgroundPaper>
@@ -185,163 +175,35 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         size={25}
                                     />
                                 </TouchableOpacity>
-
-                                {isOwner && (
-                                    <View style={stylescom.corner_container}>
-                                        <View style={stylescom.corner}>
-                                            <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                                                <FontAwesomeIcon
-                                                    icon={faLightbulb}
-                                                    color="white"
-                                                    size={13}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                )}
-
-                                {messageTrackingId && (
-                                    <View style={stylescom.corner_container}>
-                                        <View
-                                            style={{
-                                                ...stylescom.corner,
-                                                backgroundColor: '#FC702A',
-                                            }}
-                                        >
-                                            <View>
-                                                <FontAwesomeIcon
-                                                    icon={faThumbtack}
-                                                    color="white"
-                                                    size={13}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                )}
-
-                                {message.anonymous ? (
-                                    <View style={styles.button_user}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <Text style={styles.user}>@_______</Text>
-                                        </View>
-                                    </View>
-                                ) : (
-                                    <TouchableOpacity onPress={() => handleClickUser(message.user)}>
-                                        <View style={styles.button_user}>
-                                            <Text style={{ ...styles.user, fontSize: 15 }}>
-                                                @{message.user.nickname}
-                                            </Text>
-                                            <UniversityTag
-                                                id={message.user.universityId}
-                                                fontSize={14}
-                                            />
-                                        </View>
-                                    </TouchableOpacity>
-                                )}
-
-                                <View style={{ paddingVertical: 14 }}>
-                                    <MsgTransform
-                                        textStyle={stylescom.msg}
-                                        text={message.message}
-                                        handleClickUser={handleClickUser}
-                                        handleClickHashtag={handleClickHashtag}
-                                        handleClickLink={handleClickLink}
-                                    />
-                                </View>
-
-                                <View
-                                    style={{
-                                        ...stylescom.container,
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    {isPoll && (
-                                        <Poll
-                                            answers={message.answers}
-                                            totalAnswers={message.totalAnswers}
-                                            myAnswers={message.myAnswers}
-                                            messageId={message.id}
-                                            userIdMessageOwner={
-                                                message.user.id ? message.user.id : 0
-                                            }
-                                            handleClickUser={handleClickUser}
-                                            totalComments={message.totalComments}
-                                            isAnonymous={message.anonymous}
-                                        />
-                                    )}
-                                    {(message.myX2 || message.myReaction || isOwner) && !isPoll && (
-                                        <>
-                                            <View style={stylescom.container}>
-                                                <ReactionsContainer
-                                                    reactionCount={message.reactions}
-                                                    myReaction={message.myReaction}
-                                                    id={message.id}
-                                                    handleClickUser={handleClickUser}
-                                                    isIdea
-                                                    totalX2={message.totalX2}
-                                                    myX2={message.myX2}
-                                                />
-                                                <CommentsButton totalComments={totalComments} />
-                                            </View>
-                                        </>
-                                    )}
-                                    {(message.myX2 ||
-                                        message.myReaction ||
-                                        isOwner ||
-                                        message.myAnswers) && (
-                                        <View
-                                            style={[
-                                                isPoll && stylescom.container_abs,
-                                                stylescom.container,
-                                            ]}
-                                        >
-                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {date}
-                                            </Text>
-
-                                            <PreModalIdeaOptions
-                                                myIdea={isOwner}
-                                                message={{
-                                                    messageId: message.id,
-                                                    message: message.message,
-                                                    user: message.user,
-                                                    messageTrackingId,
-                                                    date: message.date,
-                                                    messageType: message.type,
-                                                    anonymous: message.anonymous,
-                                                }}
-                                                filter={filter}
-                                                setMessageTrackingId={setMessageTrackingId}
-                                                isOpenedIdeaScreen
-                                            />
-                                        </View>
-                                    )}
-                                </View>
-                                {!message.myX2 && !message.myReaction && !isOwner && !isPoll && (
-                                    <IdeaReaction
-                                        messageId={message.id}
-                                        isOwnerAndAnonymous={isOwner && message.anonymous}
-                                    />
-                                )}
+                                <IdeaTypes
+                                    idea={{ ...idea, totalComments, messageTrackingId }}
+                                    filter={filter || ''}
+                                    isOwner={uid === idea.user.id}
+                                    handleClickUser={handleClickUser}
+                                    handleClickHashtag={handleClickHashtag}
+                                    handleClickLink={handleClickLink}
+                                    handleOpenIdea={handleOpenIdea}
+                                    isOpenedIdeaScreen
+                                />
                             </View>
                         </View>
-                        {message.myAnswers || message.myX2 || message.myReaction || isOwner ? (
+                        {idea.myAnswers || idea.myX2 || idea.myReaction || isOwner ? (
                             <>
                                 <View style={stylescom.container_replyPriv}>
                                     <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
                                         Comentarios
                                         <Text style={styles.orange}>.</Text>
                                     </Text>
-                                    {!message.anonymous && !isOwner && (
+                                    {!idea.anonymous && !isOwner && (
                                         <Pressable
                                             style={styles.button_container}
                                             onPress={() =>
                                                 navigation.navigate('ReplyIdeaScreen', {
                                                     message: {
-                                                        messageId: message.id,
-                                                        message: message.message,
-                                                        user: message.user,
-                                                        date: message.date,
+                                                        ideaId: idea.id,
+                                                        message: idea.message,
+                                                        user: idea.user,
+                                                        date: idea.date,
                                                     },
                                                 })
                                             }
@@ -387,8 +249,8 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     </View>
                                 )}
                                 <InputComment
-                                    messageId={messageId}
-                                    toUser={message.user.id ? message.user.id : 0}
+                                    messageId={ideaId}
+                                    toUser={idea.user.id ? idea.user.id : 0}
                                     updateComments={updateComments}
                                     form={form}
                                     onChange={onChange}

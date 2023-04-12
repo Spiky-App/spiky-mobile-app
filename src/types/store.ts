@@ -201,11 +201,18 @@ export interface ChatMessageToReply {
     user: User;
 }
 
-export enum MessageType {
+export enum IdeaType {
     NORMAL,
     DRAFT,
     POLL,
     X2,
     QUOTE,
     MOOD,
+}
+
+export interface Mood {
+    id: number;
+    mood: string;
+    emoji: string;
+    date: string;
 }

@@ -23,7 +23,7 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message, User, MessageType } from '../types/store';
+import { Message, User, IdeaType } from '../types/store';
 import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
@@ -35,7 +35,7 @@ interface Props {
         left: number;
     };
     message: {
-        messageId: number;
+        ideaId: number;
         message: string;
         user: User;
         date: number;
@@ -45,7 +45,7 @@ interface Props {
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
     isOpenedIdeaScreen?: boolean;
-    messageType: MessageType;
+    ideaType: IdeaType;
 }
 
 export const ModalIdeaOptions = ({
@@ -57,7 +57,7 @@ export const ModalIdeaOptions = ({
     setMessageTrackingId,
     filter,
     isOpenedIdeaScreen,
-    messageType,
+    ideaType,
 }: Props) => {
     const { top, left } = position;
     const uid = useAppSelector((state: RootState) => state.user.id);
@@ -66,7 +66,7 @@ export const ModalIdeaOptions = ({
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const { deleteIdea, createReportIdea } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
-    const { messageId, messageTrackingId } = message;
+    const { ideaId, messageTrackingId } = message;
 
     const goToScreen = (
         screen: string,
@@ -81,10 +81,10 @@ export const ModalIdeaOptions = ({
     };
 
     async function handleCreateTracking() {
-        const id_tracking = await createTracking(messageId, uid);
+        const id_tracking = await createTracking(ideaId, uid);
         if (id_tracking) {
             const messagesUpdated = messages.map(msg => {
-                if (msg.id === messageId) {
+                if (msg.id === ideaId) {
                     return { ...msg, messageTrackingId: id_tracking };
                 } else {
                     return msg;
@@ -104,14 +104,14 @@ export const ModalIdeaOptions = ({
     }
 
     async function handleDeleteTracking() {
-        const isDeleted = await deleteTracking(messageId);
+        const isDeleted = await deleteTracking(ideaId);
         if (isDeleted) {
             let messagesUpdated: Message[];
             if (filter === '/tracking') {
-                messagesUpdated = messages.filter(msg => msg.id !== messageId);
+                messagesUpdated = messages.filter(msg => msg.id !== ideaId);
             } else {
                 messagesUpdated = messages.map(msg => {
-                    if (msg.id === messageId) {
+                    if (msg.id === ideaId) {
                         return { ...msg, messageTrackingId: undefined };
                     } else {
                         return msg;
@@ -136,18 +136,18 @@ export const ModalIdeaOptions = ({
     }
     async function handleIdeaRemoveFromFeed() {
         setIdeaOptions(false);
-        await createReportIdea(messageId, '', uid, true);
+        await createReportIdea(ideaId, '', uid, true);
         dispatch(
             setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
         );
-        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         if (isOpenedIdeaScreen) navigation.goBack();
     }
 
     const handleDelete = () => {
-        deleteIdea(messageId);
-        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        deleteIdea(ideaId);
+        const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
@@ -169,7 +169,7 @@ export const ModalIdeaOptions = ({
                         <View style={{ ...stylescomp.container, top: top + 20, left: left - 100 }}>
                             {!myIdea ? (
                                 <>
-                                    {messageType !== MessageType.X2 && (
+                                    {ideaType !== IdeaType.X2 && (
                                         <>
                                             <TouchableOpacity
                                                 style={stylescomp.button}
@@ -188,7 +188,7 @@ export const ModalIdeaOptions = ({
                                                     onPress={() =>
                                                         goToScreen('ReplyIdeaScreen', {
                                                             message: {
-                                                                messageId: message.messageId,
+                                                                ideaId: message.ideaId,
                                                                 message: message.message,
                                                                 user: message.user,
                                                                 date: message.date,
@@ -225,7 +225,7 @@ export const ModalIdeaOptions = ({
                                         style={stylescomp.button}
                                         onPress={() =>
                                             goToScreen('ReportIdeaScreen', {
-                                                messageId: message.messageId,
+                                                ideaId: message.ideaId,
                                             })
                                         }
                                     >
@@ -248,12 +248,12 @@ export const ModalIdeaOptions = ({
                                     </TouchableOpacity>
                                 </>
                             )}
-                            {!isOpenedIdeaScreen && messageType === MessageType.X2 && (
+                            {!isOpenedIdeaScreen && ideaType === IdeaType.X2 && (
                                 <TouchableOpacity
                                     style={stylescomp.button}
                                     onPress={() =>
                                         goToScreen('OpenedIdeaScreen', {
-                                            messageId: message.messageId,
+                                            ideaId: message.ideaId,
                                             filter: filter,
                                         })
                                     }

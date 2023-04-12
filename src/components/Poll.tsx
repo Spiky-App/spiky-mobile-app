@@ -22,6 +22,7 @@ interface Props {
     handleOpenIdea?: () => void;
     handleClickUser: (goToUser: User) => void;
     isAnonymous: boolean;
+    isOpenedIdeaScreen: boolean;
 }
 
 export const Poll = ({
@@ -34,6 +35,7 @@ export const Poll = ({
     totalComments,
     handleClickUser,
     isAnonymous,
+    isOpenedIdeaScreen,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
@@ -130,7 +132,10 @@ export const Poll = ({
                             />
                             <Text style={{ ...stylescom.number, marginLeft: 4 }}>Votos</Text>
                         </Pressable>
-                        <CommentsButton callback={handleOpenIdea} totalComments={totalComments} />
+                        <CommentsButton
+                            callback={!isOpenedIdeaScreen ? handleOpenIdea : undefined}
+                            totalComments={totalComments}
+                        />
                     </View>
 
                     <ModalPollVotes

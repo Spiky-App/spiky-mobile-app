@@ -37,6 +37,7 @@ interface University {
 export interface GetMessagesResponse {
     ok: boolean;
     mensajes: Message[];
+    mood: string | undefined;
 }
 
 export interface Message {
@@ -46,7 +47,7 @@ export interface Message {
     id_mensaje: number;
     id_usuario: number;
     mensaje: string;
-    num_respuestas?: number;
+    num_respuestas: number;
     num_x2?: number;
     mi_x2: boolean;
     reacciones: ReactionCount[];
@@ -410,4 +411,20 @@ export interface X2Reaction {
         usuario: UserI;
     };
     row_num: number;
+}
+
+export interface UpdateMood {
+    ok: boolean;
+    mensaje: Message;
+}
+
+export interface GetMoodHistory {
+    ok: boolean;
+    mensajes: Mood[];
+}
+
+export interface Mood {
+    id_mensaje: number;
+    mensaje: string;
+    fecha: string;
 }

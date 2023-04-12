@@ -40,6 +40,8 @@ import {
     UpdateUserNickname,
     DeleteAccount,
     GetX2Reactions,
+    UpdateMood,
+    GetMoodHistory,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -64,14 +66,8 @@ class SpikyService {
         return this.instance.get<UniversityResponse>('univer');
     }
 
-    getMessages(
-        uid: number,
-        filter: string,
-        lastMessageId: number | undefined,
-        parameters: MessageRequestData
-    ) {
+    getMessages(filter: string, lastMessageId: number | undefined, parameters: MessageRequestData) {
         const params = {
-            uid: uid,
             id_ultimoMensaje: lastMessageId,
             ...parameters,
         };
@@ -327,6 +323,17 @@ class SpikyService {
 
     getX2Reactions(messageId: number) {
         return this.instance.get<GetX2Reactions>(`reacc/x2/${messageId}`);
+    }
+
+    updateMood(emoji: string, mood: string) {
+        return this.instance.put<UpdateMood>('mensajes/mood', {
+            emoji,
+            mood,
+        });
+    }
+
+    getMoodHistory() {
+        return this.instance.get<GetMoodHistory>('mensajes/moods');
     }
 }
 

@@ -44,6 +44,8 @@ import { faUserSlash } from '@fortawesome/free-solid-svg-icons/faUserSlash';
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { faLink } from '@fortawesome/free-solid-svg-icons/faLink';
+import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
+import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 export {
     faSliders,
     faThumbsDown,
@@ -91,4 +93,6 @@ export {
     faClock,
     faUserSlash,
     faLink,
+    faPencil,
+    faTrash,
 };

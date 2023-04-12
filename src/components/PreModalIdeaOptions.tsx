@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../themes/appTheme';
-import { User, MessageType } from '../types/store';
+import { User, IdeaType } from '../types/store';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
 
 interface Positions {
@@ -12,12 +12,12 @@ interface Positions {
 interface Props {
     myIdea: boolean;
     message: {
-        messageId: number;
+        ideaId: number;
         message: string;
         user: User;
         date: number;
         messageTrackingId?: number;
-        messageType: MessageType;
+        ideaType: IdeaType;
         anonymous: boolean;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
@@ -25,7 +25,13 @@ interface Props {
     isOpenedIdeaScreen?: boolean;
 }
 
-export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScreen }: Props) => {
+export const PreModalIdeaOptions = ({
+    myIdea,
+    message,
+    filter,
+    isOpenedIdeaScreen,
+    setMessageTrackingId,
+}: Props) => {
     const reactContainerRef = useRef<View>(null);
     const [position, setPosition] = useState<Positions>({ top: 0, left: 0 });
     const [ideaOptions, setIdeaOptions] = useState(false);
@@ -59,7 +65,8 @@ export const PreModalIdeaOptions = ({ myIdea, message, filter, isOpenedIdeaScree
                 message={message}
                 filter={filter}
                 isOpenedIdeaScreen={isOpenedIdeaScreen}
-                messageType={message.messageType}
+                setMessageTrackingId={setMessageTrackingId}
+                ideaType={message.ideaType}
             />
         </>
     );

@@ -104,7 +104,7 @@ export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessagePro
 
     function handleGoToReplyMessage(replyMessageId: number) {
         navigation.replace('OpenedIdeaScreen', {
-            messageId: replyMessageId,
+            ideaId: replyMessageId,
         });
     }
 

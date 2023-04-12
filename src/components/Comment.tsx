@@ -115,6 +115,7 @@ export const Comment = ({
                                 offsetPosition={{ offset_x: 0, offset_y: -44 }}
                                 handleReaction={handleReaction}
                                 isComment
+                                isOwnerAndAnonymous={false}
                             />
                         )}
                     </>
@@ -123,7 +124,7 @@ export const Comment = ({
 
             <View style={{ marginTop: 4 }}>
                 <MsgTransform
-                    textStyle={{ ...styles.text, ...styles.msg }}
+                    textStyle={{ ...styles.msg, marginVertical: 8 }}
                     text={comment.comment}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}

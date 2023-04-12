@@ -5,7 +5,6 @@ import { MentionInput } from 'react-native-controlled-mentions';
 import {
     faLocationArrow,
     faPenToSquare,
-    faSquarePollHorizontal,
     faXmark,
     faFlagCheckered,
 } from '../constants/icons/FontAwesome';
@@ -291,11 +290,6 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             marginTop: 10,
                         }}
                     >
-                        <ButtonIcon
-                            disabled={isLoading}
-                            icon={faSquarePollHorizontal}
-                            onPress={() => navStack.replace('CreatePollScreen')}
-                        />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <ToggleButton
                                 isActive={isSuperAnonymous}
@@ -303,17 +297,20 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                                 text={['Super', 'anónimo']}
                             />
                         </View>
-                        <ButtonIcon
-                            disabled={isLoading || invalid()}
-                            icon={faPenToSquare}
-                            onPress={() => onPressPenToSquare(() => navDrawer.goBack())}
-                        />
-                        <ButtonIcon
-                            disabled={isLoading || invalid()}
-                            icon={faLocationArrow}
-                            onPress={onPressLocationArrow}
-                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        />
+                        <View style={styles.flex_center}>
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faPenToSquare}
+                                onPress={() => onPressPenToSquare(() => navDrawer.goBack())}
+                            />
+                            <View style={{ margin: 10 }} />
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faLocationArrow}
+                                onPress={onPressLocationArrow}
+                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            />
+                        </View>
                     </View>
                 </View>
                 <ModalConfirmation

@@ -29,6 +29,7 @@ const mensajes = [
     'contestó en tu tracking.',
     'concuerda en tu idea.',
     'concuerda en tu tracking.',
+    'se unío a la discusión.',
 ];
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {

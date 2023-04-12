@@ -1,9 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getTime } from '../helpers/getTime';
 import { transformMsg } from '../helpers/transformMsg';
 import useSpikyService from '../hooks/useSpikyService';
+import { RootStackParamList } from '../navigator/Navigator';
 import { updateNotificationsNumber } from '../store/feature/user/userSlice';
 import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
@@ -27,12 +28,13 @@ const msg_notif = [
     'contestó en tu tracking.',
     'concuerda en tu idea.',
     'concuerda en tu tracking.',
+    'se unío a la discusión.',
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
     const { updateNotifications } = useSpikyService();
     const dispatch = useAppDispatch();
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const timestamp = new Date(notification.createdAt);
     const date = getTime(timestamp.getTime() + '');
 
@@ -43,7 +45,7 @@ export const Notification = ({ notification, setModalNotif }: PropsNotification)
             dispatch(updateNotificationsNumber(-1));
         }
         navigation.navigate('OpenedIdeaScreen', {
-            messageId: notification.messageId,
+            ideaId: notification.messageId,
         });
         setModalNotif(false);
     };
