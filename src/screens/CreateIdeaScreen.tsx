@@ -5,7 +5,6 @@ import { MentionInput } from 'react-native-controlled-mentions';
 import {
     faLocationArrow,
     faPenToSquare,
-    faSquarePollHorizontal,
     faXmark,
     faFlagCheckered,
 } from '../constants/icons/FontAwesome';
@@ -27,6 +26,8 @@ import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
 import { Message } from '../types/store';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { ModalConfirmation } from '../components/ModalConfirmation';
+import ToggleButton from '../components/common/ToggleButton';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 type NavigationStackProp = StackNavigationProp<RootStackParamList>;
@@ -44,6 +45,11 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const navStack = useNavigation<NavigationStackProp>();
     const [counter, setCounter] = useState(0);
     const [isLoading, setLoading] = useState(false);
+    const [activeConfirmation, setActiveConfirmation] = useState(false);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(false);
+    const [isOpenDrafConfirmation, setIsOpenDrafConfirmation] = useState(false);
+    const [callbackDrafConfirmation, setCallbackDrafConfirmation] = useState(() => () => {});
+    const [callbackDrafCancel, setCallbackDrafCancel] = useState(() => () => {});
     const { createIdea, updateDraft } = useSpikyService();
     const IDEA_MAX_LENGHT = 220;
     const { draft } = useAppSelector((state: RootState) => state.messages);
@@ -63,7 +69,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     }
 
     async function handleCreateIdea(): Promise<Message | undefined> {
-        const mensaje = await createIdea(form.message);
+        const mensaje = await createIdea(form.message, 0, undefined, isSuperAnonymous);
         if (mensaje) {
             const createdMessage: Message = generateMessageFromMensaje({
                 ...mensaje,
@@ -122,7 +128,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
         }
         setLoading(false);
     }
-    async function onPressPenToSquare() {
+    async function onPressPenToSquare(callbackAfter: Function) {
         setLoading(true);
         if (isDraft) {
             const message = await handleUpdateDraft(idDraft, false);
@@ -130,7 +136,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 if (draft) {
                     dispatch(updateMessage(message));
                 }
-                navDrawer.goBack();
+                callbackAfter();
                 dispatch(
                     setModalAlert({
                         isOpen: true,
@@ -140,25 +146,55 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 );
             }
         } else {
-            const message = await createIdea(form.message, true);
-            if (message) {
+            const mensaje = await createIdea(form.message, 1);
+            if (mensaje) {
                 if (draft) {
-                    dispatch(addMessage(generateMessageFromMensaje(message)));
+                    dispatch(
+                        addMessage(
+                            generateMessageFromMensaje({
+                                ...mensaje,
+                                usuario: {
+                                    alias: user.nickname,
+                                    id_universidad: user.universityId,
+                                },
+                                reacciones: [],
+                                encuesta_opciones: [],
+                            })
+                        )
+                    );
                 }
-                navDrawer.goBack();
+                callbackAfter();
                 dispatch(
                     setModalAlert({ isOpen: true, text: 'Borrador guardado.', icon: faPenToSquare })
                 );
             }
         }
-
         setLoading(false);
     }
 
     useEffect(() => {
         const { message: mensaje } = form;
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
-    }, [form]);
+        if (mensaje.length > 0 && draftedIdea !== mensaje && !activeConfirmation)
+            setActiveConfirmation(true);
+        if (mensaje.length === 0 && activeConfirmation) setActiveConfirmation(false);
+    }, [form, activeConfirmation, draftedIdea]);
+
+    useEffect(() => {
+        const unsubscribe = navStack.addListener('beforeRemove', e => {
+            if (!activeConfirmation || isLoading) {
+                return;
+            }
+            e.preventDefault();
+            setCallbackDrafConfirmation(
+                () => () => onPressPenToSquare(() => navStack.dispatch(e.data.action))
+            );
+            setCallbackDrafCancel(() => () => navStack.dispatch(e.data.action));
+            setIsOpenDrafConfirmation(true);
+        });
+
+        return unsubscribe;
+    }, [navStack, activeConfirmation, form, isLoading]);
 
     const messageLenght = form.message.length;
 
@@ -209,6 +245,40 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                                 },
                             ]}
                         />
+                        <View style={stylecom.WrapAbsoluteCenter}>
+                            <View style={stylecom.WrapperMaxCounterNIdea}>
+                                <View style={stylecom.ConteMaxCounterNIdea}>
+                                    <View style={stylecom.MaxCounterNIdea}></View>
+                                    {counter <= 40 && (
+                                        <Text
+                                            style={
+                                                counter < 0
+                                                    ? stylecom.MaxCounterTextNIdeaRed
+                                                    : stylecom.MaxCounterTextNIdea
+                                            }
+                                        >
+                                            {counter}
+                                        </Text>
+                                    )}
+                                    <View
+                                        style={[
+                                            counter < 0
+                                                ? stylecom.MaxCounterNIdeaColorRed
+                                                : stylecom.MaxCounterNIdeaColor,
+                                            {
+                                                width:
+                                                    getPercentage(
+                                                        messageLenght < IDEA_MAX_LENGHT
+                                                            ? messageLenght
+                                                            : IDEA_MAX_LENGHT,
+                                                        IDEA_MAX_LENGHT
+                                                    ) + '%',
+                                            },
+                                        ]}
+                                    />
+                                </View>
+                            </View>
+                        </View>
                     </View>
                     <View
                         style={{
@@ -220,56 +290,37 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             marginTop: 10,
                         }}
                     >
-                        <ButtonIcon
-                            disabled={isLoading}
-                            icon={faSquarePollHorizontal}
-                            onPress={() => navStack.replace('CreatePollScreen')}
-                        />
-                        <View style={stylecom.WrapperMaxCounterNIdea}>
-                            <View style={stylecom.ConteMaxCounterNIdea}>
-                                <View style={stylecom.MaxCounterNIdea}></View>
-                                {counter <= 40 && (
-                                    <Text
-                                        style={
-                                            counter < 0
-                                                ? stylecom.MaxCounterTextNIdeaRed
-                                                : stylecom.MaxCounterTextNIdea
-                                        }
-                                    >
-                                        {counter}
-                                    </Text>
-                                )}
-                                <View
-                                    style={[
-                                        counter < 0
-                                            ? stylecom.MaxCounterNIdeaColorRed
-                                            : stylecom.MaxCounterNIdeaColor,
-                                        {
-                                            width:
-                                                getPercentage(
-                                                    messageLenght < IDEA_MAX_LENGHT
-                                                        ? messageLenght
-                                                        : IDEA_MAX_LENGHT,
-                                                    IDEA_MAX_LENGHT
-                                                ) + '%',
-                                        },
-                                    ]}
-                                />
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <ToggleButton
+                                isActive={isSuperAnonymous}
+                                setIsActive={setIsSuperAnonymous}
+                                text={['Super', 'anónimo']}
+                            />
                         </View>
-                        <ButtonIcon
-                            disabled={isLoading || invalid()}
-                            icon={faPenToSquare}
-                            onPress={onPressPenToSquare}
-                        />
-                        <ButtonIcon
-                            disabled={isLoading || invalid()}
-                            icon={faLocationArrow}
-                            onPress={onPressLocationArrow}
-                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                        />
+                        <View style={styles.flex_center}>
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faPenToSquare}
+                                onPress={() => onPressPenToSquare(() => navDrawer.goBack())}
+                            />
+                            <View style={{ margin: 10 }} />
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faLocationArrow}
+                                onPress={onPressLocationArrow}
+                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            />
+                        </View>
                     </View>
                 </View>
+                <ModalConfirmation
+                    isOpen={isOpenDrafConfirmation}
+                    callback={callbackDrafConfirmation}
+                    callbackCancel={callbackDrafCancel}
+                    setIsOpen={setIsOpenDrafConfirmation}
+                    text={'¿Quieres guardar como borrador tu idea incompleta?'}
+                    confirmationText={'Sí, guardar'}
+                />
             </KeyboardAvoidingView>
         </BackgroundPaper>
     );
@@ -299,6 +350,12 @@ const stylecom = StyleSheet.create({
         height: 45,
         borderWidth: 1,
         borderRadius: 30,
+    },
+    WrapAbsoluteCenter: {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        marginHorizontal: 25,
     },
     WrapperMaxCounterNIdea: {
         // flex: 1,

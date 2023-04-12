@@ -26,8 +26,7 @@ interface Props {
     id: number;
     reactionCount: ReactionCount[];
     handleClickUser: (goToUser: User) => void;
-    isIdeaReactions?: boolean;
-    isCommetReactions?: boolean;
+    isIdea?: boolean;
 }
 
 export const ModalShowReactions = ({
@@ -36,7 +35,7 @@ export const ModalShowReactions = ({
     setModalReactions,
     reactionCount,
     handleClickUser,
-    isIdeaReactions,
+    isIdea,
 }: Props) => {
     const [loading, setLoading] = useState(false);
     const [selection, setSelection] = useState('');
@@ -60,7 +59,7 @@ export const ModalShowReactions = ({
     }
 
     async function loadIdeaReactions() {
-        if (isIdeaReactions) {
+        if (isIdea) {
             const reacciones = await getIdeaReactions(id);
             const reactionList = reacciones.map(reaccion => generateReactionFromReaccion(reaccion));
             setReactions(reactionList);
@@ -78,15 +77,10 @@ export const ModalShowReactions = ({
     useEffect(() => {
         if (modalReactions) {
             setLoading(true);
+            movingPosition(650, 0, 700);
             loadIdeaReactions();
         }
         return () => setReactions([]);
-    }, [modalReactions]);
-
-    useEffect(() => {
-        if (modalReactions) {
-            movingPosition(650, 0, 700);
-        }
     }, [modalReactions]);
 
     useEffect(() => {
@@ -203,7 +197,7 @@ const ReactionComp = ({ reaction, handleClickUser, setModalReactions }: Reaction
                         @{reaction.user.nickname}
                     </Text>
                 </Pressable>
-                <UniversityTag id={reaction.user.universityId} fontSize={13} />
+                <UniversityTag id={reaction.user.universityId} fontSize={14} />
             </View>
         </View>
     );
@@ -258,16 +252,16 @@ const stylescom = StyleSheet.create({
     user: {
         ...styles.textbold,
         fontWeight: '600',
-        fontSize: 13,
+        fontSize: 14,
     },
     reaction: {
         ...styles.text,
-        fontSize: 16,
+        fontSize: 25,
         marginRight: 6,
     },
     text: {
         ...styles.numberGray,
-        fontSize: 15,
+        fontSize: 16,
         paddingVertical: 3,
     },
     flatListCount: {

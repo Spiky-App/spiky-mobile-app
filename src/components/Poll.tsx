@@ -7,7 +7,10 @@ import { setMessages } from '../store/feature/messages/messagesSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { AnswerCount, Message, User } from '../types/store';
+import { CommentsButton } from './common/CommentsButton';
 import { ModalPollVotes } from './ModalPollVotes';
+import { faSquarePollHorizontal } from '../constants/icons/FontAwesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 interface Props {
     messageId: number;
@@ -15,7 +18,11 @@ interface Props {
     answers: AnswerCount[];
     myAnswers?: number;
     totalAnswers: number;
+    totalComments: number;
+    handleOpenIdea?: () => void;
     handleClickUser: (goToUser: User) => void;
+    isAnonymous: boolean;
+    isOpenedIdeaScreen: boolean;
 }
 
 export const Poll = ({
@@ -24,7 +31,11 @@ export const Poll = ({
     totalAnswers,
     messageId,
     userIdMessageOwner,
+    handleOpenIdea,
+    totalComments,
     handleClickUser,
+    isAnonymous,
+    isOpenedIdeaScreen,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
@@ -101,20 +112,33 @@ export const Poll = ({
                         isLoading={isLoading}
                         handleAnswerPoll={handleAnswerPoll}
                         spectatorMode={spectatorMode}
+                        isOwnerAndAnonymous={isOwner && isAnonymous}
                     />
                 )}
                 keyExtractor={item => item.answer}
                 showsVerticalScrollIndicator={false}
             />
-            {myAnswers || isOwner ? (
+            {myAnswers || (isOwner && !isAnonymous) ? (
                 <Animated.View style={[{ marginTop: 15, minHeight: heightAnimated }]}>
                     <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
-                    <Pressable
-                        style={[styles.center, { paddingTop: 5, width: '100%' }]}
-                        onPress={() => setModalAnswers(true)}
-                    >
-                        <Text style={styles.textGray}>Ver votos</Text>
-                    </Pressable>
+
+                    <View style={stylescom.container}>
+                        <Pressable
+                            style={styles.button_container}
+                            onPress={() => setModalAnswers(true)}
+                        >
+                            <FontAwesomeIcon
+                                icon={faSquarePollHorizontal}
+                                color={'#67737D'}
+                                size={14}
+                            />
+                            <Text style={{ ...stylescom.number, marginLeft: 4 }}>Votos</Text>
+                        </Pressable>
+                        <CommentsButton
+                            callback={!isOpenedIdeaScreen ? handleOpenIdea : undefined}
+                            totalComments={totalComments}
+                        />
+                    </View>
 
                     <ModalPollVotes
                         messageId={messageId}
@@ -138,6 +162,7 @@ interface PollBarProps {
     isLoading: boolean;
     handleAnswerPoll: (answerId: number) => void;
     spectatorMode: boolean;
+    isOwnerAndAnonymous: boolean;
 }
 
 const PollBar = ({
@@ -148,6 +173,7 @@ const PollBar = ({
     isLoading,
     handleAnswerPoll,
     spectatorMode,
+    isOwnerAndAnonymous,
 }: PollBarProps) => {
     const width = useRef(new Animated.Value(0)).current;
     const opacity = useRef(new Animated.Value(0)).current;
@@ -182,7 +208,7 @@ const PollBar = ({
             <Pressable
                 style={stylescom.answer_button}
                 onPress={
-                    !isOwner && !myAnswers && !isLoading
+                    (!isOwner || isOwnerAndAnonymous) && !myAnswers && !isLoading
                         ? () => handleAnswerPoll(answer.id)
                         : undefined
                 }
@@ -190,7 +216,9 @@ const PollBar = ({
                 <View
                     style={[
                         stylescom.circleBorder,
-                        myAnswers || isOwner ? { borderColor: '#D4D4D4' } : {},
+                        myAnswers || (isOwner && !isOwnerAndAnonymous)
+                            ? { borderColor: '#D4D4D4' }
+                            : {},
                     ]}
                 >
                     {myAnswers === answer.id && <View style={stylescom.circleInside} />}
@@ -198,7 +226,7 @@ const PollBar = ({
                 <View style={{ flexGrow: 1, flex: 1 }}>
                     <Text style={[styles.text, stylescom.msg]}>{answer.answer}</Text>
                 </View>
-                {(myAnswers || isOwner) && (
+                {(myAnswers || (isOwner && !isOwnerAndAnonymous)) && (
                     <Animated.View style={{ ...styles.center, marginLeft: 5, opacity }}>
                         <Text style={styles.textGray}>{answer.count}</Text>
                     </Animated.View>
@@ -232,9 +260,8 @@ const stylescom = StyleSheet.create({
         flexShrink: 1,
     },
     answer_button: {
-        backgroundColor: 'white',
         borderRadius: 4,
-        paddingVertical: 4,
+        paddingVertical: 5,
         flexDirection: 'row',
     },
     suboption: {
@@ -271,12 +298,24 @@ const stylescom = StyleSheet.create({
     background_answer: {
         width: '95%',
         height: 8,
-        // marginLeft: 18,
         backgroundColor: '#D4D4D4',
         borderRadius: 6,
     },
     text_button: {
         ...styles.text,
         color: '#01192e5a',
+    },
+    container: {
+        marginTop: 10,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+    number: {
+        ...styles.text,
+        fontSize: 12,
+        color: '#67737D',
+        marginLeft: 1,
     },
 });

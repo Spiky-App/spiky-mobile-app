@@ -23,7 +23,7 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message, User } from '../types/store';
+import { Message, User, IdeaType } from '../types/store';
 import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
@@ -35,15 +35,17 @@ interface Props {
         left: number;
     };
     message: {
-        messageId: number;
+        ideaId: number;
         message: string;
         user: User;
         date: number;
         messageTrackingId?: number;
+        anonymous: boolean;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
     isOpenedIdeaScreen?: boolean;
+    ideaType: IdeaType;
 }
 
 export const ModalIdeaOptions = ({
@@ -55,6 +57,7 @@ export const ModalIdeaOptions = ({
     setMessageTrackingId,
     filter,
     isOpenedIdeaScreen,
+    ideaType,
 }: Props) => {
     const { top, left } = position;
     const uid = useAppSelector((state: RootState) => state.user.id);
@@ -63,11 +66,14 @@ export const ModalIdeaOptions = ({
     const messages = useAppSelector((state: RootState) => state.messages.messages);
     const { deleteIdea, createReportIdea } = useSpikyService();
     const { createTracking, deleteTracking } = useSpikyService();
-    const { messageId, messageTrackingId } = message;
+    const { ideaId, messageTrackingId } = message;
 
     const goToScreen = (
         screen: string,
-        params?: RootStackParamList['ReplyIdeaScreen'] | RootStackParamList['ReportIdeaScreen']
+        params?:
+            | RootStackParamList['ReplyIdeaScreen']
+            | RootStackParamList['ReportIdeaScreen']
+            | RootStackParamList['OpenedIdeaScreen']
     ) => {
         setIdeaOptions(false);
         if (screen === 'ReportIdeaScreen') navigation.pop();
@@ -75,10 +81,10 @@ export const ModalIdeaOptions = ({
     };
 
     async function handleCreateTracking() {
-        const id_tracking = await createTracking(messageId, uid);
+        const id_tracking = await createTracking(ideaId, uid);
         if (id_tracking) {
             const messagesUpdated = messages.map(msg => {
-                if (msg.id === messageId) {
+                if (msg.id === ideaId) {
                     return { ...msg, messageTrackingId: id_tracking };
                 } else {
                     return msg;
@@ -98,14 +104,14 @@ export const ModalIdeaOptions = ({
     }
 
     async function handleDeleteTracking() {
-        const isDeleted = await deleteTracking(messageId);
+        const isDeleted = await deleteTracking(ideaId);
         if (isDeleted) {
             let messagesUpdated: Message[];
             if (filter === '/tracking') {
-                messagesUpdated = messages.filter(msg => msg.id !== messageId);
+                messagesUpdated = messages.filter(msg => msg.id !== ideaId);
             } else {
                 messagesUpdated = messages.map(msg => {
-                    if (msg.id === messageId) {
+                    if (msg.id === ideaId) {
                         return { ...msg, messageTrackingId: undefined };
                     } else {
                         return msg;
@@ -130,18 +136,18 @@ export const ModalIdeaOptions = ({
     }
     async function handleIdeaRemoveFromFeed() {
         setIdeaOptions(false);
-        await createReportIdea(messageId, '', uid, true);
+        await createReportIdea(ideaId, '', uid, true);
         dispatch(
             setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
         );
-        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         if (isOpenedIdeaScreen) navigation.goBack();
     }
 
     const handleDelete = () => {
-        deleteIdea(messageId);
-        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        deleteIdea(ideaId);
+        const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setIdeaOptions(false);
@@ -163,34 +169,45 @@ export const ModalIdeaOptions = ({
                         <View style={{ ...stylescomp.container, top: top + 20, left: left - 100 }}>
                             {!myIdea ? (
                                 <>
-                                    <TouchableOpacity
-                                        style={stylescomp.button}
-                                        onPress={handleTracking}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faThumbtack}
-                                            color="#01192E"
-                                            size={13}
-                                        />
-                                        <Text style={stylescomp.text}>Tracking</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        style={stylescomp.button}
-                                        onPress={() =>
-                                            goToScreen('ReplyIdeaScreen', {
-                                                message: {
-                                                    messageId: message.messageId,
-                                                    message: message.message,
-                                                    user: message.user,
-                                                    date: message.date,
-                                                },
-                                            })
-                                        }
-                                    >
-                                        <FontAwesomeIcon icon={faReply} color="#01192E" size={13} />
-                                        <Text style={stylescomp.text}>Replicar en priv</Text>
-                                    </TouchableOpacity>
+                                    {ideaType !== IdeaType.X2 && (
+                                        <>
+                                            <TouchableOpacity
+                                                style={stylescomp.button}
+                                                onPress={handleTracking}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faThumbtack}
+                                                    color="#01192E"
+                                                    size={13}
+                                                />
+                                                <Text style={stylescomp.text}>Tracking</Text>
+                                            </TouchableOpacity>
+                                            {!message.anonymous && (
+                                                <TouchableOpacity
+                                                    style={stylescomp.button}
+                                                    onPress={() =>
+                                                        goToScreen('ReplyIdeaScreen', {
+                                                            message: {
+                                                                ideaId: message.ideaId,
+                                                                message: message.message,
+                                                                user: message.user,
+                                                                date: message.date,
+                                                            },
+                                                        })
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon
+                                                        icon={faReply}
+                                                        color="#01192E"
+                                                        size={13}
+                                                    />
+                                                    <Text style={stylescomp.text}>
+                                                        Replicar en priv
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        </>
+                                    )}
 
                                     <TouchableOpacity
                                         style={stylescomp.button}
@@ -208,7 +225,7 @@ export const ModalIdeaOptions = ({
                                         style={stylescomp.button}
                                         onPress={() =>
                                             goToScreen('ReportIdeaScreen', {
-                                                messageId: message.messageId,
+                                                ideaId: message.ideaId,
                                             })
                                         }
                                     >
@@ -230,6 +247,20 @@ export const ModalIdeaOptions = ({
                                         <Text style={stylescomp.text}>Eliminar</Text>
                                     </TouchableOpacity>
                                 </>
+                            )}
+                            {!isOpenedIdeaScreen && ideaType === IdeaType.X2 && (
+                                <TouchableOpacity
+                                    style={stylescomp.button}
+                                    onPress={() =>
+                                        goToScreen('OpenedIdeaScreen', {
+                                            ideaId: message.ideaId,
+                                            filter: filter,
+                                        })
+                                    }
+                                >
+                                    <FontAwesomeIcon icon={faTrashCan} color="#01192E" size={13} />
+                                    <Text style={stylescomp.text}>Ver idea original</Text>
+                                </TouchableOpacity>
                             )}
                         </View>
                     </TouchableWithoutFeedback>

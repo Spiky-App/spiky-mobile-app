@@ -5,7 +5,7 @@ export const socketBaseUrl: string = `${process.env.REACT_APP_BASE_URL}:${proces
 // i'm searching for alternatives but for now it hasn't
 // hurt anyone
 export const config: AxiosRequestConfig = {
-    baseURL: `${process.env.REACT_APP_BASE_URL}:${process.env.REACT_APP_PORT}/api`,
+    baseURL: `${process.env.REACT_APP_BASE_URL}:${process.env.REACT_APP_PORT}/api/v1.1`,
     timeout: 8000,
     headers: { 'Content-Type': 'application/json' },
 };

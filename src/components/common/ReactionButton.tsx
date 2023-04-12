@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Pressable } from 'react-native';
-import IconGray from '../svg/IconGray';
 import { faFaceSmile, faPlus } from '../../constants/icons/FontAwesome';
 import EmojisKeyboard from '../EmojisKeyboard';
 import { emojis1, emojis2 } from '../../constants/emojis/emojis';
@@ -24,25 +23,29 @@ interface Positions {
 }
 
 interface Props {
-    scale?: number;
     styleCircleButton?: StyleProp<ViewStyle>;
     handleReaction: (emoji: string) => void;
+    handleCreateIdeaX2?: () => void;
     offsetPosition?: { offset_x: number; offset_y: number };
     changeColorOnPress?: boolean;
+    isComment?: boolean;
+    isOwnerAndAnonymous: boolean;
 }
 
 function ReactionButton({
-    scale = 1,
     styleCircleButton = {},
     handleReaction,
+    handleCreateIdeaX2,
     offsetPosition = { offset_x: 0, offset_y: 0 },
-    changeColorOnPress,
+    isComment,
+    isOwnerAndAnonymous,
 }: Props) {
     const reactContainerRef = useRef<View>(null);
-    const width = useRef(new Animated.Value(20)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
+    const width = useRef(new Animated.Value(6)).current;
+    const opacity1 = useRef(new Animated.Value(1)).current;
+    const opacity2 = useRef(new Animated.Value(0)).current;
     const inputRange = [0, 100];
-    const outputRange = ['0%', '100%'];
+    const outputRange = ['10%', '100%'];
     const animatedWidth = width.interpolate({ inputRange, outputRange });
     const [modalReactions, setModalReactions] = useState(false);
     const [emojiKerboard, setEmojiKerboard] = useState(false);
@@ -57,15 +60,23 @@ function ReactionButton({
     }
 
     function handleCloseModal() {
-        Animated.parallel([
-            Animated.timing(opacity, {
-                toValue: 0,
-                duration: 150,
-                useNativeDriver: false,
-            }),
-            Animated.timing(width, {
-                toValue: 20,
-                duration: 200,
+        Animated.sequence([
+            Animated.parallel([
+                Animated.timing(opacity2, {
+                    toValue: 0,
+                    duration: 50,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(width, {
+                    toValue: 3,
+                    duration: isComment ? 50 : 200,
+                    useNativeDriver: false,
+                }),
+            ]),
+            Animated.timing(opacity1, {
+                delay: isComment ? 0 : 70,
+                toValue: 1,
+                duration: isComment ? 1 : 50,
                 useNativeDriver: false,
             }),
         ]).start(() => {
@@ -76,17 +87,24 @@ function ReactionButton({
     useEffect(() => {
         if (position.x !== 0) {
             setModalReactions(true);
-            Animated.parallel([
-                Animated.timing(opacity, {
+            Animated.sequence([
+                Animated.timing(opacity2, {
                     toValue: 1,
-                    duration: 100,
+                    duration: 50,
                     useNativeDriver: false,
                 }),
-                Animated.timing(width, {
-                    toValue: 100,
-                    duration: 500,
-                    useNativeDriver: false,
-                }),
+                Animated.parallel([
+                    Animated.timing(opacity1, {
+                        toValue: 0,
+                        duration: 50,
+                        useNativeDriver: false,
+                    }),
+                    Animated.timing(width, {
+                        toValue: 91,
+                        duration: 300,
+                        useNativeDriver: false,
+                    }),
+                ]),
             ]).start();
         }
     }, [position]);
@@ -95,26 +113,27 @@ function ReactionButton({
         <>
             <View style={styleCircleButton}>
                 <View style={{ alignItems: 'flex-end' }}>
-                    <View
-                        style={{
-                            ...stylescomp.container,
-                            minWidth: 42 * scale,
-                            height: 42 * scale,
-                            padding: 7 * scale,
-                            backgroundColor:
-                                changeColorOnPress && modalReactions ? '#01192E' : '#D4D4D4',
-                        }}
-                        ref={reactContainerRef}
-                    >
-                        <Pressable onPress={handleStateReactions}>
-                            <View
-                                style={{ position: 'absolute', top: 3 * scale, left: -2 * scale }}
-                            >
-                                <FontAwesomeIcon icon={faPlus} color={'white'} size={11 * scale} />
-                            </View>
-                            <IconGray color="#ffffff" underlayColor={'#01192ebe'} />
-                        </Pressable>
-                    </View>
+                    <Pressable onPress={handleStateReactions}>
+                        <Animated.View
+                            style={[
+                                isComment
+                                    ? stylescomp.containerInComment
+                                    : { ...stylescomp.container, opacity: opacity1 },
+                                {
+                                    height: isComment ? 20 : 40,
+                                    minWidth: isComment ? 20 : 50,
+                                },
+                                modalReactions && { backgroundColor: '#67737D' },
+                            ]}
+                            ref={reactContainerRef}
+                        >
+                            <FontAwesomeIcon
+                                icon={faPlus}
+                                color={'white'}
+                                size={isComment ? 14 : 18}
+                            />
+                        </Animated.View>
+                    </Pressable>
                 </View>
             </View>
 
@@ -122,17 +141,24 @@ function ReactionButton({
                 <TouchableWithoutFeedback onPress={handleCloseModal}>
                     <View style={stylescomp.wrapModal}>
                         <TouchableWithoutFeedback>
-                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 159 }}>
+                            <View
+                                style={[
+                                    stylescomp.containerModal,
+                                    { top: y, left: !isComment ? x - 340 : 0 },
+                                    isComment && { alignItems: 'center' },
+                                ]}
+                            >
                                 <Animated.View
-                                    style={{
-                                        ...stylescomp.containerbig,
-                                        width: animatedWidth,
-                                    }}
+                                    style={[
+                                        stylescomp.containerbig,
+                                        { width: animatedWidth },
+                                        isComment && { backgroundColor: '#D4D4D4' },
+                                    ]}
                                 >
                                     <Animated.View
                                         style={{
                                             ...stylescomp.containersmall,
-                                            opacity,
+                                            opacity: opacity2,
                                         }}
                                     >
                                         <EmojiReaction
@@ -143,25 +169,44 @@ function ReactionButton({
                                             fixedEmoji={'❌'}
                                             handleReaction={handleReaction}
                                         />
-                                        <EmojiReaction handleReaction={handleReaction} />
+                                        <EmojiReaction handleReaction={handleReaction} type={1} />
                                         <EmojiReaction handleReaction={handleReaction} />
                                         <Pressable
-                                            style={stylescomp.moreReactions}
+                                            style={{ ...stylescomp.moreReactions, marginRight: 6 }}
                                             onPress={() => setEmojiKerboard(true)}
                                         >
-                                            <FontAwesomeIcon
-                                                icon={faFaceSmile}
-                                                color={'white'}
-                                                size={17}
-                                            />
-                                            <View style={stylescomp.plusIcon}>
+                                            <View>
                                                 <FontAwesomeIcon
-                                                    icon={faPlus}
+                                                    icon={faFaceSmile}
                                                     color={'white'}
-                                                    size={10}
+                                                    size={20}
                                                 />
+                                                <View style={stylescomp.plusIcon}>
+                                                    <FontAwesomeIcon
+                                                        icon={faPlus}
+                                                        color={'white'}
+                                                        size={11}
+                                                    />
+                                                </View>
                                             </View>
                                         </Pressable>
+                                        {handleCreateIdeaX2 && !isOwnerAndAnonymous && (
+                                            <>
+                                                <View
+                                                    style={{
+                                                        width: 1,
+                                                        minHeight: '80%',
+                                                        backgroundColor: 'white',
+                                                    }}
+                                                />
+                                                <Pressable
+                                                    style={stylescomp.moreReactions}
+                                                    onPress={handleCreateIdeaX2}
+                                                >
+                                                    <Text style={stylescomp.textX2}>x2</Text>
+                                                </Pressable>
+                                            </>
+                                        )}
                                     </Animated.View>
                                 </Animated.View>
                             </View>
@@ -197,8 +242,8 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
     }, []);
 
     return (
-        <Pressable onPress={() => handleReaction(emoji)}>
-            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 20 : 18 }}>
+        <Pressable onPress={() => handleReaction(emoji)} style={stylescomp.emojiContainer}>
+            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 22 : 18 }}>
                 {emoji}
             </Text>
         </Pressable>
@@ -210,8 +255,18 @@ export default ReactionButton;
 const stylescomp = StyleSheet.create({
     container: {
         ...styles.center,
+        borderRadius: 14,
+        backgroundColor: '#01192e2e',
+    },
+    containerInComment: {
         ...styles.shadow_button,
-        borderRadius: 20,
+        ...styles.center,
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        borderRadius: 14,
+        backgroundColor: '#D4D4D4',
     },
     wrapModal: {
         flex: 1,
@@ -221,20 +276,19 @@ const stylescomp = StyleSheet.create({
         zIndex: 1,
     },
     containerModal: {
-        width: 200,
-        height: 42,
+        width: '100%',
+        height: 40,
         alignItems: 'flex-end',
         position: 'absolute',
-        ...styles.shadow_button,
     },
     containerbig: {
         ...styles.center,
         ...styles.shadow_button,
-        height: 42,
-        width: 200,
-        borderRadius: 20,
-        backgroundColor: '#D4D4D4',
-        padding: 7,
+        height: 40,
+        width: '100%',
+        borderRadius: 14,
+        backgroundColor: '#01192e2e',
+        paddingHorizontal: 7,
         flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',
@@ -249,11 +303,22 @@ const stylescomp = StyleSheet.create({
     moreReactions: {
         ...styles.center,
         paddingVertical: 2,
-        paddingRight: 9,
+        flexGrow: 1,
+        minHeight: '100%',
+    },
+    emojiContainer: {
+        flexGrow: 1,
+        minHeight: '100%',
+        ...styles.center,
     },
     plusIcon: {
         position: 'absolute',
-        top: -3,
-        right: 1,
+        top: -7,
+        right: -6,
+    },
+    textX2: {
+        ...styles.h4,
+        fontSize: 22,
+        color: 'white',
     },
 });

@@ -38,7 +38,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMsgWithReply } = useSpikyService();
     const { socket } = useContext(SocketContext);
-    const { message, messageId, user, date } = route.params?.message;
+    const { message, ideaId, user, date } = route.params?.message;
     const { form, onChange } = useForm({
         messageReply: '',
     });
@@ -53,7 +53,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setDisabled(true);
-        const content = await createChatMsgWithReply(user.id!!, messageId, messageReply);
+        const content = await createChatMsgWithReply(user.id!!, ideaId, messageReply);
         if (content) {
             const { userto, conver, newConver } = content;
             const converRetrived = generateConversationFromConversacion(conver, uid);

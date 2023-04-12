@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, View, Text, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
@@ -30,7 +30,7 @@ interface MessagesFeedProp {
     emptyTitle: string;
 }
 
-const MessagesFeed = ({
+export const MessagesFeed = ({
     params,
     filter,
     title,
@@ -41,7 +41,7 @@ const MessagesFeed = ({
 }: MessagesFeedProp) => {
     const dispatch = useDispatch();
     const { messages } = useAppSelector((state: RootState) => state.messages);
-    const { fetchMessages, moreMsg, loading, networkError } = useMessages(filter, params);
+    const { fetchMessages, moreMsg, loading, networkError, mood } = useMessages(filter, params);
     const [isFetching, setIsFetching] = useState(false);
 
     const onRefresh = async () => {
@@ -80,6 +80,7 @@ const MessagesFeed = ({
                     onEndReached={() => {
                         !loading && loadMore();
                     }}
+                    ListHeaderComponent={mood ? <MoodState mood={mood} /> : undefined}
                     ListFooterComponent={loading ? LoadingAnimated : <></>}
                     ListFooterComponentStyle={{ marginVertical: 12 }}
                     refreshControl={
@@ -103,4 +104,33 @@ const MessagesFeed = ({
     );
 };
 
-export default MessagesFeed;
+interface MoodStateProp {
+    mood: string;
+}
+
+const MoodState = ({ mood }: MoodStateProp) => (
+    <View style={{ width: '100%', alignItems: 'center' }}>
+        <View style={stylescom.wrap_mood}>
+            <Text style={[styles.h7, { marginBottom: 5 }]}>Estado:</Text>
+            <View style={[styles.flex_center, { justifyContent: 'flex-start' }]}>
+                <Text style={{ fontSize: 30, marginHorizontal: 8 }}>
+                    {mood.substring(0, mood.indexOf('|'))}
+                </Text>
+                <View style={{ flexShrink: 1, alignSelf: 'center' }}>
+                    <Text style={[styles.msg, { marginVertical: 8 }]}>
+                        {mood.substring(mood.indexOf('|') + 1)}
+                    </Text>
+                </View>
+            </View>
+        </View>
+    </View>
+);
+
+const stylescom = StyleSheet.create({
+    wrap_mood: {
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        width: '90%',
+        marginVertical: 8,
+    },
+});

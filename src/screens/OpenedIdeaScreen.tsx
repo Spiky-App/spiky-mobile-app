@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
+    Alert,
     FlatList,
     KeyboardAvoidingView,
+    Linking,
     Platform,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
+    Pressable,
 } from 'react-native';
 import { Comment } from '../components/Comment';
-import { faChevronLeft, faLightbulb, faMessage, faThumbtack } from '../constants/icons/FontAwesome';
-import { getTime } from '../helpers/getTime';
+import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 
 import { FormComment, InputComment } from '../components/InputComment';
@@ -22,19 +24,15 @@ import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
 import { Comment as CommentState, Message, User } from '../types/store';
-import MsgTransform from '../components/MsgTransform';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import UniversityTag from '../components/common/UniversityTag';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
-import { IdeaReaction } from '../components/IdeaReaction';
-import ReactionsContainer from '../components/common/ReactionsContainer';
-import { PreModalIdeaOptions } from '../components/PreModalIdeaOptions';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
-import { Poll } from '../components/Poll';
+import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
+import { IdeaTypes } from '../components/ideas/IdeaTypes';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -49,12 +47,15 @@ const initialMessage: Message = {
         nickname: '',
         universityId: 0,
     },
-    answersNumber: 0,
-    draft: 0,
+    totalComments: 0,
     sequence: 1,
     reactions: [],
     answers: [],
     totalAnswers: 0,
+    type: 0,
+    totalX2: 0,
+    myX2: false,
+    anonymous: false,
 };
 
 type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
@@ -62,30 +63,28 @@ type Props = DrawerScreenProps<RootStackParamList, 'OpenedIdeaScreen'>;
 export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
-    const messageId = routeSC.params?.messageId;
+    const ideaId = routeSC.params?.ideaId;
     const filter = routeSC.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
     const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState<Message>(initialMessage);
-    const [answersNumber, setAnswersNumber] = useState<number>(message.answersNumber);
+    const [idea, setIdea] = useState<Message>(initialMessage);
+    const [totalComments, setTotalComments] = useState<number>(idea.totalComments);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [comments, setComments] = useState<CommentState[]>();
-    const date = getTime(message.date.toString());
-    const isOwner = message.user.id === uid;
-    const isPoll = message.answers && message.answers.length > 0;
+    const isOwner = idea.user.id === uid;
     const { getIdeaWithComments } = useSpikyService();
 
     const handleOpenIdea = async () => {
-        const mensaje = await getIdeaWithComments(messageId);
-        if (mensaje) {
-            const messageRetrived = generateMessageFromMensaje(mensaje);
-            setMessage(messageRetrived);
+        const ideaRetrieved = await getIdeaWithComments(ideaId);
+        if (ideaRetrieved) {
+            const messageRetrived = generateMessageFromMensaje(ideaRetrieved);
+            setIdea(messageRetrived);
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
-            setAnswersNumber(messageRetrived.comments?.length || 0);
+            setTotalComments(messageRetrived.totalComments);
         } else {
             navigation.goBack();
         }
@@ -95,12 +94,11 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const updateComments = (comment: CommentState) => {
         if (comments) {
             setComments([comment, ...comments]);
-            setAnswersNumber(comments.length + 1);
+            setTotalComments(comments.length + 1);
         }
     };
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
-        navigation.pop();
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);
@@ -136,11 +134,20 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         });
     };
 
+    async function handleClickLink(url: string) {
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('URL no soportado.');
+        }
+    }
+
     useEffect(() => {
-        if (messageId) {
+        if (ideaId) {
             handleOpenIdea();
         }
-    }, [messageId]);
+    }, [ideaId]);
 
     return (
         <BackgroundPaper>
@@ -169,230 +176,104 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                         size={25}
                                     />
                                 </TouchableOpacity>
-
-                                {isOwner && !spectatorMode && (
-                                    <View style={stylescom.corner_container}>
-                                        <View style={stylescom.corner}>
-                                            <View style={{ transform: [{ rotate: '-45deg' }] }}>
-                                                <FontAwesomeIcon
-                                                    icon={faLightbulb}
-                                                    color="white"
-                                                    size={13}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                )}
-
-                                {messageTrackingId && (
-                                    <View style={stylescom.corner_container}>
-                                        <View
-                                            style={{
-                                                ...stylescom.corner,
-                                                backgroundColor: '#FC702A',
-                                            }}
-                                        >
-                                            <View>
-                                                <FontAwesomeIcon
-                                                    icon={faThumbtack}
-                                                    color="white"
-                                                    size={13}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                )}
-
-                                <View style={stylescom.flex}>
-                                    <TouchableOpacity onPress={() => handleClickUser(message.user)}>
-                                        <View style={styles.button_user}>
-                                            <Text style={{ ...styles.user, fontSize: 15 }}>
-                                                @{message.user.nickname}
-                                            </Text>
-                                            <UniversityTag
-                                                id={message.user.universityId}
-                                                fontSize={14}
-                                            />
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={{ marginVertical: 8 }}>
-                                    <MsgTransform
-                                        textStyle={{
-                                            ...styles.text,
-                                            ...stylescom.msg,
-                                            fontSize: 14,
-                                        }}
-                                        text={message.message}
-                                        handleClickUser={handleClickUser}
-                                        handleClickHashtag={handleClickHashtag}
-                                    />
-                                </View>
-
-                                <View
-                                    style={{
-                                        ...stylescom.container,
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    {isPoll && (
-                                        <Poll
-                                            answers={message?.answers || []}
-                                            totalAnswers={message.totalAnswers}
-                                            myAnswers={message.myAnswers}
-                                            messageId={message.id}
-                                            userIdMessageOwner={
-                                                message.user.id ? message.user.id : 0
-                                            }
-                                            handleClickUser={handleClickUser}
-                                        />
-                                    )}
-                                    {!message.myReaction && !isOwner && !isPoll && (
-                                        <>
-                                            <View style={{ flex: 1, height: 15 }} />
-                                            <IdeaReaction
-                                                messageId={message.id}
-                                                bottom={-15}
-                                                right={-24}
-                                            />
-                                        </>
-                                    )}
-                                    {(message.myReaction || isOwner) && !isPoll && (
-                                        <>
-                                            <View style={stylescom.container}>
-                                                {message.reactions.length > 0 && (
-                                                    <ReactionsContainer
-                                                        reactionCount={message.reactions}
-                                                        myReaction={message.myReaction}
-                                                        id={message.id}
-                                                        handleClickUser={handleClickUser}
-                                                        isIdeaReactions
-                                                    />
-                                                )}
-
-                                                <View style={stylescom.reaction}>
-                                                    <FontAwesomeIcon
-                                                        icon={faMessage}
-                                                        color={'#D4D4D4'}
-                                                        size={16}
-                                                        style={{
-                                                            ...styles.shadow_button,
-                                                            shadowOffset: {
-                                                                width: 1.5,
-                                                                height: 2,
-                                                            },
-                                                        }}
-                                                    />
-                                                    <Text style={styles.numberGray}>
-                                                        {answersNumber === 0 ? ' ' : answersNumber}
-                                                    </Text>
-                                                </View>
-                                            </View>
-                                        </>
-                                    )}
-                                    {(message.myReaction || isOwner || message.myAnswers) && (
-                                        <View
-                                            style={[
-                                                isPoll && stylescom.container_abs,
-                                                stylescom.container,
-                                            ]}
-                                        >
-                                            <Text style={{ ...styles.text, ...styles.numberGray }}>
-                                                {date}
-                                            </Text>
-
-                                            <PreModalIdeaOptions
-                                                myIdea={isOwner}
-                                                message={{
-                                                    messageId: message.id,
-                                                    message: message.message,
-                                                    user: message.user,
-                                                    messageTrackingId,
-                                                    date: message.date,
-                                                }}
-                                                filter={filter}
-                                                setMessageTrackingId={setMessageTrackingId}
-                                                isOpenedIdeaScreen
-                                            />
-                                        </View>
-                                    )}
-                                </View>
+                                <IdeaTypes
+                                    idea={{ ...idea, totalComments, messageTrackingId }}
+                                    filter={filter || ''}
+                                    isOwner={uid === idea.user.id}
+                                    handleClickUser={handleClickUser}
+                                    handleClickHashtag={handleClickHashtag}
+                                    handleClickLink={handleClickLink}
+                                    handleOpenIdea={handleOpenIdea}
+                                    isOpenedIdeaScreen
+                                    spectatorMode={spectatorMode}
+                                />
                             </View>
                         </View>
-                        {!isPoll &&
-                            (message.myReaction !== undefined || isOwner ? (
-                                <>
-                                    <View
-                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
-                                    >
-                                        <Text
-                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
+                        {idea.myAnswers || idea.myX2 || idea.myReaction || isOwner ? (
+                            <>
+                                <View style={stylescom.container_replyPriv}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                    {!idea.anonymous && !isOwner && (
+                                        <Pressable
+                                            style={styles.button_container}
+                                            onPress={() =>
+                                                navigation.navigate('ReplyIdeaScreen', {
+                                                    message: {
+                                                        ideaId: idea.id,
+                                                        message: idea.message,
+                                                        user: idea.user,
+                                                        date: idea.date,
+                                                    },
+                                                })
+                                            }
                                         >
-                                            Comentarios
-                                            <Text style={styles.orange}>.</Text>
-                                        </Text>
-                                    </View>
-                                    {comments && comments.length > 0 ? (
-                                        <View style={stylescom.commentWrap}>
-                                            <FlatList
-                                                style={{
-                                                    width: '100%',
-                                                }}
-                                                data={comments}
-                                                renderItem={({ item }) => (
-                                                    <Comment
-                                                        comment={item}
-                                                        formComment={form}
-                                                        onChangeComment={onChange}
-                                                        refInputComment={refInputComment}
-                                                        handleClickUser={handleClickUser}
-                                                        handleClickHashtag={handleClickHashtag}
-                                                    />
-                                                )}
-                                                keyExtractor={item => item.id + ''}
-                                                showsVerticalScrollIndicator={false}
+                                            <FontAwesomeIcon
+                                                icon={faReply}
+                                                color={styles.text_button.color}
+                                                size={14}
                                             />
-                                        </View>
-                                    ) : (
-                                        <View
-                                            style={{ ...stylescom.commentWrap, ...styles.center }}
-                                        >
-                                            <Text
-                                                style={{ ...styles.text, ...stylescom.textGrayPad }}
-                                            >
-                                                Se el primero en contribuir a esta idea.
+                                            <Text style={{ ...styles.text_button, marginLeft: 5 }}>
+                                                Replicar en priv
                                             </Text>
-                                        </View>
+                                        </Pressable>
                                     )}
-                                    <InputComment
-                                        messageId={messageId}
-                                        toUser={message.user.id ? message.user.id : 0}
-                                        updateComments={updateComments}
-                                        form={form}
-                                        onChange={onChange}
-                                        refInputComment={refInputComment}
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <View
-                                        style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}
-                                    >
-                                        <Text
-                                            style={{ ...styles.text, ...styles.h5, fontSize: 16 }}
-                                        >
-                                            Comentarios
-                                            <Text style={styles.orange}>.</Text>
-                                        </Text>
+                                </View>
+                                {comments && comments.length > 0 ? (
+                                    <View style={stylescom.commentWrap}>
+                                        <FlatList
+                                            style={{
+                                                width: '100%',
+                                            }}
+                                            data={comments}
+                                            renderItem={({ item }) => (
+                                                <Comment
+                                                    comment={item}
+                                                    formComment={form}
+                                                    onChangeComment={onChange}
+                                                    refInputComment={refInputComment}
+                                                    handleClickUser={handleClickUser}
+                                                    handleClickHashtag={handleClickHashtag}
+                                                    handleClickLink={handleClickLink}
+                                                />
+                                            )}
+                                            keyExtractor={item => item.id + ''}
+                                            showsVerticalScrollIndicator={false}
+                                        />
                                     </View>
+                                ) : (
                                     <View style={{ ...stylescom.commentWrap, ...styles.center }}>
                                         <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
-                                            Toma una postura antes de participar
+                                            Se el primero en contribuir a esta idea.
                                         </Text>
                                     </View>
-                                </>
-                            ))}
+                                )}
+                                <InputComment
+                                    messageId={ideaId}
+                                    toUser={idea.user.id ? idea.user.id : 0}
+                                    updateComments={updateComments}
+                                    form={form}
+                                    onChange={onChange}
+                                    refInputComment={refInputComment}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <View style={{ width: '90%', paddingLeft: 10, marginVertical: 6 }}>
+                                    <Text style={{ ...styles.text, ...styles.h5, fontSize: 16 }}>
+                                        Comentarios
+                                        <Text style={styles.orange}>.</Text>
+                                    </Text>
+                                </View>
+                                <View style={{ ...stylescom.commentWrap, ...styles.center }}>
+                                    <Text style={{ ...styles.text, ...stylescom.textGrayPad }}>
+                                        Toma una postura antes de participar
+                                    </Text>
+                                </View>
+                            </>
+                        )}
                     </>
                 ) : (
                     <View style={{ ...styles.center, flex: 1 }}>
@@ -421,9 +302,9 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
     },
     wrap: {
-        width: '90%',
+        width: '92%',
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 14,
         marginVertical: 8,
         shadowColor: '#4d4d4d',
         shadowOffset: {
@@ -441,10 +322,10 @@ const stylescom = StyleSheet.create({
         paddingLeft: 32,
     },
     msg: {
-        fontSize: 13,
+        // width: '100%',
+        ...styles.text,
         textAlign: 'left',
         flexShrink: 1,
-        width: '100%',
     },
     reactButton: {
         backgroundColor: '#D4D4D4',
@@ -488,7 +369,7 @@ const stylescom = StyleSheet.create({
         paddingHorizontal: 30,
     },
     corner_container: {
-        borderRadius: 8,
+        borderRadius: 14,
         position: 'absolute',
         height: 40,
         left: 0,
@@ -499,8 +380,8 @@ const stylescom = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginBottom: 15,
-        width: '90%',
-        borderRadius: 8,
+        width: '92%',
+        borderRadius: 14,
         backgroundColor: 'white',
         shadowColor: '#4d4d4d',
         shadowOffset: {
@@ -524,5 +405,12 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         bottom: -2,
         right: 0,
+    },
+    container_replyPriv: {
+        width: '90%',
+        marginBottom: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
 });

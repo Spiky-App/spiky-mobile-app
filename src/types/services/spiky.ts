@@ -34,36 +34,53 @@ interface University {
     background_color: string;
 }
 
-export interface MessageRequestParams {
-    alias?: string;
-    search?: string;
-    hashtag?: string;
-    univer?: number;
-    draft?: boolean;
-    lastMessageId?: number;
-}
-
 export interface GetMessagesResponse {
     ok: boolean;
     mensajes: Message[];
+    mood: string | undefined;
 }
 
 export interface Message {
     banned?: number;
-    draft: number;
+    type: number;
     fecha: string | number;
     id_mensaje: number;
     id_usuario: number;
     mensaje: string;
-    num_respuestas?: number;
+    num_respuestas: number;
+    num_x2?: number;
+    mi_x2: boolean;
     reacciones: ReactionCount[];
     mi_reaccion?: string;
     trackings?: [{ id_tracking: number }];
     usuario: UserI;
     respuestas?: Comment[];
-    encuesta_opciones?: AnswerCount[];
+    encuesta_opciones: AnswerCount[];
     mi_encuesta_respuesta?: number;
     total_encuesta_respuestas: number;
+    mensaje_child?: ChildMessage;
+    anonymous: boolean;
+}
+
+export interface ChildMessage {
+    banned?: number;
+    type: number;
+    fecha: string | number;
+    id_mensaje: number;
+    id_usuario: number;
+    mensaje: string;
+    num_respuestas?: number;
+    num_x2?: number;
+    mi_x2: boolean;
+    reacciones: ReactionCount[];
+    mi_reaccion?: string;
+    trackings?: [{ id_tracking: number }];
+    usuario: UserI;
+    respuestas?: Comment[];
+    encuesta_opciones: AnswerCount[];
+    mi_encuesta_respuesta?: number;
+    total_encuesta_respuestas: number;
+    anonymous: boolean;
 }
 
 export interface UserI {
@@ -74,12 +91,12 @@ export interface UserI {
     disable?: boolean;
 }
 
-interface ReactionCount {
+export interface ReactionCount {
     reaccion: string;
     count: number;
 }
 
-interface AnswerCount {
+export interface AnswerCount {
     id_encuesta_opcion: number;
     encuesta_opcion: string;
     encuesta_respuestas_count: number;
@@ -381,4 +398,33 @@ export interface UpdateUserNickname {
 
 export interface DeleteAccount {
     ok: boolean;
+}
+
+export interface GetX2Reactions {
+    ok: boolean;
+    X2s: X2Reaction[];
+}
+
+export interface X2Reaction {
+    mensaje_parent: {
+        id_mensaje: number;
+        usuario: UserI;
+    };
+    row_num: number;
+}
+
+export interface UpdateMood {
+    ok: boolean;
+    mensaje: Message;
+}
+
+export interface GetMoodHistory {
+    ok: boolean;
+    mensajes: Mood[];
+}
+
+export interface Mood {
+    id_mensaje: number;
+    mensaje: string;
+    fecha: string;
 }

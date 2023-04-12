@@ -27,7 +27,7 @@ export const ReportIdeaScreen = ({ route }: Props) => {
     const { form, onChange } = useForm({
         reportReason: '',
     });
-    const messageId = route.params?.messageId;
+    const ideaId = route.params?.ideaId;
     const messages = useAppSelector((state: RootState) => state.messages.messages);
 
     const { reportReason } = form;
@@ -35,9 +35,9 @@ export const ReportIdeaScreen = ({ route }: Props) => {
     const handleCreateReportIdea = () => {
         setIsLoading(true);
         setButtonState(false);
-        createReportIdea(messageId, reportReason, uid);
+        createReportIdea(ideaId, reportReason, uid);
         dispatch(setModalAlert({ isOpen: true, text: 'Mensaje reportado.', icon: faFlag }));
-        const messagesUpdated = messages.filter(msg => msg.id !== messageId);
+        const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         onChange({ reportReason: '' });
         setIsLoading(true);

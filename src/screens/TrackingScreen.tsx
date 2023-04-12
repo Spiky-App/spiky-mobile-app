@@ -1,7 +1,7 @@
 import React from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { FloatButton } from '../components/FloatButton';
-import MessagesFeed from '../components/MessagesFeed';
+import { MessagesFeed } from '../components/MessagesFeed';
 import { faThumbtack } from '../constants/icons/FontAwesome';
 
 export const TrackingScreen = () => {

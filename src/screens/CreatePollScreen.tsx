@@ -27,6 +27,7 @@ import { addMessage } from '../store/feature/messages/messagesSlice';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
+import ToggleButton from '../components/common/ToggleButton';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 interface Form {
@@ -49,6 +50,7 @@ export const CreatePollScreen = () => {
     const { createPoll } = useSpikyService();
     const dispatch = useAppDispatch();
     const [isLoading, setLoading] = useState(false);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(false);
     const { form, onChange } = useForm<Form>({
         question: '',
         answers: [
@@ -131,7 +133,7 @@ export const CreatePollScreen = () => {
         answers.forEach(a => {
             if (a.answer !== '') answers_array.push(a.answer);
         });
-        const mensaje = await createPoll(question, answers_array);
+        const mensaje = await createPoll(question, answers_array, isSuperAnonymous);
         if (mensaje) {
             const createdMessage: Message = generateMessageFromMensaje({
                 ...mensaje,
@@ -206,7 +208,12 @@ export const CreatePollScreen = () => {
                                 />
                             ))}
                         </View>
-                        <View style={{ alignItems: 'flex-end' }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <ToggleButton
+                                isActive={isSuperAnonymous}
+                                setIsActive={setIsSuperAnonymous}
+                                text={['Super', 'anónimo']}
+                            />
                             <ButtonIcon
                                 disabled={isLoading || invalid()}
                                 icon={faLocationArrow}
