@@ -399,7 +399,7 @@ function useSpikyService() {
     const getIdeaWithComments = async (messageId: number): Promise<Message | undefined> => {
         try {
             const response = await service.getMessageAndComments(messageId);
-            return { ...response.data.mensaje, num_respuestas: response.data.num_respuestas };
+            return { ...response.data.mensaje };
         } catch (error) {
             console.log(error);
             dispatch(

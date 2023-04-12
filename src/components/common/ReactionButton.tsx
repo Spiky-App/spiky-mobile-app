@@ -259,7 +259,6 @@ const stylescomp = StyleSheet.create({
         backgroundColor: '#01192e2e',
     },
     containerInComment: {
-        ...styles.shadow_button,
         ...styles.center,
         shadowOffset: {
             width: 1,

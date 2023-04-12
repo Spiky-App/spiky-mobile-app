@@ -198,7 +198,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     </Text>
                                     {!idea.anonymous && !isOwner && (
                                         <Pressable
-                                            style={styles.button_container}
+                                            style={[styles.button_container, styles.shadow_button]}
                                             onPress={() =>
                                                 navigation.navigate('ReplyIdeaScreen', {
                                                     message: {

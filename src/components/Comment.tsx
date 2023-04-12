@@ -100,7 +100,6 @@ export const Comment = ({
                                 icon={faReply}
                                 color="#D4D4D4"
                                 style={{
-                                    ...styles.shadow_button,
                                     shadowOffset: {
                                         width: 1,
                                         height: 2,
