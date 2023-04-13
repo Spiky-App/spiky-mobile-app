@@ -27,7 +27,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         myReaction: mensaje.mi_reaccion,
         reactions: reactionsRetrived(mensaje.reacciones),
         messageTrackingId,
-        totalComments: mensaje.num_respuestas,
+        totalComments: mensaje.num_respuestas ?? 0,
         totalX2: mensaje.num_x2 ?? 0,
         myX2: mensaje.mi_x2,
         type: mensaje.type,

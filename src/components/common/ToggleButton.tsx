@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Pressable, Animated, Text } from 'react-native';
+import RNReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { useAnimation } from '../../hooks/useAnimation';
 import { styles } from '../../themes/appTheme';
 
@@ -26,7 +27,13 @@ function ToggleButton({ isActive, setIsActive, text }: Props) {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Pressable
                 style={[stylescomp.container, isActive && { backgroundColor: styles.orange.color }]}
-                onPress={() => setIsActive((v: boolean) => !v)}
+                onPress={() => {
+                    RNReactNativeHapticFeedback.trigger('impactMedium', {
+                        enableVibrateFallback: true,
+                        ignoreAndroidSystemSettings: false,
+                    });
+                    setIsActive((v: boolean) => !v);
+                }}
             >
                 <Animated.View
                     style={{

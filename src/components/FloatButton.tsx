@@ -14,6 +14,7 @@ import { styles } from '../themes/appTheme';
 import { Pressable } from 'react-native';
 import { faSquarePollHorizontal, faFaceSmile, faPlus } from '../constants/icons/FontAwesome';
 import { RootStackParamList } from '../navigator/Navigator';
+import RNReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 export const FloatButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,11 +26,10 @@ export const FloatButton = () => {
     function handleChangeScreen(
         screen: 'CreateIdeaScreen' | 'CreatePollScreen' | 'CreateMoodScreen'
     ) {
-        handleCloseModal();
-        navigation.navigate(screen);
+        handleCloseModal(() => navigation.navigate(screen));
     }
 
-    function handleCloseModal() {
+    function handleCloseModal(callback?: () => void) {
         Animated.sequence([
             Animated.timing(opacity, {
                 toValue: 0,
@@ -39,16 +39,19 @@ export const FloatButton = () => {
             Animated.parallel([
                 Animated.timing(position1, {
                     toValue: 0,
-                    duration: 100,
+                    duration: 50,
                     useNativeDriver: false,
                 }),
                 Animated.timing(position2, {
                     toValue: 0,
-                    duration: 100,
+                    duration: 50,
                     useNativeDriver: false,
                 }),
             ]),
-        ]).start(() => setIsModalOpen(false));
+        ]).start(() => {
+            setIsModalOpen(false);
+            if (callback) callback();
+        });
     }
 
     useEffect(() => {
@@ -68,7 +71,7 @@ export const FloatButton = () => {
                 ]),
                 Animated.timing(opacity, {
                     toValue: 1,
-                    duration: 200,
+                    duration: 100,
                     useNativeDriver: false,
                 }),
             ]).start();
@@ -79,13 +82,19 @@ export const FloatButton = () => {
         <>
             <TouchableHighlight
                 underlayColor="#FC702Abe"
-                onPress={() => setIsModalOpen(true)}
+                onPress={() => {
+                    RNReactNativeHapticFeedback.trigger('impactMedium', {
+                        enableVibrateFallback: true,
+                        ignoreAndroidSystemSettings: false,
+                    });
+                    setIsModalOpen(true);
+                }}
                 style={[stylescom.button, isModalOpen && { backgroundColor: '#67737D' }]}
             >
                 <FontAwesomeIcon icon={faPlus} color="#F8F8F8" size={32} />
             </TouchableHighlight>
             <Modal transparent={true} visible={isModalOpen} animationType="fade">
-                <TouchableWithoutFeedback onPressOut={handleCloseModal}>
+                <TouchableWithoutFeedback onPressOut={() => handleCloseModal()}>
                     <View style={styles.backmodal}>
                         <View style={stylescom.sub_container}>
                             <Animated.View

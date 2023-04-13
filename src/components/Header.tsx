@@ -159,7 +159,7 @@ const stylescom = StyleSheet.create({
         width: 18,
         borderRadius: 100,
         position: 'absolute',
-        top: 6,
+        top: -6,
         right: -6,
     },
     newChats: {
@@ -169,7 +169,7 @@ const stylescom = StyleSheet.create({
         width: 18,
         borderRadius: 100,
         position: 'absolute',
-        top: 6,
+        top: -6,
         right: -9,
     },
     textnotif: {
