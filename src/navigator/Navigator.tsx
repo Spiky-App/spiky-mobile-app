@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { CheckEmailScreen } from '../screens/CheckEmailScreen';
 import { ForgotPwdScreen } from '../screens/ForgotPwdScreen';
@@ -24,6 +24,8 @@ import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
 import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { CreatePollScreen } from '../screens/CreatePollScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageKeys } from '../types/storage';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -97,6 +99,17 @@ export const Navigator = () => {
         }
     }
 
+    const handleUserSession = useCallback(async () => {
+        if (token) {
+            if (appState === 'inactive') {
+                const sessionId = (await AsyncStorage.getItem(StorageKeys.SESSION_ID)) as string;
+                socket?.emit('force-offline', Number(sessionId));
+            } else {
+                socket?.emit('force-online', {});
+            }
+        }
+    }, [appState, socket, token]);
+
     // I changed this because the token in store.auth can be
     // defined before config.headers.x-token that is the one
     // that we actually use here
@@ -111,14 +124,8 @@ export const Navigator = () => {
     }, [appState, token]);
 
     useEffect(() => {
-        if (token) {
-            if (appState === 'inactive') {
-                socket?.emit('force-offline', {});
-            } else {
-                socket?.emit('force-online', {});
-            }
-        }
-    }, [appState, socket, token]);
+        handleUserSession();
+    }, [handleUserSession]);
 
     useEffect(() => {
         handleSessionInfo();
