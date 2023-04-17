@@ -214,6 +214,8 @@ const stylescom = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         flex: 1,
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
     },
     containerCount: {
         marginTop: 2,

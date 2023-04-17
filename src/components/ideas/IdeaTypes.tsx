@@ -18,6 +18,8 @@ interface IdeaTypesProp {
     handleDelete?: (id: number) => Promise<void>;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
 }
 
 export const IdeaTypes = ({
@@ -32,6 +34,8 @@ export const IdeaTypes = ({
     handleDelete,
     isOpenedIdeaScreen,
     setMessageTrackingId,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
 }: IdeaTypesProp) => {
     switch (idea.type) {
         case IdeaType.NORMAL:
@@ -46,6 +50,8 @@ export const IdeaTypes = ({
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
                     spectatorMode={spectatorMode}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
                 />
             );
         case IdeaType.DRAFT:
@@ -97,6 +103,8 @@ export const IdeaTypes = ({
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
                     spectatorMode={spectatorMode}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
                 />
             );
         default:

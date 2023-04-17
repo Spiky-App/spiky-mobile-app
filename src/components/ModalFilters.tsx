@@ -64,13 +64,7 @@ export const ModalFilters = ({ modalFilter, setModalFilter }: Props) => {
             <TouchableWithoutFeedback onPress={() => setModalFilter(false)}>
                 <View style={styles.backmodal}>
                     <TouchableWithoutFeedback>
-                        <View
-                            style={{
-                                ...stylecom.container,
-                                paddingHorizontal: 25,
-                                paddingVertical: 15,
-                            }}
-                        >
+                        <View style={stylecom.container}>
                             <View style={{ ...styles.flex, justifyContent: 'space-between' }}>
                                 <Text style={{ ...styles.text, ...styles.h3 }}>
                                     Filtros
@@ -142,6 +136,8 @@ const stylecom = StyleSheet.create({
         minHeight: 300,
         width: 260,
         backgroundColor: '#ffff',
-        borderRadius: 5,
+        borderRadius: 14,
+        paddingHorizontal: 25,
+        paddingVertical: 15,
     },
 });

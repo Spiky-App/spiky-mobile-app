@@ -23,6 +23,7 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { useNavigation } from '@react-navigation/native';
+import { Pressable } from 'react-native';
 
 interface Props {
     title: string;
@@ -112,9 +113,9 @@ export const IdeasHeader = ({
                     </SafeAreaView>
                 )}
                 {profile && (
-                    <TouchableHighlight style={stylecom.dots} onPress={showActionSheet}>
+                    <Pressable style={stylecom.dots} onPress={showActionSheet}>
                         <FontAwesomeIcon icon={faSliders} color={'#01192E'} size={23} />
-                    </TouchableHighlight>
+                    </Pressable>
                 )}
 
                 {!connections &&
@@ -139,7 +140,7 @@ export const IdeasHeader = ({
                                 ...styles.shadow_button,
                                 flexDirection: 'row',
                                 backgroundColor: '#D4D4D4',
-                                borderRadius: 5,
+                                borderRadius: 8,
                             }}
                         >
                             <TouchableOpacity
@@ -187,7 +188,7 @@ const stylecom = StyleSheet.create({
     filterContainer: {
         ...styles.shadow_button,
         backgroundColor: '#D4D4D4',
-        borderRadius: 3,
+        borderRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 3,
         justifyContent: 'center',
@@ -211,7 +212,7 @@ const stylecom = StyleSheet.create({
         backgroundColor: '#01192E',
         paddingHorizontal: 8,
         paddingVertical: 5,
-        borderRadius: 5,
+        borderRadius: 8,
     },
     dots: {
         fontWeight: '600',

@@ -46,6 +46,7 @@ export const X2Idea = ({
                     handleClickLink={handleClickLink}
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={false}
+                    spectatorMode={false}
                 />
             )}
             {idea.childMessage?.type === IdeaType.NORMAL && (
@@ -58,6 +59,7 @@ export const X2Idea = ({
                     handleClickLink={handleClickLink}
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={false}
+                    spectatorMode={false}
                 />
             )}
         </>

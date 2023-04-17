@@ -27,9 +27,9 @@ const mensajes = [
     'reaccionó en tu tracking.',
     'contestó tu encuesta.',
     'contestó en tu tracking.',
-    'concuerda en tu idea.',
-    'concuerda en tu tracking.',
-    'se unío a la discusión.',
+    'reaccionó x2.',
+    'reaccionó x2 en tu tracking.',
+    'participó en la publicación',
 ];
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = props => {

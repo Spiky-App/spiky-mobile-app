@@ -1,14 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Pressable, Text, View } from 'react-native';
-import { getTime } from '../../helpers/getTime';
+import { View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
-import UniversityTag from '../common/UniversityTag';
 import MsgTransform from '../MsgTransform';
 import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { Poll } from '../Poll';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
+import UserComponent from '../common/UserComponent';
 
 interface Props {
     idea: Message;
@@ -35,7 +34,6 @@ export const PollIdea = ({
     isOpenedIdeaScreen,
     setMessageTrackingId,
 }: Props) => {
-    const fecha = getTime(idea.date.toString());
     return (
         <>
             {isOwner && !spectatorMode && (
@@ -56,23 +54,14 @@ export const PollIdea = ({
                     </View>
                 </View>
             )}
-            {idea.anonymous ? (
-                <View style={styles.button_user}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.user}>@_______</Text>
-                    </View>
-                </View>
-            ) : (
-                <Pressable
-                    onPress={() => handleClickUser(idea.user)}
-                    style={{ alignSelf: 'flex-start' }}
-                >
-                    <View style={styles.button_user}>
-                        <Text style={styles.user}>@{idea.user.nickname}</Text>
-                        <UniversityTag id={idea.user.universityId} fontSize={14} />
-                    </View>
-                </Pressable>
-            )}
+
+            <UserComponent
+                user={idea.user}
+                anonymous={idea.anonymous}
+                handleClickUser={handleClickUser}
+                date={idea.date}
+            />
+
             <View style={{ paddingVertical: 14 }}>
                 <MsgTransform
                     textStyle={styles.idea_msg}
@@ -100,9 +89,8 @@ export const PollIdea = ({
                     handleOpenIdea={() => handleOpenIdea(idea.id)}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
                 />
-                {idea.myAnswers && (
+                {(idea.myAnswers || (isOwner && !idea.anonymous)) && (
                     <View style={[styles.container_abs, styles.flex_container]}>
-                        <Text style={styles.number}>{fecha}</Text>
                         <PreModalIdeaOptions
                             myIdea={isOwner}
                             message={{
@@ -117,10 +105,24 @@ export const PollIdea = ({
                             filter={filter}
                             isOpenedIdeaScreen={isOpenedIdeaScreen}
                             setMessageTrackingId={setMessageTrackingId}
+                            enableEmojiReaction={false}
+                            enableX2Reaction={false}
                         />
                     </View>
                 )}
             </View>
+            {!idea.myAnswers && (!isOwner || idea.anonymous) && (
+                <View
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: 32,
+                        bottom: 6,
+                        backgroundColor: 'white',
+                        opacity: 0.7,
+                    }}
+                />
+            )}
         </>
     );
 };

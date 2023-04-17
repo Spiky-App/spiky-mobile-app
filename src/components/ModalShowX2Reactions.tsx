@@ -165,6 +165,8 @@ const stylescom = StyleSheet.create({
         paddingHorizontal: 25,
         position: 'absolute',
         bottom: 0,
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
     },
     containerCount: {
         marginTop: 2,

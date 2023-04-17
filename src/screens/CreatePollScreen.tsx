@@ -10,12 +10,13 @@ import {
     Animated,
     TouchableWithoutFeedback,
     ScrollView,
+    Pressable,
 } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import ButtonIcon from '../components/common/ButtonIcon';
-import { faLocationArrow, faXmark, faFlagCheckered } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faFlagCheckered, faChevronLeft } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { useAnimation } from '../hooks/useAnimation';
 import useSpikyService from '../hooks/useSpikyService';
@@ -28,6 +29,7 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import ToggleButton from '../components/common/ToggleButton';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 interface Form {
@@ -164,15 +166,21 @@ export const CreatePollScreen = () => {
                     style={[stylecom.container]}
                 >
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ marginVertical: 10 }}>
-                            <Text style={styles.h4}>Pregunta:</Text>
-                            <View style={{ position: 'absolute', top: -5, right: 5 }}>
-                                <ButtonIcon
-                                    disabled={isLoading}
-                                    icon={faXmark}
+                        <View style={{ marginVertical: 4 }}>
+                            <View style={stylecom.back_arrow}>
+                                <Pressable
                                     onPress={() => navDrawer.goBack()}
-                                    style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
-                                />
+                                    style={{ paddingRight: 6 }}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faChevronLeft}
+                                        color={'#01192E'}
+                                        size={22}
+                                    />
+                                </Pressable>
+                                <Text style={styles.h3}>
+                                    Crear encuesta<Text style={styles.orange}>.</Text>
+                                </Text>
                             </View>
                         </View>
                         <View style={stylecom.input1}>
@@ -333,5 +341,11 @@ const stylecom = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
+    },
+    back_arrow: {
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        marginBottom: 10,
+        width: '100%',
     },
 });

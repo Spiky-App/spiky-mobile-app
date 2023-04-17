@@ -72,7 +72,8 @@ export default ToggleButton;
 
 const stylescomp = StyleSheet.create({
     container: {
-        backgroundColor: styles.button_container.backgroundColor,
+        ...styles.shadow_button,
+        backgroundColor: '#D4D4D4',
         width: 60,
         borderRadius: 60,
         height: 36,

@@ -46,24 +46,6 @@ export const Poll = ({
     const [isLoading, setIsLoading] = useState(false);
     const [modalAnswers, setModalAnswers] = useState(false);
     const isOwner = user.id === userIdMessageOwner;
-    const height = useRef(new Animated.Value(0)).current;
-    const inputRange = [0, 100];
-    const outputRange = [0, 100];
-    const heightAnimated = height.interpolate({ inputRange, outputRange });
-
-    function handleSeeVotesAnimation() {
-        Animated.timing(height, {
-            toValue: 25,
-            duration: 200,
-            useNativeDriver: false,
-        }).start();
-    }
-
-    useEffect(() => {
-        if (myAnswers || isOwner) {
-            handleSeeVotesAnimation();
-        }
-    }, [myAnswers, isOwner]);
 
     async function handleAnswerPoll(id: number) {
         setIsLoading(true);
@@ -118,38 +100,31 @@ export const Poll = ({
                 keyExtractor={item => item.answer}
                 showsVerticalScrollIndicator={false}
             />
-            {myAnswers || (isOwner && !isAnonymous) ? (
-                <Animated.View style={[{ marginTop: 15, minHeight: heightAnimated }]}>
-                    <View style={{ width: '100%', backgroundColor: '#D4D4D4', height: 1.5 }} />
-
-                    <View style={stylescom.container}>
-                        <Pressable
-                            style={styles.button_container}
-                            onPress={() => setModalAnswers(true)}
-                        >
-                            <FontAwesomeIcon
-                                icon={faSquarePollHorizontal}
-                                color={'#67737D'}
-                                size={14}
-                            />
-                            <Text style={{ ...stylescom.number, marginLeft: 4 }}>Votos</Text>
-                        </Pressable>
-                        <CommentsButton
-                            callback={!isOpenedIdeaScreen ? handleOpenIdea : undefined}
-                            totalComments={totalComments}
+            <View style={[{ marginTop: 12 }]}>
+                <View style={stylescom.container}>
+                    <Pressable
+                        style={styles.button_container}
+                        onPress={() => setModalAnswers(true)}
+                    >
+                        <FontAwesomeIcon
+                            icon={faSquarePollHorizontal}
+                            color={'#67737D'}
+                            size={14}
                         />
-                    </View>
-
-                    <ModalPollVotes
-                        messageId={messageId}
-                        modalAnswers={modalAnswers}
-                        setModalAnswers={setModalAnswers}
-                        handleClickUser={handleClickUser}
+                        <Text style={{ ...stylescom.number, marginLeft: 4 }}>Votos</Text>
+                    </Pressable>
+                    <CommentsButton
+                        callback={!isOpenedIdeaScreen ? handleOpenIdea : undefined}
+                        totalComments={totalComments}
                     />
-                </Animated.View>
-            ) : (
-                <View style={{ height: 10 }} />
-            )}
+                </View>
+                <ModalPollVotes
+                    messageId={messageId}
+                    modalAnswers={modalAnswers}
+                    setModalAnswers={setModalAnswers}
+                    handleClickUser={handleClickUser}
+                />
+            </View>
         </View>
     );
 };

@@ -18,10 +18,9 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import ButtonIcon from '../components/common/ButtonIcon';
 import {
     faLocationArrow,
-    faXmark,
     faFaceSmile,
-    faPlus,
     faFlagCheckered,
+    faChevronLeft,
 } from '../constants/icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
@@ -116,7 +115,7 @@ export const CreateMoodScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (moods.length > 0) fadeIn();
+        fadeIn();
     }, [moods]);
 
     return (
@@ -127,124 +126,113 @@ export const CreateMoodScreen = () => {
                         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                         style={stylecom.container}
                     >
-                        <View style={{ flex: 1 }}>
-                            <View style={{ marginVertical: 10 }}>
-                                <Text style={styles.h4}>Estado:</Text>
-                                <View style={{ position: 'absolute', top: -5, right: 5 }}>
-                                    <ButtonIcon
-                                        disabled={isLoading}
-                                        icon={faXmark}
-                                        onPress={() => navDrawer.goBack()}
-                                        style={{
-                                            height: 24,
-                                            width: 24,
-                                            backgroundColor: '#D4D4D4',
-                                        }}
-                                    />
-                                </View>
-                            </View>
-                            <View style={styles.center}>
+                        <View style={{ marginVertical: 10 }}>
+                            <View style={stylecom.back_arrow}>
                                 <Pressable
-                                    style={stylecom.emoji_container}
-                                    onPress={() => {
-                                        Keyboard.dismiss();
-                                        setEmojiKerboard(true);
-                                    }}
+                                    onPress={() => navDrawer.goBack()}
+                                    style={{ paddingRight: 6 }}
                                 >
-                                    {emoji === '' ? (
-                                        <View style={styles.center}>
-                                            <FontAwesomeIcon
-                                                icon={faFaceSmile}
-                                                color={'#67737D'}
-                                                size={40}
-                                            />
-                                            <View style={stylecom.plusIcon}>
-                                                <FontAwesomeIcon
-                                                    icon={faPlus}
-                                                    color={'#67737D'}
-                                                    size={15}
-                                                />
-                                            </View>
-                                        </View>
-                                    ) : (
-                                        <View style={styles.center}>
-                                            <Text style={{ fontSize: 50 }}>{emoji}</Text>
-                                        </View>
-                                    )}
+                                    <FontAwesomeIcon
+                                        icon={faChevronLeft}
+                                        color={'#01192E'}
+                                        size={22}
+                                    />
                                 </Pressable>
+                                <Text style={styles.h3}>
+                                    Crear estado<Text style={styles.orange}>.</Text>
+                                </Text>
                             </View>
-                            <View style={stylecom.input}>
-                                <TextInput
-                                    placeholder="¿Cómo te sientes hoy?"
-                                    placeholderTextColor="#707070"
-                                    autoFocus
-                                    multiline={true}
-                                    style={{
-                                        ...styles.textinput,
-                                        fontSize: 16,
-                                        width: '100%',
-                                    }}
-                                    value={mood}
-                                    onChangeText={value => {
-                                        if (value.length < QUESTION_MAX_LENGHT)
-                                            onChange({ mood: value });
-                                    }}
-                                />
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                <ButtonIcon
-                                    disabled={isLoading || invalid()}
-                                    icon={faLocationArrow}
-                                    onPress={handleUpdateMood}
-                                    style={{ marginRight: 2 }}
-                                    iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                                />
-                            </View>
-                            <Text style={styles.h4}>Historial:</Text>
-                            {!isLoading && !networkError && moods.length > 0 && (
-                                <Animated.View style={{ ...stylecom.hist_container, opacity }}>
-                                    <FlatList
-                                        data={moods}
-                                        renderItem={({ item, index }) => (
-                                            <MoodRecord
-                                                mood={item.mood}
-                                                emoji={item.emoji}
-                                                date={item.date}
-                                                total={moods.length}
-                                                index={index}
-                                            />
-                                        )}
-                                        keyExtractor={item => item.id + ''}
-                                        showsVerticalScrollIndicator={true}
-                                    />
-                                </Animated.View>
-                            )}
-
-                            {networkError && <NetworkErrorFeed callback={loadMoodHistory} />}
-
-                            {isLoading && moods.length === 0 && (
-                                <Animated.View
-                                    style={{
-                                        ...stylecom.hist_container,
-                                        ...styles.center,
-                                        opacity,
-                                    }}
-                                >
-                                    <LoadingAnimated />
-                                </Animated.View>
-                            )}
-                            {!isLoading && moods.length === 0 && (
-                                <Animated.View style={{ ...stylecom.hist_container, opacity }}>
-                                    <MoodRecord
-                                        mood="Pensando un estado..."
-                                        emoji="🤔"
-                                        date="Sin estado"
-                                        index={0}
-                                        total={1}
-                                    />
-                                </Animated.View>
-                            )}
                         </View>
+                        <View style={stylecom.input}>
+                            <Pressable
+                                style={[styles.center, { marginHorizontal: 10 }]}
+                                onPress={() => {
+                                    Keyboard.dismiss();
+                                    setEmojiKerboard(true);
+                                }}
+                            >
+                                {emoji === '' ? (
+                                    <FontAwesomeIcon
+                                        icon={faFaceSmile}
+                                        color={'#67737D'}
+                                        size={35}
+                                    />
+                                ) : (
+                                    <Text style={{ fontSize: 38 }}>{emoji}</Text>
+                                )}
+                            </Pressable>
+                            <TextInput
+                                placeholder="¿Cómo te sientes hoy?"
+                                placeholderTextColor="#707070"
+                                autoFocus
+                                multiline={true}
+                                style={{
+                                    ...styles.textinput,
+                                    flexDirection: 'row',
+                                    flexShrink: 1,
+                                    fontSize: 16,
+                                    flexGrow: 1,
+                                }}
+                                value={mood}
+                                onChangeText={value => {
+                                    if (value.length < QUESTION_MAX_LENGHT)
+                                        onChange({ mood: value });
+                                }}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                            <ButtonIcon
+                                disabled={isLoading || invalid()}
+                                icon={faLocationArrow}
+                                onPress={handleUpdateMood}
+                                style={{ marginRight: 2 }}
+                                iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            />
+                        </View>
+                        <Text style={styles.h4}>Historial:</Text>
+                        {!isLoading && !networkError && moods.length > 0 && (
+                            <Animated.View style={{ ...stylecom.hist_container, opacity }}>
+                                <FlatList
+                                    data={moods}
+                                    renderItem={({ item, index }) => (
+                                        <MoodRecord
+                                            mood={item.mood}
+                                            emoji={item.emoji}
+                                            date={item.date}
+                                            total={moods.length}
+                                            index={index}
+                                        />
+                                    )}
+                                    keyExtractor={item => item.id + ''}
+                                    showsVerticalScrollIndicator={true}
+                                />
+                            </Animated.View>
+                        )}
+
+                        {networkError && <NetworkErrorFeed callback={loadMoodHistory} />}
+
+                        {isLoading && moods.length === 0 && (
+                            <Animated.View
+                                style={{
+                                    ...stylecom.hist_container,
+                                    ...styles.center,
+                                    opacity,
+                                }}
+                            >
+                                <LoadingAnimated />
+                            </Animated.View>
+                        )}
+                        {!isLoading && moods.length === 0 && (
+                            <Animated.View style={{ ...stylecom.hist_container, opacity }}>
+                                <MoodRecord
+                                    mood="Pensando un estado..."
+                                    emoji="🤔"
+                                    date="Sin estado"
+                                    index={0}
+                                    total={1}
+                                />
+                            </Animated.View>
+                        )}
                     </KeyboardAvoidingView>
                 </TouchableWithoutFeedback>
             </BackgroundPaper>
@@ -296,12 +284,17 @@ const stylecom = StyleSheet.create({
         width: '92%',
         marginTop: 15,
         marginHorizontal: 20,
+        justifyContent: 'flex-start',
         flex: 1,
     },
     input: {
         ...styles.input,
+        ...styles.center,
+        paddingLeft: 0,
         width: '100%',
+        flexDirection: 'row',
         marginBottom: 15,
+        minHeight: 65,
     },
     emoji_container: {
         ...styles.center,
@@ -334,7 +327,7 @@ const stylecom = StyleSheet.create({
         marginTop: 8,
         paddingHorizontal: 26,
         paddingBottom: 6,
-        flex: 1,
+        flexGrow: 1,
     },
     line_top: {
         flex: 1,
@@ -347,5 +340,11 @@ const stylecom = StyleSheet.create({
         width: 4,
         borderTopRightRadius: 6,
         borderTopLeftRadius: 6,
+    },
+    back_arrow: {
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        marginBottom: 10,
+        width: '100%',
     },
 });

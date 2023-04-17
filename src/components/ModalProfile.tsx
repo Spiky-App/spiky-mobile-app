@@ -66,10 +66,10 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                 },
                                 shadowOpacity: 0.25,
                                 elevation: 10,
-                                borderRadius: 5,
+                                borderRadius: 10,
                                 position: 'absolute',
-                                top: top + 40,
-                                right: right - 120,
+                                top: top + 38,
+                                right: right - 130,
                             }}
                         >
                             <TouchableOpacity
@@ -79,7 +79,7 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                     navigation.navigate('ConfigurationScreen');
                                 }}
                             >
-                                <FontAwesomeIcon icon={faGear} color="white" />
+                                <FontAwesomeIcon icon={faGear} color="white" size={16} />
                                 <Text style={{ ...styles.text, ...stylescom.textModal }}>
                                     Configuraciones
                                 </Text>
@@ -92,6 +92,7 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                 <FontAwesomeIcon
                                     icon={spectatorMode ? faUser : faUserAstronaut}
                                     color="white"
+                                    size={16}
                                 />
                                 <Text style={{ ...styles.text, ...stylescom.textModal }}>
                                     {`Modo ${spectatorMode ? 'normal' : 'espectador'}`}
@@ -102,7 +103,11 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                 style={stylescom.optionModal}
                                 onPress={logOutFunction}
                             >
-                                <FontAwesomeIcon icon={faRightFromBracket} color="white" />
+                                <FontAwesomeIcon
+                                    icon={faRightFromBracket}
+                                    color="white"
+                                    size={16}
+                                />
                                 <Text style={{ ...styles.text, ...stylescom.textModal }}>
                                     Cerrar sesión
                                 </Text>
@@ -119,12 +124,13 @@ const stylescom = StyleSheet.create({
     optionModal: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginHorizontal: 14,
-        marginVertical: 8,
+        marginHorizontal: 18,
+        marginVertical: 10,
     },
     textModal: {
+        ...styles.text,
         color: '#ffff',
-        fontSize: 15,
+        fontSize: 16,
         marginLeft: 10,
     },
 });

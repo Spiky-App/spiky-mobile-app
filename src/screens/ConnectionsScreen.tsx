@@ -166,22 +166,29 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
             <View style={stylescomp.converWrap}>
                 {newMsg && <View style={stylescomp.newChatMsg} />}
                 <View style={stylescomp.converContainer}>
-                    <View style={{ ...styles.flex, alignItems: 'center' }}>
-                        <Text style={{ ...styles.user, fontSize: 15 }}>@{toUser.nickname}</Text>
-                        <UniversityTag id={toUser.universityId} fontSize={14} />
-                        <View
-                            style={{
-                                ...stylescomp.online,
-                                backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
-                            }}
-                        />
-                    </View>
-                    <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
-                        <Text style={{ ...styles.text, overflow: 'scroll' }}>
-                            {conver.chatmessage.message.length > 80
-                                ? conver.chatmessage.message.substring(0, 80) + '...'
-                                : conver.chatmessage.message}
+                    <View style={stylescomp.circle}>
+                        <Text style={[styles.h7, { color: styles.text_button.color }]}>
+                            {toUser.nickname.substring(0, 2).toUpperCase()}
                         </Text>
+                    </View>
+                    <View style={[{ justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                        <View style={{ ...styles.flex, alignItems: 'center' }}>
+                            <Text style={{ ...styles.user, fontSize: 15 }}>@{toUser.nickname}</Text>
+                            <UniversityTag id={toUser.universityId} fontSize={14} />
+                            <View
+                                style={{
+                                    ...stylescomp.online,
+                                    backgroundColor: toUser.online ? '#FC702A' : '#bebebe',
+                                }}
+                            />
+                        </View>
+                        <View style={{ paddingHorizontal: 10, marginTop: 5 }}>
+                            <Text style={{ ...styles.text, overflow: 'scroll' }}>
+                                {conver.chatmessage.message.length > 80
+                                    ? conver.chatmessage.message.substring(0, 80) + '...'
+                                    : conver.chatmessage.message}
+                            </Text>
+                        </View>
                     </View>
                     <Text style={stylescomp.date}>{time}</Text>
                 </View>
@@ -201,11 +208,13 @@ const stylescomp = StyleSheet.create({
     },
     converContainer: {
         ...styles.shadow,
+        alignItems: 'center',
+        flexDirection: 'row',
         backgroundColor: 'white',
         minHeight: 80,
-        borderRadius: 6,
-        paddingHorizontal: 10,
-        paddingVertical: 20,
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        paddingVertical: 24,
         flex: 1,
     },
     newChatMsg: {
@@ -218,13 +227,21 @@ const stylescomp = StyleSheet.create({
     date: {
         ...styles.textGray,
         position: 'absolute',
-        top: 8,
-        right: 8,
+        top: 12,
+        right: 12,
     },
     online: {
         height: 8,
         width: 8,
         borderRadius: 5,
         marginLeft: 8,
+    },
+    circle: {
+        ...styles.center,
+        height: 42,
+        width: 42,
+        borderRadius: 21,
+        marginRight: 5,
+        backgroundColor: styles.button_container.backgroundColor,
     },
 });

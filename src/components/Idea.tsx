@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Animated, StyleSheet, View, Linking, Alert } from 'react-native';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { styles } from '../themes/appTheme';
-import { Message, User } from '../types/store';
+import { IdeaType, Message, User } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { useAnimation } from '../hooks/useAnimation';
@@ -13,6 +13,7 @@ import { setModalAlert } from '../store/feature/ui/uiSlice';
 import useSpikyService from '../hooks/useSpikyService';
 import { RootStackParamList } from '../navigator/Navigator';
 import { IdeaTypes } from './ideas/IdeaTypes';
+import SocketContext from '../context/Socket/Context';
 
 interface Props {
     idea: Message;
@@ -22,11 +23,82 @@ interface Props {
 export const Idea = ({ idea, filter }: Props) => {
     const { id: uid, nickname } = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const user = useAppSelector((state: RootState) => state.user);
     const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const { deleteIdea } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { opacity, fadeIn } = useAnimation({});
+    const [isLoading, setIsLoading] = useState(false);
+    const { socket } = useContext(SocketContext);
+    const { createIdeaReaction, createIdea } = useSpikyService();
+
+    async function handleCreateEmojiReaction(reaction: string[0]) {
+        setIsLoading(true);
+        const wasCreated = await createIdeaReaction(idea.id, reaction, user.id);
+        if (wasCreated) {
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === idea.id) {
+                    socket?.emit('notify', {
+                        id_usuario1: msg.user.id,
+                        id_usuario2: user.id,
+                        id_mensaje: msg.id,
+                        tipo: 1,
+                    });
+                    let isNew = true;
+                    let reactions = msg.reactions.map(r => {
+                        if (r.reaction === reaction) {
+                            isNew = false;
+                            return {
+                                reaction: r.reaction,
+                                count: r.count + 1,
+                            };
+                        } else {
+                            return r;
+                        }
+                    });
+                    if (isNew) {
+                        reactions = [...reactions, { reaction, count: 1 }];
+                    }
+                    return {
+                        ...msg,
+                        reactions,
+                        myReaction: reaction,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIsLoading(false);
+    }
+
+    async function handleCreateX2Reaction() {
+        setIsLoading(true);
+        const wasCreated = await createIdea('', IdeaType.X2, idea.id);
+        if (wasCreated) {
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === idea.id) {
+                    socket?.emit('notify', {
+                        id_usuario1: msg.user.id,
+                        id_usuario2: user.id,
+                        id_mensaje: msg.id,
+                        tipo: 9,
+                    });
+                    return {
+                        ...msg,
+                        totalX2: msg.totalX2 + 1,
+                        myX2: true,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIsLoading(false);
+    }
 
     async function handleDelete(id: number) {
         const wasDeleted = await deleteIdea(id);
@@ -108,6 +180,10 @@ export const Idea = ({ idea, filter }: Props) => {
                         handleDelete={handleDelete}
                         isOpenedIdeaScreen={false}
                         spectatorMode={spectatorMode}
+                        handleCreateEmojiReaction={
+                            !isLoading ? handleCreateEmojiReaction : () => {}
+                        }
+                        handleCreateX2Reaction={!isLoading ? handleCreateX2Reaction : () => {}}
                     />
                 </View>
             </Animated.View>

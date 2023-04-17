@@ -177,6 +177,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     button_user: {
+        justifyContent: 'center',
         flexDirection: 'row',
         paddingVertical: 2,
         alignSelf: 'flex-start',
@@ -190,14 +191,14 @@ export const styles = StyleSheet.create({
         bottom: 0,
     },
     shadow_button: {
-        shadowColor: '#bcbcbc',
+        shadowColor: '#4d4d4d',
         shadowOffset: {
             width: 2,
-            height: 2,
+            height: 3,
         },
-        shadowOpacity: 1,
-        shadowRadius: 0,
-        elevation: 2,
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 6,
     },
     error: {
         color: '#9b0000',
@@ -207,13 +208,18 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
     },
+    flex_start: {
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+    },
     button_container: {
         flexDirection: 'row',
         paddingHorizontal: 8,
         paddingVertical: 2,
         backgroundColor: '#E8E8E8',
         marginRight: 10,
-        borderRadius: 3,
+        borderRadius: 6,
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: 23,
@@ -245,7 +251,7 @@ export const styles = StyleSheet.create({
     number: {
         fontFamily: 'Helvetica',
         fontSize: 12,
-        color: '#01192e5a',
+        color: '#B9B9B9',
         marginLeft: 1,
     },
     corner: {
@@ -282,5 +288,15 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 6,
+    },
+    idea_label: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#E8E8E8',
+        borderRadius: 3,
+        paddingHorizontal: 4,
+        paddingVertical: 3,
+        alignSelf: 'flex-start',
     },
 });

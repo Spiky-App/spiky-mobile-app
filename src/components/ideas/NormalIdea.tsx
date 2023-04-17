@@ -1,16 +1,15 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Pressable, Text, View } from 'react-native';
-import { getTime } from '../../helpers/getTime';
+import { View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
-import UniversityTag from '../common/UniversityTag';
 import MsgTransform from '../MsgTransform';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
 import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
+import UserComponent from '../common/UserComponent';
 
 interface Props {
     idea: Message;
@@ -23,6 +22,8 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
 }
 
 export const NormalIdea = ({
@@ -36,8 +37,9 @@ export const NormalIdea = ({
     handleOpenIdea,
     isOpenedIdeaScreen,
     setMessageTrackingId,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
 }: Props) => {
-    const fecha = getTime(idea.date.toString());
     return (
         <>
             {isOwner && !spectatorMode && (
@@ -58,23 +60,12 @@ export const NormalIdea = ({
                     </View>
                 </View>
             )}
-            {idea.anonymous ? (
-                <View style={styles.button_user}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.user}>@_______</Text>
-                    </View>
-                </View>
-            ) : (
-                <Pressable
-                    onPress={() => handleClickUser(idea.user)}
-                    style={{ alignSelf: 'flex-start' }}
-                >
-                    <View style={styles.button_user}>
-                        <Text style={styles.user}>@{idea.user.nickname}</Text>
-                        <UniversityTag id={idea.user.universityId} fontSize={14} />
-                    </View>
-                </Pressable>
-            )}
+            <UserComponent
+                user={idea.user}
+                anonymous={idea.anonymous}
+                handleClickUser={handleClickUser}
+                date={idea.date}
+            />
             <View style={{ paddingVertical: 14 }}>
                 <MsgTransform
                     textStyle={styles.idea_msg}
@@ -106,7 +97,6 @@ export const NormalIdea = ({
                     />
                 </View>
                 <View style={styles.flex_container}>
-                    <Text style={styles.number}>{fecha}</Text>
                     <PreModalIdeaOptions
                         myIdea={isOwner}
                         message={{
@@ -121,11 +111,20 @@ export const NormalIdea = ({
                         filter={filter}
                         isOpenedIdeaScreen={isOpenedIdeaScreen}
                         setMessageTrackingId={setMessageTrackingId}
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        handleCreateX2Reaction={handleCreateX2Reaction}
+                        enableEmojiReaction={!idea.myReaction}
+                        enableX2Reaction={!idea.myX2}
                     />
                 </View>
             </View>
             {!idea.myX2 && !idea.myReaction && (!isOwner || idea.anonymous) && (
-                <IdeaReaction messageId={idea.id} isOwnerAndAnonymous={isOwner && idea.anonymous} />
+                <IdeaReaction
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    enableEmojiReaction={true}
+                    enableX2Reaction={!isOwner}
+                />
             )}
         </>
     );

@@ -26,9 +26,9 @@ const msg_notif = [
     'reaccionó en tu tracking.',
     'contestó tu encuesta.',
     'contestó en tu tracking.',
-    'concuerda en tu idea.',
-    'concuerda en tu tracking.',
-    'se unío a la discusión.',
+    'reaccionó x2.',
+    'reaccionó x2 en tu tracking.',
+    'participó en la publicación',
 ];
 
 export const Notification = ({ notification, setModalNotif }: PropsNotification) => {

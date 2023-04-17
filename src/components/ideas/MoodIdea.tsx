@@ -1,16 +1,15 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { getTime } from '../../helpers/getTime';
+import { Text, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
-import UniversityTag from '../common/UniversityTag';
 import MsgTransform from '../MsgTransform';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
 import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
+import UserComponent from '../common/UserComponent';
 
 interface Props {
     idea: Message;
@@ -23,6 +22,8 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
 }
 
 export const MoodIdea = ({
@@ -36,8 +37,9 @@ export const MoodIdea = ({
     handleOpenIdea,
     isOpenedIdeaScreen,
     setMessageTrackingId,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
 }: Props) => {
-    const fecha = getTime(idea.date.toString());
     return (
         <>
             {isOwner && !spectatorMode && (
@@ -59,29 +61,28 @@ export const MoodIdea = ({
                 </View>
             )}
 
-            <View style={{ ...styles.flex_center, justifyContent: 'flex-start' }}>
-                <View style={{ marginRight: 12 }}>
-                    <View style={stylescom.mood_label}>
+            <View style={{ justifyContent: 'flex-start' }}>
+                <View style={[styles.flex_center, { justifyContent: 'flex-start' }]}>
+                    <View style={[styles.idea_label, { marginRight: 6 }]}>
                         <Text style={{ ...styles.text_button, fontSize: 10 }}>Estado</Text>
                     </View>
-                    <View style={[styles.center, { flexGrow: 1 }]}>
-                        <Text style={{ fontSize: 38 }}>
-                            {idea.message.substring(0, idea.message.indexOf('|'))}
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ flexShrink: 1, alignSelf: 'flex-start' }}>
-                    <Pressable
-                        onPress={() => handleClickUser(idea.user)}
-                        style={{ alignSelf: 'flex-start' }}
-                    >
-                        <View style={styles.button_user}>
-                            <Text style={styles.user}>@{idea.user.nickname}</Text>
-                            <UniversityTag id={idea.user.universityId} fontSize={14} />
-                        </View>
-                    </Pressable>
 
-                    <View style={{ paddingVertical: 14 }}>
+                    <UserComponent
+                        user={idea.user}
+                        anonymous={false}
+                        handleClickUser={handleClickUser}
+                        date={idea.date}
+                    />
+                </View>
+                <View style={{ alignSelf: 'flex-start', flexDirection: 'row' }}>
+                    <View style={{ marginRight: 12 }}>
+                        <View style={[styles.center, { flexGrow: 1 }]}>
+                            <Text style={{ fontSize: 38 }}>
+                                {idea.message.substring(0, idea.message.indexOf('|'))}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={{ paddingVertical: 14, flexShrink: 1 }}>
                         <MsgTransform
                             textStyle={styles.idea_msg}
                             text={idea.message.substring(idea.message.indexOf('|') + 1)}
@@ -115,7 +116,6 @@ export const MoodIdea = ({
                     />
                 </View>
                 <View style={styles.flex_container}>
-                    <Text style={styles.number}>{fecha}</Text>
                     <PreModalIdeaOptions
                         myIdea={isOwner}
                         message={{
@@ -130,21 +130,21 @@ export const MoodIdea = ({
                         filter={filter}
                         isOpenedIdeaScreen={isOpenedIdeaScreen}
                         setMessageTrackingId={setMessageTrackingId}
+                        enableEmojiReaction={!idea.myReaction}
+                        enableX2Reaction={!idea.myX2}
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        handleCreateX2Reaction={handleCreateX2Reaction}
                     />
                 </View>
             </View>
-            {!idea.myX2 && !idea.myReaction && (!isOwner || idea.anonymous) && (
-                <IdeaReaction messageId={idea.id} isOwnerAndAnonymous={isOwner && idea.anonymous} />
+            {!idea.myX2 && !idea.myReaction && !isOwner && (
+                <IdeaReaction
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    enableEmojiReaction={true}
+                    enableX2Reaction={true}
+                />
             )}
         </>
     );
 };
-
-const stylescom = StyleSheet.create({
-    mood_label: {
-        ...styles.flex_center,
-        backgroundColor: '#E8E8E8',
-        borderRadius: 3,
-        padding: 2,
-    },
-});

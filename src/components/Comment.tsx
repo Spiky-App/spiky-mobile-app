@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { faReply } from '../constants/icons/FontAwesome';
+import { faPlus, faReply } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { getTime } from '../helpers/getTime';
 import { Comment as CommentProps, User } from '../types/store';
@@ -10,10 +10,10 @@ import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
 import { FormComment } from './InputComment';
 import UniversityTag from './common/UniversityTag';
-import ReactionButton from './common/ReactionButton';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
 import ReactionsContainer from './common/ReactionsContainers';
+import { ModalCommentOptions } from './ModalCommentOptions';
 
 interface Props {
     comment: CommentProps;
@@ -39,6 +39,7 @@ export const Comment = ({
     const { createCommentReaction } = useSpikyService();
     const [reactions, setReactions] = useState(comment.reactions);
     const [myReaction, setMyReaction] = useState(comment.myReaction);
+    const [modalCommentOptions, setModalCommentOptions] = useState(false);
     const date = getTime(comment.date.toString());
 
     const handleReply = () => {
@@ -49,7 +50,7 @@ export const Comment = ({
         refInputComment.current?.focus();
     };
 
-    const handleReaction = async (reaction: string) => {
+    const handleCreateEmojiReactionComment = async (reaction: string) => {
         const wasCreated = await createCommentReaction(comment.id, reaction);
         if (wasCreated) {
             socket?.emit('notify', {
@@ -108,14 +109,21 @@ export const Comment = ({
                             />
                         </TouchableOpacity>
                         {myReaction === undefined && (
-                            <ReactionButton
-                                changeColorOnPress
-                                styleCircleButton={{ marginLeft: 15 }}
-                                offsetPosition={{ offset_x: 0, offset_y: -44 }}
-                                handleReaction={handleReaction}
-                                isComment
-                                isOwnerAndAnonymous={false}
-                            />
+                            <>
+                                <Pressable
+                                    style={stylescom.actions}
+                                    onPress={() => setModalCommentOptions(true)}
+                                >
+                                    <FontAwesomeIcon icon={faPlus} color="white" size={12} />
+                                </Pressable>
+                                <ModalCommentOptions
+                                    setModalCommentOptions={setModalCommentOptions}
+                                    modalCommentOptions={modalCommentOptions}
+                                    handleCreateEmojiReactionComment={
+                                        handleCreateEmojiReactionComment
+                                    }
+                                />
+                            </>
                         )}
                     </>
                 )}
@@ -153,5 +161,13 @@ const stylescom = StyleSheet.create({
         color: '#01192e5a',
         fontSize: 12,
         marginLeft: 2,
+    },
+    actions: {
+        ...styles.center,
+        borderRadius: 14,
+        backgroundColor: '#D4D4D4',
+        height: 18,
+        minWidth: 18,
+        marginLeft: 15,
     },
 });

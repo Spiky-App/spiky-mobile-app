@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, Platform, KeyboardAvoidingView, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MentionInput } from 'react-native-controlled-mentions';
 import {
     faLocationArrow,
     faPenToSquare,
-    faXmark,
     faFlagCheckered,
+    faChevronLeft,
 } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { useForm } from '../hooks/useForm';
@@ -28,6 +28,7 @@ import { Message } from '../types/store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ModalConfirmation } from '../components/ModalConfirmation';
 import ToggleButton from '../components/common/ToggleButton';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 type NavigationStackProp = StackNavigationProp<RootStackParamList>;
@@ -205,15 +206,15 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                 style={stylecom.container}
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                    <View style={stylecom.back_arrow}>
+                        <Pressable onPress={() => navDrawer.goBack()} style={{ paddingRight: 6 }}>
+                            <FontAwesomeIcon icon={faChevronLeft} color={'#01192E'} size={22} />
+                        </Pressable>
+                        <Text style={styles.h3}>
+                            Crear idea<Text style={styles.orange}>.</Text>
+                        </Text>
+                    </View>
                     <View style={stylecom.wrap}>
-                        <View style={{ position: 'absolute', top: 8, right: 8 }}>
-                            <ButtonIcon
-                                disabled={isLoading}
-                                icon={faXmark}
-                                onPress={() => navDrawer.goBack()}
-                                style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
-                            />
-                        </View>
                         <MentionInput
                             placeholder="Perpetua tu idea.."
                             placeholderTextColor="#707070"
@@ -413,5 +414,11 @@ const stylecom = StyleSheet.create({
         height: 3,
         borderRadius: 5,
         backgroundColor: '#9b0000',
+    },
+    back_arrow: {
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        marginBottom: 10,
+        width: '100%',
     },
 });

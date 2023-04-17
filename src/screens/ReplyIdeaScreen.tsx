@@ -5,13 +5,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
     Platform,
+    Pressable,
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
     View,
 } from 'react-native';
-import { faLocationArrow, faReply, faChevronLeft, faXmark } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faReply, faChevronLeft, faClock } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
@@ -88,30 +88,38 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                 style={stylecom.container}
             >
                 <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                    <View style={stylecom.back_arrow}>
+                        <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: 6 }}>
+                            <FontAwesomeIcon icon={faChevronLeft} color={'#01192E'} size={22} />
+                        </Pressable>
+                        <Text style={styles.h3}>
+                            Crear réplica<Text style={styles.orange}>.</Text>
+                        </Text>
+                    </View>
                     <View style={stylecom.wrap}>
                         <View style={stylecom.msgContainer}>
                             <View style={{ ...stylecom.posAbsolute, top: 10, right: 10 }}>
                                 <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
                             </View>
-                            <TouchableOpacity
-                                style={styles.arrow_back}
-                                onPress={() => navigation.goBack()}
-                            >
-                                <FontAwesomeIcon icon={faChevronLeft} color={'#bebebe'} size={25} />
-                            </TouchableOpacity>
                             <View style={styles.flex}>
                                 <Text style={{ ...styles.user, ...styles.textbold }}>
                                     @{user.nickname}
                                 </Text>
                                 <UniversityTag id={user.universityId} fontSize={13} />
+                                <View style={styles.flex_center}>
+                                    <FontAwesomeIcon
+                                        icon={faClock}
+                                        color={styles.textGray.color}
+                                        size={10}
+                                        style={{ marginLeft: 4, marginRight: 2 }}
+                                    />
+                                    <Text style={[styles.number, styles.textGray]}>{fecha}</Text>
+                                </View>
                             </View>
                             <View style={{ paddingTop: 8 }}>
                                 <Text style={{ ...styles.text, fontSize: 13 }}>
                                     {transformMsg(message)}
                                 </Text>
-                            </View>
-                            <View style={{ ...stylecom.posAbsolute, bottom: 4, right: 10 }}>
-                                <Text style={{ ...styles.textGray, fontSize: 12 }}>{fecha}</Text>
                             </View>
                         </View>
                         <View style={stylecom.containerInput}>
@@ -123,6 +131,40 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                                 onChangeText={value => onChange({ messageReply: value })}
                                 autoFocus
                             />
+                            <View style={stylecom.WrapAbsoluteCenter}>
+                                <View style={stylecom.WrapperMaxCounterNIdea}>
+                                    <View style={stylecom.ConteMaxCounterNIdea}>
+                                        <View style={stylecom.MaxCounterNIdea}></View>
+                                        {counter <= 40 && (
+                                            <Text
+                                                style={
+                                                    counter < 0
+                                                        ? stylecom.MaxCounterTextNIdeaRed
+                                                        : stylecom.MaxCounterTextNIdea
+                                                }
+                                            >
+                                                {counter}
+                                            </Text>
+                                        )}
+                                        <View
+                                            style={[
+                                                counter < 0
+                                                    ? stylecom.MaxCounterNIdeaColorRed
+                                                    : stylecom.MaxCounterNIdeaColor,
+                                                {
+                                                    width:
+                                                        getPercentage(
+                                                            messageLenght < MSG_MAX_LENGHT
+                                                                ? messageLenght
+                                                                : MSG_MAX_LENGHT,
+                                                            MSG_MAX_LENGHT
+                                                        ) + '%',
+                                                },
+                                            ]}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
                         </View>
                     </View>
                     <View
@@ -130,51 +172,11 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             flexDirection: 'row',
                             flexWrap: 'wrap',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
+                            justifyContent: 'flex-end',
                             width: '90%',
                             marginTop: 10,
                         }}
                     >
-                        <ButtonIcon
-                            disabled={isDisabled}
-                            icon={faXmark}
-                            onPress={() => navigation.goBack()}
-                            style={{ height: 24, width: 24, backgroundColor: '#D4D4D4' }}
-                        />
-
-                        <View style={stylecom.WrapperMaxCounterNIdea}>
-                            <View style={stylecom.ConteMaxCounterNIdea}>
-                                <View style={stylecom.MaxCounterNIdea}></View>
-                                {counter <= 40 && (
-                                    <Text
-                                        style={
-                                            counter < 0
-                                                ? stylecom.MaxCounterTextNIdeaRed
-                                                : stylecom.MaxCounterTextNIdea
-                                        }
-                                    >
-                                        {counter}
-                                    </Text>
-                                )}
-                                <View
-                                    style={[
-                                        counter < 0
-                                            ? stylecom.MaxCounterNIdeaColorRed
-                                            : stylecom.MaxCounterNIdeaColor,
-                                        {
-                                            width:
-                                                getPercentage(
-                                                    messageLenght < MSG_MAX_LENGHT
-                                                        ? messageLenght
-                                                        : MSG_MAX_LENGHT,
-                                                    MSG_MAX_LENGHT
-                                                ) + '%',
-                                        },
-                                    ]}
-                                />
-                            </View>
-                        </View>
-
                         <ButtonIcon
                             disabled={isDisabled}
                             icon={faLocationArrow}
@@ -204,9 +206,8 @@ const stylecom = StyleSheet.create({
     },
     msgContainer: {
         width: '100%',
-        backgroundColor: '#e8e6e6',
-        paddingRight: 20,
-        paddingLeft: 35,
+        backgroundColor: styles.button_container.backgroundColor,
+        paddingHorizontal: 20,
         paddingVertical: 15,
         borderRadius: 4,
     },
@@ -226,6 +227,12 @@ const stylecom = StyleSheet.create({
         height: 45,
         borderWidth: 1,
         borderRadius: 30,
+    },
+    WrapAbsoluteCenter: {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        marginHorizontal: 25,
     },
     WrapperMaxCounterNIdea: {
         alignItems: 'center',
@@ -281,5 +288,11 @@ const stylecom = StyleSheet.create({
         height: 3,
         borderRadius: 5,
         backgroundColor: '#9b0000',
+    },
+    back_arrow: {
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        marginBottom: 10,
+        width: '100%',
     },
 });

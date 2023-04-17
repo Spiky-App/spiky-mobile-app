@@ -1,13 +1,13 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
-import { getTime } from '../../helpers/getTime';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
-import UniversityTag from '../common/UniversityTag';
 import MsgTransform from '../MsgTransform';
 import { faPen, faTrash } from '../../constants/icons/FontAwesome';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigator/Navigator';
+import UserComponent from '../common/UserComponent';
 
 interface Props {
     idea: Message;
@@ -25,7 +25,6 @@ export const DraftIdea = ({
     handleDelete,
 }: Props) => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const fecha = getTime(idea.date.toString());
     return (
         <>
             <View style={styles.corner_container}>
@@ -36,15 +35,12 @@ export const DraftIdea = ({
                 </View>
             </View>
 
-            <Pressable
-                onPress={() => handleClickUser(idea.user)}
-                style={{ alignSelf: 'flex-start' }}
-            >
-                <View style={styles.button_user}>
-                    <Text style={styles.user}>@{idea.user.nickname}</Text>
-                    <UniversityTag id={idea.user.universityId} fontSize={14} />
-                </View>
-            </Pressable>
+            <UserComponent
+                user={idea.user}
+                anonymous={false}
+                handleClickUser={handleClickUser}
+                date={idea.date}
+            />
 
             <View style={{ paddingVertical: 14 }}>
                 <MsgTransform
@@ -91,7 +87,6 @@ export const DraftIdea = ({
                             <Text style={stylescom.publish}>{'editar / publicar'}</Text>
                         </View>
                     </Pressable>
-                    <Text style={styles.number}>{fecha}</Text>
                 </View>
             </View>
         </>

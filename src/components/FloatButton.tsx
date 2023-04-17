@@ -15,6 +15,7 @@ import { Pressable } from 'react-native';
 import { faSquarePollHorizontal, faFaceSmile, faPlus } from '../constants/icons/FontAwesome';
 import { RootStackParamList } from '../navigator/Navigator';
 import RNReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import IconColor from './svg/IconColor';
 
 export const FloatButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,7 +155,9 @@ export const FloatButton = () => {
                                     <View
                                         style={[stylescom.small_button, { height: 65, width: 65 }]}
                                     >
-                                        <FontAwesomeIcon icon={faPlus} color="white" size={22} />
+                                        <View style={{ width: 38, paddingRight: 4 }}>
+                                            <IconColor color={'white'} underlayColor={'#01192E'} />
+                                        </View>
                                     </View>
                                 </Pressable>
                             </View>

@@ -1,13 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { User, IdeaType } from '../types/store';
 import { ModalIdeaOptions } from './ModalIdeaOptions';
-
-interface Positions {
-    top: number;
-    left: number;
-}
 
 interface Props {
     myIdea: boolean;
@@ -23,6 +18,10 @@ interface Props {
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
     isOpenedIdeaScreen?: boolean;
+    handleCreateEmojiReaction?: (emoji: string) => void;
+    handleCreateX2Reaction?: () => void;
+    enableX2Reaction: boolean;
+    enableEmojiReaction: boolean;
 }
 
 export const PreModalIdeaOptions = ({
@@ -31,42 +30,33 @@ export const PreModalIdeaOptions = ({
     filter,
     isOpenedIdeaScreen,
     setMessageTrackingId,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
+    enableX2Reaction,
+    enableEmojiReaction,
 }: Props) => {
-    const reactContainerRef = useRef<View>(null);
-    const [position, setPosition] = useState<Positions>({ top: 0, left: 0 });
-    const [ideaOptions, setIdeaOptions] = useState(false);
-
-    function handleOpendModal() {
-        reactContainerRef.current?.measure((px, py, pwidth, height, pageX, pageY) => {
-            setPosition({ left: pageX, top: pageY });
-        });
-    }
-
-    useEffect(() => {
-        if (position.top !== 0) {
-            setIdeaOptions(true);
-        }
-    }, [position]);
+    const [modalIdeaOptions, setModalIdeaOptions] = useState(false);
 
     return (
         <>
             <View style={{ position: 'relative' }}>
-                <Pressable onPress={handleOpendModal}>
-                    <Text ref={reactContainerRef} style={{ ...styles.textbold, ...stylescom.dots }}>
-                        ...
-                    </Text>
+                <Pressable onPress={() => setModalIdeaOptions(true)}>
+                    <Text style={stylescom.dots}>...</Text>
                 </Pressable>
             </View>
             <ModalIdeaOptions
-                setIdeaOptions={setIdeaOptions}
-                ideaOptions={ideaOptions}
-                position={position}
+                setModalIdeaOptions={setModalIdeaOptions}
+                modalIdeaOptions={modalIdeaOptions}
                 myIdea={myIdea}
                 message={message}
                 filter={filter}
                 isOpenedIdeaScreen={isOpenedIdeaScreen}
                 setMessageTrackingId={setMessageTrackingId}
                 ideaType={message.ideaType}
+                handleCreateEmojiReaction={handleCreateEmojiReaction}
+                handleCreateX2Reaction={handleCreateX2Reaction}
+                enableEmojiReaction={enableEmojiReaction}
+                enableX2Reaction={enableX2Reaction}
             />
         </>
     );
@@ -74,8 +64,8 @@ export const PreModalIdeaOptions = ({
 
 const stylescom = StyleSheet.create({
     dots: {
-        fontWeight: '600',
-        color: '#01192e5a',
+        ...styles.textbold,
+        color: styles.text_button.color,
         fontSize: 28,
         paddingLeft: 5,
         top: -1,
