@@ -1,19 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { faPlus, faReply } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
-import { getTime } from '../helpers/getTime';
 import { Comment as CommentProps, User } from '../types/store';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import MsgTransform from './MsgTransform';
 import { FormComment } from './InputComment';
-import UniversityTag from './common/UniversityTag';
 import SocketContext from '../context/Socket/Context';
 import useSpikyService from '../hooks/useSpikyService';
 import ReactionsContainer from './common/ReactionsContainers';
 import { ModalCommentOptions } from './ModalCommentOptions';
+import UserComponent from './common/UserComponent';
 
 interface Props {
     comment: CommentProps;
@@ -40,7 +39,6 @@ export const Comment = ({
     const [reactions, setReactions] = useState(comment.reactions);
     const [myReaction, setMyReaction] = useState(comment.myReaction);
     const [modalCommentOptions, setModalCommentOptions] = useState(false);
-    const date = getTime(comment.date.toString());
 
     const handleReply = () => {
         const commentMsg = formComment.comment + ' ';
@@ -83,14 +81,12 @@ export const Comment = ({
     return (
         <View style={stylescom.wrap}>
             <View style={{ ...styles.flex, marginTop: 4 }}>
-                <Pressable onPress={() => handleClickUser(comment.user)}>
-                    <View style={styles.button_user}>
-                        <Text style={styles.user}> @{comment.user.nickname}</Text>
-                        <UniversityTag id={comment.user.universityId} fontSize={13} />
-                    </View>
-                </Pressable>
-
-                <Text style={{ ...styles.numberGray, marginLeft: 10 }}>{date}</Text>
+                <UserComponent
+                    handleClickUser={handleClickUser}
+                    user={comment.user}
+                    date={comment.date}
+                    anonymous={false}
+                />
                 {uid !== comment.user.id && (
                     <>
                         <TouchableOpacity
@@ -129,9 +125,9 @@ export const Comment = ({
                 )}
             </View>
 
-            <View style={{ marginTop: 4 }}>
+            <View style={{ marginTop: 8, marginVertical: 8, flexShrink: 1 }}>
                 <MsgTransform
-                    textStyle={{ ...styles.msg, marginVertical: 8 }}
+                    textStyle={{ ...styles.idea_msg }}
                     text={comment.comment}
                     handleClickUser={handleClickUser}
                     handleClickHashtag={handleClickHashtag}

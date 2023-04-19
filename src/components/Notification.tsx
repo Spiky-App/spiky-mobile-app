@@ -18,16 +18,16 @@ interface PropsNotification {
 
 const msg_notif = [
     '',
-    'reaccionó a tu idea.',
-    'respondió a tu idea.',
-    'respondió en tu tracking.',
-    'te mencionó.',
-    'reaccionó a tu comentario.',
-    'reaccionó en tu tracking.',
-    'contestó tu encuesta.',
-    'contestó en tu tracking.',
-    'reaccionó x2.',
-    'reaccionó x2 en tu tracking.',
+    'reaccionó a tu idea',
+    'respondió a tu idea',
+    'respondió en tu tracking',
+    'te mencionó',
+    'reaccionó a tu comentario',
+    'reaccionó en tu tracking',
+    'contestó tu encuesta',
+    'contestó en tu tracking',
+    'reaccionó x2',
+    'reaccionó x2 en tu tracking',
     'participó en la publicación',
 ];
 

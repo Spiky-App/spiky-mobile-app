@@ -200,7 +200,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     const messageLenght = form.message.length;
 
     return (
-        <BackgroundPaper style={stylecom.container}>
+        <BackgroundPaper>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={stylecom.container}
@@ -329,7 +329,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
 
 const stylecom = StyleSheet.create({
     container: {
-        width: '95%',
+        width: '92%',
         flex: 1,
         marginTop: 15,
         marginBottom: 10,

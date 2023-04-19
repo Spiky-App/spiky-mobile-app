@@ -85,7 +85,7 @@ function ReactionButton({
                     <Text
                         style={[
                             stylescomp.textX2,
-                            !enableEmojiReaction && { color: styles.text.color },
+                            !enableEmojiReaction && { color: styles.text.color, width: '100%' },
                         ]}
                     >
                         x2

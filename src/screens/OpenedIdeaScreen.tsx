@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -17,13 +17,12 @@ import {
 import { Comment } from '../components/Comment';
 import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
-
 import { FormComment, InputComment } from '../components/InputComment';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Comment as CommentState, Message, User } from '../types/store';
+import { Comment as CommentState, IdeaType, Message, User } from '../types/store';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -33,6 +32,9 @@ import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { faReply } from '@fortawesome/free-solid-svg-icons/faReply';
 import { IdeaTypes } from '../components/ideas/IdeaTypes';
+import { setMessages } from '../store/feature/messages/messagesSlice';
+import SocketContext from '../context/Socket/Context';
+import { ReactionCount } from '../types/store';
 
 const DEFAULT_FORM: FormComment = {
     comment: '',
@@ -66,16 +68,95 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const ideaId = routeSC.params?.ideaId;
     const filter = routeSC.params?.filter;
     const { top, bottom } = useSafeAreaInsets();
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingReaction, setIsLoadingReaction] = useState(false);
     const [idea, setIdea] = useState<Message>(initialMessage);
     const [totalComments, setTotalComments] = useState<number>(idea.totalComments);
+    const [myReaction, setMyReaction] = useState<string | undefined>(idea.myReaction);
+    const [reactions, setReactions] = useState<ReactionCount[]>(idea.reactions);
+    const [myX2, setMyX2] = useState<boolean>(idea.myX2);
+    const [totalX2, setTotalX2] = useState<number>(idea.totalX2);
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [comments, setComments] = useState<CommentState[]>();
     const isOwner = idea.user.id === uid;
-    const { getIdeaWithComments } = useSpikyService();
+    const { socket } = useContext(SocketContext);
+    const dispatch = useAppDispatch();
+    const messages = useAppSelector((state: RootState) => state.messages.messages);
+    const { getIdeaWithComments, createIdeaReaction, createIdea } = useSpikyService();
+
+    async function handleCreateEmojiReaction(reaction: string[0]) {
+        setIsLoadingReaction(true);
+        const wasCreated = await createIdeaReaction(idea.id, reaction, uid);
+        if (wasCreated) {
+            socket?.emit('notify', {
+                id_usuario1: idea.user.id,
+                id_usuario2: uid,
+                id_mensaje: idea.id,
+                tipo: 1,
+            });
+            let isNew = true;
+            let reactionsRetrieved = idea.reactions.map(r => {
+                if (r.reaction === reaction) {
+                    isNew = false;
+                    return {
+                        reaction: r.reaction,
+                        count: r.count + 1,
+                    };
+                } else {
+                    return r;
+                }
+            });
+            if (isNew) {
+                reactionsRetrieved = [...reactionsRetrieved, { reaction, count: 1 }];
+            }
+            setMyReaction(reaction);
+            setReactions(reactionsRetrieved);
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === idea.id) {
+                    return {
+                        ...msg,
+                        reactions: reactionsRetrieved,
+                        myReaction: reaction,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIsLoadingReaction(false);
+    }
+
+    async function handleCreateX2Reaction() {
+        setIsLoadingReaction(true);
+        const wasCreated = await createIdea('', IdeaType.X2, idea.id);
+        if (wasCreated) {
+            const messagesUpdated = messages.map((msg: Message) => {
+                if (msg.id === idea.id) {
+                    socket?.emit('notify', {
+                        id_usuario1: msg.user.id,
+                        id_usuario2: uid,
+                        id_mensaje: msg.id,
+                        tipo: 9,
+                    });
+                    return {
+                        ...msg,
+                        totalX2: msg.totalX2 + 1,
+                        myX2: true,
+                    };
+                } else {
+                    return msg;
+                }
+            });
+            setMyX2(true);
+            setTotalX2(idea.totalX2 + 1);
+            dispatch(setMessages(messagesUpdated));
+        }
+        setIsLoadingReaction(false);
+    }
 
     const handleOpenIdea = async () => {
         const ideaRetrieved = await getIdeaWithComments(ideaId);
@@ -85,10 +166,14 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setComments(messageRetrived.comments ?? []);
             setMessageTrackingId(messageRetrived.messageTrackingId);
             setTotalComments(messageRetrived.totalComments);
+            setMyReaction(messageRetrived.myReaction);
+            setReactions(messageRetrived.reactions);
+            setMyX2(messageRetrived.myX2);
+            setTotalX2(messageRetrived.totalX2);
         } else {
             navigation.goBack();
         }
-        setLoading(false);
+        setIsLoading(false);
     };
 
     const updateComments = (comment: CommentState) => {
@@ -162,7 +247,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                     position: 'relative',
                 }}
             >
-                {!loading ? (
+                {!isLoading ? (
                     <>
                         <View style={stylescom.wrap}>
                             <View style={stylescom.subwrap}>
@@ -177,7 +262,15 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     />
                                 </TouchableOpacity>
                                 <IdeaTypes
-                                    idea={{ ...idea, totalComments, messageTrackingId }}
+                                    idea={{
+                                        ...idea,
+                                        totalComments,
+                                        messageTrackingId,
+                                        myReaction,
+                                        reactions,
+                                        myX2,
+                                        totalX2,
+                                    }}
                                     filter={filter || ''}
                                     isOwner={uid === idea.user.id}
                                     handleClickUser={handleClickUser}
@@ -186,6 +279,12 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     handleOpenIdea={handleOpenIdea}
                                     isOpenedIdeaScreen
                                     spectatorMode={spectatorMode}
+                                    handleCreateEmojiReaction={
+                                        !isLoadingReaction ? handleCreateEmojiReaction : () => {}
+                                    }
+                                    handleCreateX2Reaction={
+                                        !isLoadingReaction ? handleCreateX2Reaction : () => {}
+                                    }
                                 />
                             </View>
                         </View>

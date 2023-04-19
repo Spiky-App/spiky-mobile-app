@@ -204,7 +204,6 @@ export const CreateMoodScreen = () => {
                                         />
                                     )}
                                     keyExtractor={item => item.id + ''}
-                                    showsVerticalScrollIndicator={true}
                                 />
                             </Animated.View>
                         )}
@@ -254,7 +253,9 @@ interface MoodRecordProp {
 }
 
 const MoodRecord = ({ mood, emoji, date, index, total }: MoodRecordProp) => (
-    <View style={[styles.flex_center, { justifyContent: 'flex-start' }]}>
+    <Pressable
+        style={[styles.flex_center, { justifyContent: 'flex-start', paddingHorizontal: 26 }]}
+    >
         <View style={styles.center}>
             <View
                 style={[
@@ -276,7 +277,7 @@ const MoodRecord = ({ mood, emoji, date, index, total }: MoodRecordProp) => (
             </View>
             <Text style={styles.msg}>{mood}</Text>
         </View>
-    </View>
+    </Pressable>
 );
 
 const stylecom = StyleSheet.create({
@@ -325,9 +326,9 @@ const stylecom = StyleSheet.create({
     hist_container: {
         ...styles.white_wrap,
         marginTop: 8,
-        paddingHorizontal: 26,
-        paddingBottom: 6,
-        flexGrow: 1,
+        paddingVertical: 6,
+        marginBottom: 20,
+        flex: 1,
     },
     line_top: {
         flex: 1,

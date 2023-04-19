@@ -39,9 +39,9 @@ export default UniversityTag;
 const stylescomp = StyleSheet.create({
     container: {
         ...styles.center,
-        borderRadius: 4,
+        borderRadius: 5,
         paddingHorizontal: 6,
-        paddingVertical: 2,
+        paddingVertical: 1,
         marginHorizontal: 4,
         opacity: 0.9,
     },

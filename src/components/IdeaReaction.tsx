@@ -12,11 +12,9 @@ import { faPlus } from '../constants/icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import EmojisKeyboard from './EmojisKeyboard';
 import ReactionButton from './common/ReactionButton';
-
-interface Positions {
-    x: number;
-    y: number;
-}
+import { useAppDispatch } from '../store/hooks';
+import { addToast } from '../store/feature/toast/toastSlice';
+import { StatusType } from '../types/common';
 
 interface Props {
     enableX2Reaction: boolean;
@@ -39,12 +37,12 @@ export const IdeaReaction = ({
     const animatedWidth = width.interpolate({ inputRange, outputRange });
     const [modalReactions, setModalReactions] = useState(false);
     const [emojiKerboard, setEmojiKerboard] = useState(false);
-    const [position, setPosition] = useState<Positions>({ x: 0, y: 0 });
-    const { x, y } = position;
+    const [yPosition, setYPosition] = useState<number>(0);
+    const dispatch = useAppDispatch();
 
     function handleStateReactions() {
         reactContainerRef.current?.measure((px, py, pwidth, height, pageX, pageY) => {
-            setPosition({ x: pageX, y: pageY });
+            setYPosition(pageY);
         });
     }
 
@@ -57,7 +55,7 @@ export const IdeaReaction = ({
                     useNativeDriver: false,
                 }),
                 Animated.timing(width, {
-                    toValue: 1.5,
+                    toValue: 2.9,
                     duration: 200,
                     useNativeDriver: false,
                 }),
@@ -70,11 +68,12 @@ export const IdeaReaction = ({
             }),
         ]).start(() => {
             setModalReactions(false);
+            setYPosition(0);
         });
     }
 
     useEffect(() => {
-        if (position.x !== 0) {
+        if (yPosition !== 0) {
             setModalReactions(true);
             Animated.sequence([
                 Animated.timing(opacity2, {
@@ -89,19 +88,29 @@ export const IdeaReaction = ({
                         useNativeDriver: false,
                     }),
                     Animated.timing(width, {
-                        toValue: 91,
+                        toValue: 100,
                         duration: 300,
                         useNativeDriver: false,
                     }),
                 ]),
             ]).start();
         }
-    }, [position]);
+    }, [yPosition]);
 
     return (
         <View style={stylescomp.bottom_container}>
             <View style={stylescomp.blur_container} />
-            <View style={stylescomp.button_wrap}>
+            <Pressable
+                style={stylescomp.button_wrap}
+                onPress={() => {
+                    dispatch(
+                        addToast({
+                            message: 'Primero tendrás que participar.',
+                            type: StatusType.INFORMATION,
+                        })
+                    );
+                }}
+            >
                 <View>
                     <View style={{ alignItems: 'flex-end' }}>
                         <Pressable onPress={handleStateReactions}>
@@ -121,11 +130,12 @@ export const IdeaReaction = ({
                     <TouchableWithoutFeedback onPress={handleCloseModal}>
                         <View style={stylescomp.wrapModal}>
                             <TouchableWithoutFeedback>
-                                <View
-                                    style={[stylescomp.containerModal, { top: y, left: x - 342 }]}
-                                >
+                                <View style={[stylescomp.containerModal]}>
                                     <Animated.View
-                                        style={[stylescomp.containerbig, { width: animatedWidth }]}
+                                        style={[
+                                            stylescomp.containerbig,
+                                            { width: animatedWidth, top: yPosition, left: 0 },
+                                        ]}
                                     >
                                         <Animated.View
                                             style={{
@@ -162,7 +172,7 @@ export const IdeaReaction = ({
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
-            </View>
+            </Pressable>
         </View>
     );
 };
@@ -172,7 +182,7 @@ const stylescomp = StyleSheet.create({
         position: 'absolute',
         bottom: 6,
         right: 6,
-        left: 0,
+        left: 6,
     },
     blur_container: {
         position: 'absolute',
@@ -197,12 +207,11 @@ const stylescomp = StyleSheet.create({
     wrapModal: {
         flex: 1,
         backgroundColor: 'transparent',
-        justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1,
     },
     containerModal: {
-        width: '100%',
+        width: '92%',
         height: 32,
         alignItems: 'flex-end',
         position: 'absolute',
@@ -212,10 +221,9 @@ const stylescomp = StyleSheet.create({
         ...styles.center,
         ...styles.shadow_button,
         height: 32,
-        miwidth: '100%',
+        flex: 1,
         borderRadius: 10,
         backgroundColor: styles.button_container.backgroundColor,
-        paddingHorizontal: 7,
         flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',

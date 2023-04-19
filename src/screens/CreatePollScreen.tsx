@@ -159,7 +159,7 @@ export const CreatePollScreen = () => {
     }
 
     return (
-        <BackgroundPaper style={stylecom.container}>
+        <BackgroundPaper>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -303,7 +303,7 @@ const AnswerOption = ({
 
 const stylecom = StyleSheet.create({
     container: {
-        width: '95%',
+        width: '92%',
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,

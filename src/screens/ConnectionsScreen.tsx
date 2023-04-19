@@ -171,7 +171,15 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                             {toUser.nickname.substring(0, 2).toUpperCase()}
                         </Text>
                     </View>
-                    <View style={[{ justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                    <View
+                        style={[
+                            {
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                flexShrink: 1,
+                            },
+                        ]}
+                    >
                         <View style={{ ...styles.flex, alignItems: 'center' }}>
                             <Text style={{ ...styles.user, fontSize: 15 }}>@{toUser.nickname}</Text>
                             <UniversityTag id={toUser.universityId} fontSize={14} />
@@ -222,7 +230,8 @@ const stylescomp = StyleSheet.create({
         marginRight: 8,
         borderRadius: 3,
         width: 12,
-        height: 75,
+        // flexGrow: 1,
+        height: 85,
     },
     date: {
         ...styles.textGray,

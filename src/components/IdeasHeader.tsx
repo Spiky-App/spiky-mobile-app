@@ -128,7 +128,7 @@ export const IdeasHeader = ({
                                 onPress={() => setModalFilter(true)}
                             >
                                 <View style={stylecom.flexCenter}>
-                                    <FontAwesomeIcon icon={faFilter} color="white" size={17} />
+                                    <FontAwesomeIcon icon={faFilter} color={'#01192E'} size={17} />
                                     <Text style={{ ...stylecom.filterText }}>Filtros.</Text>
                                 </View>
                             </TouchableHighlight>
@@ -139,18 +139,24 @@ export const IdeasHeader = ({
                                 ...styles.center,
                                 ...styles.shadow_button,
                                 flexDirection: 'row',
-                                backgroundColor: '#D4D4D4',
+                                backgroundColor: 'white',
                                 borderRadius: 8,
                             }}
                         >
                             <TouchableOpacity
                                 style={{
                                     ...stylecom.buttonDraft,
-                                    backgroundColor: activeDraft ? '#D4D4D4' : '#01192E',
+                                    backgroundColor: activeDraft ? 'white' : '#01192E',
                                 }}
                                 onPress={() => setActiveDraft(false)}
                             >
-                                <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.h5,
+                                        color: activeDraft ? '#01192E' : 'white',
+                                    }}
+                                >
                                     Publicadas.
                                 </Text>
                             </TouchableOpacity>
@@ -158,11 +164,17 @@ export const IdeasHeader = ({
                             <TouchableOpacity
                                 style={{
                                     ...stylecom.buttonDraft,
-                                    backgroundColor: activeDraft ? '#01192E' : '#D4D4D4',
+                                    backgroundColor: activeDraft ? '#01192E' : 'white',
                                 }}
                                 onPress={() => setActiveDraft(true)}
                             >
-                                <Text style={{ ...styles.text, ...styles.h5, color: '#ffff' }}>
+                                <Text
+                                    style={{
+                                        ...styles.text,
+                                        ...styles.h5,
+                                        color: activeDraft ? 'white' : '#01192E',
+                                    }}
+                                >
                                     Borradores.
                                 </Text>
                             </TouchableOpacity>
@@ -187,7 +199,7 @@ const stylecom = StyleSheet.create({
     },
     filterContainer: {
         ...styles.shadow_button,
-        backgroundColor: '#D4D4D4',
+        backgroundColor: 'white',
         borderRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 3,
@@ -196,8 +208,8 @@ const stylecom = StyleSheet.create({
         width: 100,
     },
     filterText: {
+        ...styles.text,
         fontSize: 15,
-        color: 'white',
         fontWeight: '500',
         marginLeft: 8,
     },

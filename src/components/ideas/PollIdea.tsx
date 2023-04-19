@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
 import MsgTransform from '../MsgTransform';
@@ -8,6 +8,9 @@ import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { Poll } from '../Poll';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
 import UserComponent from '../common/UserComponent';
+import { addToast } from '../../store/feature/toast/toastSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { StatusType } from '../../types/common';
 
 interface Props {
     idea: Message;
@@ -34,6 +37,7 @@ export const PollIdea = ({
     isOpenedIdeaScreen,
     setMessageTrackingId,
 }: Props) => {
+    const dispatch = useAppDispatch();
     return (
         <>
             {isOwner && !spectatorMode && (
@@ -112,7 +116,7 @@ export const PollIdea = ({
                 )}
             </View>
             {!idea.myAnswers && (!isOwner || idea.anonymous) && (
-                <View
+                <Pressable
                     style={{
                         position: 'absolute',
                         width: '100%',
@@ -120,6 +124,14 @@ export const PollIdea = ({
                         bottom: 6,
                         backgroundColor: 'white',
                         opacity: 0.7,
+                    }}
+                    onPress={() => {
+                        dispatch(
+                            addToast({
+                                message: 'Primero tendrás que participar.',
+                                type: StatusType.INFORMATION,
+                            })
+                        );
                     }}
                 />
             )}
