@@ -342,7 +342,7 @@ const stylecom = StyleSheet.create({
         width: '100%',
         backgroundColor: 'white',
         paddingHorizontal: 25,
-        paddingTop: 30,
+        paddingTop: 20,
     },
     circleButton: {
         justifyContent: 'center',

@@ -46,7 +46,7 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        backgroundColor: '#b9b9b91b',
+        backgroundColor: '#b9b9b91e',
     },
     darkSpace: {
         backgroundColor: '#01192E',

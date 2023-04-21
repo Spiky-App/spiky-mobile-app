@@ -53,7 +53,10 @@ function ReactionButton({
                         />
                     )}
                     <Pressable
-                        style={[stylescomp.moreReactions, !enableX2Reaction && { marginRight: 6 }]}
+                        style={[
+                            stylescomp.moreReactions,
+                            !enableX2Reaction && { paddingRight: 12 },
+                        ]}
                         onPress={() => setEmojiKerboard(true)}
                     >
                         <View>
@@ -143,6 +146,7 @@ const stylescomp = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingLeft: 2,
     },
     moreReactions: {
         ...styles.center,

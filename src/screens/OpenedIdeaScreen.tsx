@@ -26,7 +26,7 @@ import { Comment as CommentState, IdeaType, Message, User } from '../types/store
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
-import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import useSpikyService from '../hooks/useSpikyService';
 import { MessageRequestData } from '../services/models/spikyService';
 import { generateMessageFromMensaje } from '../helpers/message';
@@ -79,7 +79,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const [messageTrackingId, setMessageTrackingId] = useState<number | undefined>();
     const { form, onChange } = useForm<FormComment>(DEFAULT_FORM);
     const refInputComment = React.createRef<TextInput>();
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<any>();
     const [comments, setComments] = useState<CommentState[]>();
     const isOwner = idea.user.id === uid;
     const { socket } = useContext(SocketContext);
@@ -184,6 +184,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     };
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
+        navigation.pop();
         const targetRoute = navigation
             .getState()
             .routes.find((route: { name: string }) => route.name === screen);

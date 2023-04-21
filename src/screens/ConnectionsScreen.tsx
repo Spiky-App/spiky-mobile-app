@@ -129,7 +129,7 @@ export const ConnectionsScreen = () => {
                 <NetworkErrorFeed callback={loadConversations} />
             ) : conversations?.length !== 0 ? (
                 <FlatList
-                    style={{ width: '90%' }}
+                    style={{ width: '92%' }}
                     data={conversations}
                     renderItem={({ item }) => (
                         <ConversationItem
@@ -164,9 +164,8 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
     return (
         <TouchableOpacity onPress={() => onOpenConversation(conver.id, toUser)}>
             <View style={stylescomp.converWrap}>
-                {newMsg && <View style={stylescomp.newChatMsg} />}
                 <View style={stylescomp.converContainer}>
-                    <View style={stylescomp.circle}>
+                    <View style={[stylescomp.circle, newMsg && { borderColor: '#FC702A' }]}>
                         <Text style={[styles.h7, { color: styles.text_button.color }]}>
                             {toUser.nickname.substring(0, 2).toUpperCase()}
                         </Text>
@@ -221,17 +220,10 @@ const stylescomp = StyleSheet.create({
         backgroundColor: 'white',
         minHeight: 80,
         borderRadius: 8,
-        paddingHorizontal: 15,
+        paddingLeft: 12,
+        paddingRight: 28,
         paddingVertical: 24,
         flex: 1,
-    },
-    newChatMsg: {
-        backgroundColor: '#FC702A',
-        marginRight: 8,
-        borderRadius: 3,
-        width: 12,
-        // flexGrow: 1,
-        height: 85,
     },
     date: {
         ...styles.textGray,
@@ -247,10 +239,12 @@ const stylescomp = StyleSheet.create({
     },
     circle: {
         ...styles.center,
-        height: 42,
-        width: 42,
+        height: 40,
+        width: 40,
         borderRadius: 21,
         marginRight: 5,
+        borderWidth: 3,
+        borderColor: styles.button_container.backgroundColor,
         backgroundColor: styles.button_container.backgroundColor,
     },
 });
