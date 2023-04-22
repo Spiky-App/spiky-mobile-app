@@ -117,7 +117,7 @@ const MoodState = ({ mood }: MoodStateProp) => (
                     {mood.substring(0, mood.indexOf('|'))}
                 </Text>
                 <View style={{ flexShrink: 1, alignSelf: 'center' }}>
-                    <Text style={[styles.msg, { marginVertical: 8 }]}>
+                    <Text style={[styles.idea_msg, { marginVertical: 8 }]}>
                         {mood.substring(mood.indexOf('|') + 1)}
                     </Text>
                 </View>

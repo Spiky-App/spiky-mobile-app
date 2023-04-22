@@ -275,7 +275,7 @@ const MoodRecord = ({ mood, emoji, date, index, total }: MoodRecordProp) => (
             <View style={stylecom.date_container}>
                 <Text style={styles.text_button}>{date}</Text>
             </View>
-            <Text style={styles.msg}>{mood}</Text>
+            <Text style={styles.idea_msg}>{mood}</Text>
         </View>
     </Pressable>
 );

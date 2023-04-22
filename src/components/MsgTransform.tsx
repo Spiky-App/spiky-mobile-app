@@ -136,7 +136,7 @@ export default MsgTransform;
 
 const stylescomp = StyleSheet.create({
     text_wrap: {
-        alignItems: 'flex-end',
+        alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'flex-end',
     },

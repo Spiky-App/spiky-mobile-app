@@ -6,6 +6,7 @@ import {
     StyleSheet,
     View,
     TouchableWithoutFeedback,
+    Platform,
 } from 'react-native';
 import { styles } from '../themes/appTheme';
 import { faPlus } from '../constants/icons/FontAwesome';
@@ -98,7 +99,7 @@ export const IdeaReaction = ({
     }, [yPosition]);
 
     return (
-        <View style={stylescomp.bottom_container}>
+        <View style={[stylescomp.bottom_container, { bottom: Platform.OS === 'ios' ? 6 : 12 }]}>
             <View style={stylescomp.blur_container} />
             <Pressable
                 style={stylescomp.button_wrap}
@@ -180,7 +181,6 @@ export const IdeaReaction = ({
 const stylescomp = StyleSheet.create({
     bottom_container: {
         position: 'absolute',
-        bottom: 6,
         right: 6,
         left: 6,
     },

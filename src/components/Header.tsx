@@ -10,6 +10,7 @@ import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
 import { BlurView } from '@react-native-community/blur';
+import { Platform } from 'react-native';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -104,8 +105,9 @@ export const Header = () => {
                                 <BlurView
                                     style={stylescom.blur_user}
                                     blurType="light"
-                                    blurAmount={5}
+                                    blurAmount={Platform.OS === 'ios' ? 5 : 24}
                                     reducedTransparencyFallbackColor="white"
+                                    overlayColor={'transparent'}
                                 />
                             )}
                         </View>
