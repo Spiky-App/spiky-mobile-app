@@ -104,6 +104,7 @@ export const Navigator = () => {
             if (appState === 'inactive') {
                 const sessionId = (await AsyncStorage.getItem(StorageKeys.SESSION_ID)) as string;
                 socket?.emit('force-offline', Number(sessionId));
+                await AsyncStorage.removeItem(StorageKeys.SESSION_ID);
             } else {
                 socket?.emit('force-online', {});
             }

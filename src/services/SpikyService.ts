@@ -287,9 +287,10 @@ class SpikyService {
         return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 
-    deleteDeviceToken(deviceTokenStorage: string) {
+    logout(deviceTokenStorage: string, sessionId: number) {
         return this.instance.post<DeleteDeviceToken>(`auth/logout`, {
             device_token: deviceTokenStorage,
+            sessionId,
         });
     }
 
