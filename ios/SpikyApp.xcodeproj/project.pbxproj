@@ -542,7 +542,7 @@
 				DEVELOPMENT_TEAM = 3HYDX58NGZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SpikyApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -574,7 +574,7 @@
 				DEVELOPMENT_TEAM = 3HYDX58NGZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SpikyApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
