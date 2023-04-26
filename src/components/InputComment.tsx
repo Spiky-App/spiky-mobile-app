@@ -54,15 +54,15 @@ export const InputComment = ({
         const messagesUpdated = messages.map(msg =>
             msg.id === messageId ? { ...msg, totalComments: msg.totalComments + 1 } : msg
         );
-        if (toUser !== user.id) {
-            socket?.emit('notify', {
-                id_usuario1: toUser,
-                id_usuario2: user.id,
-                id_mensaje: messageId,
-                id_respuesta: newComment.id,
-                tipo: 2,
-            });
-        }
+
+        socket?.emit('notify', {
+            id_usuario1: toUser,
+            id_usuario2: user.id,
+            id_mensaje: messageId,
+            id_respuesta: newComment.id,
+            tipo: 2,
+        });
+
         const regexp = /(@\[@\w*\]\(\d*\))/g;
         const mentions: RegExpMatchArray | null = newComment.comment.match(regexp);
         if (mentions) {
