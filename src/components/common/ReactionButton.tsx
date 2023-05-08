@@ -1,189 +1,116 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-    Modal,
-    Text,
-    Platform,
-    StyleSheet,
-    View,
-    StyleProp,
-    ViewStyle,
-    Animated,
-    TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, Platform, StyleSheet, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Pressable } from 'react-native';
-import IconGray from '../svg/IconGray';
 import { faFaceSmile, faPlus } from '../../constants/icons/FontAwesome';
-import EmojisKeyboard from '../EmojisKeyboard';
 import { emojis1, emojis2 } from '../../constants/emojis/emojis';
 
-interface Positions {
-    x: number;
-    y: number;
-}
-
 interface Props {
-    scale?: number;
-    styleCircleButton?: StyleProp<ViewStyle>;
-    handleReaction: (emoji: string) => void;
-    offsetPosition?: { offset_x: number; offset_y: number };
-    changeColorOnPress?: boolean;
+    setModalOptions?: (value: boolean) => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
+    enableX2Reaction: boolean;
+    enableEmojiReaction: boolean;
+    setEmojiKerboard: (value: boolean) => void;
 }
 
 function ReactionButton({
-    scale = 1,
-    styleCircleButton = {},
-    handleReaction,
-    offsetPosition = { offset_x: 0, offset_y: 0 },
-    changeColorOnPress,
+    setModalOptions,
+    handleCreateX2Reaction,
+    handleCreateEmojiReaction,
+    enableX2Reaction,
+    enableEmojiReaction,
+    setEmojiKerboard,
 }: Props) {
-    const reactContainerRef = useRef<View>(null);
-    const width = useRef(new Animated.Value(20)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
-    const inputRange = [0, 100];
-    const outputRange = ['0%', '100%'];
-    const animatedWidth = width.interpolate({ inputRange, outputRange });
-    const [modalReactions, setModalReactions] = useState(false);
-    const [emojiKerboard, setEmojiKerboard] = useState(false);
-    const [position, setPosition] = useState<Positions>({ x: 0, y: 0 });
-    const { x, y } = position;
-    const { offset_x, offset_y } = offsetPosition;
-
-    function handleStateReactions() {
-        reactContainerRef.current?.measure((px, py, pwidth, height, pageX, pageY) => {
-            setPosition({ x: pageX + offset_x, y: pageY + offset_y });
-        });
-    }
-
-    function handleCloseModal() {
-        Animated.parallel([
-            Animated.timing(opacity, {
-                toValue: 0,
-                duration: 150,
-                useNativeDriver: false,
-            }),
-            Animated.timing(width, {
-                toValue: 20,
-                duration: 200,
-                useNativeDriver: false,
-            }),
-        ]).start(() => {
-            setModalReactions(false);
-        });
-    }
-
-    useEffect(() => {
-        if (position.x !== 0) {
-            setModalReactions(true);
-            Animated.parallel([
-                Animated.timing(opacity, {
-                    toValue: 1,
-                    duration: 100,
-                    useNativeDriver: false,
-                }),
-                Animated.timing(width, {
-                    toValue: 100,
-                    duration: 500,
-                    useNativeDriver: false,
-                }),
-            ]).start();
-        }
-    }, [position]);
-
     return (
-        <>
-            <View style={styleCircleButton}>
-                <View style={{ alignItems: 'flex-end' }}>
-                    <View
-                        style={{
-                            ...stylescomp.container,
-                            minWidth: 42 * scale,
-                            height: 42 * scale,
-                            padding: 7 * scale,
-                            backgroundColor:
-                                changeColorOnPress && modalReactions ? '#01192E' : '#D4D4D4',
-                        }}
-                        ref={reactContainerRef}
-                    >
-                        <Pressable onPress={handleStateReactions}>
-                            <View
-                                style={{ position: 'absolute', top: 3 * scale, left: -2 * scale }}
-                            >
-                                <FontAwesomeIcon icon={faPlus} color={'white'} size={11 * scale} />
-                            </View>
-                            <IconGray color="#ffffff" underlayColor={'#01192ebe'} />
-                        </Pressable>
-                    </View>
-                </View>
-            </View>
-
-            <Modal animationType="fade" visible={modalReactions} transparent={true}>
-                <TouchableWithoutFeedback onPress={handleCloseModal}>
-                    <View style={stylescomp.wrapModal}>
-                        <TouchableWithoutFeedback>
-                            <View style={{ ...stylescomp.containerModal, top: y, left: x - 159 }}>
-                                <Animated.View
-                                    style={{
-                                        ...stylescomp.containerbig,
-                                        width: animatedWidth,
-                                    }}
-                                >
-                                    <Animated.View
-                                        style={{
-                                            ...stylescomp.containersmall,
-                                            opacity,
-                                        }}
-                                    >
-                                        <EmojiReaction
-                                            fixedEmoji={'✅'}
-                                            handleReaction={handleReaction}
-                                        />
-                                        <EmojiReaction
-                                            fixedEmoji={'❌'}
-                                            handleReaction={handleReaction}
-                                        />
-                                        <EmojiReaction handleReaction={handleReaction} />
-                                        <EmojiReaction handleReaction={handleReaction} />
-                                        <Pressable
-                                            style={stylescomp.moreReactions}
-                                            onPress={() => setEmojiKerboard(true)}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faFaceSmile}
-                                                color={'white'}
-                                                size={17}
-                                            />
-                                            <View style={stylescomp.plusIcon}>
-                                                <FontAwesomeIcon
-                                                    icon={faPlus}
-                                                    color={'white'}
-                                                    size={10}
-                                                />
-                                            </View>
-                                        </Pressable>
-                                    </Animated.View>
-                                </Animated.View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        <EmojisKeyboard
-                            isOpend={emojiKerboard}
-                            setEmojiKerboard={setEmojiKerboard}
-                            afterSelection={handleReaction}
+        <View style={stylescomp.containersmall}>
+            {enableEmojiReaction && (
+                <>
+                    <EmojiReaction
+                        fixedEmoji={'✅'}
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        setModalIdeaOptions={setModalOptions}
+                    />
+                    <EmojiReaction
+                        fixedEmoji={'❌'}
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        setModalIdeaOptions={setModalOptions}
+                    />
+                    <EmojiReaction
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        setModalIdeaOptions={setModalOptions}
+                        type={1}
+                    />
+                    <EmojiReaction
+                        handleCreateEmojiReaction={handleCreateEmojiReaction}
+                        setModalIdeaOptions={setModalOptions}
+                    />
+                    {!enableX2Reaction && (
+                        <EmojiReaction
+                            handleCreateEmojiReaction={handleCreateEmojiReaction}
+                            setModalIdeaOptions={setModalOptions}
                         />
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
-        </>
+                    )}
+                    <Pressable
+                        style={[
+                            stylescomp.moreReactions,
+                            !enableX2Reaction && { paddingRight: 12 },
+                        ]}
+                        onPress={() => setEmojiKerboard(true)}
+                    >
+                        <View>
+                            <FontAwesomeIcon
+                                icon={faFaceSmile}
+                                color={styles.text_button.color}
+                                size={18}
+                            />
+                            <View style={stylescomp.plusIcon}>
+                                <FontAwesomeIcon
+                                    icon={faPlus}
+                                    color={styles.text_button.color}
+                                    size={8}
+                                />
+                            </View>
+                        </View>
+                    </Pressable>
+                </>
+            )}
+            {enableX2Reaction && (
+                <Pressable
+                    style={stylescomp.X2Reaction}
+                    onPress={() => {
+                        setModalOptions && setModalOptions(false);
+                        handleCreateX2Reaction();
+                    }}
+                >
+                    {enableEmojiReaction && enableX2Reaction && <View style={stylescomp.line} />}
+                    <Text
+                        style={[
+                            stylescomp.textX2,
+                            !enableEmojiReaction && { color: styles.text.color, width: '100%' },
+                        ]}
+                    >
+                        x2
+                    </Text>
+                </Pressable>
+            )}
+        </View>
     );
 }
 
 interface EmojiReactionProps {
     fixedEmoji?: string;
     type?: number;
-    handleReaction: (emoji: string) => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    setModalIdeaOptions?: (value: boolean) => void;
 }
-const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps) => {
+const EmojiReaction = ({
+    fixedEmoji,
+    type,
+    handleCreateEmojiReaction,
+    setModalIdeaOptions,
+}: EmojiReactionProps) => {
     const [emoji, setEmoji] = useState('');
 
     useEffect(() => {
@@ -197,8 +124,14 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
     }, []);
 
     return (
-        <Pressable onPress={() => handleReaction(emoji)}>
-            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 20 : 18 }}>
+        <Pressable
+            onPress={() => {
+                setModalIdeaOptions && setModalIdeaOptions(false);
+                handleCreateEmojiReaction(emoji);
+            }}
+            style={stylescomp.emojiContainer}
+        >
+            <Text style={{ ...styles.text, fontSize: Platform.OS === 'ios' ? 18 : 18 }}>
                 {emoji}
             </Text>
         </Pressable>
@@ -208,52 +141,39 @@ const EmojiReaction = ({ fixedEmoji, type, handleReaction }: EmojiReactionProps)
 export default ReactionButton;
 
 const stylescomp = StyleSheet.create({
-    container: {
-        ...styles.center,
-        ...styles.shadow_button,
-        borderRadius: 20,
-    },
-    wrapModal: {
-        flex: 1,
-        backgroundColor: 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1,
-    },
-    containerModal: {
-        width: 200,
-        height: 42,
-        alignItems: 'flex-end',
-        position: 'absolute',
-        ...styles.shadow_button,
-    },
-    containerbig: {
-        ...styles.center,
-        ...styles.shadow_button,
-        height: 42,
-        width: 200,
-        borderRadius: 20,
-        backgroundColor: '#D4D4D4',
-        padding: 7,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-    },
     containersmall: {
-        paddingLeft: 8,
-        flex: 1,
+        width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingLeft: 2,
     },
     moreReactions: {
         ...styles.center,
-        paddingVertical: 2,
-        paddingRight: 9,
+    },
+    X2Reaction: {
+        ...styles.center,
+        paddingRight: 10,
+        flexDirection: 'row',
+    },
+    emojiContainer: {
+        ...styles.center,
     },
     plusIcon: {
         position: 'absolute',
         top: -3,
-        right: 1,
+        right: -6,
+    },
+    textX2: {
+        ...styles.textbold,
+        fontSize: 20,
+        color: styles.text_button.color,
+    },
+    line: {
+        width: 1.6,
+        height: 20,
+        opacity: 0.4,
+        marginRight: 20,
+        backgroundColor: styles.text_button.color,
     },
 });

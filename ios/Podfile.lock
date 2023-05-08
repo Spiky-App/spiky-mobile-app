@@ -391,6 +391,8 @@ PODS:
   - React-jsinspector (0.69.7)
   - React-logger (0.69.7):
     - glog
+  - react-native-blur (4.3.0):
+    - React-Core
   - react-native-netinfo (9.3.6):
     - React-Core
   - react-native-safe-area-context (4.3.1):
@@ -480,6 +482,8 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.5.0):
     - React-Core
+  - RNReactNativeHapticFeedback (2.0.3):
+    - React-Core
   - RNReanimated (2.13.0):
     - DoubleConversion
     - FBLazyVector
@@ -564,6 +568,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -584,6 +589,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -658,6 +664,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -698,6 +706,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -752,6 +762,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: a73bec0218ba959fc92f811b581ad6c2270c6b6f
   React-jsinspector: 8134ee22182b8dd98dc0973db6266c398103ce6c
   React-logger: 1e7ac909607ee65fd5c4d8bea8c6e644f66b8843
+  react-native-blur: 50c9feabacbc5f49b61337ebc32192c6be7ec3c3
   react-native-netinfo: f80db8cac2151405633324cb645c60af098ee461
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   React-perflogger: 8e832d4e21fdfa613033c76d58d7e617341e804b
@@ -772,6 +783,7 @@ SPEC CHECKSUMS:
   RNFBApp: 528463ddc518e491080dffa89def8e195433450c
   RNFBMessaging: c1b04b37c0ac7ff4fd71051d80888b89aa66dabc
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
+  RNReactNativeHapticFeedback: afa5bf2794aecbb2dba2525329253da0d66656df
   RNReanimated: f0d66bda3d074c43c72a18f4fd4f4c26687bc1fd
   RNScreens: 4a1af06327774490d97342c00aee0c2bafb497b7
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8

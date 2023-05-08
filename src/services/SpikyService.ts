@@ -3,7 +3,6 @@ import {
     LoginResponse,
     GetMessagesResponse,
     UniversityResponse,
-    MessageRequestParams,
     CreateMessageResponse,
     GetUsersSuggetionProps,
     GetHashtagsSuggetionProps,
@@ -40,6 +39,9 @@ import {
     GetPollAnswers,
     UpdateUserNickname,
     DeleteAccount,
+    GetX2Reactions,
+    UpdateMood,
+    GetMoodHistory,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -64,14 +66,8 @@ class SpikyService {
         return this.instance.get<UniversityResponse>('univer');
     }
 
-    getMessages(
-        uid: number,
-        filter: string,
-        lastMessageId: number | undefined,
-        parameters: MessageRequestData
-    ) {
+    getMessages(filter: string, lastMessageId: number | undefined, parameters: MessageRequestData) {
         const params = {
-            uid: uid,
             id_ultimoMensaje: lastMessageId,
             ...parameters,
         };
@@ -84,10 +80,17 @@ class SpikyService {
         });
     }
 
-    createMessage(message: string, draft: number) {
+    createMessage(
+        message: string,
+        type: number = 1,
+        childMessageId?: number,
+        isSuperAnonymous?: boolean
+    ) {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
-            draft,
+            type,
+            id_mensaje_child: childMessageId,
+            anonymous: isSuperAnonymous,
         });
     }
     updateDraft(message: string, id: number, post: boolean) {
@@ -95,17 +98,6 @@ class SpikyService {
             id_mensaje: id,
             mensaje: message,
             post,
-        });
-    }
-
-    //Este servicio parece que no lo usan
-    getUserMessages(uid: number, parameters?: MessageRequestParams) {
-        const params = {
-            uid,
-            ...parameters,
-        };
-        return this.instance.get<GetMessagesResponse>(`mensajes/user`, {
-            params,
         });
     }
 
@@ -302,10 +294,11 @@ class SpikyService {
         return this.instance.get<GetCommentReactions>(`reacc/resp/${commentId}`);
     }
 
-    createPoll(message: string, answers: string[]) {
+    createPoll(message: string, answers: string[], isSuperAnonymous: boolean) {
         return this.instance.post<CreatePollResponse>('mensajes/create-poll', {
             mensaje: message,
             opciones: answers,
+            anonymous: isSuperAnonymous,
         });
     }
 
@@ -327,6 +320,21 @@ class SpikyService {
 
     deleteAccount() {
         return this.instance.put<DeleteAccount>(`auth/delete-account`);
+    }
+
+    getX2Reactions(messageId: number) {
+        return this.instance.get<GetX2Reactions>(`reacc/x2/${messageId}`);
+    }
+
+    updateMood(emoji: string, mood: string) {
+        return this.instance.put<UpdateMood>('mensajes/mood', {
+            emoji,
+            mood,
+        });
+    }
+
+    getMoodHistory() {
+        return this.instance.get<GetMoodHistory>('mensajes/moods');
     }
 }
 

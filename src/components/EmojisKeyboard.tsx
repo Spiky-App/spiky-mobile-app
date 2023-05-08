@@ -8,8 +8,14 @@ interface Props {
     isOpend: boolean;
     setEmojiKerboard: (value: boolean) => void;
     afterSelection: (emoji: string) => void;
+    setModalIdeaOptions?: (value: boolean) => void;
 }
-const EmojisKeyboard = ({ isOpend, setEmojiKerboard, afterSelection }: Props) => {
+const EmojisKeyboard = ({
+    isOpend,
+    setEmojiKerboard,
+    afterSelection,
+    setModalIdeaOptions,
+}: Props) => {
     const { position, movingPosition } = useAnimation({ init_position: 650 });
 
     function handleCloseModal() {
@@ -17,7 +23,11 @@ const EmojisKeyboard = ({ isOpend, setEmojiKerboard, afterSelection }: Props) =>
     }
 
     function handleSelection(emoji: string) {
-        movingPosition(0, 650, 400, () => afterSelection(emoji));
+        movingPosition(0, 650, 400, () => {
+            setEmojiKerboard(false);
+            setModalIdeaOptions && setModalIdeaOptions(false);
+            afterSelection(emoji);
+        });
     }
 
     useEffect(() => {

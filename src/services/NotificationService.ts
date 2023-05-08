@@ -96,12 +96,12 @@ class NotificationService {
                         case ClickNotificationTypes.GO_TO_IDEA:
                             if (!data.isRemote) {
                                 routeParams = {
-                                    messageId: data.ideaId,
+                                    ideaId: data.ideaId,
                                     filter: '',
                                 };
                             } else {
                                 routeParams = {
-                                    messageId: data.contentId,
+                                    ideaId: data.contentId,
                                     filter: '',
                                 };
                             }

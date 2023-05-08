@@ -24,6 +24,7 @@ import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
 import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { CreatePollScreen } from '../screens/CreatePollScreen';
+import { CreateMoodScreen } from '../screens/CreateMoodScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from '../types/storage';
 
@@ -36,14 +37,14 @@ export type RootStackParamList = {
     ChangePasswordScreen: undefined;
     RegisterScreen: { token: string; correoValid: string };
     MenuMain: undefined;
-    CreateIdeaScreen: { draftedIdea?: string; draftID?: number };
-    OpenedIdeaScreen: { messageId: number; filter?: string };
+    CreateIdeaScreen: { draftedIdea?: string; draftID?: number } | undefined;
+    OpenedIdeaScreen: { ideaId: number; filter?: string };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
-    ReportIdeaScreen: { messageId: number };
+    ReportIdeaScreen: { ideaId: number };
     ReplyIdeaScreen: {
         message: {
-            messageId: number;
+            ideaId: number;
             message: string;
             user: User;
             date: number;
@@ -53,6 +54,7 @@ export type RootStackParamList = {
     ChangeForgotPasswordScreen: { token: string; correoValid: string };
     ManifestPart2Screen: { correoValid: string; password: string };
     CreatePollScreen: undefined;
+    CreateMoodScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -165,6 +167,7 @@ export const Navigator = () => {
                     <Stack.Screen name="ReplyIdeaScreen" component={ReplyIdeaScreen} />
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
                     <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
+                    <Stack.Screen name="CreateMoodScreen" component={CreateMoodScreen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />

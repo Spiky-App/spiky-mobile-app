@@ -7,6 +7,7 @@ interface UIState {
     universities?: University[];
     modalAlert: ModalAlert;
     appState: 'active' | 'inactive';
+    spectatorMode: boolean;
 }
 
 const initialState: UIState = {
@@ -18,6 +19,7 @@ const initialState: UIState = {
         color: '#01192E',
     },
     appState: 'active',
+    spectatorMode: false,
 };
 
 export const uiSlice = createSlice({
@@ -33,10 +35,13 @@ export const uiSlice = createSlice({
         setAppState: (state: UIState, action: PayloadAction<'active' | 'inactive'>) => {
             state.appState = action.payload;
         },
+        toggleSpectatorMode: (state: UIState) => {
+            state.spectatorMode = !state.spectatorMode;
+        },
     },
 });
 
-export const { setUniversities, setModalAlert, setAppState } = uiSlice.actions;
+export const { setUniversities, setModalAlert, setAppState, toggleSpectatorMode } = uiSlice.actions;
 
 export const selectUi = (state: RootState) => state.ui;
 
