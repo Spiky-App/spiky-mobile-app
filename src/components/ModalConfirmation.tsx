@@ -8,6 +8,7 @@ interface Props {
     callback: () => void;
     setIsOpen: (state: boolean) => void;
     confirmationText: string;
+    callbackCancel?: () => void;
 }
 
 export const ModalConfirmation = ({
@@ -16,10 +17,15 @@ export const ModalConfirmation = ({
     setIsOpen,
     callback,
     confirmationText,
+    callbackCancel,
 }: Props) => {
     function handleConfirmation() {
         setIsOpen(false);
         callback();
+    }
+    function handleCancel() {
+        setIsOpen(false);
+        callbackCancel && callbackCancel();
     }
     return (
         <Modal transparent={true} visible={isOpen} animationType="fade">
@@ -34,7 +40,7 @@ export const ModalConfirmation = ({
                         </Text>
                     </View>
                     <View style={stylescom.container_buttons}>
-                        <TouchableOpacity style={stylescom.button} onPress={() => setIsOpen(false)}>
+                        <TouchableOpacity style={stylescom.button} onPress={handleCancel}>
                             <Text style={styles.h5}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity

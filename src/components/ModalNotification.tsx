@@ -146,6 +146,6 @@ const stylescom = StyleSheet.create({
         height: 360,
         width: '85%',
         backgroundColor: '#ffff',
-        borderRadius: 5,
+        borderRadius: 14,
     },
 });

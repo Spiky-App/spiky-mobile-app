@@ -26,10 +26,10 @@ export const BackgroundPaper = ({ children, style, topDark }: Props) => {
             style={stylescom.imageback}
         >
             <StatusBar barStyle={topDark ? 'light-content' : 'dark-content'} translucent={false} />
-            {topDark && <View style={{ height: top ? top : 0, ...stylescom.darkSpace }} />}
             <SafeAreaView style={style ? [stylescom.container, style] : stylescom.container}>
                 {children}
             </SafeAreaView>
+            {topDark && <View style={{ height: top ? top : 0, ...stylescom.darkSpace }} />}
         </ImageBackground>
     );
 };
@@ -46,6 +46,7 @@ const stylescom = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+        backgroundColor: '#b9b9b91e',
     },
     darkSpace: {
         backgroundColor: '#01192E',

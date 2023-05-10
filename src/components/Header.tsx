@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
-import { faBars, faUser } from '../constants/icons/FontAwesome';
+import { faBars, faUser, faUserAstronaut } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
+import { BlurView } from '@react-native-community/blur';
+import { Platform } from 'react-native';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
+    const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
     const navigation = useNavigation<any>();
     const { top } = useSafeAreaInsets();
     const [profileOption, setProfileOption] = useState(false);
@@ -43,7 +46,6 @@ export const Header = () => {
                     style={{
                         ...stylescom.container,
                         marginTop: top > 0 ? 0 : 15,
-                        justifyContent: 'space-between',
                     }}
                     onLayout={({ nativeEvent }) => {
                         setPosition({
@@ -85,8 +87,30 @@ export const Header = () => {
                         style={{ ...stylescom.flexConte, marginRight: 20 }}
                         onPress={() => setProfileOption(true)}
                     >
-                        <FontAwesomeIcon icon={faUser} size={18} color="#ffff" />
-                        <Text style={stylescom.text}>{`@${nickname}`}</Text>
+                        <FontAwesomeIcon
+                            icon={spectatorMode ? faUserAstronaut : faUser}
+                            size={18}
+                            color={'#ffff'}
+                        />
+                        <View style={{ ...styles.center, marginLeft: 3 }}>
+                            <Text
+                                style={[
+                                    stylescom.text,
+                                    { paddingHorizontal: spectatorMode ? 8 : 0 },
+                                ]}
+                            >
+                                @{nickname}
+                            </Text>
+                            {spectatorMode && (
+                                <BlurView
+                                    style={stylescom.blur_user}
+                                    blurType="light"
+                                    blurAmount={Platform.OS === 'ios' ? 5 : 24}
+                                    reducedTransparencyFallbackColor="white"
+                                    overlayColor={'transparent'}
+                                />
+                            )}
+                        </View>
                     </TouchableOpacity>
 
                     <ModalProfile
@@ -103,12 +127,14 @@ export const Header = () => {
 const stylescom = StyleSheet.create({
     container: {
         backgroundColor: '#01192E',
-        height: 45,
         marginHorizontal: 15,
         borderRadius: 5,
         alignItems: 'center',
         flexDirection: 'row',
         flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingTop: 6,
+        paddingBottom: 8,
     },
     imageback: {
         backgroundColor: '#F8F8F8',
@@ -120,13 +146,13 @@ const stylescom = StyleSheet.create({
         fontFamily: 'Helvetica',
         fontWeight: '400',
         fontSize: 16,
-        marginLeft: 3,
+        paddingVertical: 6,
     },
     flexConte: {
+        ...styles.center,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 45,
     },
     notif: {
         ...styles.center,
@@ -135,7 +161,7 @@ const stylescom = StyleSheet.create({
         width: 18,
         borderRadius: 100,
         position: 'absolute',
-        top: 6,
+        top: -6,
         right: -6,
     },
     newChats: {
@@ -145,7 +171,7 @@ const stylescom = StyleSheet.create({
         width: 18,
         borderRadius: 100,
         position: 'absolute',
-        top: 6,
+        top: -6,
         right: -9,
     },
     textnotif: {
@@ -153,5 +179,11 @@ const stylescom = StyleSheet.create({
         ...styles.h3,
         color: '#ffff',
         fontSize: 10,
+    },
+    blur_user: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
     },
 });

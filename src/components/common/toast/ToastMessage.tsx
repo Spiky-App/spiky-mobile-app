@@ -9,6 +9,7 @@ import {
     faXmark,
     faBell,
     faBellConcierge,
+    faCircleInfo,
 } from '../../../constants/icons/FontAwesome';
 import { styles } from '../../../themes/appTheme';
 
@@ -48,6 +49,8 @@ function ToastMessage({ message, status }: Props) {
                 return '#FC702A';
             case StatusType.NUDGE:
                 return '#FC702A';
+            case StatusType.INFORMATION:
+                return '#01192E';
             default:
                 return '#01192E';
         }
@@ -60,6 +63,8 @@ function ToastMessage({ message, status }: Props) {
                 return faBell;
             case StatusType.NUDGE:
                 return faBellConcierge;
+            case StatusType.INFORMATION:
+                return faCircleInfo;
             default:
                 return faTriangleExclamation;
         }

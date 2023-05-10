@@ -40,7 +40,7 @@ export interface MessagesData {
     trackings: Tracking[];
     num_respuestas: number;
     usuario: Usuario;
-    draft: number;
+    type: number;
 }
 
 export interface MessagesResponseData {
@@ -57,7 +57,7 @@ export interface AuthRenewResponseData {
     n_notificaciones: number;
     msg: string;
 }
-
+//RAUL
 export interface MessageRequestData {
     alias?: string;
     search?: string;

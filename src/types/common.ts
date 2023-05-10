@@ -12,4 +12,5 @@ export enum StatusType {
     DEFAULT,
     NOTIFICATION,
     NUDGE,
+    INFORMATION,
 }

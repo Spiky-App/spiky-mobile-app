@@ -3,8 +3,8 @@ import { BackgroundPaper } from '../components/BackgroundPaper';
 import { FloatButton } from '../components/FloatButton';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import MessagesFeed from '../components/MessagesFeed';
 import { faUser } from '../constants/icons/FontAwesome';
+import { MessagesFeed } from '../components/MessagesFeed';
 
 type Props = DrawerScreenProps<DrawerParamList, 'ProfileScreen'>;
 
