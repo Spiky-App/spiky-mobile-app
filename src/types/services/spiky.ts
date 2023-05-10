@@ -377,6 +377,12 @@ export interface PollAnswer {
 
 export interface UpdateUserNickname {
     ok: boolean;
+    uid: number;
+    alias: string;
+    id_universidad: number;
+    n_notificaciones: number;
+    n_chatmensajes: number;
+    token: string;
 }
 
 export interface DeleteAccount {
