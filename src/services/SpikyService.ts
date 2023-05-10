@@ -182,11 +182,12 @@ class SpikyService {
         );
     }
 
-    createMessageComment(messageId: number, uid: number, comment: string) {
+    createMessageComment(messageId: number, uid: number, comment: string, anonymous: boolean) {
         return this.instance.post<CreateMessageCommentResponse>('/resp', {
             id_mensaje: messageId,
             uid,
             respuesta: comment,
+            anonymous,
         });
     }
 

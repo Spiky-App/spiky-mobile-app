@@ -244,12 +244,12 @@ const stylesInputChat = StyleSheet.create({
     },
     container: {
         backgroundColor: '#E6E6E6',
-        paddingHorizontal: 10,
-        paddingVertical: 13,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
         justifyContent: 'space-between',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        borderRadius: 8,
+        borderRadius: 14,
     },
     borderTextbox: {
         borderColor: '#9b0000',
@@ -266,7 +266,7 @@ const stylesInputChat = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 8,
         justifyContent: 'center',
-        borderRadius: 5,
+        borderRadius: 8,
     },
     counterText: {
         ...styles.text,

@@ -92,10 +92,11 @@ function useSpikyService() {
     const createMessageComment = async (
         messageId: number,
         uid: number,
-        comment: string
+        comment: string,
+        anonymous: boolean
     ): Promise<MessageComment | undefined> => {
         try {
-            const response = await service.createMessageComment(messageId, uid, comment);
+            const response = await service.createMessageComment(messageId, uid, comment, anonymous);
             return response.data.respuesta;
         } catch (error) {
             console.log(error);
