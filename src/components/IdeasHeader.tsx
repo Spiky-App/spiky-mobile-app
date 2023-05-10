@@ -47,7 +47,7 @@ export const IdeasHeader = ({
     const { opacity, fadeIn } = useAnimation({});
     const dispatch = useDispatch();
     let actionSheet = useRef();
-    var profileOptionArray = ['Bloquear contenido de ' + title, 'Cancelar'];
+    var profileOptionArray = ['Reportar usuario', 'Bloquear contenido de ' + title, 'Cancelar'];
     const { blockUser } = useSpikyService();
     const { id: uid } = useAppSelector((state: RootState) => state.user);
     const navigation = useNavigation<any>();
