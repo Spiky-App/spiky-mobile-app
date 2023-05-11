@@ -25,6 +25,8 @@ interface Props {
     form: FormComment;
     onChange: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
+    isOwner: boolean;
+    isIdeaSuperAnonymous: boolean;
 }
 
 const MAX_LENGHT = 180;
@@ -40,6 +42,8 @@ export const InputComment = ({
     form,
     onChange,
     refInputComment,
+    isOwner,
+    isIdeaSuperAnonymous,
 }: Props) => {
     const { createMessageComment } = useSpikyService();
     const dispatch = useAppDispatch();
@@ -47,7 +51,7 @@ export const InputComment = ({
     const user = useAppSelector((state: RootState) => state.user);
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
-    const [isSuperAnonymous, setIsSuperAnonymous] = useState(false);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(true);
     const [inputHeight, setInputHeight] = useState(0);
     const { socket } = useContext(SocketContext);
     const { comment } = form;
@@ -176,8 +180,41 @@ export const InputComment = ({
                         onBlur={() => setKeyboardVisible(false)}
                     />
                 </View>
+                {!isIdeaSuperAnonymous && (
+                    <View>
+                        <ButtonIcon
+                            icon={faLocationArrow}
+                            style={{
+                                paddingHorizontal: 10,
+                                justifyContent: 'center',
+                                borderRadius: 100,
+                                height: 36,
+                                width: 36,
+                                marginLeft: 6,
+                            }}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            disabled={isDisabled}
+                            onPress={onPressButton}
+                        />
+                        {counter <= 40 && (
+                            <Text
+                                style={{
+                                    fontSize: 14,
+                                    fontWeight: '300',
+                                    color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                                    textAlign: 'center',
+                                    margin: 'auto',
+                                    bottom: '-50%',
+                                }}
+                            >
+                                {counter}
+                            </Text>
+                        )}
+                    </View>
+                )}
             </View>
-            {isKeyboardVisible && (
+
+            {isKeyboardVisible && isIdeaSuperAnonymous && isOwner && (
                 <View style={stylesInputComment.buttons_container}>
                     <ToggleButton
                         isActive={isSuperAnonymous}

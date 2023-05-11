@@ -353,6 +353,8 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 <InputComment
                                     messageId={ideaId}
                                     toUser={idea.user.id ? idea.user.id : 0}
+                                    isOwner={isOwner}
+                                    isIdeaSuperAnonymous={idea.anonymous}
                                     updateComments={updateComments}
                                     form={form}
                                     onChange={onChange}
