@@ -47,6 +47,7 @@ import { faLink } from '@fortawesome/free-solid-svg-icons/faLink';
 import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons/faUserAstronaut';
+import { faPenFancy } from '@fortawesome/free-solid-svg-icons/faPenFancy';
 
 export {
     faSliders,
@@ -98,4 +99,5 @@ export {
     faLink,
     faPencil,
     faTrash,
+    faPenFancy,
 };

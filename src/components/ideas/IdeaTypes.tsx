@@ -5,6 +5,9 @@ import { DraftIdea } from './../ideas/DraftIdea';
 import { PollIdea } from './../ideas/PollIdea';
 import { X2Idea } from './../ideas/X2Idea';
 import { MoodIdea } from './../ideas/MoodIdea';
+import { QuoteIdea } from './QuoteIdea';
+import { Text, View } from 'react-native';
+import { styles } from '../../themes/appTheme';
 
 interface IdeaTypesProp {
     idea: Message;
@@ -20,6 +23,7 @@ interface IdeaTypesProp {
     setMessageTrackingId?: (value: number | undefined) => void;
     handleCreateEmojiReaction: (emoji: string) => void;
     handleCreateX2Reaction: () => void;
+    OpenCreateQuoteScreen: () => void;
 }
 
 export const IdeaTypes = ({
@@ -36,6 +40,7 @@ export const IdeaTypes = ({
     setMessageTrackingId,
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
+    OpenCreateQuoteScreen,
 }: IdeaTypesProp) => {
     switch (idea.type) {
         case IdeaType.NORMAL:
@@ -52,6 +57,7 @@ export const IdeaTypes = ({
                     spectatorMode={spectatorMode}
                     handleCreateEmojiReaction={handleCreateEmojiReaction}
                     handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                 />
             );
         case IdeaType.DRAFT:
@@ -91,6 +97,23 @@ export const IdeaTypes = ({
                     setMessageTrackingId={setMessageTrackingId}
                 />
             );
+        case IdeaType.QUOTE:
+            return (
+                <QuoteIdea
+                    idea={idea}
+                    filter={filter}
+                    isOwner={isOwner}
+                    handleClickUser={handleClickUser}
+                    handleClickHashtag={handleClickHashtag}
+                    handleClickLink={handleClickLink}
+                    handleOpenIdea={handleOpenIdea}
+                    isOpenedIdeaScreen={isOpenedIdeaScreen}
+                    spectatorMode={spectatorMode}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                />
+            );
         case IdeaType.MOOD:
             return (
                 <MoodIdea
@@ -105,9 +128,14 @@ export const IdeaTypes = ({
                     spectatorMode={spectatorMode}
                     handleCreateEmojiReaction={handleCreateEmojiReaction}
                     handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                 />
             );
         default:
-            return <></>;
+            return (
+                <View style={styles.center}>
+                    <Text>Actualiza la aplicación para ver esta publicación.</Text>
+                </View>
+            );
     }
 };

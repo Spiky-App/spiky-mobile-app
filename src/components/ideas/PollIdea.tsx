@@ -98,12 +98,12 @@ export const PollIdea = ({
                         <PreModalIdeaOptions
                             myIdea={isOwner}
                             message={{
-                                ideaId: idea.id,
+                                id: idea.id,
                                 message: idea.message,
                                 user: idea.user,
                                 messageTrackingId: idea.messageTrackingId,
                                 date: idea.date,
-                                ideaType: idea.type,
+                                type: idea.type,
                                 anonymous: idea.anonymous,
                             }}
                             filter={filter}

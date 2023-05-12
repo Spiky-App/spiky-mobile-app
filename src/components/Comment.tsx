@@ -85,25 +85,27 @@ export const Comment = ({
                     handleClickUser={handleClickUser}
                     user={comment.user}
                     date={comment.date}
-                    anonymous={false}
+                    anonymous={comment.anonymous}
                 />
                 {uid !== comment.user.id && (
                     <>
-                        <TouchableOpacity
-                            style={{ ...styles.numberGray, marginLeft: 10 }}
-                            onPress={handleReply}
-                        >
-                            <FontAwesomeIcon
-                                icon={faReply}
-                                color="#D4D4D4"
-                                style={{
-                                    shadowOffset: {
-                                        width: 1,
-                                        height: 2,
-                                    },
-                                }}
-                            />
-                        </TouchableOpacity>
+                        {!comment.anonymous && (
+                            <TouchableOpacity
+                                style={{ ...styles.numberGray, marginLeft: 10 }}
+                                onPress={handleReply}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faReply}
+                                    color="#D4D4D4"
+                                    style={{
+                                        shadowOffset: {
+                                            width: 1,
+                                            height: 2,
+                                        },
+                                    }}
+                                />
+                            </TouchableOpacity>
+                        )}
                         {myReaction === undefined && (
                             <>
                                 <Pressable

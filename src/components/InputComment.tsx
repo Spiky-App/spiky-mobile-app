@@ -12,6 +12,7 @@ import { styles } from '../themes/appTheme';
 import { Comment } from '../types/store';
 import ButtonIcon from './common/ButtonIcon';
 import { RenderSuggetions } from './Suggestions';
+import ToggleButton from './common/ToggleButton';
 
 export interface FormComment {
     comment: string;
@@ -24,6 +25,8 @@ interface Props {
     form: FormComment;
     onChange: (stateUpdated: Partial<FormComment>) => void;
     refInputComment: React.RefObject<TextInput>;
+    isOwner: boolean;
+    isIdeaSuperAnonymous: boolean;
 }
 
 const MAX_LENGHT = 180;
@@ -39,6 +42,8 @@ export const InputComment = ({
     form,
     onChange,
     refInputComment,
+    isOwner,
+    isIdeaSuperAnonymous,
 }: Props) => {
     const { createMessageComment } = useSpikyService();
     const dispatch = useAppDispatch();
@@ -46,6 +51,7 @@ export const InputComment = ({
     const user = useAppSelector((state: RootState) => state.user);
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(true);
     const [inputHeight, setInputHeight] = useState(0);
     const { socket } = useContext(SocketContext);
     const { comment } = form;
@@ -79,7 +85,12 @@ export const InputComment = ({
 
     async function onPressButton() {
         setDisabled(true);
-        const messageComment = await createMessageComment(messageId, user.id, comment);
+        const messageComment = await createMessageComment(
+            messageId,
+            user.id,
+            comment,
+            isSuperAnonymous
+        );
         if (messageComment) {
             const newComment: Comment = {
                 id: messageComment.id_respuesta,
@@ -92,9 +103,11 @@ export const InputComment = ({
                     universityId: user.universityId,
                 },
                 reactions: [],
+                anonymous: isSuperAnonymous,
             };
             handleNewComment(newComment);
         }
+        isSuperAnonymous && setIsSuperAnonymous(false);
         onChange(DEFAULT_FORM);
         Keyboard.dismiss();
     }
@@ -111,100 +124,156 @@ export const InputComment = ({
         }
     }, [comment]);
 
-    return (
-        <View
-            onLayout={event => {
-                const { height } = event.nativeEvent.layout;
-                setInputHeight(height);
-            }}
-            style={{
-                backgroundColor: '#E6E6E6',
-                bottom: 6,
-                paddingHorizontal: 10,
-                paddingVertical: 13,
-                justifyContent: 'center',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                borderRadius: 8,
-                width: '95%',
-            }}
-        >
-            <View
-                style={{
-                    flex: 1,
-                    backgroundColor: 'white',
-                    paddingHorizontal: 8,
-                    justifyContent: 'center',
-                    borderRadius: 8,
-                    ...(counter < 0 && stylesInputComment.borderTextbox),
-                }}
-            >
-                <MentionInput
-                    inputRef={refInputComment}
-                    placeholder="Escribe algo..."
-                    placeholderTextColor="#707070"
-                    style={{ ...styles.textinput, fontSize: 16 }}
-                    multiline={true}
-                    value={comment}
-                    onChange={text => onChange({ comment: text })}
-                    partTypes={[
-                        {
-                            trigger: '@',
-                            renderSuggestions: props =>
-                                RenderSuggetions({ ...props, isMention: true, inputHeight }),
-                            textStyle: { ...styles.h5, color: '#5c71ad' },
-                            allowedSpacesCount: 0,
-                            isInsertSpaceAfterMention: true,
-                            getPlainString: ({ name }: MentionData) => name,
-                        },
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-                        {
-                            trigger: '#',
-                            renderSuggestions: props =>
-                                RenderSuggetions({ ...props, isMention: false, inputHeight }),
-                            textStyle: { ...styles.h5, color: '#5c71ad' },
-                            allowedSpacesCount: 0,
-                            isInsertSpaceAfterMention: true,
-                            isBottomMentionSuggestionsRender: true,
-                            getPlainString: ({ name }: MentionData) => name,
-                        },
-                    ]}
-                />
-            </View>
-            <View style={{ paddingLeft: 8 }}>
-                <ButtonIcon
-                    icon={faLocationArrow}
+    return (
+        <View>
+            <View
+                onLayout={event => {
+                    const { height } = event.nativeEvent.layout;
+                    setInputHeight(height);
+                }}
+                style={stylesInputComment.wrap}
+            >
+                <View
                     style={{
-                        paddingHorizontal: 10,
+                        flex: 1,
+                        backgroundColor: 'white',
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
                         justifyContent: 'center',
-                        borderRadius: 100,
-                        height: 36,
-                        width: 36,
+                        borderRadius: 10,
+                        ...(counter < 0 && stylesInputComment.borderTextbox),
                     }}
-                    iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                    disabled={isDisabled}
-                    onPress={onPressButton}
-                />
-                {counter <= 40 && (
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: '300',
-                            color: counter < 0 ? '#FC702A' : '#9C9C9C',
-                            textAlign: 'center',
-                            margin: 'auto',
-                            bottom: '-50%',
-                        }}
-                    >
-                        {counter}
-                    </Text>
+                >
+                    <MentionInput
+                        inputRef={refInputComment}
+                        placeholder="Escribe algo..."
+                        placeholderTextColor="#707070"
+                        style={{ ...styles.textinput, fontSize: 16 }}
+                        multiline={true}
+                        value={comment}
+                        onChange={text => onChange({ comment: text })}
+                        partTypes={[
+                            {
+                                trigger: '@',
+                                renderSuggestions: props =>
+                                    RenderSuggetions({ ...props, isMention: true, inputHeight }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+
+                            {
+                                trigger: '#',
+                                renderSuggestions: props =>
+                                    RenderSuggetions({ ...props, isMention: false, inputHeight }),
+                                textStyle: { ...styles.h5, color: '#5c71ad' },
+                                allowedSpacesCount: 0,
+                                isInsertSpaceAfterMention: true,
+                                isBottomMentionSuggestionsRender: true,
+                                getPlainString: ({ name }: MentionData) => name,
+                            },
+                        ]}
+                        onFocus={() => setKeyboardVisible(true)}
+                        onBlur={() => setKeyboardVisible(false)}
+                    />
+                </View>
+                {!isIdeaSuperAnonymous && (
+                    <View>
+                        <ButtonIcon
+                            icon={faLocationArrow}
+                            style={{
+                                paddingHorizontal: 10,
+                                justifyContent: 'center',
+                                borderRadius: 100,
+                                height: 36,
+                                width: 36,
+                                marginLeft: 6,
+                            }}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            disabled={isDisabled}
+                            onPress={onPressButton}
+                        />
+                        {counter <= 40 && (
+                            <Text
+                                style={{
+                                    fontSize: 14,
+                                    fontWeight: '300',
+                                    color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                                    textAlign: 'center',
+                                    margin: 'auto',
+                                    bottom: '-50%',
+                                }}
+                            >
+                                {counter}
+                            </Text>
+                        )}
+                    </View>
                 )}
             </View>
+
+            {isKeyboardVisible && isIdeaSuperAnonymous && isOwner && (
+                <View style={stylesInputComment.buttons_container}>
+                    <ToggleButton
+                        isActive={isSuperAnonymous}
+                        setIsActive={setIsSuperAnonymous}
+                        text={['Super', 'anónimo']}
+                        scale={0.9}
+                    />
+                    <View style={styles.flex_center}>
+                        {counter <= 40 && (
+                            <Text
+                                style={{
+                                    fontSize: 14,
+                                    fontWeight: '300',
+                                    color: counter < 0 ? '#FC702A' : '#9C9C9C',
+                                    textAlign: 'center',
+                                    paddingRight: 15,
+                                }}
+                            >
+                                {counter}
+                            </Text>
+                        )}
+                        <ButtonIcon
+                            icon={faLocationArrow}
+                            style={{
+                                paddingHorizontal: 10,
+                                justifyContent: 'center',
+                                borderRadius: 100,
+                                height: 36,
+                                width: 36,
+                            }}
+                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
+                            disabled={isDisabled}
+                            onPress={onPressButton}
+                        />
+                    </View>
+                </View>
+            )}
         </View>
     );
 };
 
 const stylesInputComment = StyleSheet.create({
+    wrap: {
+        backgroundColor: '#E6E6E6',
+        bottom: 6,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+        justifyContent: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        borderRadius: 14,
+        width: '95%',
+    },
+    buttons_container: {
+        paddingRight: 6,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        bottom: 2,
+    },
     borderTextbox: {
         borderColor: '#FC702A',
         borderWidth: 0.2,

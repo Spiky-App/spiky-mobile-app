@@ -16,18 +16,21 @@ import ReactionButton from './common/ReactionButton';
 import { useAppDispatch } from '../store/hooks';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
+import { ModalQuoteAndX2Options } from './ModalQuoteAndX2Options';
 
 interface Props {
     enableX2Reaction: boolean;
     enableEmojiReaction: boolean;
     handleCreateEmojiReaction?: (emoji: string) => void;
     handleCreateX2Reaction?: () => void;
+    OpenCreateQuoteScreen?: () => void;
 }
 export const IdeaReaction = ({
     enableX2Reaction,
     enableEmojiReaction,
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
+    OpenCreateQuoteScreen,
 }: Props) => {
     const reactContainerRef = useRef<View>(null);
     const width = useRef(new Animated.Value(6)).current;
@@ -37,6 +40,7 @@ export const IdeaReaction = ({
     const outputRange = ['10%', '100%'];
     const animatedWidth = width.interpolate({ inputRange, outputRange });
     const [modalReactions, setModalReactions] = useState(false);
+    const [modalQuoteAndX2Options, setModalQuoteAndX2Options] = useState(false);
     const [emojiKerboard, setEmojiKerboard] = useState(false);
     const [yPosition, setYPosition] = useState<number>(0);
     const dispatch = useAppDispatch();
@@ -47,7 +51,7 @@ export const IdeaReaction = ({
         });
     }
 
-    function handleCloseModal() {
+    function handleCloseModal(callback?: () => void) {
         Animated.sequence([
             Animated.parallel([
                 Animated.timing(opacity2, {
@@ -70,7 +74,12 @@ export const IdeaReaction = ({
         ]).start(() => {
             setModalReactions(false);
             setYPosition(0);
+            callback && callback();
         });
+    }
+
+    function handleOpenCreateQuoteScreen() {
+        handleCloseModal(OpenCreateQuoteScreen);
     }
 
     useEffect(() => {
@@ -128,7 +137,7 @@ export const IdeaReaction = ({
                     </View>
                 </View>
                 <Modal animationType="fade" visible={modalReactions} transparent={true}>
-                    <TouchableWithoutFeedback onPress={handleCloseModal}>
+                    <TouchableWithoutFeedback onPress={() => handleCloseModal()}>
                         <View style={stylescomp.wrapModal}>
                             <TouchableWithoutFeedback>
                                 <View style={[stylescomp.containerModal]}>
@@ -150,10 +159,8 @@ export const IdeaReaction = ({
                                                         ? handleCreateEmojiReaction
                                                         : () => {}
                                                 }
-                                                handleCreateX2Reaction={
-                                                    handleCreateX2Reaction
-                                                        ? handleCreateX2Reaction
-                                                        : () => {}
+                                                handleCreateX2Reaction={() =>
+                                                    setModalQuoteAndX2Options(true)
                                                 }
                                                 enableX2Reaction={enableX2Reaction}
                                                 enableEmojiReaction={enableEmojiReaction}
@@ -170,6 +177,14 @@ export const IdeaReaction = ({
                                     handleCreateEmojiReaction ? handleCreateEmojiReaction : () => {}
                                 }
                             />
+                            {handleOpenCreateQuoteScreen && (
+                                <ModalQuoteAndX2Options
+                                    setModalQuoteAndX2Options={setModalQuoteAndX2Options}
+                                    modalQuoteAndX2Options={modalQuoteAndX2Options}
+                                    handleCreateX2Reaction={handleCreateX2Reaction}
+                                    handleOpenCreateQuoteScreen={handleOpenCreateQuoteScreen}
+                                />
+                            )}
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>

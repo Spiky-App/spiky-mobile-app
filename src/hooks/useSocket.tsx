@@ -14,6 +14,7 @@ export const useSocket = (url: string) => {
             forceNew: true,
             query: {
                 'x-token': token,
+                version: 'v1.2',
             },
         };
         const socketTemp = io(url, options).connect();

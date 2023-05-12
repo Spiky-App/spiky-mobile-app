@@ -1,8 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, User } from '../../types/store';
+import { IdeaType, Message, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
@@ -22,12 +22,12 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
-    handleCreateEmojiReaction?: (emoji: string) => void;
-    handleCreateX2Reaction?: () => void;
-    OpenCreateQuoteScreen?: () => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
+    OpenCreateQuoteScreen: () => void;
 }
 
-export const NormalIdea = ({
+export const QuoteIdea = ({
     filter,
     idea,
     isOwner,
@@ -77,6 +77,64 @@ export const NormalIdea = ({
                     handleClickLink={handleClickLink}
                 />
             </View>
+            {idea.childMessage && (
+                <Pressable
+                    style={stylecom.quote_container}
+                    onPress={() => handleOpenIdea(idea.childMessage ? idea.childMessage.id : 0)}
+                >
+                    {idea.childMessage.type === IdeaType.MOOD ? (
+                        <View
+                            style={{
+                                alignSelf: 'flex-start',
+                                flexDirection: 'row',
+                                marginBottom: 10,
+                            }}
+                        >
+                            <View style={{ marginRight: 6 }}>
+                                <View style={[styles.center, { flexGrow: 1 }]}>
+                                    <Text style={{ fontSize: 24 }}>
+                                        {idea.childMessage.message.substring(
+                                            0,
+                                            idea.childMessage.message.indexOf('|')
+                                        )}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={{ paddingVertical: 6, flexShrink: 1 }}>
+                                <MsgTransform
+                                    textStyle={{ ...styles.idea_msg, fontSize: 12 }}
+                                    text={idea.childMessage.message.substring(
+                                        idea.childMessage.message.indexOf('|') + 1
+                                    )}
+                                    handleClickUser={() => {}}
+                                    handleClickHashtag={() => {}}
+                                    handleClickLink={async () => {}}
+                                />
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={{ marginBottom: 10 }}>
+                            <MsgTransform
+                                textStyle={{ ...styles.idea_msg, fontSize: 12 }}
+                                text={idea.childMessage?.message}
+                                handleClickUser={() => {}}
+                                handleClickHashtag={() => {}}
+                                handleClickLink={async () => {}}
+                            />
+                        </View>
+                    )}
+                    <View style={styles.flex_start}>
+                        <Text style={{ ...styles.idea_msg, fontSize: 10 }}>—</Text>
+                        <UserComponent
+                            user={idea.childMessage.user}
+                            anonymous={idea.childMessage.anonymous}
+                            date={idea.childMessage.date}
+                            handleClickUser={() => () => {}}
+                            small
+                        />
+                    </View>
+                </Pressable>
+            )}
             <View
                 style={{
                     ...styles.flex_container,
@@ -132,3 +190,15 @@ export const NormalIdea = ({
         </>
     );
 };
+
+const stylecom = StyleSheet.create({
+    quote_container: {
+        backgroundColor: '#eeeeef',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        marginBottom: 5,
+    },
+});
