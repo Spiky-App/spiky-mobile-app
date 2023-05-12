@@ -183,6 +183,10 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         }
     };
 
+    function OpenCreateQuoteScreen() {
+        navigation.navigate('CreateQuoteScreen', { idea });
+    }
+
     const changeScreen = (screen: string, params?: MessageRequestData) => {
         navigation.pop();
         const targetRoute = navigation
@@ -286,6 +290,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     handleCreateX2Reaction={
                                         !isLoadingReaction ? handleCreateX2Reaction : () => {}
                                     }
+                                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                                 />
                             </View>
                         </View>
@@ -301,11 +306,12 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             style={[styles.button_container, styles.shadow_button]}
                                             onPress={() =>
                                                 navigation.navigate('ReplyIdeaScreen', {
-                                                    message: {
-                                                        ideaId: idea.id,
+                                                    idea: {
+                                                        id: idea.id,
                                                         message: idea.message,
                                                         user: idea.user,
                                                         date: idea.date,
+                                                        type: idea.type,
                                                     },
                                                 })
                                             }

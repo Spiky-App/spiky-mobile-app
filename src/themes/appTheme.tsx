@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     button: {
         borderWidth: 1,
         borderColor: '#01192E',
-        borderRadius: 3,
+        borderRadius: 8,
         paddingHorizontal: 16,
         paddingVertical: 8,
         alignItems: 'center',

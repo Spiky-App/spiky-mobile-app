@@ -17,7 +17,7 @@ import { ChatScreen } from '../screens/ChatScreen';
 import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import SocketContext from '../context/Socket/Context';
-import { University, User } from '../types/store';
+import { IdeaType, University, User } from '../types/store';
 import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
 import { setUniversities } from '../store/feature/ui/uiSlice';
@@ -26,6 +26,7 @@ import { CreatePollScreen } from '../screens/CreatePollScreen';
 import { CreateMoodScreen } from '../screens/CreateMoodScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from '../types/storage';
+import { CreateQuoteScreen } from '../screens/CreateQuoteScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -42,11 +43,12 @@ export type RootStackParamList = {
     TermAndConditionsScreen: undefined;
     ReportIdeaScreen: { ideaId: number };
     ReplyIdeaScreen: {
-        message: {
-            ideaId: number;
+        idea: {
+            id: number;
             message: string;
             user: User;
             date: number;
+            type: IdeaType;
         };
     };
     ChatScreen: { conversationId: number; toUser: User };
@@ -54,6 +56,16 @@ export type RootStackParamList = {
     ManifestPart2Screen: { correoValid: string; password: string };
     CreatePollScreen: undefined;
     CreateMoodScreen: undefined;
+    CreateQuoteScreen: {
+        idea: {
+            id: number;
+            message: string;
+            date: number;
+            user: User;
+            type: IdeaType;
+            anonymous: boolean;
+        };
+    };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -166,6 +178,7 @@ export const Navigator = () => {
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
                     <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
                     <Stack.Screen name="CreateMoodScreen" component={CreateMoodScreen} />
+                    <Stack.Screen name="CreateQuoteScreen" component={CreateQuoteScreen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />
