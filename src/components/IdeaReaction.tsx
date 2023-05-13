@@ -23,7 +23,7 @@ interface Props {
     enableEmojiReaction: boolean;
     handleCreateEmojiReaction?: (emoji: string) => void;
     handleCreateX2Reaction?: () => void;
-    OpenCreateQuoteScreen?: () => void;
+    OpenCreateQuoteScreen: () => void;
 }
 export const IdeaReaction = ({
     enableX2Reaction,
@@ -79,7 +79,10 @@ export const IdeaReaction = ({
     }
 
     function handleOpenCreateQuoteScreen() {
-        handleCloseModal(OpenCreateQuoteScreen);
+        handleCloseModal(() => {
+            setModalQuoteAndX2Options(false);
+            OpenCreateQuoteScreen();
+        });
     }
 
     useEffect(() => {

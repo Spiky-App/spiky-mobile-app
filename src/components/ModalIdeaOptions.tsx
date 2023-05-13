@@ -204,17 +204,17 @@ export const ModalIdeaOptions = ({
                                                     setModalOptions={setModalIdeaOptions}
                                                 />
                                             )}
-                                            <QuoteOption
-                                                goToScreen={goToScreen}
-                                                message={message}
-                                            />
-                                            <TrackingOption handleTracking={handleTracking} />
                                             {!message.anonymous && (
                                                 <ReplyIdeagOption
                                                     goToScreen={goToScreen}
                                                     message={message}
                                                 />
                                             )}
+                                            <QuoteOption
+                                                goToScreen={goToScreen}
+                                                message={message}
+                                            />
+                                            <TrackingOption handleTracking={handleTracking} />
                                         </>
                                     )}
                                     <NoLikeOption

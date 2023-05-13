@@ -80,7 +80,7 @@ export const CreateQuoteScreen = ({ route }: Props) => {
                 });
             }
             const messagesUpdated = messages.map((msg: Message) => {
-                if (msg.id === quote.id) {
+                if (msg.id === quote.id && !msg.myX2) {
                     socket?.emit('notify', {
                         id_usuario1: msg.user.id,
                         id_usuario2: user.id,

@@ -24,7 +24,7 @@ interface Props {
     setMessageTrackingId?: (value: number | undefined) => void;
     handleCreateEmojiReaction?: (emoji: string) => void;
     handleCreateX2Reaction?: () => void;
-    OpenCreateQuoteScreen?: () => void;
+    OpenCreateQuoteScreen: () => void;
 }
 
 export const MoodIdea = ({

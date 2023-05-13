@@ -133,8 +133,10 @@ export const IdeaTypes = ({
             );
         default:
             return (
-                <View style={styles.center}>
-                    <Text>Actualiza la aplicación para ver esta publicación.</Text>
+                <View style={{ ...styles.center, paddingBottom: 10 }}>
+                    <Text style={styles.link}>
+                        Actualiza la aplicación para ver esta publicación.
+                    </Text>
                 </View>
             );
     }

@@ -60,10 +60,7 @@ export const ModalQuoteAndX2Options = ({
                                 setModalOptions={setModalQuoteAndX2Options}
                             />
                             <QuoteOption
-                                handleOpenCreateQuoteScreen={() => {
-                                    setModalQuoteAndX2Options(false);
-                                    handleOpenCreateQuoteScreen();
-                                }}
+                                handleOpenCreateQuoteScreen={handleOpenCreateQuoteScreen}
                             />
                         </Animated.View>
                     </TouchableWithoutFeedback>
