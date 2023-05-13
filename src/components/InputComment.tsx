@@ -51,7 +51,7 @@ export const InputComment = ({
     const user = useAppSelector((state: RootState) => state.user);
     const [counter, setCounter] = useState(0);
     const [isDisabled, setDisabled] = useState(true);
-    const [isSuperAnonymous, setIsSuperAnonymous] = useState(true);
+    const [isSuperAnonymous, setIsSuperAnonymous] = useState(isIdeaSuperAnonymous && isOwner);
     const [inputHeight, setInputHeight] = useState(0);
     const { socket } = useContext(SocketContext);
     const { comment } = form;
@@ -180,8 +180,8 @@ export const InputComment = ({
                         onBlur={() => setKeyboardVisible(false)}
                     />
                 </View>
-                {!isIdeaSuperAnonymous && (
-                    <View>
+                {(!isOwner || (!isIdeaSuperAnonymous && isOwner)) && (
+                    <View style={{ paddingBottom: 20 }}>
                         <ButtonIcon
                             icon={faLocationArrow}
                             style={{

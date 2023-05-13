@@ -158,7 +158,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         setIsLoadingReaction(false);
     }
 
-    const handleOpenIdea = async () => {
+    const LoadOpenIdea = async () => {
         const ideaRetrieved = await getIdeaWithComments(ideaId);
         if (ideaRetrieved) {
             const messageRetrived = generateMessageFromMensaje(ideaRetrieved);
@@ -185,6 +185,14 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
 
     function OpenCreateQuoteScreen() {
         navigation.navigate('CreateQuoteScreen', { idea });
+    }
+
+    function handleOpenIdea(id: number) {
+        navigation.pop();
+        navigation.navigate('OpenedIdeaScreen', {
+            ideaId: id,
+            filter: filter,
+        });
     }
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
@@ -235,7 +243,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
 
     useEffect(() => {
         if (ideaId) {
-            handleOpenIdea();
+            LoadOpenIdea();
         }
     }, [ideaId]);
 
