@@ -179,7 +179,7 @@ export const InputComment = ({
                         onBlur={() => setKeyboardVisible(false)}
                     />
                 </View>
-                {(!isOwner || (!isIdeaSuperAnonymous && isOwner)) && (
+                {isKeyboardVisible && (!isOwner || (!isIdeaSuperAnonymous && isOwner)) && (
                     <View style={{ paddingBottom: 20 }}>
                         <ButtonIcon
                             icon={faLocationArrow}
