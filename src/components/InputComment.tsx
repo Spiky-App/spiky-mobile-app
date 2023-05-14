@@ -107,7 +107,6 @@ export const InputComment = ({
             };
             handleNewComment(newComment);
         }
-        isSuperAnonymous && setIsSuperAnonymous(false);
         onChange(DEFAULT_FORM);
         Keyboard.dismiss();
     }
