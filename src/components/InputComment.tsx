@@ -179,8 +179,8 @@ export const InputComment = ({
                         onBlur={() => setKeyboardVisible(false)}
                     />
                 </View>
-                {isKeyboardVisible && (!isOwner || (!isIdeaSuperAnonymous && isOwner)) && (
-                    <View style={{ paddingBottom: 20 }}>
+                {isKeyboardVisible && (
+                    <View>
                         <ButtonIcon
                             icon={faLocationArrow}
                             style={{
@@ -212,7 +212,6 @@ export const InputComment = ({
                     </View>
                 )}
             </View>
-
             {isKeyboardVisible && isIdeaSuperAnonymous && isOwner && (
                 <View style={stylesInputComment.buttons_container}>
                     <ToggleButton
@@ -221,34 +220,6 @@ export const InputComment = ({
                         text={['Super', 'anónimo']}
                         scale={0.9}
                     />
-                    <View style={styles.flex_center}>
-                        {counter <= 40 && (
-                            <Text
-                                style={{
-                                    fontSize: 14,
-                                    fontWeight: '300',
-                                    color: counter < 0 ? '#FC702A' : '#9C9C9C',
-                                    textAlign: 'center',
-                                    paddingRight: 15,
-                                }}
-                            >
-                                {counter}
-                            </Text>
-                        )}
-                        <ButtonIcon
-                            icon={faLocationArrow}
-                            style={{
-                                paddingHorizontal: 10,
-                                justifyContent: 'center',
-                                borderRadius: 100,
-                                height: 36,
-                                width: 36,
-                            }}
-                            iconStyle={{ transform: [{ rotate: '45deg' }] }}
-                            disabled={isDisabled}
-                            onPress={onPressButton}
-                        />
-                    </View>
                 </View>
             )}
         </View>
