@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, Linking, Alert } from 'react-native';
+import { Animated, View, Linking, Alert } from 'react-native';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { styles } from '../themes/appTheme';
-import { IdeaType, Message, User } from '../types/store';
+import { IdeaType, Message, TopicQuestion, User } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { useAnimation } from '../hooks/useAnimation';
@@ -35,36 +35,64 @@ export const Idea = ({ idea, filter }: Props) => {
 
     async function handleCreateEmojiReaction(reaction: string[0]) {
         setIsLoading(true);
-        const wasCreated = await createIdeaReaction(idea.id, reaction, user.id);
+        const ideaSelected =
+            idea.type === IdeaType.X2 && idea.childMessage ? idea.childMessage : idea;
+        const wasCreated = await createIdeaReaction(ideaSelected.id, reaction, user.id);
         if (wasCreated) {
+            socket?.emit('notify', {
+                id_usuario1: ideaSelected.user.id,
+                id_usuario2: user.id,
+                id_mensaje: ideaSelected.id,
+                tipo: 1,
+            });
             const messagesUpdated = messages.map((msg: Message) => {
                 if (msg.id === idea.id) {
-                    socket?.emit('notify', {
-                        id_usuario1: msg.user.id,
-                        id_usuario2: user.id,
-                        id_mensaje: msg.id,
-                        tipo: 1,
-                    });
-                    let isNew = true;
-                    let reactions = msg.reactions.map(r => {
-                        if (r.reaction === reaction) {
-                            isNew = false;
-                            return {
-                                reaction: r.reaction,
-                                count: r.count + 1,
-                            };
-                        } else {
-                            return r;
+                    if (msg.type === IdeaType.X2 && msg.childMessage) {
+                        let isNew = true;
+                        let reactions = msg.childMessage.reactions.map(r => {
+                            if (r.reaction === reaction) {
+                                isNew = false;
+                                return {
+                                    reaction: r.reaction,
+                                    count: r.count + 1,
+                                };
+                            } else {
+                                return r;
+                            }
+                        });
+                        if (isNew) {
+                            reactions = [...reactions, { reaction, count: 1 }];
                         }
-                    });
-                    if (isNew) {
-                        reactions = [...reactions, { reaction, count: 1 }];
+                        return {
+                            ...msg,
+                            childMessage: {
+                                ...msg.childMessage,
+                                reactions,
+                                myReaction: reaction,
+                            },
+                        };
+                    } else {
+                        let isNew = true;
+                        let reactions = msg.reactions.map(r => {
+                            if (r.reaction === reaction) {
+                                isNew = false;
+                                return {
+                                    reaction: r.reaction,
+                                    count: r.count + 1,
+                                };
+                            } else {
+                                return r;
+                            }
+                        });
+                        if (isNew) {
+                            reactions = [...reactions, { reaction, count: 1 }];
+                        }
+                        return {
+                            ...msg,
+                            reactions,
+                            myReaction: reaction,
+                        };
                     }
-                    return {
-                        ...msg,
-                        reactions,
-                        myReaction: reaction,
-                    };
                 } else {
                     return msg;
                 }
@@ -76,21 +104,34 @@ export const Idea = ({ idea, filter }: Props) => {
 
     async function handleCreateX2Reaction() {
         setIsLoading(true);
-        const wasCreated = await createIdea('', IdeaType.X2, idea.id);
+        const ideaSelected =
+            idea.type === IdeaType.X2 && idea.childMessage ? idea.childMessage : idea;
+        const wasCreated = await createIdea('', IdeaType.X2, ideaSelected.id);
         if (wasCreated) {
+            socket?.emit('notify', {
+                id_usuario1: ideaSelected.user.id,
+                id_usuario2: user.id,
+                id_mensaje: ideaSelected.id,
+                tipo: 9,
+            });
             const messagesUpdated = messages.map((msg: Message) => {
                 if (msg.id === idea.id) {
-                    socket?.emit('notify', {
-                        id_usuario1: msg.user.id,
-                        id_usuario2: user.id,
-                        id_mensaje: msg.id,
-                        tipo: 9,
-                    });
-                    return {
-                        ...msg,
-                        totalX2: msg.totalX2 + 1,
-                        myX2: true,
-                    };
+                    if (msg.type === IdeaType.X2 && msg.childMessage) {
+                        return {
+                            ...msg,
+                            childMessage: {
+                                ...msg.childMessage,
+                                totalX2: msg.totalX2 + 1,
+                                myX2: true,
+                            },
+                        };
+                    } else {
+                        return {
+                            ...msg,
+                            totalX2: msg.totalX2 + 1,
+                            myX2: true,
+                        };
+                    }
                 } else {
                     return msg;
                 }
@@ -117,7 +158,10 @@ export const Idea = ({ idea, filter }: Props) => {
     }
 
     function OpenCreateQuoteScreen() {
-        navigation.navigate('CreateQuoteScreen', { idea });
+        setIsLoading(true);
+        const ideaSelected =
+            idea.type === IdeaType.X2 && idea.childMessage ? idea.childMessage : idea;
+        navigation.navigate('CreateQuoteScreen', { idea: ideaSelected });
     }
 
     function changeScreen(screen: string, params?: MessageRequestData) {
@@ -156,6 +200,14 @@ export const Idea = ({ idea, filter }: Props) => {
         });
     }
 
+    function handleClicTopicQuestion(topicQuestion: TopicQuestion | undefined) {
+        if (topicQuestion) {
+            changeScreen('TopicQuestionsScreen', {
+                topicQuestion,
+            });
+        }
+    }
+
     async function handleClickLink(url: string) {
         const supported = await Linking.canOpenURL(url);
         if (supported) {
@@ -171,41 +223,24 @@ export const Idea = ({ idea, filter }: Props) => {
 
     return (
         <View style={styles.center}>
-            <Animated.View style={{ ...stylescom.white_wrap, opacity }}>
-                <View style={stylescom.subwrap}>
-                    <IdeaTypes
-                        idea={idea}
-                        filter={filter}
-                        isOwner={uid === idea.user.id}
-                        handleClickUser={handleClickUser}
-                        handleClickHashtag={handleClickHashtag}
-                        handleClickLink={handleClickLink}
-                        handleOpenIdea={handleOpenIdea}
-                        handleDelete={handleDelete}
-                        isOpenedIdeaScreen={false}
-                        spectatorMode={spectatorMode}
-                        handleCreateEmojiReaction={
-                            !isLoading ? handleCreateEmojiReaction : () => {}
-                        }
-                        handleCreateX2Reaction={!isLoading ? handleCreateX2Reaction : () => {}}
-                        OpenCreateQuoteScreen={OpenCreateQuoteScreen}
-                    />
-                </View>
+            <Animated.View style={[styles.flex_center, { opacity }]}>
+                <IdeaTypes
+                    idea={idea}
+                    filter={filter}
+                    isOwner={uid === idea.user.id}
+                    handleClickUser={handleClickUser}
+                    handleClickHashtag={handleClickHashtag}
+                    handleClickLink={handleClickLink}
+                    handleOpenIdea={handleOpenIdea}
+                    handleDelete={handleDelete}
+                    isOpenedIdeaScreen={false}
+                    spectatorMode={spectatorMode}
+                    handleCreateEmojiReaction={!isLoading ? handleCreateEmojiReaction : () => {}}
+                    handleCreateX2Reaction={!isLoading ? handleCreateX2Reaction : () => {}}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                    handleClicTopicQuestion={handleClicTopicQuestion}
+                />
             </Animated.View>
         </View>
     );
 };
-
-const stylescom = StyleSheet.create({
-    white_wrap: {
-        ...styles.white_wrap,
-        marginVertical: 8,
-        width: '92%',
-    },
-    subwrap: {
-        paddingTop: 15,
-        paddingBottom: 6,
-        paddingHorizontal: 25,
-        borderRadius: 14,
-    },
-});

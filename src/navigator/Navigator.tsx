@@ -17,16 +17,17 @@ import { ChatScreen } from '../screens/ChatScreen';
 import { ChangeForgotPasswordScreen } from '../screens/ChangeForgotPasswordScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import SocketContext from '../context/Socket/Context';
-import { IdeaType, University, User } from '../types/store';
+import { IdeaType, Topic, TopicQuestion, University, User } from '../types/store';
 import useSpikyService from '../hooks/useSpikyService';
 import { ManifestPart2Screen } from '../screens/ManifestPart2Screen';
-import { setUniversities } from '../store/feature/ui/uiSlice';
+import { setTopics, setUniversities } from '../store/feature/ui/uiSlice';
 import { setNotificationsAndNewChatMessagesNumber } from '../store/feature/user/userSlice';
 import { CreatePollScreen } from '../screens/CreatePollScreen';
 import { CreateMoodScreen } from '../screens/CreateMoodScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from '../types/storage';
 import { CreateQuoteScreen } from '../screens/CreateQuoteScreen';
+import { CreateTopicIdeaScreen } from '../screens/CreateTopicIdeaScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -66,6 +67,10 @@ export type RootStackParamList = {
             anonymous: boolean;
         };
     };
+    CreateTopicIdeaScreen: {
+        topicQuestion?: TopicQuestion;
+        topic?: Topic;
+    };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -79,17 +84,29 @@ export const Navigator = () => {
 
     async function handleSessionInfo() {
         if (token) {
-            const unversities = await setSessionInfo();
-            if (unversities) {
-                const universitiesResponse: University[] = unversities.map<University>(
-                    university => ({
-                        id: university.id_universidad,
-                        shortname: university.alias,
-                        color: university.color,
-                        backgroundColor: university.background_color,
-                    })
-                );
-                dispatch(setUniversities(universitiesResponse));
+            const response = await setSessionInfo();
+            if (response) {
+                const { universities, topics } = response;
+                if (universities) {
+                    const universitiesResponse: University[] = universities.map<University>(
+                        university => ({
+                            id: university.id_universidad,
+                            shortname: university.alias,
+                            color: university.color,
+                            backgroundColor: university.background_color,
+                        })
+                    );
+                    dispatch(setUniversities(universitiesResponse));
+                }
+                if (topics) {
+                    const topicsResponse: Topic[] = topics.map<Topic>(topic => ({
+                        id: topic.id_topic,
+                        name: topic.name,
+                        emoji: topic.emoji,
+                        backgroundColor: topic.background_color,
+                    }));
+                    dispatch(setTopics(topicsResponse));
+                }
             }
         }
     }
@@ -178,6 +195,7 @@ export const Navigator = () => {
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
                     <Stack.Screen name="CreatePollScreen" component={CreatePollScreen} />
                     <Stack.Screen name="CreateMoodScreen" component={CreateMoodScreen} />
+                    <Stack.Screen name="CreateTopicIdeaScreen" component={CreateTopicIdeaScreen} />
                     <Stack.Screen name="CreateQuoteScreen" component={CreateQuoteScreen} />
                 </>
             )}

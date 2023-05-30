@@ -48,6 +48,9 @@ import { faPencil } from '@fortawesome/free-solid-svg-icons/faPencil';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons/faUserAstronaut';
 import { faPenFancy } from '@fortawesome/free-solid-svg-icons/faPenFancy';
+import { faComments } from '@fortawesome/free-solid-svg-icons/faComments';
+import { faRotate } from '@fortawesome/free-solid-svg-icons/faRotate';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
 
 export {
     faSliders,
@@ -100,4 +103,7 @@ export {
     faPencil,
     faTrash,
     faPenFancy,
+    faComments,
+    faRotate,
+    faAngleRight,
 };

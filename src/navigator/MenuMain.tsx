@@ -26,6 +26,9 @@ import { menuInfo } from '../constants/navigator';
 import { ConnectionsScreen } from '../screens/ConnectionsScreen';
 import { ChangeAliasScreen } from '../screens/ChangeAliasScreen';
 import { BlacklistScreen } from '../screens/BlacklistScreen';
+import { TopicsScreen } from '../screens/TopicsScreen';
+import { TopicQuestion } from '../types/store';
+import { TopicQuestionsScreen } from '../screens/TopicQuestionsScreen';
 
 export type DrawerParamList = {
     CommunityScreen: undefined;
@@ -42,6 +45,8 @@ export type DrawerParamList = {
     ConnectionsScreen: undefined;
     ChangeAliasScreen: undefined;
     BlacklistScreen: undefined;
+    TopicsScreen: undefined;
+    TopicQuestionsScreen: { topicQuestion: TopicQuestion };
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -67,6 +72,8 @@ export const MenuMain = () => {
             <Drawer.Screen name="MyIdeasScreen" component={MyIdeasScreen} />
             <Drawer.Screen name="TrackingScreen" component={TrackingScreen} />
             <Drawer.Screen name="SearchScreen" component={SearchScreen} />
+            <Drawer.Screen name="TopicsScreen" component={TopicsScreen} />
+            <Drawer.Screen name="TopicQuestionsScreen" component={TopicQuestionsScreen} />
             <Drawer.Screen name="ConnectionsScreen" component={ConnectionsScreen} />
             <Drawer.Screen
                 name="ProfileScreen"

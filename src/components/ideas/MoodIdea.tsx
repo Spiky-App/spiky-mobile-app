@@ -7,9 +7,10 @@ import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
-import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
+import { Pressable } from 'react-native';
 
 interface Props {
     idea: Message;
@@ -25,6 +26,7 @@ interface Props {
     handleCreateEmojiReaction?: (emoji: string) => void;
     handleCreateX2Reaction?: () => void;
     OpenCreateQuoteScreen: () => void;
+    handleGoBack?: () => void;
 }
 
 export const MoodIdea = ({
@@ -41,9 +43,15 @@ export const MoodIdea = ({
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
     OpenCreateQuoteScreen,
+    handleGoBack,
 }: Props) => {
     return (
         <>
+            {handleGoBack && (
+                <Pressable style={styles.arrow_back} onPress={handleGoBack}>
+                    <FontAwesomeIcon icon={faChevronLeft} color={'#D4D4D4'} size={25} />
+                </Pressable>
+            )}
             {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>

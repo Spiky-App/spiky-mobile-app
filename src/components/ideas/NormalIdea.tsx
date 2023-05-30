@@ -1,13 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
-import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
 
@@ -25,6 +25,7 @@ interface Props {
     handleCreateEmojiReaction?: (emoji: string) => void;
     handleCreateX2Reaction?: () => void;
     OpenCreateQuoteScreen: () => void;
+    handleGoBack?: () => void;
 }
 
 export const NormalIdea = ({
@@ -41,9 +42,15 @@ export const NormalIdea = ({
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
     OpenCreateQuoteScreen,
+    handleGoBack,
 }: Props) => {
     return (
         <>
+            {handleGoBack && (
+                <Pressable style={styles.arrow_back} onPress={handleGoBack}>
+                    <FontAwesomeIcon icon={faChevronLeft} color={'#D4D4D4'} size={25} />
+                </Pressable>
+            )}
             {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>

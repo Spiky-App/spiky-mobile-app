@@ -22,9 +22,10 @@ export interface ForgotPasswordResponse {
     msg: string;
 }
 
-export interface UniversityResponse {
+export interface GetSessionInfo {
     ok: boolean;
     universidades: University[];
+    topics: Topic[];
 }
 
 interface University {
@@ -32,6 +33,20 @@ interface University {
     alias: string;
     color: string;
     background_color: string;
+}
+
+interface Topic {
+    id_topic: number;
+    name: string;
+    emoji: string;
+    background_color: string;
+}
+
+export interface TopicQuestion {
+    id_topic_question: number;
+    question: string;
+    topic: Topic;
+    num_mensajes?: number;
 }
 
 export interface GetMessagesResponse {
@@ -59,6 +74,7 @@ export interface Message {
     mi_encuesta_respuesta?: number;
     total_encuesta_respuestas: number;
     mensaje_child?: ChildMessage;
+    topic_question?: TopicQuestion;
     anonymous: boolean;
 }
 
@@ -434,4 +450,12 @@ export interface Mood {
     id_mensaje: number;
     mensaje: string;
     fecha: string;
+}
+
+export interface GetRandomTopicQuestion {
+    topic_question: TopicQuestion;
+}
+
+export interface GetTopicQuestions {
+    topic_questions: TopicQuestion[];
 }

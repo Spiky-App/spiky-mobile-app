@@ -10,19 +10,17 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
     View,
     Pressable,
 } from 'react-native';
 import { Comment } from '../components/Comment';
-import { faChevronLeft } from '../constants/icons/FontAwesome';
 import { styles } from '../themes/appTheme';
 import { FormComment, InputComment } from '../components/InputComment';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Comment as CommentState, IdeaType, Message, User } from '../types/store';
+import { Comment as CommentState, IdeaType, Message, TopicQuestion, User } from '../types/store';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -232,6 +230,18 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         });
     };
 
+    function handleClicTopicQuestion(topicQuestion: TopicQuestion | undefined) {
+        if (topicQuestion) {
+            changeScreen('TopicQuestionsScreen', {
+                topicQuestion,
+            });
+        }
+    }
+
+    function handleGoBack() {
+        navigation.goBack();
+    }
+
     async function handleClickLink(url: string) {
         const supported = await Linking.canOpenURL(url);
         if (supported) {
@@ -262,46 +272,34 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             >
                 {!isLoading ? (
                     <>
-                        <View style={stylescom.wrap}>
-                            <View style={stylescom.subwrap}>
-                                <TouchableOpacity
-                                    style={styles.arrow_back}
-                                    onPress={() => navigation.goBack()}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faChevronLeft}
-                                        color={'#D4D4D4'}
-                                        size={25}
-                                    />
-                                </TouchableOpacity>
-                                <IdeaTypes
-                                    idea={{
-                                        ...idea,
-                                        totalComments,
-                                        messageTrackingId,
-                                        myReaction,
-                                        reactions,
-                                        myX2,
-                                        totalX2,
-                                    }}
-                                    filter={filter || ''}
-                                    isOwner={uid === idea.user.id}
-                                    handleClickUser={handleClickUser}
-                                    handleClickHashtag={handleClickHashtag}
-                                    handleClickLink={handleClickLink}
-                                    handleOpenIdea={handleOpenIdea}
-                                    isOpenedIdeaScreen
-                                    spectatorMode={spectatorMode}
-                                    handleCreateEmojiReaction={
-                                        !isLoadingReaction ? handleCreateEmojiReaction : () => {}
-                                    }
-                                    handleCreateX2Reaction={
-                                        !isLoadingReaction ? handleCreateX2Reaction : () => {}
-                                    }
-                                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
-                                />
-                            </View>
-                        </View>
+                        <IdeaTypes
+                            idea={{
+                                ...idea,
+                                totalComments,
+                                messageTrackingId,
+                                myReaction,
+                                reactions,
+                                myX2,
+                                totalX2,
+                            }}
+                            filter={filter || ''}
+                            isOwner={uid === idea.user.id}
+                            handleClickUser={handleClickUser}
+                            handleClickHashtag={handleClickHashtag}
+                            handleClickLink={handleClickLink}
+                            handleOpenIdea={handleOpenIdea}
+                            isOpenedIdeaScreen
+                            spectatorMode={spectatorMode}
+                            handleCreateEmojiReaction={
+                                !isLoadingReaction ? handleCreateEmojiReaction : () => {}
+                            }
+                            handleCreateX2Reaction={
+                                !isLoadingReaction ? handleCreateX2Reaction : () => {}
+                            }
+                            OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                            handleClicTopicQuestion={handleClicTopicQuestion}
+                            handleGoBack={handleGoBack}
+                        />
                         {idea.myAnswers || idea.myX2 || idea.myReaction || isOwner ? (
                             <>
                                 <View style={stylescom.container_replyPriv}>
