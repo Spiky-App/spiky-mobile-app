@@ -11,22 +11,22 @@ import {
     TextInput,
     View,
 } from 'react-native';
-import { faLocationArrow, faReply, faChevronLeft, faClock } from '../constants/icons/FontAwesome';
+import { faLocationArrow, faReply, faChevronLeft } from '../constants/icons/FontAwesome';
 import { useForm } from '../hooks/useForm';
 import { RootStackParamList } from '../navigator/Navigator';
 import { styles } from '../themes/appTheme';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import ButtonIcon from '../components/common/ButtonIcon';
-import { getTime } from '../helpers/getTime';
 import useSpikyService from '../hooks/useSpikyService';
-import { transformMsg } from '../helpers/transformMsg';
 import SocketContext from '../context/Socket/Context';
-import UniversityTag from '../components/common/UniversityTag';
 import { generateConversationFromConversacion } from '../helpers/conversations';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { RootState } from '../store';
+import UserComponent from '../components/common/UserComponent';
+import MsgTransform from '../components/MsgTransform';
+import { IdeaType } from '../types/store';
 
 type Props = DrawerScreenProps<RootStackParamList, 'ReplyIdeaScreen'>;
 
@@ -38,12 +38,11 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     const [isDisabled, setDisabled] = useState(true);
     const { createChatMsgWithReply } = useSpikyService();
     const { socket } = useContext(SocketContext);
-    const { message, ideaId, user, date } = route.params?.message;
+    const repliedIdea = route.params?.idea;
     const { form, onChange } = useForm({
         messageReply: '',
     });
     const { messageReply } = form;
-    const fecha = getTime(date.toString());
     const MSG_MAX_LENGHT = 200;
     const messageLenght = form.messageReply.length;
 
@@ -53,7 +52,11 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
     async function onPressLocationArrow() {
         setDisabled(true);
-        const content = await createChatMsgWithReply(user.id!!, ideaId, messageReply);
+        const content = await createChatMsgWithReply(
+            repliedIdea.user.id!!,
+            repliedIdea.id,
+            messageReply
+        );
         if (content) {
             const { userto, conver, newConver } = content;
             const converRetrived = generateConversationFromConversacion(conver, uid);
@@ -82,12 +85,12 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
     }, [messageReply]);
 
     return (
-        <BackgroundPaper style={stylecom.container}>
+        <BackgroundPaper>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={stylecom.container}
             >
-                <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                <View style={{ width: '100%%', flex: 1, alignItems: 'center' }}>
                     <View style={stylecom.back_arrow}>
                         <Pressable onPress={() => navigation.goBack()} style={{ paddingRight: 6 }}>
                             <FontAwesomeIcon icon={faChevronLeft} color={'#01192E'} size={22} />
@@ -101,25 +104,54 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             <View style={{ ...stylecom.posAbsolute, top: 10, right: 10 }}>
                                 <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
                             </View>
-                            <View style={styles.flex}>
-                                <Text style={{ ...styles.user, ...styles.textbold }}>
-                                    @{user.nickname}
-                                </Text>
-                                <UniversityTag id={user.universityId} fontSize={13} />
-                                <View style={styles.flex_center}>
-                                    <FontAwesomeIcon
-                                        icon={faClock}
-                                        color={styles.textGray.color}
-                                        size={10}
-                                        style={{ marginLeft: 4, marginRight: 2 }}
-                                    />
-                                    <Text style={[styles.number, styles.textGray]}>{fecha}</Text>
-                                </View>
-                            </View>
+                            <UserComponent
+                                user={repliedIdea.user}
+                                anonymous={false}
+                                date={repliedIdea.date}
+                                handleClickUser={() => {}}
+                            />
                             <View style={{ paddingTop: 8 }}>
-                                <Text style={{ ...styles.text, fontSize: 13 }}>
-                                    {transformMsg(message)}
-                                </Text>
+                                {repliedIdea.type === IdeaType.MOOD ? (
+                                    <View
+                                        style={{
+                                            alignSelf: 'flex-start',
+                                            flexDirection: 'row',
+                                            marginBottom: 10,
+                                        }}
+                                    >
+                                        <View style={{ marginRight: 6 }}>
+                                            <View style={[styles.center, { flexGrow: 1 }]}>
+                                                <Text style={{ fontSize: 24 }}>
+                                                    {repliedIdea.message.substring(
+                                                        0,
+                                                        repliedIdea.message.indexOf('|')
+                                                    )}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={{ paddingVertical: 6, flexShrink: 1 }}>
+                                            <MsgTransform
+                                                textStyle={{ ...styles.idea_msg, fontSize: 12 }}
+                                                text={repliedIdea.message.substring(
+                                                    repliedIdea.message.indexOf('|') + 1
+                                                )}
+                                                handleClickUser={() => {}}
+                                                handleClickHashtag={() => {}}
+                                                handleClickLink={async () => {}}
+                                            />
+                                        </View>
+                                    </View>
+                                ) : (
+                                    <View style={{ marginBottom: 10 }}>
+                                        <MsgTransform
+                                            textStyle={{ ...styles.idea_msg, fontSize: 12 }}
+                                            text={repliedIdea.message}
+                                            handleClickUser={() => {}}
+                                            handleClickHashtag={() => {}}
+                                            handleClickLink={async () => {}}
+                                        />
+                                    </View>
+                                )}
                             </View>
                         </View>
                         <View style={stylecom.containerInput}>
@@ -192,7 +224,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
 
 const stylecom = StyleSheet.create({
     container: {
-        width: '95%',
+        width: '92%',
         flex: 1,
         marginTop: 15,
         marginHorizontal: 20,
@@ -207,9 +239,11 @@ const stylecom = StyleSheet.create({
     msgContainer: {
         width: '100%',
         backgroundColor: styles.button_container.backgroundColor,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        borderRadius: 10,
         paddingHorizontal: 20,
-        paddingVertical: 15,
-        borderRadius: 4,
+        paddingVertical: 10,
     },
     posAbsolute: {
         position: 'absolute',

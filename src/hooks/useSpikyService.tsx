@@ -34,8 +34,10 @@ import {
     UserI,
     UserInfo,
     X2Reaction,
+    TopicQuestion as TopicQuestionSP,
 } from '../types/services/spiky';
-import { Toast } from '../types/store';
+import { Toast, TopicQuestion } from '../types/store';
+import { topicQuestionRetrived } from '../helpers/message';
 
 function useSpikyService() {
     const config = useAppSelector((state: RootState) => state.serviceConfig.config);
@@ -76,10 +78,12 @@ function useSpikyService() {
     async function logOutFunction() {
         try {
             const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-            if (deviceTokenStorage) {
-                await service.deleteDeviceToken(deviceTokenStorage);
+            const sessionIdStorage = await AsyncStorage.getItem(StorageKeys.SESSION_ID);
+            if (deviceTokenStorage && sessionIdStorage) {
+                await service.logout(deviceTokenStorage, Number(sessionIdStorage));
             }
             await AsyncStorage.removeItem(StorageKeys.TOKEN);
+            await AsyncStorage.removeItem(StorageKeys.SESSION_ID);
             dispatch(restartConfig());
             dispatch(signOut());
             dispatch(removeUser());
@@ -92,10 +96,11 @@ function useSpikyService() {
     const createMessageComment = async (
         messageId: number,
         uid: number,
-        comment: string
+        comment: string,
+        anonymous: boolean
     ): Promise<MessageComment | undefined> => {
         try {
-            const response = await service.createMessageComment(messageId, uid, comment);
+            const response = await service.createMessageComment(messageId, uid, comment, anonymous);
             return response.data.respuesta;
         } catch (error) {
             console.log(error);
@@ -277,14 +282,16 @@ function useSpikyService() {
         message: string,
         type: number = 0,
         childMessageId?: number,
-        isSuperAnonymous?: boolean
+        isSuperAnonymous?: boolean,
+        topicQuestionId?: number
     ): Promise<Message | undefined> => {
         try {
             const response = await service.createMessage(
                 message,
                 type,
                 childMessageId,
-                isSuperAnonymous
+                isSuperAnonymous,
+                topicQuestionId
             );
             return response.data.mensaje;
         } catch (error) {
@@ -615,8 +622,8 @@ function useSpikyService() {
 
     const setSessionInfo = async () => {
         try {
-            const response = await service.getUniversities();
-            return response.data.universidades;
+            const response = await service.getSessionInfo();
+            return { universities: response.data.universidades, topics: response.data.topics };
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando universidades.')));
@@ -805,6 +812,58 @@ function useSpikyService() {
         }
     };
 
+    const getRandomTopicQuestion = async (
+        topicId: number
+    ): Promise<{
+        topicQuestion?: TopicQuestion;
+        networkError?: boolean;
+    }> => {
+        try {
+            const response = await service.getRandomTopicQuestion(topicId);
+            return { topicQuestion: topicQuestionRetrived(response.data.topic_question) };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
+            return {};
+        }
+    };
+
+    const getTopicQuestions = async (
+        topicId?: number
+    ): Promise<{
+        topic_questions: TopicQuestionSP[];
+        networkError?: boolean;
+    }> => {
+        try {
+            const response = await service.getTopicQuestions(topicId);
+            return { topic_questions: response.data.topic_questions };
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                if (error.message === 'Network Error' || error.message.startsWith('timeout')) {
+                    return { topic_questions: [], networkError: true };
+                } else {
+                    dispatch(
+                        addToast(handleSpikyServiceToast(error, 'Error cargando información.'))
+                    );
+                }
+            } else {
+                dispatch(addToast(handleSpikyServiceToast(error, 'Error cargando información.')));
+            }
+            return { topic_questions: [] };
+        }
+    };
+
     return {
         createMessageComment,
         createReport,
@@ -851,6 +910,8 @@ function useSpikyService() {
         getX2Rections,
         updateMood,
         getMoodHistory,
+        getRandomTopicQuestion,
+        getTopicQuestions,
     };
 }
 

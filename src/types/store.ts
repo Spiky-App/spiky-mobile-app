@@ -62,6 +62,7 @@ export interface Message {
     myAnswers?: number;
     totalAnswers: number;
     childMessage?: ChildMessage;
+    topicQuestion?: TopicQuestion;
     anonymous: boolean;
 }
 
@@ -83,6 +84,13 @@ export interface ChildMessage {
     myAnswers?: number;
     totalAnswers: number;
     anonymous: boolean;
+}
+
+export interface TopicQuestion {
+    id: number;
+    question: string;
+    topic: Topic;
+    totalIdeas?: number;
 }
 
 export interface ReactionCount {
@@ -116,6 +124,7 @@ export interface Comment {
     user: User;
     reactions: ReactionCount[];
     myReaction?: string;
+    anonymous: boolean;
 }
 
 export interface Notification {
@@ -208,6 +217,7 @@ export enum IdeaType {
     X2,
     QUOTE,
     MOOD,
+    TOPIC,
 }
 
 export interface Mood {
@@ -215,4 +225,11 @@ export interface Mood {
     mood: string;
     emoji: string;
     date: string;
+}
+
+export interface Topic {
+    id: number;
+    name: string;
+    emoji: string;
+    backgroundColor: string;
 }

@@ -8,9 +8,10 @@ interface Props {
     isActive: boolean;
     setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
     text: string[];
+    scale?: number;
 }
 
-function ToggleButton({ isActive, setIsActive, text }: Props) {
+function ToggleButton({ isActive, setIsActive, text, scale = 1 }: Props) {
     const { position, movingPosition } = useAnimation({
         init_position: 22,
     });
@@ -24,7 +25,7 @@ function ToggleButton({ isActive, setIsActive, text }: Props) {
     }, [isActive]);
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', transform: [{ scale }] }}>
             <Pressable
                 style={[stylescomp.container, isActive && { backgroundColor: styles.orange.color }]}
                 onPress={() => {

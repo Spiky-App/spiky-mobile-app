@@ -18,6 +18,7 @@ function generateCommentFromComentario(comentario: Comentario): Comment {
             universityId: comentario.usuario.id_universidad,
         },
         myReaction: comentario.mi_resp_reaccion,
+        anonymous: comentario.anonymous,
     };
 }
 
