@@ -30,6 +30,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
+import { useAnimation } from '../hooks/useAnimation';
+import { Animated } from 'react-native';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 type Props = DrawerScreenProps<RootStackParamList, 'CreateTopicIdeaScreen'>;
@@ -52,6 +54,9 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
     const IDEA_MAX_LENGHT = 220;
     const user = useAppSelector((state: RootState) => state.user);
     const { socket } = useContext(SocketContext);
+    const { movingPosition, position } = useAnimation({
+        init_position: 0,
+    });
 
     function invalid() {
         const { message: mensaje } = form;
@@ -135,6 +140,14 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
         setLoading(false);
     }
 
+    function handleBoucingInAnimation() {
+        movingPosition(-100, 0, 600);
+    }
+
+    function handleBoucingOutAnimation() {
+        movingPosition(0, 100, 600, handleGetRandomTopicQuestion);
+    }
+
     useEffect(() => {
         const { message: mensaje } = form;
         setCounter(IDEA_MAX_LENGHT - mensaje.length);
@@ -143,8 +156,10 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
     useEffect(() => {
         if (!topicQuestion) {
             handleGetRandomTopicQuestion();
+        } else {
+            handleBoucingInAnimation();
         }
-    }, [topicQuestion, topic]);
+    }, [topicQuestion]);
 
     const messageLenght = form.message.length;
 
@@ -180,7 +195,14 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
                                 </Text>
                             </View>
                             {topicQuestion && !isLoading && (
-                                <Text style={styles.idea_msg}>{topicQuestion?.question}</Text>
+                                <Animated.View
+                                    style={[
+                                        stylecom.question_container,
+                                        { transform: [{ translateY: position }] },
+                                    ]}
+                                >
+                                    <Text style={styles.idea_msg}>{topicQuestion?.question}</Text>
+                                </Animated.View>
                             )}
                             {networkError && (
                                 <Text style={[styles.textGray, { fontSize: 14 }]}>
@@ -299,7 +321,7 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
                                 <ButtonIcon
                                     disabled={isLoading}
                                     icon={faRotate}
-                                    onPress={handleGetRandomTopicQuestion}
+                                    onPress={handleBoucingOutAnimation}
                                 />
                             </View>
                             <ButtonIcon
@@ -323,19 +345,37 @@ const stylecom = StyleSheet.create({
         marginTop: 15,
         marginBottom: 10,
         marginHorizontal: 20,
+        position: 'relative',
     },
     wrap_topic: {
         ...styles.shadow,
         flex: 1,
         borderRadius: 14,
         width: '100%',
+        position: 'relative',
     },
     topic: {
         ...styles.flex_start,
         width: '100%',
         paddingHorizontal: 15,
-        paddingVertical: 20,
-        alignSelf: 'flex-start',
+        marginVertical: 10,
+        height: 80,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    question_container: {
+        ...styles.flex_start,
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        flex: 1,
+    },
+    question_subcontainer: {
+        width: '100%',
+        position: 'absolute',
+        backgroundColor: 'red',
+        bottom: '100%',
+        zIndex: 2,
     },
     wrap: {
         ...styles.shadow,

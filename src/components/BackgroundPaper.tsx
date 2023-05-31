@@ -40,6 +40,7 @@ const stylescom = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative',
     },
     container: {
         flex: 1,
