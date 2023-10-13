@@ -20,7 +20,6 @@ import { faLocationArrow, faFlagCheckered, faChevronLeft } from '../constants/ic
 import { useNavigation } from '@react-navigation/native';
 import { useAnimation } from '../hooks/useAnimation';
 import useSpikyService from '../hooks/useSpikyService';
-import { Idea } from '../types/store';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
@@ -30,6 +29,7 @@ import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import ToggleButton from '../components/common/ToggleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Idea } from '../types/store';
 
 type NavigationDrawerProp = DrawerNavigationProp<DrawerParamList>;
 interface Form {
@@ -137,7 +137,7 @@ export const CreatePollScreen = () => {
         });
         const mensaje = await createPoll(question, answers_array, isSuperAnonymous);
         if (mensaje) {
-            const createdMessage: Message = generateMessageFromMensaje({
+            const createdMessage: Idea = generateMessageFromMensaje({
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
