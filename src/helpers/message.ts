@@ -1,15 +1,15 @@
 import {
-    Message as Mensaje,
+    Idea as Mensaje,
     ReactionCount as ReaccionesCount,
     AnswerCount as RespuestasCount,
     Comment as Comentario,
     ChildMessage as MensajeChild,
     TopicQuestion,
 } from '../types/services/spiky';
-import { AnswerCount, Comment, Message, ReactionCount } from '../types/store';
+import { AnswerCount, Comment, Idea, ReactionCount } from '../types/store';
 import { generateCommentFromComentario } from './comment';
 
-function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Message {
+function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Idea {
     const messageTrackingId: number | undefined = mensaje?.trackings?.find(
         (tracking, index) => index === 0
     )?.id_tracking;

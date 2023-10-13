@@ -42,14 +42,12 @@ export const ModalFiltersTopics = ({
                         <View style={stylescomp.container}>
                             <View style={{ ...styles.flex, justifyContent: 'space-between' }}>
                                 <Text style={{ ...styles.text, ...styles.h3 }}>
-                                    Tópicos
+                                    Categorías
                                     <Text style={styles.orange}>.</Text>
                                 </Text>
                             </View>
 
-                            <Text style={{ ...styles.text, ...styles.textGray, marginTop: 10 }}>
-                                Hablemos de:
-                            </Text>
+                            <Text style={{ ...styles.textGray, marginTop: 10 }}>Hablemos de:</Text>
 
                             <View style={{ marginLeft: 20, marginTop: 15 }}>
                                 <TouchableOpacity

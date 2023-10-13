@@ -122,6 +122,23 @@ export const IdeasHeader = ({
                 )}
 
                 {topicQuestion && (
+                    <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
+                        <TouchableHighlight
+                            style={stylecom.answerContainer}
+                            underlayColor="#01192E"
+                            onPress={() =>
+                                navigation.navigate('CreateTopicIdeaScreen', {
+                                    topicQuestion,
+                                    topic: topicQuestion.topic,
+                                })
+                            }
+                        >
+                            <Text style={stylecom.answerText}>Contestar</Text>
+                        </TouchableHighlight>
+                    </View>
+                )}
+
+                {topicQuestion && (
                     <View style={[styles.flex_center, { width: '100%' }]}>
                         <View
                             style={[
@@ -227,11 +244,25 @@ const stylecom = StyleSheet.create({
         alignItems: 'center',
         width: 100,
     },
+    answerContainer: {
+        ...styles.shadow_button,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        paddingHorizontal: 12,
+        paddingVertical: 3,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     filterText: {
         ...styles.text,
         fontSize: 15,
         fontWeight: '500',
         marginLeft: 8,
+    },
+    answerText: {
+        ...styles.text,
+        fontSize: 15,
+        fontWeight: '500',
     },
     flexCenter: {
         flexDirection: 'row',
@@ -256,7 +287,6 @@ const stylecom = StyleSheet.create({
     },
     topic: {
         ...styles.shadow,
-
         ...styles.flex_center,
         borderRadius: 14,
         paddingHorizontal: 15,

@@ -20,7 +20,7 @@ import { faLocationArrow, faFlagCheckered, faChevronLeft } from '../constants/ic
 import { useNavigation } from '@react-navigation/native';
 import { useAnimation } from '../hooks/useAnimation';
 import useSpikyService from '../hooks/useSpikyService';
-import { Message } from '../types/store';
+import { Idea } from '../types/store';
 import { generateMessageFromMensaje } from '../helpers/message';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';

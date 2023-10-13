@@ -86,7 +86,7 @@ export const ConfigurationScreen = () => {
 
                         <View style={{ marginVertical: 30 }}>
                             <View style={stylescom.longContainer}>
-                                <Text style={{ ...styles.text, ...styles.h5 }}>@seudónimo:</Text>
+                                <Text style={{ ...styles.text, ...styles.h5 }}>seudónimo:</Text>
                                 <View style={{ ...styles.input, width: 190, marginLeft: 15 }}>
                                     <Text style={{ ...styles.text }}>{nickname}</Text>
                                 </View>

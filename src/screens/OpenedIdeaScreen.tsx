@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { RootStackParamList } from '../navigator/Navigator';
-import { Comment as CommentState, IdeaType, Message, TopicQuestion, User } from '../types/store';
+import { Comment as CommentState, IdeaType, Idea, TopicQuestion, User } from '../types/store';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { useForm } from '../hooks/useForm';
 import { BackgroundPaper } from '../components/BackgroundPaper';
@@ -38,7 +38,7 @@ const DEFAULT_FORM: FormComment = {
     comment: '',
 };
 
-const initialMessage: Message = {
+const initialMessage: Idea = {
     id: 0,
     message: '',
     date: 0,
@@ -68,7 +68,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
     const { top, bottom } = useSafeAreaInsets();
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingReaction, setIsLoadingReaction] = useState(false);
-    const [idea, setIdea] = useState<Message>(initialMessage);
+    const [idea, setIdea] = useState<Idea>(initialMessage);
     const [totalComments, setTotalComments] = useState<number>(idea.totalComments);
     const [myReaction, setMyReaction] = useState<string | undefined>(idea.myReaction);
     const [reactions, setReactions] = useState<ReactionCount[]>(idea.reactions);
@@ -112,7 +112,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             }
             setMyReaction(reaction);
             setReactions(reactionsRetrieved);
-            const messagesUpdated = messages.map((msg: Message) => {
+            const messagesUpdated = messages.map((msg: Idea) => {
                 if (msg.id === idea.id) {
                     return {
                         ...msg,
@@ -132,7 +132,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         setIsLoadingReaction(true);
         const wasCreated = await createIdea('', IdeaType.X2, idea.id);
         if (wasCreated) {
-            const messagesUpdated = messages.map((msg: Message) => {
+            const messagesUpdated = messages.map((msg: Idea) => {
                 if (msg.id === idea.id) {
                     socket?.emit('notify', {
                         id_usuario1: msg.user.id,
@@ -299,6 +299,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                             OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                             handleClicTopicQuestion={handleClicTopicQuestion}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={() => {}}
                         />
                         {idea.myAnswers || idea.myX2 || idea.myReaction || isOwner ? (
                             <>

@@ -67,6 +67,7 @@ export const InputComment = ({
             id_mensaje: messageId,
             id_respuesta: newComment.id,
             tipo: 2,
+            is_anonymous: isSuperAnonymous,
         });
 
         const regexp = /(@\[@\w*\]\(\d*\))/g;

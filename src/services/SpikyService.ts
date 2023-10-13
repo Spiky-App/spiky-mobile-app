@@ -155,7 +155,7 @@ class SpikyService {
     }
 
     updateNotifications(arrayIds: number[]) {
-        return this.instance.put<UpdateNotifications>(`notif`, { id_notificaciones: arrayIds });
+        return this.instance.put<UpdateNotifications>(`notif`, { id_notifications: arrayIds });
     }
 
     getUserInfo() {

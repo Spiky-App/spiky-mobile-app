@@ -51,6 +51,10 @@ import { faPenFancy } from '@fortawesome/free-solid-svg-icons/faPenFancy';
 import { faComments } from '@fortawesome/free-solid-svg-icons/faComments';
 import { faRotate } from '@fortawesome/free-solid-svg-icons/faRotate';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
+import { faCircleHalfStroke } from '@fortawesome/free-solid-svg-icons/faCircleHalfStroke';
+import { faComment } from '@fortawesome/free-solid-svg-icons/faComment';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp';
 
 export {
     faSliders,
@@ -106,4 +110,8 @@ export {
     faComments,
     faRotate,
     faAngleRight,
+    faCircleHalfStroke,
+    faComment,
+    faChevronDown,
+    faChevronUp,
 };

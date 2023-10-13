@@ -17,7 +17,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
-import { IdeaType, Message } from '../types/store';
+import { IdeaType, Idea } from '../types/store';
 import ToggleButton from '../components/common/ToggleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { setModalAlert } from '../store/feature/ui/uiSlice';
@@ -60,7 +60,7 @@ export const CreateQuoteScreen = ({ route }: Props) => {
         const mensaje = await createIdea(form.message, IdeaType.QUOTE, quote.id, isSuperAnonymous);
 
         if (mensaje) {
-            const createdMessage: Message = generateMessageFromMensaje({
+            const createdMessage: Idea = generateMessageFromMensaje({
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
@@ -79,7 +79,7 @@ export const CreateQuoteScreen = ({ route }: Props) => {
                     tipo: 4,
                 });
             }
-            const messagesUpdated = messages.map((msg: Message) => {
+            const messagesUpdated = messages.map((msg: Idea) => {
                 if (msg.id === quote.id && !msg.myX2) {
                     socket?.emit('notify', {
                         id_usuario1: msg.user.id,
@@ -268,7 +268,7 @@ export const CreateQuoteScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            marginTop: 10,
+                            paddingVertical: 10,
                         }}
                     >
                         <ToggleButton
@@ -305,6 +305,7 @@ const stylecom = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 25,
         paddingVertical: 20,
+        paddingBottom: 32,
         overflow: 'scroll',
     },
     circleButton: {

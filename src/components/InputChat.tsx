@@ -241,6 +241,7 @@ const stylesInputChat = StyleSheet.create({
         left: 0,
         right: 0,
         width: '100%',
+        paddingHorizontal: 15,
     },
     container: {
         backgroundColor: '#E6E6E6',

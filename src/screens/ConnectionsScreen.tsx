@@ -20,7 +20,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { ChatMessage, Conversation, User } from '../types/store';
-import { faCircleNodes } from '../constants/icons/FontAwesome';
+import { faComment } from '../constants/icons/FontAwesome';
 import { generateConversationFromConversacion } from '../helpers/conversations';
 import NetworkErrorFeed from '../components/NetworkErrorFeed';
 
@@ -119,17 +119,12 @@ export const ConnectionsScreen = () => {
 
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
-            <IdeasHeader
-                title={'Conexiones'}
-                connections={true}
-                icon={faCircleNodes}
-                blocked_user={''}
-            />
+            <IdeasHeader title={'Chat'} connections={true} icon={faComment} blocked_user={''} />
             {networkError ? (
                 <NetworkErrorFeed callback={loadConversations} />
             ) : conversations?.length !== 0 ? (
                 <FlatList
-                    style={{ width: '92%' }}
+                    style={{ width: '100%' }}
                     data={conversations}
                     renderItem={({ item }) => (
                         <ConversationItem
@@ -180,7 +175,7 @@ const ConversationItem = ({ conver, uid, onOpenConversation }: ConversationItemP
                         ]}
                     >
                         <View style={{ ...styles.flex, alignItems: 'center' }}>
-                            <Text style={{ ...styles.user, fontSize: 15 }}>@{toUser.nickname}</Text>
+                            <Text style={{ ...styles.user, fontSize: 15 }}>{toUser.nickname}</Text>
                             <UniversityTag id={toUser.universityId} fontSize={14} />
                             <View
                                 style={{
@@ -212,6 +207,7 @@ const stylescomp = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 20,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     converContainer: {
         ...styles.shadow,
@@ -223,7 +219,7 @@ const stylescomp = StyleSheet.create({
         paddingLeft: 12,
         paddingRight: 28,
         paddingVertical: 24,
-        flex: 1,
+        width: '94%',
     },
     date: {
         ...styles.textGray,

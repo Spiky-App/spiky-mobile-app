@@ -22,7 +22,7 @@ import {
     GetChatMessages,
     HashtagI,
     LoginResponse,
-    Message,
+    Idea,
     MessageComment,
     MessageWithReplyContent,
     Mood,
@@ -284,7 +284,7 @@ function useSpikyService() {
         childMessageId?: number,
         isSuperAnonymous?: boolean,
         topicQuestionId?: number
-    ): Promise<Message | undefined> => {
+    ): Promise<Idea | undefined> => {
         try {
             const response = await service.createMessage(
                 message,
@@ -305,7 +305,7 @@ function useSpikyService() {
         message: string,
         id: number,
         post: boolean
-    ): Promise<Message | undefined> => {
+    ): Promise<Idea | undefined> => {
         try {
             const response = await service.updateDraft(message, id, post);
             return response.data.mensaje;
@@ -358,7 +358,7 @@ function useSpikyService() {
     const retrieveNotifications = async (): Promise<Notification[]> => {
         try {
             const response = await service.getNotifications();
-            return response.data.notificaciones;
+            return response.data.notifications;
         } catch (error) {
             console.log(error);
             dispatch(addToast(handleSpikyServiceToast(error, 'Error al obtener notificaciones.')));
@@ -403,7 +403,7 @@ function useSpikyService() {
         return [];
     };
 
-    const getIdeaWithComments = async (messageId: number): Promise<Message | undefined> => {
+    const getIdeaWithComments = async (messageId: number): Promise<Idea | undefined> => {
         try {
             const response = await service.getMessageAndComments(messageId);
             return { ...response.data.mensaje };
@@ -474,7 +474,7 @@ function useSpikyService() {
         filter: string,
         lastMessageId: number | undefined,
         parameters: MessageRequestData
-    ): Promise<{ messages: Message[]; networkError?: boolean; mood?: string }> => {
+    ): Promise<{ messages: Idea[]; networkError?: boolean; mood?: string }> => {
         try {
             const response = await service.getMessages(filter, lastMessageId, parameters);
             return { messages: response.data.mensajes, mood: response.data.mood };
@@ -680,7 +680,7 @@ function useSpikyService() {
         question: string,
         answers: string[],
         isSuperAnonymous: boolean
-    ): Promise<Message | undefined> => {
+    ): Promise<Idea | undefined> => {
         try {
             const response = await service.createPoll(question, answers, isSuperAnonymous);
             return response.data.mensaje;
@@ -777,7 +777,7 @@ function useSpikyService() {
         }
     };
 
-    const updateMood = async (emoji: string, mood: string): Promise<Message | undefined> => {
+    const updateMood = async (emoji: string, mood: string): Promise<Idea | undefined> => {
         try {
             const response = await service.updateMood(emoji, mood);
             return response.data.mensaje;
@@ -820,7 +820,11 @@ function useSpikyService() {
     }> => {
         try {
             const response = await service.getRandomTopicQuestion(topicId);
-            return { topicQuestion: topicQuestionRetrived(response.data.topic_question) };
+            if (response.data.topic_question) {
+                return { topicQuestion: topicQuestionRetrived(response.data.topic_question) };
+            } else {
+                return {};
+            }
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError) {

@@ -99,101 +99,105 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             Crear réplica<Text style={styles.orange}>.</Text>
                         </Text>
                     </View>
-                    <View style={stylecom.wrap}>
-                        <View style={stylecom.msgContainer}>
-                            <View style={{ ...stylecom.posAbsolute, top: 10, right: 10 }}>
-                                <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
-                            </View>
-                            <UserComponent
-                                user={repliedIdea.user}
-                                anonymous={false}
-                                date={repliedIdea.date}
-                                handleClickUser={() => {}}
-                            />
-                            <View style={{ paddingTop: 8 }}>
-                                {repliedIdea.type === IdeaType.MOOD ? (
-                                    <View
-                                        style={{
-                                            alignSelf: 'flex-start',
-                                            flexDirection: 'row',
-                                            marginBottom: 10,
-                                        }}
-                                    >
-                                        <View style={{ marginRight: 6 }}>
-                                            <View style={[styles.center, { flexGrow: 1 }]}>
-                                                <Text style={{ fontSize: 24 }}>
-                                                    {repliedIdea.message.substring(
-                                                        0,
-                                                        repliedIdea.message.indexOf('|')
+                    <View style={stylecom.wrap_reply}>
+                        <View style={stylecom.reply}>
+                            <View style={stylecom.msgContainer}>
+                                <View style={{ ...stylecom.posAbsolute, top: 10, right: 10 }}>
+                                    <FontAwesomeIcon icon={faReply} color={'#bebebe'} size={18} />
+                                </View>
+                                <UserComponent
+                                    user={repliedIdea.user}
+                                    anonymous={false}
+                                    date={repliedIdea.date}
+                                    handleClickUser={() => {}}
+                                />
+                                <View style={{ paddingTop: 8 }}>
+                                    {repliedIdea.type === IdeaType.MOOD ? (
+                                        <View
+                                            style={{
+                                                alignSelf: 'flex-start',
+                                                flexDirection: 'row',
+                                                marginBottom: 10,
+                                            }}
+                                        >
+                                            <View style={{ marginRight: 6 }}>
+                                                <View style={[styles.center, { flexGrow: 1 }]}>
+                                                    <Text style={{ fontSize: 24 }}>
+                                                        {repliedIdea.message.substring(
+                                                            0,
+                                                            repliedIdea.message.indexOf('|')
+                                                        )}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                            <View style={{ paddingVertical: 6, flexShrink: 1 }}>
+                                                <MsgTransform
+                                                    textStyle={styles.idea_msg}
+                                                    text={repliedIdea.message.substring(
+                                                        repliedIdea.message.indexOf('|') + 1
                                                     )}
-                                                </Text>
+                                                    handleClickUser={() => {}}
+                                                    handleClickHashtag={() => {}}
+                                                    handleClickLink={async () => {}}
+                                                />
                                             </View>
                                         </View>
-                                        <View style={{ paddingVertical: 6, flexShrink: 1 }}>
+                                    ) : (
+                                        <View style={{ marginBottom: 10 }}>
                                             <MsgTransform
-                                                textStyle={{ ...styles.idea_msg, fontSize: 12 }}
-                                                text={repliedIdea.message.substring(
-                                                    repliedIdea.message.indexOf('|') + 1
-                                                )}
+                                                textStyle={styles.idea_msg}
+                                                text={repliedIdea.message}
                                                 handleClickUser={() => {}}
                                                 handleClickHashtag={() => {}}
                                                 handleClickLink={async () => {}}
                                             />
                                         </View>
-                                    </View>
-                                ) : (
-                                    <View style={{ marginBottom: 10 }}>
-                                        <MsgTransform
-                                            textStyle={{ ...styles.idea_msg, fontSize: 12 }}
-                                            text={repliedIdea.message}
-                                            handleClickUser={() => {}}
-                                            handleClickHashtag={() => {}}
-                                            handleClickLink={async () => {}}
-                                        />
-                                    </View>
-                                )}
+                                    )}
+                                </View>
                             </View>
                         </View>
-                        <View style={stylecom.containerInput}>
-                            <TextInput
-                                placeholder="Escribe algo..."
-                                placeholderTextColor="#707070"
-                                style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
-                                multiline={true}
-                                onChangeText={value => onChange({ messageReply: value })}
-                                autoFocus
-                            />
-                            <View style={stylecom.WrapAbsoluteCenter}>
-                                <View style={stylecom.WrapperMaxCounterNIdea}>
-                                    <View style={stylecom.ConteMaxCounterNIdea}>
-                                        <View style={stylecom.MaxCounterNIdea}></View>
-                                        {counter <= 40 && (
-                                            <Text
-                                                style={
+                        <View style={stylecom.wrap}>
+                            <View style={stylecom.containerInput}>
+                                <TextInput
+                                    placeholder="Escribe algo..."
+                                    placeholderTextColor="#707070"
+                                    style={{ ...styles.textinput, fontSize: 16, fontWeight: '300' }}
+                                    multiline={true}
+                                    onChangeText={value => onChange({ messageReply: value })}
+                                    autoFocus
+                                />
+                                <View style={stylecom.WrapAbsoluteCenter}>
+                                    <View style={stylecom.WrapperMaxCounterNIdea}>
+                                        <View style={stylecom.ConteMaxCounterNIdea}>
+                                            <View style={stylecom.MaxCounterNIdea}></View>
+                                            {counter <= 40 && (
+                                                <Text
+                                                    style={
+                                                        counter < 0
+                                                            ? stylecom.MaxCounterTextNIdeaRed
+                                                            : stylecom.MaxCounterTextNIdea
+                                                    }
+                                                >
+                                                    {counter}
+                                                </Text>
+                                            )}
+                                            <View
+                                                style={[
                                                     counter < 0
-                                                        ? stylecom.MaxCounterTextNIdeaRed
-                                                        : stylecom.MaxCounterTextNIdea
-                                                }
-                                            >
-                                                {counter}
-                                            </Text>
-                                        )}
-                                        <View
-                                            style={[
-                                                counter < 0
-                                                    ? stylecom.MaxCounterNIdeaColorRed
-                                                    : stylecom.MaxCounterNIdeaColor,
-                                                {
-                                                    width:
-                                                        getPercentage(
-                                                            messageLenght < MSG_MAX_LENGHT
-                                                                ? messageLenght
-                                                                : MSG_MAX_LENGHT,
-                                                            MSG_MAX_LENGHT
-                                                        ) + '%',
-                                                },
-                                            ]}
-                                        />
+                                                        ? stylecom.MaxCounterNIdeaColorRed
+                                                        : stylecom.MaxCounterNIdeaColor,
+                                                    {
+                                                        width:
+                                                            getPercentage(
+                                                                messageLenght < MSG_MAX_LENGHT
+                                                                    ? messageLenght
+                                                                    : MSG_MAX_LENGHT,
+                                                                MSG_MAX_LENGHT
+                                                            ) + '%',
+                                                    },
+                                                ]}
+                                            />
+                                        </View>
                                     </View>
                                 </View>
                             </View>
@@ -206,7 +210,7 @@ export const ReplyIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'flex-end',
                             width: '90%',
-                            marginTop: 10,
+                            paddingVertical: 10,
                         }}
                     >
                         <ButtonIcon
@@ -229,16 +233,30 @@ const stylecom = StyleSheet.create({
         marginTop: 15,
         marginHorizontal: 20,
     },
-    wrap: {
+    wrap_reply: {
         ...styles.shadow,
+        backgroundColor: '#ececec',
         flex: 1,
-        borderRadius: 10,
+        borderRadius: 14,
+        width: '100%',
+        position: 'relative',
+    },
+    reply: {
+        ...styles.flex_start,
+        width: '100%',
+        marginTop: 8,
+        height: 80,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    wrap: {
+        flex: 1,
+        borderRadius: 14,
         width: '100%',
         backgroundColor: 'white',
     },
     msgContainer: {
         width: '100%',
-        backgroundColor: styles.button_container.backgroundColor,
         alignItems: 'flex-start',
         justifyContent: 'center',
         borderRadius: 10,
@@ -253,6 +271,7 @@ const stylecom = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 25,
         paddingVertical: 15,
+        paddingBottom: 30,
     },
     circleButton: {
         justifyContent: 'center',

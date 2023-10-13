@@ -33,7 +33,7 @@ export const types = {
     msgStartAddNew: '[msg] Start add new',
     msgAddNew: '[msg] Add new',
     msgNewLoaded: '[msg] New messages loaded',
-    msgLoaded: '[msg] Messages loaded',
+    msgLoaded: '[msg] Ideas loaded',
     msgUpdate: '[msg] Update message reacc/track',
     msgFilter: '[msg] Change filter',
     msgActiveMsg: '[msg] Active message',

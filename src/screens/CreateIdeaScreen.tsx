@@ -24,7 +24,7 @@ import useSpikyService from '../hooks/useSpikyService';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
-import { Message } from '../types/store';
+import { Idea } from '../types/store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ModalConfirmation } from '../components/ModalConfirmation';
 import ToggleButton from '../components/common/ToggleButton';
@@ -72,7 +72,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
     async function handleCreateIdea(): Promise<Message | undefined> {
         const mensaje = await createIdea(form.message, 0, undefined, isSuperAnonymous);
         if (mensaje) {
-            const createdMessage: Message = generateMessageFromMensaje({
+            const createdMessage: Idea = generateMessageFromMensaje({
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
@@ -288,7 +288,7 @@ export const CreateIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            marginTop: 10,
+                            paddingVertical: 10,
                         }}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -343,6 +343,7 @@ const stylecom = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 25,
         paddingTop: 20,
+        paddingBottom: 32,
     },
     circleButton: {
         justifyContent: 'center',

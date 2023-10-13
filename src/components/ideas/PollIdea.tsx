@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { View, Pressable } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, User } from '../../types/store';
+import { Idea, User } from '../../types/store';
 import MsgTransform from '../MsgTransform';
 import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { Poll } from '../Poll';
@@ -11,9 +11,10 @@ import UserComponent from '../common/UserComponent';
 import { addToast } from '../../store/feature/toast/toastSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { StatusType } from '../../types/common';
+import { RootStackParamList } from '../../navigator/Navigator';
 
 interface Props {
-    idea: Message;
+    idea: Idea;
     filter: string;
     isOwner: boolean;
     spectatorMode: boolean;
@@ -24,6 +25,7 @@ interface Props {
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
     handleGoBack?: () => void;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const PollIdea = ({
@@ -38,6 +40,7 @@ export const PollIdea = ({
     isOpenedIdeaScreen,
     setMessageTrackingId,
     handleGoBack,
+    openReplyIdeaScreen,
 }: Props) => {
     const dispatch = useAppDispatch();
     return (
@@ -89,16 +92,12 @@ export const PollIdea = ({
                 }}
             >
                 <Poll
-                    answers={idea.answers}
-                    totalAnswers={idea.totalAnswers}
-                    myAnswers={idea.myAnswers}
-                    messageId={idea.id}
-                    userIdMessageOwner={idea.user.id ? idea.user.id : 0}
-                    isAnonymous={idea.anonymous}
-                    totalComments={idea.totalComments}
+                    idea={idea}
+                    isOwner={isOwner}
                     handleClickUser={handleClickUser}
                     handleOpenIdea={() => handleOpenIdea(idea.id)}
                     isOpenedIdeaScreen={isOpenedIdeaScreen}
+                    openReplyIdeaScreen={openReplyIdeaScreen}
                 />
                 {(idea.myAnswers || (isOwner && !idea.anonymous)) && (
                     <View style={[styles.container_abs, styles.flex_container]}>

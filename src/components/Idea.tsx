@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Animated, View, Linking, Alert } from 'react-native';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { styles } from '../themes/appTheme';
-import { IdeaType, Message, TopicQuestion, User } from '../types/store';
+import { IdeaType, Idea as IdeaProps, TopicQuestion, User } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { useAnimation } from '../hooks/useAnimation';
@@ -16,7 +16,7 @@ import { IdeaTypes } from './ideas/IdeaTypes';
 import SocketContext from '../context/Socket/Context';
 
 interface Props {
-    idea: Message;
+    idea: IdeaProps;
     filter: string;
 }
 
@@ -45,7 +45,7 @@ export const Idea = ({ idea, filter }: Props) => {
                 id_mensaje: ideaSelected.id,
                 tipo: 1,
             });
-            const messagesUpdated = messages.map((msg: Message) => {
+            const messagesUpdated = messages.map((msg: IdeaProps) => {
                 if (msg.id === idea.id) {
                     if (msg.type === IdeaType.X2 && msg.childMessage) {
                         let isNew = true;
@@ -114,7 +114,7 @@ export const Idea = ({ idea, filter }: Props) => {
                 id_mensaje: ideaSelected.id,
                 tipo: 9,
             });
-            const messagesUpdated = messages.map((msg: Message) => {
+            const messagesUpdated = messages.map((msg: IdeaProps) => {
                 if (msg.id === idea.id) {
                     if (msg.type === IdeaType.X2 && msg.childMessage) {
                         return {
@@ -144,7 +144,7 @@ export const Idea = ({ idea, filter }: Props) => {
     async function handleDelete(id: number) {
         const wasDeleted = await deleteIdea(id);
         if (wasDeleted) {
-            const messagesUpdated = messages.filter((msg: Message) => msg.id !== id);
+            const messagesUpdated = messages.filter((msg: IdeaProps) => msg.id !== id);
             dispatch(setMessages(messagesUpdated));
             dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faTrash }));
         }
@@ -200,6 +200,10 @@ export const Idea = ({ idea, filter }: Props) => {
         });
     }
 
+    function openReplyIdeaScreen(param: RootStackParamList['ReplyIdeaScreen']) {
+        navigation.navigate('ReplyIdeaScreen', param);
+    }
+
     function handleClicTopicQuestion(topicQuestion: TopicQuestion | undefined) {
         if (topicQuestion) {
             changeScreen('TopicQuestionsScreen', {
@@ -239,6 +243,7 @@ export const Idea = ({ idea, filter }: Props) => {
                     handleCreateX2Reaction={!isLoading ? handleCreateX2Reaction : () => {}}
                     OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                     handleClicTopicQuestion={handleClicTopicQuestion}
+                    openReplyIdeaScreen={openReplyIdeaScreen}
                 />
             </Animated.View>
         </View>

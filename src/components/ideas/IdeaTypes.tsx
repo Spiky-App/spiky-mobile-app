@@ -1,17 +1,18 @@
 import React from 'react';
-import { Message, IdeaType, User, TopicQuestion } from '../../types/store';
+import { Idea, IdeaType, User, TopicQuestion } from '../../types/store';
 import { NormalIdea } from './../ideas/NormalIdea';
 import { DraftIdea } from './../ideas/DraftIdea';
 import { PollIdea } from './../ideas/PollIdea';
 import { X2Idea } from './../ideas/X2Idea';
 import { MoodIdea } from './../ideas/MoodIdea';
 import { QuoteIdea } from './QuoteIdea';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { TopicIdea } from './TopicIdea';
+import { RootStackParamList } from '../../navigator/Navigator';
 
 interface IdeaTypesProp {
-    idea: Message;
+    idea: Idea;
     filter: string;
     isOwner: boolean;
     spectatorMode: boolean;
@@ -27,6 +28,7 @@ interface IdeaTypesProp {
     OpenCreateQuoteScreen: () => void;
     handleClicTopicQuestion: (topicQuestion: TopicQuestion | undefined) => void;
     handleGoBack?: () => void;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const IdeaTypes = ({
@@ -46,12 +48,13 @@ export const IdeaTypes = ({
     OpenCreateQuoteScreen,
     handleClicTopicQuestion,
     handleGoBack,
+    openReplyIdeaScreen,
 }: IdeaTypesProp) => {
     switch (idea.type) {
         case IdeaType.NORMAL:
             return (
                 <View style={styles.white_idea_wrap}>
-                    <View style={styles.idea_subwrap}>
+                    <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                         <NormalIdea
                             idea={idea}
                             filter={filter}
@@ -66,6 +69,7 @@ export const IdeaTypes = ({
                             handleCreateX2Reaction={handleCreateX2Reaction}
                             OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={openReplyIdeaScreen}
                         />
                     </View>
                 </View>
@@ -87,7 +91,7 @@ export const IdeaTypes = ({
         case IdeaType.POLL:
             return (
                 <View style={styles.white_idea_wrap}>
-                    <View style={styles.idea_subwrap}>
+                    <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                         <PollIdea
                             idea={idea}
                             filter={filter}
@@ -99,6 +103,7 @@ export const IdeaTypes = ({
                             isOpenedIdeaScreen={isOpenedIdeaScreen}
                             spectatorMode={spectatorMode}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={openReplyIdeaScreen}
                         />
                     </View>
                 </View>
@@ -106,7 +111,7 @@ export const IdeaTypes = ({
         case IdeaType.X2:
             return (
                 <View style={styles.white_idea_wrap}>
-                    <View style={styles.idea_subwrap}>
+                    <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                         <X2Idea
                             idea={idea}
                             filter={filter}
@@ -120,6 +125,7 @@ export const IdeaTypes = ({
                             handleCreateX2Reaction={handleCreateX2Reaction}
                             OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={openReplyIdeaScreen}
                         />
                     </View>
                 </View>
@@ -127,7 +133,7 @@ export const IdeaTypes = ({
         case IdeaType.QUOTE:
             return (
                 <View style={styles.white_idea_wrap}>
-                    <View style={styles.idea_subwrap}>
+                    <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                         <QuoteIdea
                             idea={idea}
                             filter={filter}
@@ -142,6 +148,7 @@ export const IdeaTypes = ({
                             handleCreateX2Reaction={handleCreateX2Reaction}
                             OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={openReplyIdeaScreen}
                         />
                     </View>
                 </View>
@@ -149,7 +156,7 @@ export const IdeaTypes = ({
         case IdeaType.MOOD:
             return (
                 <View style={styles.white_idea_wrap}>
-                    <View style={styles.idea_subwrap}>
+                    <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                         <MoodIdea
                             idea={idea}
                             filter={filter}
@@ -164,6 +171,7 @@ export const IdeaTypes = ({
                             handleCreateX2Reaction={handleCreateX2Reaction}
                             OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                             handleGoBack={handleGoBack}
+                            openReplyIdeaScreen={openReplyIdeaScreen}
                         />
                     </View>
                 </View>
@@ -185,15 +193,10 @@ export const IdeaTypes = ({
                     OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                     handleClicTopicQuestion={handleClicTopicQuestion}
                     handleGoBack={handleGoBack}
+                    openReplyIdeaScreen={openReplyIdeaScreen}
                 />
             );
         default:
-            return (
-                <View style={{ ...styles.center, paddingBottom: 10 }}>
-                    <Text style={styles.link}>
-                        Actualiza la aplicación para ver esta publicación.
-                    </Text>
-                </View>
-            );
+            return <></>;
     }
 };

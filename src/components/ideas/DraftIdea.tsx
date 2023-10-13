@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, Text, View, StyleSheet } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, User } from '../../types/store';
+import { Idea, User } from '../../types/store';
 import MsgTransform from '../MsgTransform';
 import { faPen, faTrash } from '../../constants/icons/FontAwesome';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -10,7 +10,7 @@ import { RootStackParamList } from '../../navigator/Navigator';
 import UserComponent from '../common/UserComponent';
 
 interface Props {
-    idea: Message;
+    idea: Idea;
     handleClickUser: (goToUser: User) => void;
     handleClickHashtag: (hashtag_text: string) => void;
     handleClickLink: (url: string) => Promise<void>;

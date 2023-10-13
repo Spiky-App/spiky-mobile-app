@@ -265,7 +265,7 @@ export const ChatScreen = ({ route }: Props) => {
                             }
                         >
                             <Text style={{ ...styles.h3, color: '#ffff', marginRight: 5 }}>
-                                {'@' + toUser.nickname}
+                                {toUser.nickname}
                             </Text>
                         </TouchableOpacity>
                         <UniversityTag id={toUser.universityId} fontSize={23} />
@@ -286,7 +286,6 @@ export const ChatScreen = ({ route }: Props) => {
                     style={{
                         width: '100%',
                         alignItems: 'center',
-                        paddingHorizontal: 15,
                         flex: 1,
                     }}
                 >
@@ -315,7 +314,7 @@ export const ChatScreen = ({ route }: Props) => {
                                 toUser.disable ? (
                                     <View style={{ alignItems: 'center', flex: 1, marginTop: 20 }}>
                                         <Text style={styles.textGray}>
-                                            {`La cuenta de @${toUser.nickname} está deshabilitada.`}
+                                            {`La cuenta de ${toUser.nickname} está deshabilitada.`}
                                         </Text>
                                     </View>
                                 ) : (

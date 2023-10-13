@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Text, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, User } from '../../types/store';
+import { Idea, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
@@ -11,9 +11,11 @@ import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/F
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
 import { Pressable } from 'react-native';
+import { RootStackParamList } from '../../navigator/Navigator';
+import { ReplyIdeaButton } from '../common/ReplyIdeaButton';
 
 interface Props {
-    idea: Message;
+    idea: Idea;
     filter: string;
     isOwner: boolean;
     spectatorMode: boolean;
@@ -27,6 +29,7 @@ interface Props {
     handleCreateX2Reaction?: () => void;
     OpenCreateQuoteScreen: () => void;
     handleGoBack?: () => void;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const MoodIdea = ({
@@ -44,6 +47,7 @@ export const MoodIdea = ({
     handleCreateX2Reaction,
     OpenCreateQuoteScreen,
     handleGoBack,
+    openReplyIdeaScreen,
 }: Props) => {
     return (
         <>
@@ -123,6 +127,12 @@ export const MoodIdea = ({
                     <CommentsButton
                         callback={!isOpenedIdeaScreen ? () => handleOpenIdea(idea.id) : undefined}
                         totalComments={idea.totalComments}
+                    />
+                    <ReplyIdeaButton
+                        idea={idea}
+                        isOwner={isOwner}
+                        isOpenedIdeaScreen={isOpenedIdeaScreen}
+                        openReplyIdeaScreen={openReplyIdeaScreen}
                     />
                 </View>
                 <View style={styles.flex_container}>

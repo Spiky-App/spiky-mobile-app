@@ -44,7 +44,7 @@ export interface Tracking {
     id: number;
 }
 
-export interface Message {
+export interface Idea {
     id: number;
     message: string;
     date: number;
@@ -129,14 +129,36 @@ export interface Comment {
 
 export interface Notification {
     id: number;
-    messageId: number;
-    commentId: number | null;
-    message: string;
     type: NotificationType;
     seen: boolean;
     updatedAt: string | null;
     createdAt: string;
+    notificationIdea: NotificationIdea | null;
+    notificationPrompt: NotificationPrompt | null;
+}
+
+export interface NotificationIdea {
     user: User;
+    idea: {
+        id: number;
+        message: string;
+    };
+    comment: {
+        message: string;
+        anonymous: boolean;
+    } | null;
+}
+
+export interface NotificationPrompt {
+    title: string;
+    message: string;
+    notification_random_chat: {
+        chat: {
+            id: number;
+            user_1: User;
+            user_2: User;
+        };
+    } | null;
 }
 
 export enum NotificationType {
@@ -146,6 +168,8 @@ export enum NotificationType {
     COMMENT_TRACKING = 3,
     MENTION = 4,
     REACT_COMMENT = 5,
+    NOTICE = 6,
+    RANDOM_CHAT = 12,
 }
 
 export interface Conversation {

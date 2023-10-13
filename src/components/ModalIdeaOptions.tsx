@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { useAnimation } from '../hooks/useAnimation';
 import { styles } from '../themes/appTheme';
-import { IdeaType, Message, User } from '../types/store';
+import { IdeaType, Idea, User } from '../types/store';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigator/Navigator';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -105,7 +105,7 @@ export const ModalIdeaOptions = ({
     async function handleDeleteTracking() {
         const isDeleted = await deleteTracking(ideaId);
         if (isDeleted) {
-            let messagesUpdated: Message[];
+            let messagesUpdated: Idea[];
             if (filter === '/tracking') {
                 messagesUpdated = messages.filter(msg => msg.id !== ideaId);
             } else {
@@ -155,15 +155,15 @@ export const ModalIdeaOptions = ({
     }
 
     function goToScreen(
-        screen: 'ReplyIdeaScreen' | 'ReportIdeaScreen' | 'OpenedIdeaScreen' | 'CreateQuoteScreen',
+        screen: 'ReplyIdeaScreen' | 'ReportScreen' | 'OpenedIdeaScreen' | 'CreateQuoteScreen',
         params?:
             | RootStackParamList['ReplyIdeaScreen']
-            | RootStackParamList['ReportIdeaScreen']
+            | RootStackParamList['ReportScreen']
             | RootStackParamList['OpenedIdeaScreen']
             | RootStackParamList['CreateQuoteScreen']
     ) {
         setModalIdeaOptions(false);
-        if (screen === 'ReportIdeaScreen') navigation.pop();
+        if (screen === 'ReportScreen') navigation.pop();
         navigation.navigate(screen, params);
     }
 
@@ -342,10 +342,7 @@ const SeeOriginalIdeaOption = ({ goToScreen, message, filter }: SeeOriginalIdeaO
 );
 
 interface ReportIdeaOptionProps {
-    goToScreen: (
-        screen: 'ReportIdeaScreen',
-        params?: RootStackParamList['ReportIdeaScreen']
-    ) => void;
+    goToScreen: (screen: 'ReportScreen', params?: RootStackParamList['ReportScreen']) => void;
     message: {
         id: number;
     };
@@ -354,7 +351,7 @@ const ReportIdeaOption = ({ goToScreen, message }: ReportIdeaOptionProps) => (
     <Pressable
         style={stylescom.option}
         onPress={() =>
-            goToScreen('ReportIdeaScreen', {
+            goToScreen('ReportScreen', {
                 ideaId: message.id,
             })
         }

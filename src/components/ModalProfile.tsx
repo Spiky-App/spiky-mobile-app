@@ -28,7 +28,6 @@ interface Props {
     profileOption: boolean;
     position: {
         top: number;
-        right: number;
     };
 }
 
@@ -37,7 +36,7 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
     const { logOutFunction } = useSpikyService();
     const dispatch = useAppDispatch();
     const spectatorMode = useAppSelector((state: RootState) => state.ui.spectatorMode);
-    const { top, right } = position;
+    const { top } = position;
 
     function handleSpectatorMode() {
         setProfileOption(false);
@@ -69,7 +68,6 @@ export const ModalProfile = ({ setProfileOption, profileOption, position }: Prop
                                 borderRadius: 10,
                                 position: 'absolute',
                                 top: top + 38,
-                                right: right - 130,
                             }}
                         >
                             <TouchableOpacity

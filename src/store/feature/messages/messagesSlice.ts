@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { ActiveMessage, Message } from '../../../types/store';
+import { ActiveMessage, Idea } from '../../../types/store';
 
 interface MessagesState {
-    messages: Message[];
+    messages: Idea[];
     loading: boolean;
     filter: string;
     moreMsg: boolean;

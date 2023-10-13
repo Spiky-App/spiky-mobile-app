@@ -14,8 +14,9 @@ import { clearNotificationsNumber } from '../store/feature/user/userSlice';
 import { useAppDispatch } from '../store/hooks';
 import { styles } from '../themes/appTheme';
 import { Notification as NotificationProps } from '../types/store';
-import { Notification } from './Notification';
+import { NotificationIdea } from './NotificationIdea';
 import { LoadingAnimated } from './svg/LoadingAnimated';
+import { NotificationPrompt } from './NotificationPrompt';
 
 interface Props {
     setModalNotif: (value: boolean) => void;
@@ -63,9 +64,17 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
         notifications?.length !== 0 ? (
             <FlatList
                 data={notifications}
-                renderItem={({ item }) => (
-                    <Notification notification={item} setModalNotif={setModalNotif} />
-                )}
+                renderItem={({ item }) => {
+                    if (item.notificationIdea) {
+                        return (
+                            <NotificationIdea notification={item} setModalNotif={setModalNotif} />
+                        );
+                    } else {
+                        return (
+                            <NotificationPrompt notification={item} setModalNotif={setModalNotif} />
+                        );
+                    }
+                }}
                 keyExtractor={item => item.id + ''}
                 showsVerticalScrollIndicator={false}
             />
@@ -119,7 +128,6 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
 
                             <View
                                 style={{
-                                    marginHorizontal: 5,
                                     marginTop: 20,
                                     marginBottom: 35,
                                     flex: 1,
@@ -143,8 +151,8 @@ export const ModalNotification = ({ modalNotif, setModalNotif }: Props) => {
 
 const stylescom = StyleSheet.create({
     container: {
-        height: 360,
-        width: '85%',
+        height: 420,
+        width: '90%',
         backgroundColor: '#ffff',
         borderRadius: 14,
     },

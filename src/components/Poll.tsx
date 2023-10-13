@@ -6,36 +6,30 @@ import { RootState } from '../store';
 import { setMessages } from '../store/feature/messages/messagesSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { styles } from '../themes/appTheme';
-import { AnswerCount, Message, User } from '../types/store';
+import { AnswerCount, Idea, User } from '../types/store';
 import { CommentsButton } from './common/CommentsButton';
 import { ModalPollVotes } from './ModalPollVotes';
 import { faSquarePollHorizontal } from '../constants/icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { ReplyIdeaButton } from './common/ReplyIdeaButton';
+import { RootStackParamList } from '../navigator/Navigator';
 
 interface Props {
-    messageId: number;
-    userIdMessageOwner: number;
-    answers: AnswerCount[];
-    myAnswers?: number;
-    totalAnswers: number;
-    totalComments: number;
+    idea: Idea;
+    isOpenedIdeaScreen: boolean;
+    isOwner: boolean;
     handleOpenIdea?: () => void;
     handleClickUser: (goToUser: User) => void;
-    isAnonymous: boolean;
-    isOpenedIdeaScreen: boolean;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const Poll = ({
-    answers,
-    myAnswers,
-    totalAnswers,
-    messageId,
-    userIdMessageOwner,
     handleOpenIdea,
-    totalComments,
     handleClickUser,
-    isAnonymous,
     isOpenedIdeaScreen,
+    idea,
+    isOwner,
+    openReplyIdeaScreen,
 }: Props) => {
     const user = useAppSelector((state: RootState) => state.user);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
@@ -45,18 +39,17 @@ export const Poll = ({
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [modalAnswers, setModalAnswers] = useState(false);
-    const isOwner = user.id === userIdMessageOwner;
 
     async function handleAnswerPoll(id: number) {
         setIsLoading(true);
         const wasCreated = await createPollAnswer(id);
         if (wasCreated) {
-            const messagesUpdated = messages.map((msg: Message) => {
-                if (msg.id === messageId) {
+            const messagesUpdated = messages.map((msg: Idea) => {
+                if (msg.id === idea.id) {
                     socket?.emit('notify', {
-                        id_usuario1: userIdMessageOwner,
+                        id_usuario1: idea.user.id,
                         id_usuario2: user.id,
-                        id_mensaje: messageId,
+                        id_mensaje: idea.id,
                         tipo: 7,
                     });
                     const newAnswers = msg.answers?.map(a => {
@@ -70,7 +63,7 @@ export const Poll = ({
                         ...msg,
                         answers: newAnswers,
                         myAnswers: id,
-                        totalAnswers: totalAnswers + 1,
+                        totalAnswers: idea.totalAnswers + 1,
                     };
                 } else {
                     return msg;
@@ -84,17 +77,17 @@ export const Poll = ({
     return (
         <View style={{ flex: 1, marginTop: 12 }}>
             <FlatList
-                data={answers}
+                data={idea.answers}
                 renderItem={({ item }) => (
                     <PollBar
                         answer={item}
-                        myAnswers={myAnswers}
+                        myAnswers={idea.myAnswers}
                         isOwner={isOwner}
-                        totalAnswers={totalAnswers}
+                        totalAnswers={idea.totalAnswers}
                         isLoading={isLoading}
                         handleAnswerPoll={handleAnswerPoll}
                         spectatorMode={spectatorMode}
-                        isOwnerAndAnonymous={isOwner && isAnonymous}
+                        isOwnerAndAnonymous={isOwner && idea.anonymous}
                     />
                 )}
                 keyExtractor={item => item.answer}
@@ -115,11 +108,17 @@ export const Poll = ({
                     </Pressable>
                     <CommentsButton
                         callback={!isOpenedIdeaScreen ? handleOpenIdea : undefined}
-                        totalComments={totalComments}
+                        totalComments={idea.totalComments}
+                    />
+                    <ReplyIdeaButton
+                        idea={idea}
+                        isOwner={isOwner}
+                        isOpenedIdeaScreen={isOpenedIdeaScreen}
+                        openReplyIdeaScreen={openReplyIdeaScreen}
                     />
                 </View>
                 <ModalPollVotes
-                    messageId={messageId}
+                    messageId={idea.id}
                     modalAnswers={modalAnswers}
                     setModalAnswers={setModalAnswers}
                     handleClickUser={handleClickUser}

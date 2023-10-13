@@ -6,7 +6,7 @@ import { IdeasHeader } from '../components/IdeasHeader';
 import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { styles } from '../themes/appTheme';
 import { Topic, TopicQuestion } from '../types/store';
-import { faAngleRight, faComments } from '../constants/icons/FontAwesome';
+import { faAngleRight, faCircleHalfStroke } from '../constants/icons/FontAwesome';
 import NetworkErrorFeed from '../components/NetworkErrorFeed';
 import useSpikyService from '../hooks/useSpikyService';
 import { topicQuestionRetrived } from '../helpers/message';
@@ -57,15 +57,15 @@ export const TopicsScreen = () => {
     return (
         <BackgroundPaper style={{ justifyContent: 'flex-start' }}>
             <IdeasHeader
-                title={'Discuiones'}
+                title={'Discusiones'}
                 connections={true}
-                icon={faComments}
+                icon={faCircleHalfStroke}
                 blocked_user={''}
             />
             <View style={stylescomp.filter_container}>
                 <View style={{ marginRight: 6 }}>
                     <Text style={{ ...styles.text_button, fontSize: 14, ...styles.h5 }}>
-                        Tópico:
+                        Categoría:
                     </Text>
                 </View>
                 <Pressable

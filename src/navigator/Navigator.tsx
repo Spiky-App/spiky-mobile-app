@@ -28,6 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys } from '../types/storage';
 import { CreateQuoteScreen } from '../screens/CreateQuoteScreen';
 import { CreateTopicIdeaScreen } from '../screens/CreateTopicIdeaScreen';
+import { ReportScreen } from '../screens/ReportScreen';
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -42,7 +43,7 @@ export type RootStackParamList = {
     OpenedIdeaScreen: { ideaId: number; filter?: string };
     ManifestPart1Screen: undefined;
     TermAndConditionsScreen: undefined;
-    ReportIdeaScreen: { ideaId: number };
+    ReportScreen: { ideaId?: number; reportedUser?: string };
     ReplyIdeaScreen: {
         idea: {
             id: number;
@@ -197,6 +198,7 @@ export const Navigator = () => {
                     <Stack.Screen name="CreateMoodScreen" component={CreateMoodScreen} />
                     <Stack.Screen name="CreateTopicIdeaScreen" component={CreateTopicIdeaScreen} />
                     <Stack.Screen name="CreateQuoteScreen" component={CreateQuoteScreen} />
+                    <Stack.Screen name="ReportScreen" component={ReportScreen} />
                 </>
             )}
             <Stack.Screen name="TermAndConditionsScreen" component={TermAndConditionsScreen} />

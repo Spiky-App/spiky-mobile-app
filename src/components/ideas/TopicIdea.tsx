@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, TopicQuestion, User } from '../../types/store';
+import { Idea, TopicQuestion, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
@@ -11,9 +11,11 @@ import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/F
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
 import { Text } from 'react-native';
+import { RootStackParamList } from '../../navigator/Navigator';
+import { ReplyIdeaButton } from '../common/ReplyIdeaButton';
 
 interface Props {
-    idea: Message;
+    idea: Idea;
     filter: string;
     isOwner: boolean;
     spectatorMode: boolean;
@@ -28,6 +30,7 @@ interface Props {
     OpenCreateQuoteScreen: () => void;
     handleClicTopicQuestion: (topicQuestion: TopicQuestion | undefined) => void;
     handleGoBack?: () => void;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const TopicIdea = ({
@@ -46,6 +49,7 @@ export const TopicIdea = ({
     OpenCreateQuoteScreen,
     handleClicTopicQuestion,
     handleGoBack,
+    openReplyIdeaScreen,
 }: Props) => {
     const backgroundColor = idea.topicQuestion?.topic.backgroundColor;
     return (
@@ -62,7 +66,7 @@ export const TopicIdea = ({
                 </Pressable>
             )}
             <View style={stylescomp.white_idea_wrap}>
-                <View style={styles.idea_subwrap}>
+                <View style={[styles.idea_subwrap, handleGoBack && { paddingLeft: 32 }]}>
                     {handleGoBack && (
                         <Pressable style={styles.arrow_back} onPress={handleGoBack}>
                             <FontAwesomeIcon icon={faChevronLeft} color={'#D4D4D4'} size={25} />
@@ -122,6 +126,12 @@ export const TopicIdea = ({
                                     !isOpenedIdeaScreen ? () => handleOpenIdea(idea.id) : undefined
                                 }
                                 totalComments={idea.totalComments}
+                            />
+                            <ReplyIdeaButton
+                                idea={idea}
+                                isOwner={isOwner}
+                                isOpenedIdeaScreen={isOpenedIdeaScreen}
+                                openReplyIdeaScreen={openReplyIdeaScreen}
                             />
                         </View>
                         <View style={styles.flex_container}>

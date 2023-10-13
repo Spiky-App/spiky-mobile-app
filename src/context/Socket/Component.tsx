@@ -67,7 +67,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
             notificationService.showNotification(
                 1,
                 'Notificación',
-                '@' + resp.alias + ' ' + mensajes[resp.tipo],
+                resp.alias + ' ' + mensajes[resp.tipo],
                 {
                     type: ClickNotificationTypes.GO_TO_IDEA,
                     ideaId: resp.id_mensaje,
@@ -111,7 +111,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(increaseNewChatMessagesNumber());
                 notificationService.showNotification(
                     conver.id,
-                    `Mensaje de @${userFrom.nickname}`,
+                    `Mensaje de ${userFrom.nickname}`,
                     conver.chatmessage.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
@@ -130,7 +130,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 dispatch(updateLastChatMsgConversation({ chatMsg: chatmsg, newMsg: true }));
                 notificationService.showNotification(
                     chatmsg.id,
-                    `Mensaje de @${sender.nickname}`,
+                    `Mensaje de ${sender.nickname}`,
                     chatmsg.message,
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
@@ -149,7 +149,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                 notificationService.showNotification(
                     converId,
                     'Notificación',
-                    '@' + sender.nickname + ' te ha enviado un zumbido',
+                    sender.nickname + ' te ha enviado un zumbido',
                     {
                         type: ClickNotificationTypes.GO_TO_CONVERSATION,
                         conversationId: converId,

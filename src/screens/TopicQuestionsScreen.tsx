@@ -2,7 +2,7 @@ import React from 'react';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { FloatButton } from '../components/FloatButton';
 import { MessagesFeed } from '../components/MessagesFeed';
-import { faComments } from '../constants/icons/FontAwesome';
+import { faCircleHalfStroke } from '../constants/icons/FontAwesome';
 import { DrawerParamList } from '../navigator/MenuMain';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 
@@ -18,7 +18,7 @@ export const TopicQuestionsScreen = ({ route }: Props) => {
                 filter={'/topic'}
                 title={'Discusión'}
                 myideas={false}
-                icon={faComments}
+                icon={faCircleHalfStroke}
                 emptyTitle={'Cuestión de tiempo de que alguien hable.'}
                 topicQuestion={topicQuestion}
             />

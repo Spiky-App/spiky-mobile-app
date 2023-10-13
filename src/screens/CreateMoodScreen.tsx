@@ -29,7 +29,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import EmojisKeyboard from '../components/EmojisKeyboard';
 import { generateMessageFromMensaje } from '../helpers/message';
-import { Message } from '../types/store';
+import { Idea } from '../types/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store';
 import { addMessage } from '../store/feature/messages/messagesSlice';
@@ -78,7 +78,7 @@ export const CreateMoodScreen = () => {
         setIsLoading(true);
         const mensaje = await updateMood(emoji, mood);
         if (mensaje) {
-            const createdMessage: Message = generateMessageFromMensaje({
+            const createdMessage: Idea = generateMessageFromMensaje({
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,

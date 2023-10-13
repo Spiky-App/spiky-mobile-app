@@ -16,7 +16,7 @@ export const ProfileScreen = ({ route }: Props) => {
             <MessagesFeed
                 params={{ alias }}
                 filter={'/perfil'}
-                title={'@' + alias}
+                title={alias}
                 myideas={false}
                 icon={faUser}
                 emptyTitle={'Todos tenemos algo que decir.'}

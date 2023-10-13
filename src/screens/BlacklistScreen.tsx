@@ -73,7 +73,7 @@ export const BlacklistScreen = () => {
                             >
                                 <View style={{ flexDirection: 'row' }}>
                                     <Text style={{ ...styles.text, ...styles.h5 }}>
-                                        {'@' + item.alias}
+                                        {item.alias}
                                     </Text>
                                     <UniversityTag id={item.id_universidad} fontSize={13} />
                                 </View>

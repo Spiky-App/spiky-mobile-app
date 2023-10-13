@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Pressable, View } from 'react-native';
 import { styles } from '../../themes/appTheme';
-import { Message, User } from '../../types/store';
+import { Idea, User } from '../../types/store';
 import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
@@ -10,9 +10,11 @@ import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
 import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
+import { RootStackParamList } from '../../navigator/Navigator';
+import { ReplyIdeaButton } from '../common/ReplyIdeaButton';
 
 interface Props {
-    idea: Message;
+    idea: Idea;
     filter: string;
     isOwner: boolean;
     spectatorMode: boolean;
@@ -26,6 +28,7 @@ interface Props {
     handleCreateX2Reaction?: () => void;
     OpenCreateQuoteScreen: () => void;
     handleGoBack?: () => void;
+    openReplyIdeaScreen: (param: RootStackParamList['ReplyIdeaScreen']) => void;
 }
 
 export const NormalIdea = ({
@@ -43,6 +46,7 @@ export const NormalIdea = ({
     handleCreateX2Reaction,
     OpenCreateQuoteScreen,
     handleGoBack,
+    openReplyIdeaScreen,
 }: Props) => {
     return (
         <>
@@ -103,6 +107,12 @@ export const NormalIdea = ({
                     <CommentsButton
                         callback={!isOpenedIdeaScreen ? () => handleOpenIdea(idea.id) : undefined}
                         totalComments={idea.totalComments}
+                    />
+                    <ReplyIdeaButton
+                        idea={idea}
+                        isOwner={isOwner}
+                        isOpenedIdeaScreen={isOpenedIdeaScreen}
+                        openReplyIdeaScreen={openReplyIdeaScreen}
                     />
                 </View>
                 <View style={styles.flex_container}>

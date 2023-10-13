@@ -188,6 +188,8 @@ export const ChatMessage = ({ msg, user, setMessageToReply, toUser }: MessagePro
                             ...stylescomp.message,
                             justifyContent: owner ? 'flex-end' : 'flex-start',
                             flexWrap: msg.message.length > 20 ? 'wrap' : 'nowrap',
+                            borderTopLeftRadius: msg.reply || msg.replyMessage ? 0 : 10,
+                            borderTopRightRadius: msg.reply || msg.replyMessage ? 0 : 10,
                         }}
                     >
                         <View>
@@ -235,10 +237,12 @@ const stylescomp = StyleSheet.create({
     containerMessageRight: {
         marginVertical: 8,
         alignItems: 'flex-end',
+        marginHorizontal: 15,
     },
     containerMessageLeft: {
         marginVertical: 8,
         alignItems: 'flex-start',
+        marginHorizontal: 15,
     },
     message: {
         ...styles.shadow,
@@ -249,7 +253,8 @@ const stylescomp = StyleSheet.create({
         alignContent: 'center',
         flexDirection: 'row',
         minHeight: 'auto',
-        borderRadius: 10,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
     },
     text: {
         ...styles.text,
@@ -272,9 +277,10 @@ const stylescomp = StyleSheet.create({
     },
     containerReplyMsg: {
         backgroundColor: '#e8e6e6',
-        borderRadius: 10,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
         paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingVertical: 10,
         maxWidth: 280,
     },
 });

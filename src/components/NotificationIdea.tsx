@@ -31,44 +31,54 @@ const msg_notif = [
     'participó en la publicación',
 ];
 
-export const Notification = ({ notification, setModalNotif }: PropsNotification) => {
+export const NotificationIdea = ({ notification, setModalNotif }: PropsNotification) => {
     const { updateNotifications } = useSpikyService();
     const dispatch = useAppDispatch();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const timestamp = new Date(notification.createdAt);
     const date = getTime(timestamp.getTime() + '');
 
-    const new_mensaje = transformMsg(notification.message);
+    const messageToConvert = notification.notificationIdea?.comment
+        ? notification.notificationIdea?.comment?.message
+        : notification.notificationIdea?.idea?.message;
+
+    const new_mensaje = transformMsg(messageToConvert ? messageToConvert : '');
 
     const handleOpenIdea = async () => {
         if (!notification.seen && (await updateNotifications([notification.id]))) {
             dispatch(updateNotificationsNumber(-1));
         }
-        navigation.navigate('OpenedIdeaScreen', {
-            ideaId: notification.messageId,
-        });
+        if (notification.notificationIdea?.idea.id) {
+            navigation.navigate('OpenedIdeaScreen', {
+                ideaId: notification.notificationIdea?.idea.id,
+            });
+        }
         setModalNotif(false);
     };
 
     return (
-        <View>
-            {!notification.seen && (
-                <View style={stylescom.wrapnew}>
-                    <View style={stylescom.new} />
-                </View>
-            )}
-
+        <View style={[stylescom.container, !notification.seen && { backgroundColor: '#ffeadfcd' }]}>
+            <View style={stylescom.circle}>
+                <Text style={[styles.h7, { color: styles.text_button.color }]}>
+                    {notification.notificationIdea?.user.nickname.substring(0, 2).toUpperCase()}
+                </Text>
+            </View>
             <TouchableOpacity
-                style={{ marginVertical: 10, marginLeft: 18 }}
+                style={{ marginVertical: 8, marginLeft: 5, flex: 1 }}
                 onPress={handleOpenIdea}
             >
                 <View style={styles.flex}>
-                    <Text style={styles.flex}>
-                        <View style={{ flexDirection: 'row' }}>
+                    <Text style={styles.flex_center}>
+                        <View style={{ flexDirection: 'row', marginRight: 5 }}>
                             <Text style={{ ...styles.text, ...styles.h5, fontSize: 13 }}>
-                                {'@' + notification.user.nickname}
+                                {notification.notificationIdea?.user.nickname}
                             </Text>
-                            <UniversityTag id={notification.user.universityId} fontSize={13} />
+                            {notification.notificationIdea?.user.universityId && (
+                                <UniversityTag
+                                    id={notification.notificationIdea?.user.universityId}
+                                    fontSize={13}
+                                />
+                            )}
                         </View>
                         <Text style={{ ...styles.text, fontSize: 13 }}>
                             {msg_notif[notification.type]}
@@ -107,10 +117,22 @@ const stylescom = StyleSheet.create({
         ...styles.center,
         paddingRight: 10,
     },
-    new: {
-        backgroundColor: '#FC702A',
-        height: 15,
-        width: 15,
-        borderRadius: 100,
+    circle: {
+        ...styles.center,
+        height: 40,
+        width: 40,
+        borderRadius: 21,
+        marginRight: 5,
+        borderWidth: 3,
+        borderColor: styles.button_container.backgroundColor,
+        backgroundColor: styles.button_container.backgroundColor,
+    },
+    container: {
+        ...styles.flex_start,
+        width: '100%',
+        borderRadius: 14,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        marginVertical: 4,
     },
 });

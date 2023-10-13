@@ -41,7 +41,7 @@ function UserComponent({ user, anonymous, date, handleClickUser, small }: Props)
         return (
             <Pressable onPress={() => handleClickUser(user)} style={{ alignSelf: 'flex-start' }}>
                 <View style={styles.button_user}>
-                    <Text style={[styles.user, small && { fontSize: 12 }]}>@{user.nickname}</Text>
+                    <Text style={[styles.user, small && { fontSize: 12 }]}>{user.nickname}</Text>
                     <UniversityTag id={user.universityId} fontSize={small ? 12 : 14} />
                     <View style={styles.flex_center}>
                         <FontAwesomeIcon

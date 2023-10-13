@@ -51,11 +51,11 @@ export interface TopicQuestion {
 
 export interface GetMessagesResponse {
     ok: boolean;
-    mensajes: Message[];
+    mensajes: Idea[];
     mood: string | undefined;
 }
 
-export interface Message {
+export interface Idea {
     banned?: number;
     type: number;
     fecha: string | number;
@@ -120,13 +120,13 @@ export interface AnswerCount {
 
 export interface CreateMessageResponse {
     ok: boolean;
-    mensaje: Message;
+    mensaje: Idea;
 }
 
 export interface UpdateDraftResponse {
     ok: boolean;
     msg: string;
-    mensaje: Message;
+    mensaje: Idea;
 }
 
 export interface GetUsersSuggetionProps {
@@ -164,7 +164,7 @@ export interface DeleteMessageProps {
 
 export interface GetMessageAndComments {
     ok: boolean;
-    mensaje: Message;
+    mensaje: Idea;
     num_respuestas: number;
 }
 
@@ -185,24 +185,46 @@ export interface CreateCommentReaction {
 
 export interface GetNotifications {
     ok: boolean;
-    notificaciones: Notification[];
+    notifications: Notification[];
 }
 
 export interface Notification {
-    id_notificacion: number;
-    id_mensaje: number;
-    id_respuesta: number | null;
-    tipo: number;
-    visto: boolean;
-    updatedAt: string | null;
-    createdAt: string;
-    usuario2: UserI;
-    mensaje: {
-        mensaje: string;
+    id_notification: number;
+    type: number;
+    seen: boolean;
+    updated_at: string | null;
+    created_at: string;
+    notification_idea: {
+        id_idea: number;
+        usuario: UserI;
+        idea: {
+            id_mensaje: number;
+            mensaje: string;
+        };
+        comment: {
+            respuesta: string;
+            anonymous: boolean;
+        } | null;
     };
-    respuesta: {
-        respuesta: string;
-    } | null;
+    notification_prompt: {
+        title: string;
+        message: string;
+        notification_random_chat: {
+            chat: {
+                id_conversacion: number;
+                usuario1: {
+                    id_universidad: number;
+                    online: boolean;
+                    id_usuario: number;
+                };
+                usuario2: {
+                    id_universidad: number;
+                    online: boolean;
+                    id_usuario: number;
+                };
+            };
+        } | null;
+    };
 }
 
 export interface UpdateNotifications {
@@ -387,7 +409,7 @@ export interface GetNetworkConnectionStatus {
 
 export interface CreatePollResponse {
     ok: boolean;
-    mensaje: Message;
+    mensaje: Idea;
 }
 
 export interface CreateAnswerPoll {
@@ -438,7 +460,7 @@ export interface X2Reaction {
 
 export interface UpdateMood {
     ok: boolean;
-    mensaje: Message;
+    mensaje: Idea;
 }
 
 export interface GetMoodHistory {

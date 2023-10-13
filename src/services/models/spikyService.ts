@@ -1,4 +1,4 @@
-import { TopicQuestion } from '../../types/store';
+import { IdeaType, TopicQuestion, User } from '../../types/store';
 
 export interface LoginResponseData {
     ok: boolean;
@@ -68,4 +68,11 @@ export interface MessageRequestData {
     draft?: number;
     cantidad?: number;
     topicQuestion?: TopicQuestion;
+    idea?: {
+        id: number;
+        message: string;
+        user: User;
+        date: number;
+        type: IdeaType;
+    };
 }

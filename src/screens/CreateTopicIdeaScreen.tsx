@@ -24,10 +24,9 @@ import useSpikyService from '../hooks/useSpikyService';
 import { BackgroundPaper } from '../components/BackgroundPaper';
 import { generateMessageFromMensaje } from '../helpers/message';
 import SocketContext from '../context/Socket/Context';
-import { IdeaType, Message, TopicQuestion } from '../types/store';
+import { IdeaType, Idea, TopicQuestion } from '../types/store';
 import ToggleButton from '../components/common/ToggleButton';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { LoadingAnimated } from '../components/svg/LoadingAnimated';
 import { addToast } from '../store/feature/toast/toastSlice';
 import { StatusType } from '../types/common';
 import { useAnimation } from '../hooks/useAnimation';
@@ -79,7 +78,7 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
             topicQuestion?.id
         );
         if (mensaje) {
-            const createdMessage: Message = generateMessageFromMensaje({
+            const createdMessage: Idea = generateMessageFromMensaje({
                 ...mensaje,
                 usuario: {
                     alias: user.nickname,
@@ -209,10 +208,10 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
                                     Revisa tu conexión a internet.
                                 </Text>
                             )}
-                            {isLoading && (
-                                <View style={{ marginLeft: 100 }}>
-                                    <LoadingAnimated />
-                                </View>
+                            {!networkError && !isLoading && !topicQuestion && (
+                                <Text style={[styles.textGray, { fontSize: 14 }]}>
+                                    Uups... algo salió mal, vuelve a intentarlo.
+                                </Text>
                             )}
                         </View>
                         <View style={stylecom.wrap}>
@@ -290,7 +289,7 @@ export const CreateTopicIdeaScreen = ({ route }: Props) => {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '90%',
-                            marginTop: 10,
+                            paddingVertical: 10,
                         }}
                     >
                         <ToggleButton
@@ -358,8 +357,8 @@ const stylecom = StyleSheet.create({
         ...styles.flex_start,
         width: '100%',
         paddingHorizontal: 15,
-        marginVertical: 10,
-        height: 80,
+        marginVertical: 15,
+        minHeight: 70,
         position: 'relative',
         overflow: 'hidden',
     },
@@ -378,13 +377,13 @@ const stylecom = StyleSheet.create({
         zIndex: 2,
     },
     wrap: {
-        ...styles.shadow,
         flex: 1,
         borderRadius: 14,
         width: '100%',
         backgroundColor: 'white',
         paddingHorizontal: 25,
         paddingTop: 20,
+        paddingBottom: 32,
     },
     circleButton: {
         justifyContent: 'center',

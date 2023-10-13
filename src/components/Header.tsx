@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
-import { faBars, faUser, faUserAstronaut } from '../constants/icons/FontAwesome';
+import { faBars, faComment, faChevronDown, faChevronUp } from '../constants/icons/FontAwesome';
 import { ModalProfile } from './ModalProfile';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
-import LogoWhiteSvg from './svg/LogoWhiteSvg';
 import { styles } from '../themes/appTheme';
 import { BlurView } from '@react-native-community/blur';
 import { Platform } from 'react-native';
+import IconWhiteSvg from './svg/IconWhiteSvg';
 
 export const Header = () => {
     const nickname = useAppSelector((state: RootState) => state.user.nickname);
@@ -20,7 +20,6 @@ export const Header = () => {
     const [profileOption, setProfileOption] = useState(false);
     const [position, setPosition] = useState({
         top: 0,
-        right: 0,
     });
     const { notificationsNumber, newChatMessagesNumber } = useAppSelector(
         (state: RootState) => state.user
@@ -50,65 +49,76 @@ export const Header = () => {
                     onLayout={({ nativeEvent }) => {
                         setPosition({
                             top: nativeEvent.layout.y + 10,
-                            right: nativeEvent.layout.x + 120,
                         });
                     }}
                 >
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                    <View style={styles.flex_start}>
                         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                            <View
-                                style={{
-                                    ...stylescom.flexConte,
-                                    marginHorizontal: 20,
-                                }}
-                            >
+                            <View style={[styles.flex_center, { marginLeft: 20 }]}>
                                 <FontAwesomeIcon icon={faBars} size={22} color="#ffff" />
-                                {notificationsNumber + newChatMessagesNumber > 0 && (
-                                    <>
-                                        {newChatMessagesNumber > 0 && (
-                                            <View style={stylescom.newChats} />
-                                        )}
-                                        <View style={stylescom.notif}>
-                                            <Text style={stylescom.textnotif}>
-                                                {notificationsNumber + newChatMessagesNumber}
-                                            </Text>
-                                        </View>
-                                    </>
+                                {notificationsNumber > 0 && (
+                                    <View style={stylescom.notif}>
+                                        <Text style={stylescom.textnotif}>
+                                            {notificationsNumber}
+                                        </Text>
+                                    </View>
                                 )}
                             </View>
                         </TouchableOpacity>
-                        <View style={{ marginLeft: 10, width: 75, justifyContent: 'center' }}>
+                    </View>
+                    <View style={styles.flex_center}>
+                        <View style={stylescom.icon}>
                             <TouchableOpacity onPress={() => changeScreen('CommunityScreen')}>
-                                <LogoWhiteSvg />
+                                <IconWhiteSvg />
                             </TouchableOpacity>
                         </View>
+                        <TouchableOpacity
+                            style={stylescom.flexConte}
+                            onPress={() => setProfileOption(true)}
+                        >
+                            {/* <FontAwesomeIcon
+                                icon={spectatorMode ? faUserAstronaut : faUser}
+                                size={18}
+                                color={'#ffff'}
+                            /> */}
+                            <View style={{ ...styles.center, marginHorizontal: 6 }}>
+                                <Text
+                                    style={[
+                                        stylescom.text,
+                                        { paddingHorizontal: spectatorMode ? 8 : 0 },
+                                    ]}
+                                >
+                                    {nickname}
+                                </Text>
+                                {spectatorMode && (
+                                    <BlurView
+                                        style={stylescom.blur_user}
+                                        blurType="light"
+                                        blurAmount={Platform.OS === 'ios' ? 5 : 24}
+                                        reducedTransparencyFallbackColor="white"
+                                        overlayColor={'transparent'}
+                                    />
+                                )}
+                            </View>
+                            <FontAwesomeIcon
+                                icon={profileOption ? faChevronUp : faChevronDown}
+                                size={12}
+                                color={'#ffff'}
+                            />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={{ ...stylescom.flexConte, marginRight: 20 }}
-                        onPress={() => setProfileOption(true)}
-                    >
-                        <FontAwesomeIcon
-                            icon={spectatorMode ? faUserAstronaut : faUser}
-                            size={18}
-                            color={'#ffff'}
-                        />
-                        <View style={{ ...styles.center, marginLeft: 3 }}>
-                            <Text
-                                style={[
-                                    stylescom.text,
-                                    { paddingHorizontal: spectatorMode ? 8 : 0 },
-                                ]}
-                            >
-                                @{nickname}
-                            </Text>
-                            {spectatorMode && (
-                                <BlurView
-                                    style={stylescom.blur_user}
-                                    blurType="light"
-                                    blurAmount={Platform.OS === 'ios' ? 5 : 24}
-                                    reducedTransparencyFallbackColor="white"
-                                    overlayColor={'transparent'}
-                                />
+                    <TouchableOpacity onPress={() => changeScreen('ConnectionsScreen')}>
+                        <View
+                            style={{
+                                ...stylescom.flexConte,
+                                marginRight: 20,
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faComment} size={22} color="#ffff" />
+                            {newChatMessagesNumber > 0 && (
+                                <View style={[stylescom.notif, { right: -10 }]}>
+                                    <Text style={stylescom.textnotif}>{newChatMessagesNumber}</Text>
+                                </View>
                             )}
                         </View>
                     </TouchableOpacity>
@@ -185,5 +195,13 @@ const stylescom = StyleSheet.create({
         width: '100%',
         height: '100%',
         borderRadius: 10,
+    },
+    icon: {
+        // position: 'absolute',
+        // left: -24,
+        // bottom: 0,
+        // top: 0,
+        marginBottom: 5,
+        width: 24,
     },
 });
