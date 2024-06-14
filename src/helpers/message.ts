@@ -4,6 +4,7 @@ import {
     AnswerCount as RespuestasCount,
     Comment as Comentario,
     ChildMessage as MensajeChild,
+    TopicQuestion,
 } from '../types/services/spiky';
 import { AnswerCount, Comment, Message, ReactionCount } from '../types/store';
 import { generateCommentFromComentario } from './comment';
@@ -14,6 +15,10 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
     )?.id_tracking;
 
     const mensaje_child = childMessageRetrived(msgIndex, mensaje.mensaje_child);
+
+    const topic_question = mensaje.topic_question
+        ? topicQuestionRetrived(mensaje.topic_question)
+        : undefined;
 
     return {
         id: mensaje.id_mensaje,
@@ -37,6 +42,7 @@ function generateMessageFromMensaje(mensaje: Mensaje, msgIndex: number = 1): Mes
         myAnswers: mensaje.mi_encuesta_respuesta,
         totalAnswers: mensaje.total_encuesta_respuestas,
         childMessage: mensaje_child,
+        topicQuestion: topic_question,
         anonymous: mensaje.anonymous,
     };
 }
@@ -63,6 +69,20 @@ function commentsRetrived(comentarios?: Comentario[]) {
         return generateCommentFromComentario(comentario);
     });
     return comments;
+}
+
+export function topicQuestionRetrived(topic_question: TopicQuestion) {
+    return {
+        id: topic_question.id_topic_question,
+        question: topic_question.question,
+        topic: {
+            id: topic_question.topic.id_topic,
+            name: topic_question.topic.name,
+            emoji: topic_question.topic.emoji,
+            backgroundColor: topic_question.topic.background_color,
+        },
+        totalIdeas: topic_question.num_mensajes,
+    };
 }
 
 function childMessageRetrived(msgIndex: number, mensaje_child?: MensajeChild) {

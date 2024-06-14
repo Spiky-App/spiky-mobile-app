@@ -6,6 +6,7 @@ import {
     faHashtag,
     faUser,
     faCircleNodes,
+    faComments,
 } from './icons/FontAwesome';
 
 export const menuInfo = [
@@ -13,6 +14,11 @@ export const menuInfo = [
         name: 'Comunidad',
         screen: 'CommunityScreen',
         icon: faUsers,
+    },
+    {
+        name: 'Discusiones',
+        screen: 'TopicsScreen',
+        icon: faComments,
     },
     {
         name: 'Mis ideas',

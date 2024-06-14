@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { ModalAlert, University } from '../../../types/store';
+import { ModalAlert, Topic, University } from '../../../types/store';
 import { faCircleExclamation } from '../../../constants/icons/FontAwesome';
 
 interface UIState {
@@ -8,6 +8,7 @@ interface UIState {
     modalAlert: ModalAlert;
     appState: 'active' | 'inactive';
     spectatorMode: boolean;
+    topics?: Topic[];
 }
 
 const initialState: UIState = {
@@ -20,6 +21,7 @@ const initialState: UIState = {
     },
     appState: 'active',
     spectatorMode: false,
+    topics: undefined,
 };
 
 export const uiSlice = createSlice({
@@ -38,10 +40,14 @@ export const uiSlice = createSlice({
         toggleSpectatorMode: (state: UIState) => {
             state.spectatorMode = !state.spectatorMode;
         },
+        setTopics: (state: UIState, action: PayloadAction<Topic[]>) => {
+            state.topics = action.payload;
+        },
     },
 });
 
-export const { setUniversities, setModalAlert, setAppState, toggleSpectatorMode } = uiSlice.actions;
+export const { setUniversities, setModalAlert, setAppState, toggleSpectatorMode, setTopics } =
+    uiSlice.actions;
 
 export const selectUi = (state: RootState) => state.ui;
 

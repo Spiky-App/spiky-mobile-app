@@ -7,12 +7,12 @@ import { ModalIdeaOptions } from './ModalIdeaOptions';
 interface Props {
     myIdea: boolean;
     message: {
-        ideaId: number;
+        id: number;
         message: string;
         user: User;
         date: number;
         messageTrackingId?: number;
-        ideaType: IdeaType;
+        type: IdeaType;
         anonymous: boolean;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
@@ -52,7 +52,6 @@ export const PreModalIdeaOptions = ({
                 filter={filter}
                 isOpenedIdeaScreen={isOpenedIdeaScreen}
                 setMessageTrackingId={setMessageTrackingId}
-                ideaType={message.ideaType}
                 handleCreateEmojiReaction={handleCreateEmojiReaction}
                 handleCreateX2Reaction={handleCreateX2Reaction}
                 enableEmojiReaction={enableEmojiReaction}

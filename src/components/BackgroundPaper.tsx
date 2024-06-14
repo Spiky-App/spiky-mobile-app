@@ -40,13 +40,14 @@ const stylescom = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative',
     },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        backgroundColor: '#b9b9b91e',
+        // backgroundColor: '#b9b9b90',
     },
     darkSpace: {
         backgroundColor: '#01192E',

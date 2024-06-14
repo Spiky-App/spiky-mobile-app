@@ -2,7 +2,6 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import {
     LoginResponse,
     GetMessagesResponse,
-    UniversityResponse,
     CreateMessageResponse,
     GetUsersSuggetionProps,
     GetHashtagsSuggetionProps,
@@ -42,6 +41,9 @@ import {
     GetX2Reactions,
     UpdateMood,
     GetMoodHistory,
+    GetSessionInfo,
+    GetRandomTopicQuestion,
+    GetTopicQuestions,
 } from '../types/services/spiky';
 import { MessageRequestData } from '../services/models/spikyService';
 class SpikyService {
@@ -62,8 +64,8 @@ class SpikyService {
         return this.instance.get<ForgotPasswordResponse>('auth/forgot-password?correo=' + email);
     }
 
-    getUniversities() {
-        return this.instance.get<UniversityResponse>('univer');
+    getSessionInfo() {
+        return this.instance.get<GetSessionInfo>('lists/session-info');
     }
 
     getMessages(filter: string, lastMessageId: number | undefined, parameters: MessageRequestData) {
@@ -84,13 +86,15 @@ class SpikyService {
         message: string,
         type: number = 1,
         childMessageId?: number,
-        isSuperAnonymous?: boolean
+        isSuperAnonymous?: boolean,
+        topicQuestionId?: number
     ) {
         return this.instance.post<CreateMessageResponse>('mensajes/create', {
             mensaje: message,
             type,
             id_mensaje_child: childMessageId,
             anonymous: isSuperAnonymous,
+            id_topic_question: topicQuestionId,
         });
     }
     updateDraft(message: string, id: number, post: boolean) {
@@ -182,11 +186,12 @@ class SpikyService {
         );
     }
 
-    createMessageComment(messageId: number, uid: number, comment: string) {
+    createMessageComment(messageId: number, uid: number, comment: string, anonymous: boolean) {
         return this.instance.post<CreateMessageCommentResponse>('/resp', {
             id_mensaje: messageId,
             uid,
             respuesta: comment,
+            anonymous,
         });
     }
 
@@ -279,9 +284,10 @@ class SpikyService {
         return this.instance.get<GetTermsAndConditions>(`lists/terms`);
     }
 
-    deleteDeviceToken(deviceTokenStorage: string) {
+    logout(deviceTokenStorage: string, sessionId: number) {
         return this.instance.post<DeleteDeviceToken>(`auth/logout`, {
             device_token: deviceTokenStorage,
+            sessionId,
         });
     }
 
@@ -334,6 +340,15 @@ class SpikyService {
 
     getMoodHistory() {
         return this.instance.get<GetMoodHistory>('mensajes/moods');
+    }
+
+    getRandomTopicQuestion(topicId: number) {
+        return this.instance.get<GetRandomTopicQuestion>('topic/random-questions/' + topicId);
+    }
+
+    getTopicQuestions(topicId?: number) {
+        const params = { id_topic: topicId };
+        return this.instance.get<GetTopicQuestions>('topic/questions', { params });
     }
 }
 

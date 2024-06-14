@@ -5,6 +5,7 @@ import { IdeaType, Message, User } from '../../types/store';
 import UniversityTag from '../common/UniversityTag';
 import { MoodIdea } from './MoodIdea';
 import { NormalIdea } from './NormalIdea';
+import { QuoteIdea } from './QuoteIdea';
 
 interface Props {
     idea: Message;
@@ -15,6 +16,10 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
+    OpenCreateQuoteScreen: () => void;
+    handleCreateEmojiReaction: (emoji: string) => void;
+    handleCreateX2Reaction: () => void;
+    handleGoBack?: () => void;
 }
 
 export const X2Idea = ({
@@ -24,6 +29,10 @@ export const X2Idea = ({
     handleClickHashtag,
     handleClickLink,
     handleOpenIdea,
+    OpenCreateQuoteScreen,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
+    handleGoBack,
 }: Props) => {
     const ideaRetrieved =
         idea.type === IdeaType.X2 && idea.childMessage ? { ...idea.childMessage, type: 3 } : idea;
@@ -47,6 +56,10 @@ export const X2Idea = ({
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={false}
                     spectatorMode={false}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                    handleGoBack={handleGoBack}
                 />
             )}
             {idea.childMessage?.type === IdeaType.NORMAL && (
@@ -60,6 +73,44 @@ export const X2Idea = ({
                     handleOpenIdea={handleOpenIdea}
                     isOpenedIdeaScreen={false}
                     spectatorMode={false}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    handleGoBack={handleGoBack}
+                />
+            )}
+            {idea.childMessage?.type === IdeaType.QUOTE && (
+                <QuoteIdea
+                    idea={ideaRetrieved}
+                    filter={filter}
+                    isOwner={false}
+                    handleClickUser={handleClickUser}
+                    handleClickHashtag={handleClickHashtag}
+                    handleClickLink={handleClickLink}
+                    handleOpenIdea={handleOpenIdea}
+                    isOpenedIdeaScreen={false}
+                    spectatorMode={false}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                    handleGoBack={handleGoBack}
+                />
+            )}
+            {idea.childMessage?.type === IdeaType.TOPIC && (
+                <NormalIdea
+                    idea={ideaRetrieved}
+                    filter={filter}
+                    isOwner={false}
+                    handleClickUser={handleClickUser}
+                    handleClickHashtag={handleClickHashtag}
+                    handleClickLink={handleClickLink}
+                    handleOpenIdea={handleOpenIdea}
+                    isOpenedIdeaScreen={false}
+                    spectatorMode={false}
+                    handleCreateEmojiReaction={handleCreateEmojiReaction}
+                    handleCreateX2Reaction={handleCreateX2Reaction}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
+                    handleGoBack={handleGoBack}
                 />
             )}
         </>

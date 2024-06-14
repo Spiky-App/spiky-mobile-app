@@ -24,6 +24,7 @@ import { RootState } from '../store';
 import { useAppSelector } from '../store/hooks';
 import { useNavigation } from '@react-navigation/native';
 import { Pressable } from 'react-native';
+import { TopicQuestion } from '../types/store';
 
 interface Props {
     title: string;
@@ -32,6 +33,7 @@ interface Props {
     profile?: boolean;
     icon: IconDefinition;
     blocked_user: string;
+    topicQuestion?: TopicQuestion;
 }
 
 export const IdeasHeader = ({
@@ -41,6 +43,7 @@ export const IdeasHeader = ({
     icon,
     profile,
     blocked_user,
+    topicQuestion,
 }: Props) => {
     const [modalFilter, setModalFilter] = useState(false);
     const [activeDraft, setActiveDraft] = useState(false);
@@ -118,7 +121,24 @@ export const IdeasHeader = ({
                     </Pressable>
                 )}
 
+                {topicQuestion && (
+                    <View style={[styles.flex_center, { width: '100%' }]}>
+                        <View
+                            style={[
+                                stylecom.topic,
+                                { backgroundColor: topicQuestion.topic.backgroundColor },
+                            ]}
+                        >
+                            <View style={stylecom.emoji_container}>
+                                <Text style={styles.h5}>{topicQuestion.topic.emoji}</Text>
+                            </View>
+                            <Text style={styles.idea_msg}>{topicQuestion.question}</Text>
+                        </View>
+                    </View>
+                )}
+
                 {!connections &&
+                    !topicQuestion &&
                     !profile &&
                     (!myideas ? (
                         <View style={{ flexGrow: 1, alignItems: 'flex-end' }}>
@@ -233,5 +253,23 @@ const stylecom = StyleSheet.create({
         marginLeft: 5,
         paddingHorizontal: 8,
         top: -4,
+    },
+    topic: {
+        ...styles.shadow,
+
+        ...styles.flex_center,
+        borderRadius: 14,
+        paddingHorizontal: 15,
+        paddingVertical: 15,
+        marginVertical: 8,
+        alignSelf: 'flex-start',
+    },
+    emoji_container: {
+        ...styles.flex_center,
+        backgroundColor: '#ffff',
+        borderRadius: 15,
+        height: 35,
+        width: 35,
+        marginRight: 10,
     },
 });

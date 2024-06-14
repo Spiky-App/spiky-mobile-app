@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     button: {
         borderWidth: 1,
         borderColor: '#01192E',
-        borderRadius: 3,
+        borderRadius: 8,
         paddingHorizontal: 16,
         paddingVertical: 8,
         alignItems: 'center',
@@ -96,10 +96,10 @@ export const styles = StyleSheet.create({
         shadowColor: '#4d4d4d',
         shadowOffset: {
             width: 0,
-            height: 4,
+            height: 2,
         },
         backgroundColor: 'white',
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.3,
         shadowRadius: 4,
         elevation: 6,
         borderRadius: 4,
@@ -186,7 +186,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',
-        left: 5,
+        left: 4,
         top: 0,
         bottom: 0,
     },
@@ -213,6 +213,12 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'row',
     },
+    flex_spc_between: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+    },
     button_container: {
         flexDirection: 'row',
         paddingHorizontal: 8,
@@ -234,12 +240,6 @@ export const styles = StyleSheet.create({
         flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    idea_subwrap: {
-        paddingTop: 15,
-        paddingBottom: 6,
-        paddingHorizontal: 25,
-        borderRadius: 14,
     },
     idea_msg: {
         fontFamily: 'Helvetica',
@@ -298,5 +298,25 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 4,
         paddingVertical: 3,
         alignSelf: 'flex-start',
+    },
+    white_idea_wrap: {
+        backgroundColor: 'white',
+        borderRadius: 14,
+        shadowColor: '#4d4d4d',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 6,
+        marginVertical: 8,
+        width: '92%',
+    },
+    idea_subwrap: {
+        paddingTop: 15,
+        paddingBottom: 6,
+        paddingHorizontal: 25,
+        borderRadius: 14,
     },
 });

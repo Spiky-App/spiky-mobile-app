@@ -13,11 +13,13 @@ import { RefreshControl } from 'react-native';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { styles } from '../themes/appTheme';
 import NetworkErrorFeed from './NetworkErrorFeed';
+import { TopicQuestion } from '../types/store';
 
 interface MessageParams {
     alias?: string;
     search?: string;
     hashtag?: string;
+    id_topic_question?: number;
 }
 
 interface MessagesFeedProp {
@@ -28,6 +30,7 @@ interface MessagesFeedProp {
     profile?: boolean;
     icon: IconDefinition;
     emptyTitle: string;
+    topicQuestion?: TopicQuestion;
 }
 
 export const MessagesFeed = ({
@@ -38,6 +41,7 @@ export const MessagesFeed = ({
     profile,
     icon,
     emptyTitle,
+    topicQuestion,
 }: MessagesFeedProp) => {
     const dispatch = useDispatch();
     const { messages } = useAppSelector((state: RootState) => state.messages);
@@ -67,6 +71,7 @@ export const MessagesFeed = ({
                 myideas={myideas}
                 icon={icon}
                 profile={profile}
+                topicQuestion={topicQuestion}
                 blocked_user={params.alias ? params.alias : ''}
             />
             {messages?.length !== 0 && !networkError && (

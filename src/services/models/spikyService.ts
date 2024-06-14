@@ -1,3 +1,5 @@
+import { TopicQuestion } from '../../types/store';
+
 export interface LoginResponseData {
     ok: boolean;
     uid: number;
@@ -65,4 +67,5 @@ export interface MessageRequestData {
     univers?: string;
     draft?: number;
     cantidad?: number;
+    topicQuestion?: TopicQuestion;
 }

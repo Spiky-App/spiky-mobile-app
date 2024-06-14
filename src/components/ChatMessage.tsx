@@ -249,6 +249,7 @@ const stylescomp = StyleSheet.create({
         alignContent: 'center',
         flexDirection: 'row',
         minHeight: 'auto',
+        borderRadius: 10,
     },
     text: {
         ...styles.text,
@@ -271,8 +272,7 @@ const stylescomp = StyleSheet.create({
     },
     containerReplyMsg: {
         backgroundColor: '#e8e6e6',
-        borderTopLeftRadius: 5,
-        borderTopRightRadius: 5,
+        borderRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
         maxWidth: 280,

@@ -7,9 +7,10 @@ import { CommentsButton } from '../common/CommentsButton';
 import ReactionsContainers from '../common/ReactionsContainers';
 import MsgTransform from '../MsgTransform';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
-import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { IdeaReaction } from '../IdeaReaction';
 import UserComponent from '../common/UserComponent';
+import { Pressable } from 'react-native';
 
 interface Props {
     idea: Message;
@@ -22,8 +23,10 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
-    handleCreateEmojiReaction: (emoji: string) => void;
-    handleCreateX2Reaction: () => void;
+    handleCreateEmojiReaction?: (emoji: string) => void;
+    handleCreateX2Reaction?: () => void;
+    OpenCreateQuoteScreen: () => void;
+    handleGoBack?: () => void;
 }
 
 export const MoodIdea = ({
@@ -39,9 +42,16 @@ export const MoodIdea = ({
     setMessageTrackingId,
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
+    OpenCreateQuoteScreen,
+    handleGoBack,
 }: Props) => {
     return (
         <>
+            {handleGoBack && (
+                <Pressable style={styles.arrow_back} onPress={handleGoBack}>
+                    <FontAwesomeIcon icon={faChevronLeft} color={'#D4D4D4'} size={25} />
+                </Pressable>
+            )}
             {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>
@@ -119,12 +129,12 @@ export const MoodIdea = ({
                     <PreModalIdeaOptions
                         myIdea={isOwner}
                         message={{
-                            ideaId: idea.id,
+                            id: idea.id,
                             message: idea.message,
                             user: idea.user,
                             messageTrackingId: idea.messageTrackingId,
                             date: idea.date,
-                            ideaType: idea.type,
+                            type: idea.type,
                             anonymous: idea.anonymous,
                         }}
                         filter={filter}
@@ -143,6 +153,7 @@ export const MoodIdea = ({
                     handleCreateX2Reaction={handleCreateX2Reaction}
                     enableEmojiReaction={true}
                     enableX2Reaction={true}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                 />
             )}
         </>

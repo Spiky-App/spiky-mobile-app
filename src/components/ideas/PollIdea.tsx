@@ -4,7 +4,7 @@ import { View, Pressable } from 'react-native';
 import { styles } from '../../themes/appTheme';
 import { Message, User } from '../../types/store';
 import MsgTransform from '../MsgTransform';
-import { faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
+import { faChevronLeft, faLightbulb, faThumbtack } from '../../constants/icons/FontAwesome';
 import { Poll } from '../Poll';
 import { PreModalIdeaOptions } from '../PreModalIdeaOptions';
 import UserComponent from '../common/UserComponent';
@@ -23,6 +23,7 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
+    handleGoBack?: () => void;
 }
 
 export const PollIdea = ({
@@ -36,10 +37,16 @@ export const PollIdea = ({
     handleOpenIdea,
     isOpenedIdeaScreen,
     setMessageTrackingId,
+    handleGoBack,
 }: Props) => {
     const dispatch = useAppDispatch();
     return (
         <>
+            {handleGoBack && (
+                <Pressable style={styles.arrow_back} onPress={handleGoBack}>
+                    <FontAwesomeIcon icon={faChevronLeft} color={'#D4D4D4'} size={25} />
+                </Pressable>
+            )}
             {isOwner && !spectatorMode && (
                 <View style={styles.corner_container}>
                     <View style={styles.corner}>
@@ -98,12 +105,12 @@ export const PollIdea = ({
                         <PreModalIdeaOptions
                             myIdea={isOwner}
                             message={{
-                                ideaId: idea.id,
+                                id: idea.id,
                                 message: idea.message,
                                 user: idea.user,
                                 messageTrackingId: idea.messageTrackingId,
                                 date: idea.date,
-                                ideaType: idea.type,
+                                type: idea.type,
                                 anonymous: idea.anonymous,
                             }}
                             filter={filter}

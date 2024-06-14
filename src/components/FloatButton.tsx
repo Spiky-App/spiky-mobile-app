@@ -12,17 +12,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { styles } from '../themes/appTheme';
 import { Pressable } from 'react-native';
-import { faSquarePollHorizontal, faFaceSmile, faPlus } from '../constants/icons/FontAwesome';
+import {
+    faSquarePollHorizontal,
+    faFaceSmile,
+    faPlus,
+    faComments,
+} from '../constants/icons/FontAwesome';
 import { RootStackParamList } from '../navigator/Navigator';
 import RNReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import IconColor from './svg/IconColor';
+import { ModalTopics } from './ModalTopics';
 
 export const FloatButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const position1 = useRef(new Animated.Value(0)).current;
     const position2 = useRef(new Animated.Value(0)).current;
+    const position3 = useRef(new Animated.Value(0)).current;
     const opacity = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    const [isOpenModalTopics, setIsOpenModalTopics] = useState(false);
 
     function handleChangeScreen(
         screen: 'CreateIdeaScreen' | 'CreatePollScreen' | 'CreateMoodScreen'
@@ -48,6 +56,11 @@ export const FloatButton = () => {
                     duration: 50,
                     useNativeDriver: false,
                 }),
+                Animated.timing(position3, {
+                    toValue: 0,
+                    duration: 50,
+                    useNativeDriver: false,
+                }),
             ]),
         ]).start(() => {
             setIsModalOpen(false);
@@ -66,6 +79,11 @@ export const FloatButton = () => {
                     }),
                     Animated.timing(position2, {
                         toValue: -160,
+                        duration: 200,
+                        useNativeDriver: false,
+                    }),
+                    Animated.timing(position3, {
+                        toValue: -235,
                         duration: 200,
                         useNativeDriver: false,
                     }),
@@ -98,6 +116,32 @@ export const FloatButton = () => {
                 <TouchableWithoutFeedback onPressOut={() => handleCloseModal()}>
                     <View style={styles.backmodal}>
                         <View style={stylescom.sub_container}>
+                            <Animated.View
+                                style={[
+                                    stylescom.option_container,
+                                    { transform: [{ translateY: position3 }] },
+                                ]}
+                            >
+                                <Pressable
+                                    style={stylescom.press_container}
+                                    onPress={() =>
+                                        handleCloseModal(() => setIsOpenModalTopics(true))
+                                    }
+                                >
+                                    <Animated.View style={[stylescom.text_container, { opacity }]}>
+                                        <Text style={{ ...styles.text, fontSize: 16 }}>
+                                            Discusiones
+                                        </Text>
+                                    </Animated.View>
+                                    <View style={stylescom.small_button}>
+                                        <FontAwesomeIcon
+                                            icon={faComments}
+                                            color={'white'}
+                                            size={16}
+                                        />
+                                    </View>
+                                </Pressable>
+                            </Animated.View>
                             <Animated.View
                                 style={[
                                     stylescom.option_container,
@@ -165,6 +209,7 @@ export const FloatButton = () => {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+            <ModalTopics modalTopics={isOpenModalTopics} setModalTopics={setIsOpenModalTopics} />
         </>
     );
 };
