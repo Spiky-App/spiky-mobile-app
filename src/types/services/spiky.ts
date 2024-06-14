@@ -160,6 +160,7 @@ export interface Comment {
     resp_reacciones: ReactionCount[];
     usuario: UserI;
     mi_resp_reaccion?: string;
+    anonymous: boolean;
 }
 
 export interface CreateCommentReaction {

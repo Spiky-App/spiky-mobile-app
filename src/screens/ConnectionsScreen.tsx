@@ -219,7 +219,7 @@ const stylescomp = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: 'white',
         minHeight: 80,
-        borderRadius: 8,
+        borderRadius: 14,
         paddingLeft: 12,
         paddingRight: 28,
         paddingVertical: 24,

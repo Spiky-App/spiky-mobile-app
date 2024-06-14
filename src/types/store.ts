@@ -116,6 +116,7 @@ export interface Comment {
     user: User;
     reactions: ReactionCount[];
     myReaction?: string;
+    anonymous: boolean;
 }
 
 export interface Notification {

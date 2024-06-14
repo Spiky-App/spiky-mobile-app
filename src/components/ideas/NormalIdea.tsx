@@ -22,8 +22,9 @@ interface Props {
     handleOpenIdea: (id: number) => void;
     isOpenedIdeaScreen: boolean;
     setMessageTrackingId?: (value: number | undefined) => void;
-    handleCreateEmojiReaction: (emoji: string) => void;
-    handleCreateX2Reaction: () => void;
+    handleCreateEmojiReaction?: (emoji: string) => void;
+    handleCreateX2Reaction?: () => void;
+    OpenCreateQuoteScreen: () => void;
 }
 
 export const NormalIdea = ({
@@ -39,6 +40,7 @@ export const NormalIdea = ({
     setMessageTrackingId,
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
+    OpenCreateQuoteScreen,
 }: Props) => {
     return (
         <>
@@ -100,12 +102,12 @@ export const NormalIdea = ({
                     <PreModalIdeaOptions
                         myIdea={isOwner}
                         message={{
-                            ideaId: idea.id,
+                            id: idea.id,
                             message: idea.message,
                             user: idea.user,
                             messageTrackingId: idea.messageTrackingId,
                             date: idea.date,
-                            ideaType: idea.type,
+                            type: idea.type,
                             anonymous: idea.anonymous,
                         }}
                         filter={filter}
@@ -124,6 +126,7 @@ export const NormalIdea = ({
                     handleCreateEmojiReaction={handleCreateEmojiReaction}
                     enableEmojiReaction={true}
                     enableX2Reaction={!isOwner}
+                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                 />
             )}
         </>

@@ -6,6 +6,7 @@ import {
     faTrashCan,
     faThumbsDown,
     faBan,
+    faPenFancy,
 } from '../constants/icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -37,17 +38,17 @@ interface Props {
     modalIdeaOptions: boolean;
     myIdea: boolean;
     message: {
-        ideaId: number;
+        id: number;
         message: string;
         user: User;
         date: number;
         messageTrackingId?: number;
         anonymous: boolean;
+        type: IdeaType;
     };
     setMessageTrackingId?: (value: number | undefined) => void;
     filter?: string;
     isOpenedIdeaScreen?: boolean;
-    ideaType: IdeaType;
     enableX2Reaction: boolean;
     enableEmojiReaction: boolean;
     handleCreateEmojiReaction?: (emoji: string) => void;
@@ -62,7 +63,6 @@ export const ModalIdeaOptions = ({
     setMessageTrackingId,
     filter,
     isOpenedIdeaScreen,
-    ideaType,
     handleCreateEmojiReaction,
     handleCreateX2Reaction,
     enableX2Reaction,
@@ -73,11 +73,11 @@ export const ModalIdeaOptions = ({
     const [emojiKerboard, setEmojiKerboard] = useState(false);
     const uid = useAppSelector((state: RootState) => state.user.id);
     const messages = useAppSelector((state: RootState) => state.messages.messages);
-    const { deleteIdea, createReportIdea, createTracking, deleteTracking } = useSpikyService();
+    const { deleteIdea, createReport, createTracking, deleteTracking } = useSpikyService();
     const { movingPosition, position } = useAnimation({
         init_position: 0,
     });
-    const { ideaId, messageTrackingId } = message;
+    const { id: ideaId, messageTrackingId } = message;
 
     async function handleCreateTracking() {
         const id_tracking = await createTracking(ideaId, uid);
@@ -136,7 +136,7 @@ export const ModalIdeaOptions = ({
 
     async function handleIdeaRemoveFromFeed() {
         setModalIdeaOptions(false);
-        await createReportIdea(ideaId, '', uid, true);
+        await createReport('', ideaId, message.user.nickname, true);
         dispatch(
             setModalAlert({ isOpen: true, text: 'Ya no verás este contenido', icon: faThumbsDown })
         );
@@ -145,21 +145,22 @@ export const ModalIdeaOptions = ({
         if (isOpenedIdeaScreen) navigation.goBack();
     }
 
-    const handleDelete = () => {
+    function handleDelete() {
         deleteIdea(ideaId);
         const messagesUpdated = messages.filter(msg => msg.id !== ideaId);
         dispatch(setMessages(messagesUpdated));
         dispatch(setModalAlert({ isOpen: true, text: 'Idea eliminada', icon: faEraser }));
         setModalIdeaOptions(false);
         if (isOpenedIdeaScreen) navigation.goBack();
-    };
+    }
 
     function goToScreen(
-        screen: 'ReplyIdeaScreen' | 'ReportIdeaScreen' | 'OpenedIdeaScreen',
+        screen: 'ReplyIdeaScreen' | 'ReportIdeaScreen' | 'OpenedIdeaScreen' | 'CreateQuoteScreen',
         params?:
             | RootStackParamList['ReplyIdeaScreen']
             | RootStackParamList['ReportIdeaScreen']
             | RootStackParamList['OpenedIdeaScreen']
+            | RootStackParamList['CreateQuoteScreen']
     ) {
         setModalIdeaOptions(false);
         if (screen === 'ReportIdeaScreen') navigation.pop();
@@ -167,12 +168,12 @@ export const ModalIdeaOptions = ({
     }
 
     function handleCloseModal() {
-        movingPosition(0, 750, 400, () => setModalIdeaOptions(false));
+        movingPosition(0, 950, 400, () => setModalIdeaOptions(false));
     }
 
     useEffect(() => {
         if (modalIdeaOptions) {
-            movingPosition(750, 0, 700);
+            movingPosition(950, 0, 700);
         }
     }, [modalIdeaOptions]);
 
@@ -189,125 +190,50 @@ export const ModalIdeaOptions = ({
                         >
                             {!myIdea ? (
                                 <>
-                                    {ideaType !== IdeaType.X2 && (
+                                    {message.type !== IdeaType.X2 && (
                                         <>
                                             {(enableEmojiReaction || enableX2Reaction) && (
-                                                <View style={stylescom.optionEmojis}>
-                                                    <ReactionButton
-                                                        handleCreateEmojiReaction={
-                                                            handleCreateEmojiReaction
-                                                                ? handleCreateEmojiReaction
-                                                                : () => {}
-                                                        }
-                                                        handleCreateX2Reaction={
-                                                            handleCreateX2Reaction
-                                                                ? handleCreateX2Reaction
-                                                                : () => {}
-                                                        }
-                                                        enableX2Reaction={enableX2Reaction}
-                                                        enableEmojiReaction={enableEmojiReaction}
-                                                        setEmojiKerboard={setEmojiKerboard}
-                                                        setModalOptions={setModalIdeaOptions}
-                                                    />
-                                                </View>
-                                            )}
-                                            <Pressable
-                                                style={stylescom.option}
-                                                onPress={handleTracking}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faThumbTack}
-                                                    color="#01192E"
-                                                    size={16}
-                                                    style={{ marginRight: 10 }}
-                                                />
-                                                <Text style={styles.h4}>Tracking</Text>
-                                            </Pressable>
-                                            {!message.anonymous && (
-                                                <Pressable
-                                                    style={stylescom.option}
-                                                    onPress={() =>
-                                                        goToScreen('ReplyIdeaScreen', {
-                                                            message: {
-                                                                ideaId: message.ideaId,
-                                                                message: message.message,
-                                                                user: message.user,
-                                                                date: message.date,
-                                                            },
-                                                        })
+                                                <Reactions
+                                                    handleCreateEmojiReaction={
+                                                        handleCreateEmojiReaction
                                                     }
-                                                >
-                                                    <FontAwesomeIcon
-                                                        icon={faReply}
-                                                        color="#01192E"
-                                                        size={16}
-                                                        style={{ marginRight: 10 }}
-                                                    />
-                                                    <Text style={styles.h4}>
-                                                        Replicar en privado
-                                                    </Text>
-                                                </Pressable>
+                                                    handleCreateX2Reaction={handleCreateX2Reaction}
+                                                    enableX2Reaction={enableX2Reaction}
+                                                    enableEmojiReaction={enableEmojiReaction}
+                                                    setEmojiKerboard={setEmojiKerboard}
+                                                    setModalOptions={setModalIdeaOptions}
+                                                />
                                             )}
+                                            {!message.anonymous && (
+                                                <ReplyIdeagOption
+                                                    goToScreen={goToScreen}
+                                                    message={message}
+                                                />
+                                            )}
+                                            <QuoteOption
+                                                goToScreen={goToScreen}
+                                                message={message}
+                                            />
+                                            <TrackingOption handleTracking={handleTracking} />
                                         </>
                                     )}
-                                    <Pressable
-                                        style={stylescom.option}
-                                        onPress={handleIdeaRemoveFromFeed}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faThumbsDown}
-                                            color="#01192E"
-                                            size={16}
-                                            style={{ marginRight: 10 }}
-                                        />
-                                        <Text style={styles.h4}>No me gusta</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        style={stylescom.option}
-                                        onPress={() =>
-                                            goToScreen('ReportIdeaScreen', {
-                                                ideaId: message.ideaId,
-                                            })
-                                        }
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faBan}
-                                            color="#01192E"
-                                            size={16}
-                                            style={{ marginRight: 10 }}
-                                        />
-                                        <Text style={styles.h4}>Reportar</Text>
-                                    </Pressable>
+                                    <NoLikeOption
+                                        handleIdeaRemoveFromFeed={handleIdeaRemoveFromFeed}
+                                    />
+                                    <ReportIdeaOption goToScreen={goToScreen} message={message} />
                                 </>
                             ) : (
-                                <Pressable style={stylescom.option} onPress={handleDelete}>
-                                    <FontAwesomeIcon
-                                        icon={faTrashCan}
-                                        color="#01192E"
-                                        size={16}
-                                        style={{ marginRight: 10 }}
-                                    />
-                                    <Text style={styles.h4}>Eliminar</Text>
-                                </Pressable>
+                                <>
+                                    <QuoteOption goToScreen={goToScreen} message={message} />
+                                    <DeleteOption handleDelete={handleDelete} />
+                                </>
                             )}
-                            {!isOpenedIdeaScreen && ideaType === IdeaType.X2 && (
-                                <Pressable
-                                    style={stylescom.option}
-                                    onPress={() =>
-                                        goToScreen('OpenedIdeaScreen', {
-                                            ideaId: message.ideaId,
-                                            filter: filter,
-                                        })
-                                    }
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faLightbulb}
-                                        color="#01192E"
-                                        size={16}
-                                        style={{ marginRight: 10 }}
-                                    />
-                                    <Text style={styles.h4}>Ver idea original</Text>
-                                </Pressable>
+                            {!isOpenedIdeaScreen && message.type === IdeaType.X2 && (
+                                <SeeOriginalIdeaOption
+                                    goToScreen={goToScreen}
+                                    message={message}
+                                    filter={filter}
+                                />
                             )}
                         </Animated.View>
                     </TouchableWithoutFeedback>
@@ -327,9 +253,182 @@ export const ModalIdeaOptions = ({
     );
 };
 
+interface DeleteOptionProps {
+    handleDelete: () => void;
+}
+const DeleteOption = ({ handleDelete }: DeleteOptionProps) => (
+    <Pressable style={stylescom.option} onPress={handleDelete}>
+        <FontAwesomeIcon icon={faTrashCan} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Eliminar</Text>
+    </Pressable>
+);
+
+interface TrackingOptionProps {
+    handleTracking: () => void;
+}
+const TrackingOption = ({ handleTracking }: TrackingOptionProps) => (
+    <Pressable style={stylescom.option} onPress={handleTracking}>
+        <FontAwesomeIcon icon={faThumbTack} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Tracking</Text>
+    </Pressable>
+);
+
+interface NoLikeOptionProps {
+    handleIdeaRemoveFromFeed: () => void;
+}
+const NoLikeOption = ({ handleIdeaRemoveFromFeed }: NoLikeOptionProps) => (
+    <Pressable style={stylescom.option} onPress={handleIdeaRemoveFromFeed}>
+        <FontAwesomeIcon
+            icon={faThumbsDown}
+            color="#01192E"
+            size={16}
+            style={{ marginRight: 10 }}
+        />
+        <Text style={styles.h4}>No me gusta</Text>
+    </Pressable>
+);
+
+interface QuoteOptionProps {
+    goToScreen: (
+        screen: 'CreateQuoteScreen',
+        params?: RootStackParamList['CreateQuoteScreen']
+    ) => void;
+    message: {
+        id: number;
+        message: string;
+        user: User;
+        date: number;
+        anonymous: boolean;
+        type: IdeaType;
+    };
+}
+const QuoteOption = ({ goToScreen, message }: QuoteOptionProps) => (
+    <Pressable
+        style={stylescom.option}
+        onPress={() =>
+            goToScreen('CreateQuoteScreen', {
+                idea: message,
+            })
+        }
+    >
+        <FontAwesomeIcon icon={faPenFancy} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Citar idea</Text>
+    </Pressable>
+);
+
+interface SeeOriginalIdeaOptionProps {
+    goToScreen: (
+        screen: 'OpenedIdeaScreen',
+        params?: RootStackParamList['OpenedIdeaScreen']
+    ) => void;
+    message: {
+        id: number;
+    };
+    filter?: string;
+}
+const SeeOriginalIdeaOption = ({ goToScreen, message, filter }: SeeOriginalIdeaOptionProps) => (
+    <Pressable
+        style={stylescom.option}
+        onPress={() =>
+            goToScreen('OpenedIdeaScreen', {
+                ideaId: message.id,
+                filter: filter,
+            })
+        }
+    >
+        <FontAwesomeIcon icon={faLightbulb} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Ver idea original</Text>
+    </Pressable>
+);
+
+interface ReportIdeaOptionProps {
+    goToScreen: (
+        screen: 'ReportIdeaScreen',
+        params?: RootStackParamList['ReportIdeaScreen']
+    ) => void;
+    message: {
+        id: number;
+    };
+}
+const ReportIdeaOption = ({ goToScreen, message }: ReportIdeaOptionProps) => (
+    <Pressable
+        style={stylescom.option}
+        onPress={() =>
+            goToScreen('ReportIdeaScreen', {
+                ideaId: message.id,
+            })
+        }
+    >
+        <FontAwesomeIcon icon={faBan} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Reportar</Text>
+    </Pressable>
+);
+
+interface ReplyIdeaOptionProps {
+    goToScreen: (screen: 'ReplyIdeaScreen', params?: RootStackParamList['ReplyIdeaScreen']) => void;
+    message: {
+        id: number;
+        message: string;
+        user: User;
+        date: number;
+        messageTrackingId?: number;
+        anonymous: boolean;
+        type: IdeaType;
+    };
+}
+const ReplyIdeagOption = ({ goToScreen, message }: ReplyIdeaOptionProps) => (
+    <Pressable
+        style={stylescom.option}
+        onPress={() =>
+            goToScreen('ReplyIdeaScreen', {
+                idea: {
+                    id: message.id,
+                    message: message.message,
+                    user: message.user,
+                    date: message.date,
+                    type: message.type,
+                },
+            })
+        }
+    >
+        <FontAwesomeIcon icon={faReply} color="#01192E" size={16} style={{ marginRight: 10 }} />
+        <Text style={styles.h4}>Replicar en privado</Text>
+    </Pressable>
+);
+
+interface ReactionsProps {
+    setModalOptions?: (value: boolean) => void;
+    handleCreateEmojiReaction?: (emoji: string) => void;
+    handleCreateX2Reaction?: () => void;
+    enableX2Reaction: boolean;
+    enableEmojiReaction: boolean;
+    setEmojiKerboard: (value: boolean) => void;
+}
+const Reactions = ({
+    setModalOptions,
+    handleCreateEmojiReaction,
+    handleCreateX2Reaction,
+    enableX2Reaction,
+    enableEmojiReaction,
+    setEmojiKerboard,
+}: ReactionsProps) => (
+    <View style={stylescom.optionEmojis}>
+        <ReactionButton
+            handleCreateEmojiReaction={
+                handleCreateEmojiReaction ? handleCreateEmojiReaction : () => {}
+            }
+            handleCreateX2Reaction={handleCreateX2Reaction ? handleCreateX2Reaction : () => {}}
+            enableX2Reaction={enableX2Reaction}
+            enableEmojiReaction={enableEmojiReaction}
+            setEmojiKerboard={setEmojiKerboard}
+            setModalOptions={setModalOptions}
+        />
+    </View>
+);
+
 const stylescom = StyleSheet.create({
     container: {
-        height: '42%',
+        height: 'auto',
         width: '100%',
         backgroundColor: '#ffff',
         paddingHorizontal: 25,

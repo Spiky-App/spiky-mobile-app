@@ -15,6 +15,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { StatusType } from '../../types/common';
 import { ChatMessage, Conversation, User } from '../../types/store';
 import { SocketContextProvider } from './Context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageKeys } from '../../types/storage';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
 const mensajes = [
@@ -155,6 +157,10 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
                     }
                 );
             }
+        });
+
+        socket?.on('session-started', async (sessionId: number) => {
+            await AsyncStorage.setItem(StorageKeys.SESSION_ID, sessionId.toString());
         });
     }, [socket, activeConversationId]);
 

@@ -12,9 +12,10 @@ interface Props {
     anonymous: boolean;
     date: number;
     handleClickUser: (goToUser: User) => void;
+    small?: boolean;
 }
 
-function UserComponent({ user, anonymous, date, handleClickUser }: Props) {
+function UserComponent({ user, anonymous, date, handleClickUser, small }: Props) {
     const fecha = getTime(date.toString());
 
     if (anonymous) {
@@ -40,16 +41,16 @@ function UserComponent({ user, anonymous, date, handleClickUser }: Props) {
         return (
             <Pressable onPress={() => handleClickUser(user)} style={{ alignSelf: 'flex-start' }}>
                 <View style={styles.button_user}>
-                    <Text style={styles.user}>@{user.nickname}</Text>
-                    <UniversityTag id={user.universityId} fontSize={14} />
+                    <Text style={[styles.user, small && { fontSize: 12 }]}>@{user.nickname}</Text>
+                    <UniversityTag id={user.universityId} fontSize={small ? 12 : 14} />
                     <View style={styles.flex_center}>
                         <FontAwesomeIcon
                             icon={faClock}
                             color="#B9B9B9"
-                            size={10}
+                            size={small ? 9 : 10}
                             style={{ marginLeft: 4, marginRight: 2 }}
                         />
-                        <Text style={styles.number}>{fecha}</Text>
+                        <Text style={[styles.number, small && { fontSize: 11 }]}>{fecha}</Text>
                     </View>
                 </View>
             </Pressable>

@@ -158,7 +158,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
         setIsLoadingReaction(false);
     }
 
-    const handleOpenIdea = async () => {
+    const LoadOpenIdea = async () => {
         const ideaRetrieved = await getIdeaWithComments(ideaId);
         if (ideaRetrieved) {
             const messageRetrived = generateMessageFromMensaje(ideaRetrieved);
@@ -182,6 +182,18 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
             setTotalComments(comments.length + 1);
         }
     };
+
+    function OpenCreateQuoteScreen() {
+        navigation.navigate('CreateQuoteScreen', { idea });
+    }
+
+    function handleOpenIdea(id: number) {
+        navigation.pop();
+        navigation.navigate('OpenedIdeaScreen', {
+            ideaId: id,
+            filter: filter,
+        });
+    }
 
     const changeScreen = (screen: string, params?: MessageRequestData) => {
         navigation.pop();
@@ -231,7 +243,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
 
     useEffect(() => {
         if (ideaId) {
-            handleOpenIdea();
+            LoadOpenIdea();
         }
     }, [ideaId]);
 
@@ -286,6 +298,7 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                     handleCreateX2Reaction={
                                         !isLoadingReaction ? handleCreateX2Reaction : () => {}
                                     }
+                                    OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                                 />
                             </View>
                         </View>
@@ -301,11 +314,12 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                             style={[styles.button_container, styles.shadow_button]}
                                             onPress={() =>
                                                 navigation.navigate('ReplyIdeaScreen', {
-                                                    message: {
-                                                        ideaId: idea.id,
+                                                    idea: {
+                                                        id: idea.id,
                                                         message: idea.message,
                                                         user: idea.user,
                                                         date: idea.date,
+                                                        type: idea.type,
                                                     },
                                                 })
                                             }
@@ -353,6 +367,8 @@ export const OpenedIdeaScreen = ({ route: routeSC }: Props) => {
                                 <InputComment
                                     messageId={ideaId}
                                     toUser={idea.user.id ? idea.user.id : 0}
+                                    isOwner={isOwner}
+                                    isIdeaSuperAnonymous={idea.anonymous}
                                     updateComments={updateComments}
                                     form={form}
                                     onChange={onChange}

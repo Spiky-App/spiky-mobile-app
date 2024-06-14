@@ -76,10 +76,12 @@ function useSpikyService() {
     async function logOutFunction() {
         try {
             const deviceTokenStorage = await AsyncStorage.getItem(StorageKeys.DEVICE_TOKEN);
-            if (deviceTokenStorage) {
-                await service.deleteDeviceToken(deviceTokenStorage);
+            const sessionIdStorage = await AsyncStorage.getItem(StorageKeys.SESSION_ID);
+            if (deviceTokenStorage && sessionIdStorage) {
+                await service.logout(deviceTokenStorage, Number(sessionIdStorage));
             }
             await AsyncStorage.removeItem(StorageKeys.TOKEN);
+            await AsyncStorage.removeItem(StorageKeys.SESSION_ID);
             dispatch(restartConfig());
             dispatch(signOut());
             dispatch(removeUser());
@@ -92,10 +94,11 @@ function useSpikyService() {
     const createMessageComment = async (
         messageId: number,
         uid: number,
-        comment: string
+        comment: string,
+        anonymous: boolean
     ): Promise<MessageComment | undefined> => {
         try {
-            const response = await service.createMessageComment(messageId, uid, comment);
+            const response = await service.createMessageComment(messageId, uid, comment, anonymous);
             return response.data.respuesta;
         } catch (error) {
             console.log(error);

@@ -17,7 +17,7 @@ const StylesComponent = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 6,
-        borderRadius: 4,
+        borderRadius: 10,
     },
     textInput: {
         fontFamily: 'Helvetica',

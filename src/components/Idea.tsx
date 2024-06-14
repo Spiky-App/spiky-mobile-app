@@ -116,6 +116,10 @@ export const Idea = ({ idea, filter }: Props) => {
         });
     }
 
+    function OpenCreateQuoteScreen() {
+        navigation.navigate('CreateQuoteScreen', { idea });
+    }
+
     function changeScreen(screen: string, params?: MessageRequestData) {
         const targetRoute = navigation
             .getState()
@@ -184,6 +188,7 @@ export const Idea = ({ idea, filter }: Props) => {
                             !isLoading ? handleCreateEmojiReaction : () => {}
                         }
                         handleCreateX2Reaction={!isLoading ? handleCreateX2Reaction : () => {}}
+                        OpenCreateQuoteScreen={OpenCreateQuoteScreen}
                     />
                 </View>
             </Animated.View>
